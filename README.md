@@ -13,7 +13,7 @@ Raiment Studios is creating an open source world including the worldbuilding con
 
 * **Ease and enjoyable to contribute to**: a friendly community and straightforward process to make small contributions possible for anyone
 
-| jump to |
+|  |
 | :-: |
 | [Work](#work) \| [Contributing](#contributing) \| [Community](#community) \| |
 
