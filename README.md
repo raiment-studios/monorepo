@@ -10,5 +10,6 @@ This is the monorepo for Raiment Studio. Work is defined into the following proj
 * **Wiki** - lightweight custom wiki used for the Worldbuilding and Company projects
 * **Project** - lighweight project manager simplifying Company processes
 * **Build** - build tool used to simplify and enforce the Company conventions
+* **Marketing** - public website and material to encourage participation
 * **Core**
 * **Engine**
