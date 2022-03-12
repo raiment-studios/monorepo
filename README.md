@@ -7,7 +7,7 @@
 
 ## What is the "Raiment" project?
 
-Raiment Studios is creating an open source world including the worldbuilding content, a rulebook, two implementations of the game, and a set of tools to make contributing enjoyable and easy.
+Raiment Studios is creating an open source world including the worldbuilding content, a rulebook, two implementations of the game, and a set of tools to make contributing enjoyable and easy.  Please take a look at our [Vision statement](source/projects/organization/vision.md) to see if this is a project you'd like to contribute to!
 
 **Design goals**
 
@@ -17,8 +17,8 @@ Raiment Studios is creating an open source world including the worldbuilding con
 
 Work is categorized into the following projects:
 
-* [**Company**](source/projects/company) - how we work: consistent processes aimed to make communications & decisions clear
-* **Worldbuilding** - open-content describing the world of Kestrel
+* [**Organization**](source/projects/organization) - how we work: consistent processes aimed to make communications & decisions clear
+* [**Worldbuilding**](source/project/worldbuilding) - open-content describing the world of Kestrel
 * **Rulebook** - written core rulebook for games set in the world Kestrel
 * **Storytelling** - computer-aided, "pen & paper" solo storytelling rpg
 * **Adventure** - voxel-based, open-world adventure rpg
