@@ -1,6 +1,7 @@
 # Principles
 
-![](https://img.shields.io/badge/status-placeholder-ccc?labelColor=555)
+
+![](https://img.shields.io/badge/status-placeholder-ccc?labelColor=555) ![](https://img.shields.io/badge/version-v0.1.0-ccc?labelColor=555)
 
 
 
