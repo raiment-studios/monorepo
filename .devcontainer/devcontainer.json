@@ -9,8 +9,6 @@
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-        "workbench.colorTheme": "GitHub Dark",
-
 		"prettier.tabWidth": 4,
         "prettier.printWidth": 100,
         "prettier.singleQuote": true,
@@ -38,7 +36,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "source setup.sh",
+	//"postCreateCommand": "",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode"

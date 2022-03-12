@@ -7,3 +7,4 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         curl wget build-essential
 
 
+RUN echo 'source /workspaces/monorepo/setup.sh' >> /home/$USERNAME/.bashrc 2> /dev/null
