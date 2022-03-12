@@ -1,8 +1,8 @@
+# Principles
 
 ![](https://img.shields.io/badge/status-placeholder-ccc?labelColor=555)
 
 
-## Principles
 
 The company **Principles** are the general guidelines for how work is done as part of the company. 
 
@@ -10,7 +10,7 @@ The company **Principles** are the general guidelines for how work is done as pa
 1. [Show-don't-tell](#show-dont-tell)
 1. [Consistent, structured processes](#consistent-structured-processes)
 
-### People first
+## People first
 
 Individuals are and will always be more important than any particular project work, implementation detail, decision, innovation, mistake, disagreement, success, or anything else that comes up as part of this work.  That principle _must always be followed_.  If you do not agree with this principle, this project will be frustrated for you.
 
@@ -21,7 +21,7 @@ The primary goal of the company is to create an environment that is inspiring, s
 * [ ] Split out into a Values page?
 
 
-### Show don't tell
+## Show don't tell
 
 Rapid prototying, mocks, and demonstration branches are preferred over long documents.  This principle is intended to balance [Consistent, Structured Processes](#consistent-structured-processes) so that process does not _reduce_ efficiency.
 
@@ -35,7 +35,7 @@ Rapid prototying, mocks, and demonstration branches are preferred over long docu
 * "Take my word for it"
 
 
-### Consistent, structured processes
+## Consistent, structured processes
 
 Any _non-trivial_ work should follow the same standard set of steps from introducing the proposal, implementing it, reviewing it, testing it, and releasing it. The purpose of this structure is that consistency allows more efficient, objective work to be done as less time is lost to confusion due to an ill-defined process. This is particularly important for distributed, community-driven, creative work.
 
