@@ -29,6 +29,12 @@ Work is categorized into the following projects:
 * **Core**
 * **Engine**
 
+## Technology
+
+The project is currently coded primarily in JavaScript in order to rapidly flesh out the first prototypes of the project and ensure they are easily accesible on the web.
+
+After the initial prototyping stabilizes, the project intends to migrate towards a Rust and JavaScript mix, utilizing WASM when appropriate.
+
 ## Contributing
 
 TODO
