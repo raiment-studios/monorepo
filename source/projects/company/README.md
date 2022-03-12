@@ -6,13 +6,33 @@
 
 The company **Principles** are the general guidelines for how work is done as part of the company. 
 
+1. [People first](#people-first)
 1. [Show-don't-tell](#show-dont-tell)
 1. [Consistent, structured processes](#consistent-structured-processes)
 
+### People first
 
-### Show-don't-tell
+Individuals are and will always be more important than any particular project work, implementation detail, decision, innovation, mistake, disagreement, success, or anything else that comes up as part of this work.  That principle _must always be followed_.  If you do not agree with this principle, this project will be frustrated for you.
+
+The primary goal of the company is to create an environment that is inspiring, safe, and encouraging. Contributions and learning should feel easy within this group.
+
+**TODO**
+
+* [ ] Split out into a Values page?
+
+
+### Show don't tell
 
 Rapid prototying, mocks, and demonstration branches are preferred over long documents.  This principle is intended to balance [Consistent, Structured Processes](#consistent-structured-processes) so that process does not _reduce_ efficiency.
+
+**Manifestations**
+
+* Proposals including sketches
+* Proposals including similar examples from other existing external work
+
+**Avoid**
+
+* "Take my word for it"
 
 
 ### Consistent, structured processes
