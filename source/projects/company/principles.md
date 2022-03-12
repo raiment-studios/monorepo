@@ -1,7 +1,7 @@
 # Principles
 
 
-![](https://img.shields.io/badge/status-placeholder-930) 
+![](https://img.shields.io/badge/status-draft-930) 
 ![](https://img.shields.io/badge/version-v0.1.0-930)
 ![](https://img.shields.io/badge/feedback-welcome!-1a1)
 
