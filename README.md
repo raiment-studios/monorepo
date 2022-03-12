@@ -37,7 +37,7 @@ After the initial prototyping stabilizes, the project intends to migrate towards
 
 ## Contributing
 
-TODO
+See the [contributing page](source/projects/organization/contributing.md)!
 
 ## Community
 
