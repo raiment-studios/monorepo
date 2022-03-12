@@ -1,0 +1,4 @@
+{
+    "name": "raiment-env",
+    "image": "ubuntu:20.10"
+}
