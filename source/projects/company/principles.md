@@ -40,8 +40,13 @@ The primary goal of the company is to create an environment that is inspiring, s
 
 Rapid prototying, mocks, and demonstration branches are preferred over long documents.  This principle is intended to balance [Consistent, Structured Processes](#consistent-structured-processes) so that process does not _reduce_ efficiency.
 
+**Upsides**
+
+**Risks**
+
 **Manifestations**
 
+* Protoypes and mini-demos
 * Proposals including sketches
 * Proposals including similar examples from other existing external work
 
@@ -49,6 +54,9 @@ Rapid prototying, mocks, and demonstration branches are preferred over long docu
 
 * "Take my word for it"
 
+**Notes**
+
+* This principle is part of the rationale for the [Wiki](/source/projects//wiki) is considered in-scope for the Raiment project. We want to ensure rapid prototyping that can utilize other assets within the project can be done in a straightforward manner.
 
 ## Consistent, structured processes
 
