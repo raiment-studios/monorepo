@@ -36,8 +36,24 @@ __bash_prompt() {
 }
 __bash_prompt
 
-
-
-
 alias gs='git status'
 alias gcap='git pull && git add . && git commit -m "Update" && git push'
+
+__intro() {
+
+    local RT_BLUE=$(echo -en '\x1b[38;2;60;130;192m')
+    local SCC_GRAY50=$(echo -en '\x1b[38;2;128;128;128m')
+    local RT_PURPLE=$(echo -en '\x1b[38;2;98;95;241m')
+    local RT_RESET=$(echo -en "\x1b[0m\n")
+
+    echo
+    echo
+    echo
+    printf "${RT_BLUE}Raiment development environment${RT_RESET}\n"
+    printf "${RT_BLUE}-------------------------------${RT_RESET}\n"
+    echo
+    printf "${RT_PURPLE}Project structure${RT_RESET}\n"
+    tree -d -L 2 -n $(ls -d */)
+    unset -f __intro
+}
+__intro
