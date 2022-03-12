@@ -21,7 +21,9 @@ __bash_prompt() {
             if [ "${BRANCH}" != "" ]; then \
                 echo -n "\[\033[0;36m\](\[\033[1;31m\]${BRANCH}" \
                 && if git ls-files --error-unmatch -m --directory --no-empty-directory -o --exclude-standard ":/*" > /dev/null 2>&1; then \
-                        echo -n " \[\033[1;33m\]✗"; \
+                        echo -n " \[\033[1;33m\]🟡"; \
+                else \
+                    echo -n " \[\033[1;33m\]"🟢; \
                 fi \
                 && echo -n "\[\033[0;36m\]) "; \
             fi; \
