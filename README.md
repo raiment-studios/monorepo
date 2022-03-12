@@ -1,8 +1,10 @@
 # Raiment Studios monorepo (WIP)
 
-This is the monorepo for Raiment Studio. Work is defined into the following projects:
+Raiment Studios is creating an **open source** set of content and tools. 
 
-* **Company** - how we work: consistent processes aimed to make communications & decisions clear
+Work is categorized into the following projects:
+
+* [**Company**](source/projects/company) - how we work: consistent processes aimed to make communications & decisions clear
 * **Worldbuilding** - open-content describing the world of Kestrel
 * **Rulebook** - written core rulebook for games set in the world Kestrel
 * **Storytelling** - computer-aided, "pen & paper" solo storytelling rpg
@@ -13,3 +15,9 @@ This is the monorepo for Raiment Studio. Work is defined into the following proj
 * **Marketing** - public website and material to encourage participation
 * **Core**
 * **Engine**
+
+
+## Community
+
+* [Chat Server](https://raiment-studios.zulipchat.com/)
+* TODO: Community knowledge base
