@@ -19,11 +19,11 @@ Work is categorized into the following projects:
 
 * [**Organization**](source/projects/organization) - how we work: consistent processes aimed to make communications & decisions clear
 * [**Worldbuilding**](source/project/worldbuilding) - open-content describing the world of Kestrel
-* **Rulebook** - written core rulebook for games set in the world Kestrel
-* **Storytelling** - computer-aided, "pen & paper" solo storytelling rpg
-* **Adventure** - voxel-based, open-world adventure rpg
-* **Wiki** - lightweight custom wiki used for the Worldbuilding and Company projects
+* [**Rulebook**](source/project/rulebook) - written core rulebook for games set in the world Kestrel
+* [**Storytelling**](source/project/storytelling) - computer-aided, "pen & paper" solo storytelling rpg
+* [**Adventure**](source/project/adventure) - voxel-based, open-world adventure rpg
 * **Project** - lighweight project manager simplifying Company processes
+* **Wiki** - lightweight custom wiki used for the Worldbuilding and Company projects
 * **Build** - build tool used to simplify and enforce the Company conventions
 * **Marketing** - public website and material to encourage participation
 * **Core**
