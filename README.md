@@ -37,12 +37,21 @@ After the initial prototyping stabilizes, the project intends to migrate towards
 
 ## Contributing
 
-See the [contributing page](source/projects/organization/contributing.md)!
+For more details, see the [contributing page](source/projects/organization/contributing.md)!
 
 ## Community
 
 * [Chat Server](https://raiment-studios.zulipchat.com/)
+* [Forums](https://github.com/raiment-studios/monorepo/discussions)
 * TODO: Community knowledge base
+
+## Roadmap
+
+* [ ] devcontainer to normalize dev environment
+* [ ] procedural, voxel focus
+* [ ] web focus
+* [ ] Write the vision
+* [ ] Contributions button
 
 ## FAQ
 
