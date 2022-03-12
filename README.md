@@ -1,6 +1,22 @@
 # Raiment Studios monorepo (WIP)
 
+![](https://img.shields.io/badge/license-MIT-039) 
+[![](https://img.shields.io/badge/chat-zulip-518)](https://raiment-studios.zulipchat.com/)
+![](https://img.shields.io/badge/feedback-welcome!-1a1)
+
+
 Raiment Studios is creating an **open source** set of content and tools. 
+
+## What is the "Raiment" project?
+
+Raiment Studios is creating an open source world including the worldbuilding content, a rulebook, two implementations of the game, and a set of tools to make contributing enjoyable and easy.
+
+**Design goals**
+
+* **Ease and enjoyable to contribute to**: a friendly community and straightforward process to make small contributions possible for anyone
+
+
+## Work
 
 Work is categorized into the following projects:
 
@@ -21,3 +37,7 @@ Work is categorized into the following projects:
 
 * [Chat Server](https://raiment-studios.zulipchat.com/)
 * TODO: Community knowledge base
+
+## TODO
+
+- [ ] Logo
