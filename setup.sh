@@ -1,2 +1,2 @@
 alias gs='git status'
-alias gcap='git pull && git add . && git commit -m "Update"'
+alias gcap='git pull && git add . && git commit -m "Update" && git push'
