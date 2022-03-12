@@ -13,11 +13,6 @@ Raiment Studios is creating an open source world including the worldbuilding con
 
 * **Ease and enjoyable to contribute to**: a friendly community and straightforward process to make small contributions possible for anyone
 
-|  |
-| :-: |
-| [Work](#work) \| [Contributing](#contributing) \| [Community](#community) \| |
-
-
 ## Work
 
 Work is categorized into the following projects:
@@ -42,3 +37,20 @@ TODO
 
 * [Chat Server](https://raiment-studios.zulipchat.com/)
 * TODO: Community knowledge base
+
+## FAQ
+
+TODO
+
+## Acknowledgements
+
+TODO 
+
+## License
+
+All code and content within this repository, unless specifically noted otherwise, is licensed under:
+
+* [MIT License](./LICENSE)
+
+Unless stated explicitly otherwise any contribution intentionally submitted for inclusion in this repository or otherwise to the project shall be licensed as stated above without any additional terms or conditions.
+

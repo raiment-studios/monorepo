@@ -44,7 +44,7 @@ Rapid prototying, mocks, and demonstration branches are preferred over long docu
 
 **Risks**
 
-**Manifestations**
+**Examples**
 
 * Protoypes and mini-demos
 * Proposals including sketches
@@ -64,7 +64,7 @@ Any _non-trivial_ work should follow the same standard set of steps from introdu
 
 Consistent processes should be thought of as "work patterns" (in the "design patterns" sense). 
 
-**Manifestations**
+**Examples**
 
 * Templates & prototypes (in the "copy from an existing example" sense)
 * Self review checkiists
@@ -79,6 +79,32 @@ Consistent processes should be thought of as "work patterns" (in the "design pat
 * More rocess overhead than "actual work"
 * Constraints on flexibility or innovation
 * Process before purpose
+
+## Be obvious and explicit over clever
+
+**Examples**
+
+**Pitfalls**
+
+* Clever or cute project, service, library names - describe what they do instead. Clever names, while fun, force new contributors to learn new terminology whereas more "boring" but obvious names immediately give them a hint as to purpose of a thing
+
+## Gitops driven
+
+Changes should be document with revision history and stored in a single repository.  
+
+**Examples**
+
+**Pitfalls**
+
+**Upsides**
+
+**Risks**
+
+**Notes**
+
+## Ask questions and alwayus ask for questions
+
+## Include why when stating what
 
 
 
