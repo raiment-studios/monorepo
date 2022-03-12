@@ -31,7 +31,7 @@ The primary goal of the company is to create an environment that is inspiring, s
 * Policing of behaviors creates an exclusionist group of contributors
 
 
-**TODO**
+**⚠️TODO**
 
 * [ ] Split out into a Values page?
 

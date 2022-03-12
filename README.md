@@ -43,7 +43,7 @@ For more details, see the [contributing page](source/projects/organization/contr
 
 * [Chat Server](https://raiment-studios.zulipchat.com/)
 * [Forums](https://github.com/raiment-studios/monorepo/discussions)
-* TODO: Community knowledge base
+* ⚠️TODO: Community knowledge base
 
 ## Roadmap
 
@@ -55,11 +55,11 @@ For more details, see the [contributing page](source/projects/organization/contr
 
 ## FAQ
 
-TODO
+⚠️TODO
 
 ## Acknowledgements
 
-TODO 
+⚠️TODO 
 
 ## License
 
