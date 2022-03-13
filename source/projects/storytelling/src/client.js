@@ -18,8 +18,6 @@ function DevelopmentReloader() {
                 last: null,
             };
             let timer = setInterval(async () => {
-                console.log('Polling', DEVELOPMENT_MODE);
-
                 const resp = await fetch('/buildstamp.txt');
                 const text = await resp.text();
                 if (value.last === null) {
@@ -27,7 +25,6 @@ function DevelopmentReloader() {
                 } else if (value.last !== text) {
                     window.location.reload();
                 }
-                console.log(text);
             }, 3000);
             return () => {
                 clearInterval(timer);

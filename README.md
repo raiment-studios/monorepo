@@ -47,11 +47,7 @@ For more details, see the [contributing page](source/projects/organization/contr
 
 ## Roadmap
 
-* [ ] devcontainer to normalize dev environment
-* [ ] procedural, voxel focus
-* [ ] web focus
-* [ ] Write the vision
-* [ ] Contributions button
+⚠️TODO
 
 ## FAQ
 
