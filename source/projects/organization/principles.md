@@ -87,7 +87,9 @@ Consistent processes should be thought of as "work patterns" (in the "design pat
 * Constraints on flexibility or innovation
 * Process before purpose
 
-## Be obvious and explicit over clever
+## Straightforward rather than clever
+
+For iternal work (as opposed to in-game, in-story, marketing, or other contexts), be straightforward and descriptive rather than interesting and unique in choosing names or approaches. This increases understanding and makes for more efficient communication.  The goal of the project is creative _output_ so ensure the creativity is directed at the final product rather than the inner workings.
 
 **Examples**
 
