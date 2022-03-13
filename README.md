@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/license-MIT-039) 
 [![](https://img.shields.io/badge/chat-zulip-518)](https://raiment-studios.zulipchat.com/)
-![](https://img.shields.io/badge/feedback-welcome!-1a1)
+[![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
 
 
 ## What is the "Raiment" project?
