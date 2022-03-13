@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+# https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
+export MONOREPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+# Set this both for consistency and to avoid warnings
 git config pull.rebase false
 
+# Get rid of unreadable green background from ls
+# https://stackoverflow.com/questions/40574819/how-to-remove-dir-background-in-ls-color-output
+dircolors -p | sed 's/;42/;01/' > ~/.dircolors
 
-# Codespaces bash prompt theme
+
+# Bash prompt customized from Codespaces default
 __bash_prompt() {
     local RT_BLUE=$(echo -en '\x1b[38;2;60;130;192m')
     local SCC_GRAY50=$(echo -en '\x1b[38;2;128;128;128m')
@@ -36,8 +43,26 @@ __bash_prompt() {
 }
 __bash_prompt
 
+
+function __shortcut_cmd {
+    case "$2" in
+    "")       $1 $MONOREPO_ROOT ;;
+    /)        $1 $MONOREPO_ROOT ;;
+    *)        $1 $MONOREPO_ROOT ;;
+    esac
+}
+
+function scd {
+    __shortcut_cmd "cd" $1 
+}
+
+
+
+#  Convenience aliases
 alias gs='git status'
 alias gcap='git pull && git add . && git commit -m "Update" && git push'
+
+
 
 __intro() {
 
