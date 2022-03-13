@@ -9,4 +9,4 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         curl wget build-essential \
         tree
 
-RUN echo 'source /workspaces/monorepo/setup.sh' >> /home/$USERNAME/.bashrc 2> /dev/null
+RUN echo 'source /workspaces/monorepo/setup.sh' >> /home/vscode/.bashrc 2> /dev/null
