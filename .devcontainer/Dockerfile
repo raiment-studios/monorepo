@@ -10,16 +10,18 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         tree \
         gpg gpg-agent git-secret 
 
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
 # Install NodeJS
 RUN wget https://nodejs.org/dist/v16.14.0/node-v16.14.0-linux-x64.tar.xz && \
     tar xvf node-v16.14.0-linux-x64.tar.xz && \
     cp -r node-v16.14.0-linux-x64/bin /usr/ && \
     cp -r node-v16.14.0-linux-x64/include /usr/ && \
     cp -r node-v16.14.0-linux-x64/lib /usr/ && \
-    cp -r node-v16.14.0-linux-x64/share /usr/
-
-# Install Rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    cp -r node-v16.14.0-linux-x64/share /usr/ && \
+    rm -rf node-v16.14.0-linux-x64 && \
+    rm -f node-v16.14.0-linux-x64.tar.xz
 
 # Install Go
 RUN wget https://golang.org/dl/go1.17.7.linux-amd64.tar.gz  && \
