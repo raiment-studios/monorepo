@@ -7,7 +7,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:${VARIANT}
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
         curl wget build-essential \
-        tree
+        tree \
+        gpg gpg-agent git-secret 
 
 # Install NodeJS
 RUN wget https://nodejs.org/dist/v16.14.0/node-v16.14.0-linux-x64.tar.xz && \
@@ -16,6 +17,15 @@ RUN wget https://nodejs.org/dist/v16.14.0/node-v16.14.0-linux-x64.tar.xz && \
     cp -r node-v16.14.0-linux-x64/include /usr/ && \
     cp -r node-v16.14.0-linux-x64/lib /usr/ && \
     cp -r node-v16.14.0-linux-x64/share /usr/
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+# Install Go
+RUN wget https://golang.org/dl/go1.17.7.linux-amd64.tar.gz  && \
+    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.17.7.linux-amd64.tar.gz
+ENV PATH $PATH:/usr/local/go/bin
+
 
 # Run the development environment setup script on every login
 RUN echo 'source /workspaces/monorepo/setup.sh' >> /home/vscode/.bashrc 2> /dev/null
