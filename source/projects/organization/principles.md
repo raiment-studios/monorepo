@@ -14,7 +14,7 @@ By having written principles, these are intended to make behaviors more _objecti
 1. [People first](#people-first)
 1. [Show don't tell](#show-dont-tell)
 1. [Consistent, structured processes](#consistent-structured-processes)
-1. [Be obvious and explicit over clever](#be-obvious-and-explicit-over-clever)
+1. [Straightforward rather than clever](#straightforward-rather-than-clever)
 1. [Gitops driven](#gitops-driven)
 1. [Ask questions and alwayus ask for questions](#ask-questions-and-alwayus-ask-for-questions)
 1. [Include why when stating what](#include-why-when-stating-what)
