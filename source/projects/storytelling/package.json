@@ -1,9 +1,12 @@
 {
   "type": "module",
   "dependencies": {
-    "firebase": "^9.6.8"
+    "firebase": "^9.6.8",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
+    "esbuild": "^0.14.25",
     "firebase-tools": "^10.2.2"
   }
 }
