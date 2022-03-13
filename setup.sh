@@ -62,12 +62,14 @@ function scd {
 alias gs='git status'
 
 
+# gcap = git commit and pull
 function gcap {
-    local message="${1:update}"
-    #git pull 
-    #git add 
-    echo git commit -m "Update"
-    # git push
+    local arg=$*
+    local message="${arg:='update'}"
+    git pull 
+    git add .
+    git commit -m \""${message}"\"
+    git push
 }
 
 
