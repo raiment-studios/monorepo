@@ -9,10 +9,17 @@ The company **Principles** are the general guidelines for how work is done as pa
 
 By having written principles, these are intended to make behaviors more _objective_ and _consistent_.  It should always be okay to politely ask someone to adhere to the company principles to encourage this consistency and objectivity.
 
+<!-- TOC depthfrom:2 orderedlist:false withlinks:true bulletcharacter:1. -->
 
 1. [People first](#people-first)
-1. [Show-don't-tell](#show-dont-tell)
+1. [Show don't tell](#show-dont-tell)
 1. [Consistent, structured processes](#consistent-structured-processes)
+1. [Be obvious and explicit over clever](#be-obvious-and-explicit-over-clever)
+1. [Gitops driven](#gitops-driven)
+1. [Ask questions and alwayus ask for questions](#ask-questions-and-alwayus-ask-for-questions)
+1. [Include why when stating what](#include-why-when-stating-what)
+
+<!-- /TOC -->
 
 ## People first
 

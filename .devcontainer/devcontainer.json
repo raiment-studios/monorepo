@@ -6,6 +6,9 @@
 	},
 
 	"settings": {
+		"files.autoSave": "off",
+		"workbench.colorTheme": "Default Dark+",		
+
 		"prettier.tabWidth": 4,
         "prettier.printWidth": 100,
         "prettier.singleQuote": true,
@@ -24,7 +27,8 @@
 	},
 	"extensions": [
 		"esbenp.prettier-vscode",
-		"ms-azuretools.vscode-docker"
+		"ms-azuretools.vscode-docker",
+		"huntertran.auto-markdown-toc"
 	],
 	"remoteUser": "vscode"
 }
