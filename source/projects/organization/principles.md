@@ -16,8 +16,8 @@ By having written principles, these are intended to make behaviors more _objecti
 1. [Consistent, structured processes](#consistent-structured-processes)
 1. [Straightforward rather than clever](#straightforward-rather-than-clever)
 1. [Gitops driven](#gitops-driven)
-1. [Ask questions and alwayus ask for questions](#ask-questions-and-alwayus-ask-for-questions)
-1. [Include why when stating what](#include-why-when-stating-what)
+1. [Always ask for questions](#always-ask-for-questions)
+1. [Always explain why](#always-explain-why)
 
 <!-- /TOC -->
 
@@ -111,9 +111,11 @@ Changes should be document with revision history and stored in a single reposito
 
 **Notes**
 
-## Ask questions and alwayus ask for questions
+## Always ask for questions
 
-## Include why when stating what
+## Always explain why
+
+The motivation and the intent are the most important.
 
 
 
