@@ -19,6 +19,16 @@ export function App() {
                 <h2>Storytelling</h2>
                 <p style={{ color: 'red' }}>This is a placeholder.</p>
             </div>
+            <div>
+                <div className="flex-row">
+                    <div className="flex-col" style={{ flex: '1 0 0' }}>
+                        <div>Story</div>
+                    </div>
+                    <div className="flex-col" style={{ flex: '1 0 0' }}>
+                        <div>Conflict</div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
