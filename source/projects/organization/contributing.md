@@ -1,8 +1,10 @@
 # Contributing
 
-![](https://img.shields.io/badge/status-not--ready-930) 
+![](https://img.shields.io/badge/status-not%20ready-930) 
 ![](https://img.shields.io/badge/version-v0.1.0-930)
 [![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
+
+**⚠️ Warning: this project is not yet ready for contributions as more groundwork needs to be done to make it easy to help.**
 
 ## General
 
