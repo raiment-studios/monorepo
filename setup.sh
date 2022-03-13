@@ -62,16 +62,20 @@ function scd {
 alias gs='git status'
 
 
-# gcap = git commit and pull
+# gcap = git commit and pull from the root of the repo
+#
+# This is a convenience for early, solo development (where reviews are not
+# yet taking place).
+#
 function gcap {
     local arg=$*
     local message="${arg:='update'}"
-    pushd $MONOREPO_ROOT 2> /dev/null
+    pushd $MONOREPO_ROOT > /dev/null
     git pull 
     git add .
     git commit -m \""${message}"\"
     git push
-    popd
+    popd > /dev/null
 }
 
 __intro() {
