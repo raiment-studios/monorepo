@@ -10,6 +10,10 @@ A more direct interpretation of the core rulebook.
 
 This should run off the same content base as other games. It's a way to test and validate the procedural _story_ is possible and enjoyable, without becoming distracted by "just building an engine" where the story is lost.
 
+## Demo
+
+[https://raiment-8c8fb.web.app/](https://raiment-8c8fb.web.app/)
+
 ## Acknowledgements
 
 Thanks to [donjon.bin.sh](https://donjon.bin.sh/fantasy/adventure/) for excellent inspiration.
