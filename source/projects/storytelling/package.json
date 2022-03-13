@@ -1,1 +1,9 @@
-{}
+{
+  "type": "module",
+  "dependencies": {
+    "firebase": "^9.6.8"
+  },
+  "devDependencies": {
+    "firebase-tools": "^10.2.2"
+  }
+}

@@ -1,0 +1,2 @@
+publish:
+	npx firebase deploy

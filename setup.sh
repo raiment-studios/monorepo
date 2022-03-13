@@ -52,7 +52,7 @@ function __shortcut_cmd {
     esac
 }
 
-function scd {
+function rcd {
     __shortcut_cmd "cd" $1 
 }
 
