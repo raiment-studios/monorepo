@@ -66,13 +66,13 @@ alias gs='git status'
 function gcap {
     local arg=$*
     local message="${arg:='update'}"
+    pushd $MONOREPO_ROOT 2> /dev/null
     git pull 
     git add .
     git commit -m \""${message}"\"
     git push
+    popd
 }
-
-
 
 __intro() {
 
