@@ -12,7 +12,7 @@ This should run off the same content base as other games. It's a way to test and
 
 ## Demo
 
-[https://raiment-8c8fb.web.app/](https://raiment-8c8fb.web.app/)
+[https://storytelling.raiment.studio/](https://storytelling.raiment.studio/)
 
 ## Acknowledgements
 
