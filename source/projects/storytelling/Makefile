@@ -18,7 +18,7 @@ clean:
 ifeq ($(DEVELOPMENT_MODE),1)
 BUILD_FLAGS += --define:DEVELOPMENT_MODE=1 
 else
-BUILD_FLAGS += --minify
+BUILD_FLAGS += --define:DEVELOPMENT_MODE=0 --minify
 endif
 
 .PHONY: build
