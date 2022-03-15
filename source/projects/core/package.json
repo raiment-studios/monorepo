@@ -1,0 +1,10 @@
+{
+    "name": "@raiment/core",
+    "version": "0.1.0",
+    "type": "module",
+    "main": "src/index.js",
+    "peerDependencies": {
+    },
+    "dependencies": {
+    }
+}
