@@ -1,4 +1,5 @@
 DEVELOPMENT_MODE ?= 0
+BUILD_FLAGS ?=
 
 #
 # clean
@@ -13,7 +14,6 @@ clean:
 # build
 #
 
-BUILD_FLAGS ?=
 
 ifeq ($(DEVELOPMENT_MODE),1)
 BUILD_FLAGS += --define:DEVELOPMENT_MODE=1 
@@ -23,7 +23,6 @@ endif
 
 .PHONY: build
 build:
-	echo "$(BUILD_FLAGS)"
 	mkdir -p dist	
 	node -e "console.log(Date.now());" > dist/buildstamp.txt
 	cp -f src/*.html dist/
@@ -48,15 +47,22 @@ run:
 
 .PHONY: dev dev-watch
 dev:
-	npx concurrently "make run" "make dev-watch" "make dev-watch-react-ex"
+	npx concurrently "make run" "make dev-watch" "make dev-watch-react-ex" "make dev-watch-core"
 dev-watch:
 	npx nodemon -q \
 		--watch "src/**/*" \
 		--exec "DEVELOPMENT_MODE=1 make build"
+
 dev-watch-react-ex:
 	npx nodemon -q \
 		--watch "$(MONOREPO_ROOT)/source/projects/react-ex/src/**/*" \
-		-
+		--exec "make -C ../react-ex build-pack && npm i @raiment/react-ex && DEVELOPMENT_MODE=1 make build"
+
+dev-watch-core:
+	npx nodemon -q \
+		--watch "$(MONOREPO_ROOT)/source/projects/core/src/**/*" \
+		--exec "make -C ../core build-pack && npm i @raiment/core && DEVELOPMENT_MODE=1 make build"
+
 #
 # test
 #

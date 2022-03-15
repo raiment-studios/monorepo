@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCommonStyles, useLocalStorage } from '@raiment/react-ex';
-import { last, cloneDeep } from 'lodash';
+import { makeRNG } from '@raiment/core';
+import { last, cloneDeep, clone } from 'lodash';
 
 export function App() {
     useCommonStyles();
@@ -14,12 +15,25 @@ export function App() {
         ],
     });
 
+    const rng = makeRNG();
+
     const generators = {
-        Choice: () => {},
         D20: () => {
             return {
                 type: 'd20',
-                value: `roll = ${Math.floor(1 + Math.random() * 20)}`,
+                value: `roll = ${rng.rangei(1, 21)}`,
+            };
+        },
+        Choice: () => {
+            const table = [
+                { weight: 10, value: 'No, but...' },
+                { weight: 40, value: 'No' },
+                { weight: 40, value: 'Yes' },
+                { weight: 10, value: 'Yes, but...' },
+            ];
+            return {
+                type: 'choice',
+                value: `${rng.selectWeighted(table, (item) => item.weight).value}`,
             };
         },
         Character: () => {},
@@ -43,12 +57,15 @@ export function App() {
         setStory(cloneDeep(story));
     };
 
+    const handleRemove = (evt, round, cardIndex) => {
+        round.cards.splice(cardIndex, 1);
+        setStory(cloneDeep(story));
+    };
+
     return (
         <div style={{ margin: '2rem auto', width: '62em' }}>
             <div className="flex-col">
-                <h1>Raiment Studios</h1>
-                <h2>Storytelling</h2>
-                <p style={{ color: 'red' }}>This is a placeholder.</p>
+                <h1>Raiment Studios: Storytelling</h1>
             </div>
             <div className="flex-row">
                 <div className="flex-row" style={{ width: '50em' }}>
@@ -58,7 +75,11 @@ export function App() {
                     <div className="flex-col" style={{ flex: '1 0 0' }}>
                         <div style={{ marginBottom: 8 }}>Cards</div>
                         {last(story.rounds).cards.map((card, index) => (
-                            <Card key={index} card={card} />
+                            <Card
+                                key={index}
+                                card={card}
+                                onRemove={(evt) => handleRemove(evt, last(story.rounds), index)}
+                            />
                         ))}
                     </div>
                 </div>
@@ -80,9 +101,10 @@ export function App() {
     );
 }
 
-function Card({ card }) {
+function Card({ card, onRemove }) {
     return (
         <div
+            className="flex-row"
             style={{
                 margin: '0 0 12px',
                 padding: '4px 8px',
@@ -91,9 +113,23 @@ function Card({ card }) {
                 fontSize: '90%',
             }}
         >
-            <div>
-                <strong>{card.type}</strong>
+            <div className="flex-col" style={{ flex: '1 0 0' }}>
+                <div style={{ marginBottom: '0.25rem' }}>
+                    <strong>{card.type}</strong>
+                </div>
                 {card.value && <div>{card.value}</div>}
+            </div>
+            <div
+                style={{
+                    fontSize: '70%',
+                    textAlign: 'center',
+                    padding: 4,
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                }}
+                onClick={onRemove}
+            >
+                ✖
             </div>
         </div>
     );
