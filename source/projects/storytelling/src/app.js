@@ -37,9 +37,48 @@ export function App() {
             };
         },
         Character: () => {},
-        Conflict: () => {},
-        Problem: () => {},
+        Conflict: () => {
+            return {
+                type: 'conflict',
+                props: {
+                    problem: `${generators.Problem().value}`,
+                    complication: `${generators.Problem().value}`,
+                },
+            };
+        },
+        Problem: () => {
+            const table = [
+                'hunger', //
+                'sickness',
+                'injury',
+                'betrayal',
+                'tarnished reputation',
+                'hostile environment',
+                'in serious debt',
+                'friend needs rescue',
+                'been robbed',
+                'old enemy returned',
+                'mistaken identity',
+                'family fued',
+                'friend in need',
+                'lost heirloom',
+                'mistaken heroism',
+                'imprisonment',
+            ];
+
+            return {
+                type: 'problem',
+                value: rng.select(table),
+            };
+        },
         Value: () => {},
+        Season: () => {
+            const value = rng.select(['spring', 'summer', 'fall', 'winter']);
+            return {
+                type: 'season',
+                value: `season = ${value}`,
+            };
+        },
     };
 
     const handleClickGenerator = (evt, func) => {
@@ -118,6 +157,12 @@ function Card({ card, onRemove }) {
                     <strong>{card.type}</strong>
                 </div>
                 {card.value && <div>{card.value}</div>}
+                {card.props &&
+                    Object.entries(card.props).map(([key, value]) => (
+                        <div key={key}>
+                            {key} = {value}
+                        </div>
+                    ))}
             </div>
             <div
                 style={{
