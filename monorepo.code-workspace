@@ -1,0 +1,22 @@
+{
+	"folders": [
+
+		{
+			"name": "@raiment/core (src)",
+			"path": "source/projects/core/src"
+		},
+		{
+			"name": "@raiment/react-ex (src)",
+			"path": "source/projects/react-ex/src"
+		},
+		{
+			"path": "source/projects/storytelling/src",
+			"name": "Storytelling (src)"
+		},
+		{
+			"name": "monorepo root",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
