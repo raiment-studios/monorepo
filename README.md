@@ -21,7 +21,7 @@ Work is categorized into the following projects:
 * [**Organization**](source/projects/organization) - how we work: consistent processes aimed to make communications & decisions clear
 * [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel
 * [**Rulebook**](source/projects/rulebook) - written core rulebook for games set in the world Kestrel
-* [**Storytelling**](source/projects/storytelling) - computer-aided, "pen & paper" solo storytelling rpg
+* [**Storytelling**](source/projects/storytelling) - computer-aided, "pen & paper" solo storytelling rpg ([demo](https://storytelling.raiment.studio/))
 * [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
 * **Project** - lighweight project manager simplifying Company processes
 * **Wiki** - lightweight custom wiki used for the Worldbuilding and Company projects
