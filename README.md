@@ -8,7 +8,7 @@
 
 ## What is the "Raiment" project?
 
-Raiment Studios is creating an open source world including the worldbuilding content, a rulebook, two implementations of the game, and a set of tools to make contributing enjoyable and easy.  Please take a look at our [Vision statement](source/projects/organization/vision.md) to see if this is a project you'd like to contribute to!
+Raiment Studios is creating an open source world including the worldbuilding content, a rulebook, a TTRPG-like game, a voxel-based game, and a set of tools to make contributing enjoyable and easy.  Please take a look at our [Vision statement](source/projects/organization/vision.md) to see if this is a project you'd like to contribute to!
 
 **Design goals**
 
