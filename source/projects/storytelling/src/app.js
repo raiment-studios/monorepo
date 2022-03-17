@@ -92,6 +92,38 @@ export function App() {
                 value: rng.select(table),
             };
         },
+        Clue: () => {
+            const table = [
+                'a letter',
+                'an inheritance',
+                'a loud-mouthed local',
+                'an old statue',
+                'similar looks',
+            ];
+            return {
+                type: 'secret',
+                value: rng.select(table),
+            };
+        },
+        Secret: () => {
+            const table = [
+                'is a child of a famous person',
+                'is a child of a politician',
+                'has great wealth',
+                'has no money',
+                'is not who they say they are',
+                'knows state secrets',
+                'is a spy',
+                'is an assassin',
+                'accidentally killed a family member',
+                'is an alcoholic',
+                'is disowned from their family',
+            ];
+            return {
+                type: 'secret',
+                value: rng.select(table),
+            };
+        },
         Value: () => {
             const table = [
                 'acceptance',
