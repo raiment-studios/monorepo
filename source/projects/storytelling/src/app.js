@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCommonStyles, useLocalStorage } from '@raiment/react-ex';
 import { makeRNG } from '@raiment/core';
-import { last, cloneDeep, clone } from 'lodash';
+import { last, cloneDeep, set, get, clone } from 'lodash';
 
 export function App() {
     useCommonStyles();
@@ -288,36 +288,82 @@ export function App() {
             <div className="flex-col">
                 <h1>Raiment Studios: Storytelling</h1>
             </div>
-            <div className="flex-row">
-                <div className="flex-row" style={{ width: '50em' }}>
-                    <div className="flex-col" style={{ flex: '1 0 0' }}>
-                        <div style={{ marginBottom: 8 }}>Story</div>
-                    </div>
-                    <div className="flex-col" style={{ flex: '1 0 0' }}>
-                        <div style={{ marginBottom: 8 }}>Cards</div>
-                        {last(story.rounds).cards.map((card, index) => (
-                            <Card
-                                key={index}
-                                card={card}
-                                onRemove={(evt) => handleRemove(evt, last(story.rounds), index)}
-                            />
-                        ))}
-                    </div>
-                </div>
-                <div style={{ flex: '0 0 2em' }} />
-                <div className="flex-col">
-                    <div>
-                        <strong>Generators</strong>
-                    </div>
-                    {Object.entries(generators).map(([name, func]) => (
-                        <div key={name}>
-                            <a href="#" onClick={(evt) => handleClickGenerator(evt, func)}>
-                                {name}
-                            </a>
+            {story.rounds.map((round, roundIndex) => (
+                <div key={`round-${roundIndex}`} className="flex-col">
+                    <div className="flex-row">
+                        <div className="flex-row" style={{ width: '50em' }}>
+                            <div className="flex-col" style={{ flex: '1 0 0' }}>
+                                <div style={{ marginBottom: 8 }}>Story</div>
+                                <Editable
+                                    style={{
+                                        borderLeft: 'solid 4px #eee',
+                                        padding: '0.5rem 1rem 1rem 0.25rem',
+                                    }}
+                                    data={round}
+                                    field="text"
+                                />
+                            </div>
+                            <div style={{ flex: '0 0 8px' }} />
+                            <div className="flex-col" style={{ flex: '1 0 0' }}>
+                                <div style={{ marginBottom: 8 }}>Cards</div>
+                                {round.cards.map((card, index) => (
+                                    <Card
+                                        key={index}
+                                        card={card}
+                                        onRemove={(evt) => handleRemove(evt, round, index)}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    ))}
+                        <div style={{ flex: '0 0 2em' }} />
+                        <div className="flex-col">
+                            <div>
+                                <strong>Generators</strong>
+                            </div>
+                            {Object.entries(generators).map(([name, func]) => (
+                                <div key={name}>
+                                    <a href="#" onClick={(evt) => handleClickGenerator(evt, func)}>
+                                        {name}
+                                    </a>
+                                </div>
+                            ))}
+                        </div>
+                        <div style={{ flex: '0 0 0.5em' }} />
+                        <div className="flex-col">
+                            <div>
+                                <strong>Round {roundIndex + 1}</strong>
+                            </div>
+                            <div style={{ fontSize: '80%', whiteSpace: 'nowrap' }}>
+                                <a
+                                    href="#"
+                                    onClick={(evt) => {
+                                        evt.preventDefault();
+                                        story.rounds.splice(roundIndex + 1, 0, {
+                                            cards: [],
+                                            text: '',
+                                        });
+                                        setStory(cloneDeep(story));
+                                    }}
+                                >
+                                    Add
+                                </a>
+                            </div>
+                            <div style={{ fontSize: '80%', whiteSpace: 'nowrap' }}>
+                                <a
+                                    href="#"
+                                    onClick={(evt) => {
+                                        evt.preventDefault();
+                                        story.rounds.splice(roundIndex, 1);
+                                        setStory(cloneDeep(story));
+                                    }}
+                                >
+                                    Remove
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            ))}
         </div>
     );
 }
@@ -414,6 +460,37 @@ function Card({ card, onRemove }) {
             >
                 ✖
             </div>
+        </div>
+    );
+}
+
+function Editable({
+    id, //
+    className,
+    style,
+    onKeyDown,
+    data,
+    field,
+    onSave,
+    onBlur,
+}) {
+    return (
+        <div
+            id={id}
+            className={className}
+            style={style}
+            suppressContentEditableWarning
+            contentEditable
+            spellCheck={false}
+            onInput={(evt) => {
+                // TODO: read innHTML & convert HTML to markdown
+                set(data, field, evt.target.innerText);
+                onSave && onSave();
+            }}
+            onBlur={onBlur || onSave}
+            onKeyDown={onKeyDown}
+        >
+            {get(data, field)}
         </div>
     );
 }
