@@ -25,6 +25,7 @@ endif
 build:
 	mkdir -p dist	
 	node -e "console.log(Date.now());" > dist/buildstamp.txt
+	node ./src/scripts/transform_assets.js
 	cp -f src/*.html dist/
 	npx esbuild \
 		$(BUILD_FLAGS) \

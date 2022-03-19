@@ -4,6 +4,7 @@
     "type": "module",
     "main": "src/index.js",
     "dependencies": {
-        "mersenne-twister": "^1.1.0"
+        "mersenne-twister": "^1.1.0",
+        "yaml": "^1.10.2"
     }
 }

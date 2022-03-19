@@ -67,7 +67,7 @@ export function App() {
                 },
             };
         },
-        Problem: () => {
+        Problem: async () => {
             const table = [
                 'hunger', //
                 'sickness',
@@ -86,6 +86,8 @@ export function App() {
                 'lost heirloom',
                 'mistaken heroism',
                 'imprisonment',
+                'sky is falling',
+                'lockdown',
             ];
 
             return {
@@ -314,10 +316,13 @@ export function App() {
         },
     };
 
-    const handleClickGenerator = (evt, func) => {
+    const handleClickGenerator = async (evt, func) => {
         evt.preventDefault();
 
-        const result = func();
+        let result = func();
+        if (result.then) {
+            result = await result;
+        }
         if (!result?.type) {
             return;
         }
