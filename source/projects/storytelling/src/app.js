@@ -1,14 +1,15 @@
 import React from 'react';
 import { useCommonStyles, useLocalStorage } from '@raiment/react-ex';
 import { makeRNG } from '@raiment/core';
-import { last, cloneDeep, set, get, clone } from 'lodash';
+import { last, cloneDeep, get, clone } from 'lodash';
+import { Editable } from './components/editable';
 
 const cache = {};
 async function fetchCached(url, field) {
     let json = cache[url];
     if (!json) {
         console.log(`Loading ${url}...`);
-        const resp = await fetch('/assets/values.json');
+        const resp = await fetch(url);
         json = await resp.json();
         cache[url] = json;
     }
@@ -80,28 +81,7 @@ export function App() {
             };
         },
         Problem: async () => {
-            const table = [
-                'hunger', //
-                'sickness',
-                'injury',
-                'locked entry',
-                'betrayal',
-                'tarnished reputation',
-                'hostile environment',
-                'in serious debt',
-                'friend needs rescue',
-                'been robbed',
-                'old enemy returned',
-                'mistaken identity',
-                'family fued',
-                'friend in need',
-                'lost heirloom',
-                'mistaken heroism',
-                'imprisonment',
-                'sky is falling',
-                'lockdown',
-            ];
-
+            const table = await fetchCached('/assets/problems.json', 'values');
             return {
                 type: 'problem',
                 value: rng.select(table),
@@ -272,6 +252,9 @@ export function App() {
                                     }}
                                     data={round}
                                     field="text"
+                                    onBlur={() => {
+                                        setStory(cloneDeep(story));
+                                    }}
                                 />
                             </div>
                             <div style={{ flex: '0 0 8px' }} />
@@ -431,37 +414,6 @@ function Card({ card, onRemove }) {
             >
                 ✖
             </div>
-        </div>
-    );
-}
-
-function Editable({
-    id, //
-    className,
-    style,
-    onKeyDown,
-    data,
-    field,
-    onSave,
-    onBlur,
-}) {
-    return (
-        <div
-            id={id}
-            className={className}
-            style={style}
-            suppressContentEditableWarning
-            contentEditable
-            spellCheck={false}
-            onInput={(evt) => {
-                // TODO: read innHTML & convert HTML to markdown
-                set(data, field, evt.target.innerText);
-                onSave && onSave();
-            }}
-            onBlur={onBlur || onSave}
-            onKeyDown={onKeyDown}
-        >
-            {get(data, field)}
         </div>
     );
 }
