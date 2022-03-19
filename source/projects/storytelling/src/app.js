@@ -72,6 +72,7 @@ export function App() {
                 'hunger', //
                 'sickness',
                 'injury',
+                'locked entry',
                 'betrayal',
                 'tarnished reputation',
                 'hostile environment',
@@ -285,6 +286,8 @@ export function App() {
                 'merchant',
                 'pilgrim',
                 'sellsword',
+                'librarian',
+                'bodyguard',
             ]);
             return {
                 type: 'profession',
