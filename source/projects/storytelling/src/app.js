@@ -3,6 +3,18 @@ import { useCommonStyles, useLocalStorage } from '@raiment/react-ex';
 import { makeRNG } from '@raiment/core';
 import { last, cloneDeep, set, get, clone } from 'lodash';
 
+const cache = {};
+async function fetchCached(url, field) {
+    let json = cache[url];
+    if (!json) {
+        console.log(`Loading ${url}...`);
+        const resp = await fetch('/assets/values.json');
+        json = await resp.json();
+        cache[url] = json;
+    }
+    return get(json, field);
+}
+
 export function App() {
     useCommonStyles();
 
@@ -128,103 +140,7 @@ export function App() {
             };
         },
         Value: async () => {
-            const table = [
-                'acceptance',
-                'achievement',
-                'adaptability',
-                'adventure',
-                'altruism',
-                'appreciation',
-                'attention to detail',
-                'authenticity',
-                'balance',
-                'belonging',
-                'bravery',
-                'calm',
-                'candor',
-                'challenge',
-                'collaboration',
-                'communication',
-                'community',
-                'competition',
-                'composure',
-                'control',
-                'country',
-                'creativity',
-                'diversity',
-                'education',
-                'efficiency',
-                'enthussiasm',
-                'environmentalism',
-                'ethics',
-                'excellence',
-                'experimentation',
-                'exploration',
-                'fairness',
-                'faith',
-                'family',
-                'fitness',
-                'freedom',
-                'friendship',
-                'fun',
-                'generosity',
-                'hard-working',
-                'health',
-                'history',
-                'honesty',
-                'hope',
-                'humor',
-                'inclusiveness',
-                'independence',
-                'influence',
-                'integrity',
-                'justice',
-                'leadership',
-                'learning',
-                'longevity',
-                'love',
-                'loyalty',
-                'minimalism',
-                'moderation',
-                'modesty',
-                'morality',
-                'objectivity',
-                'ownership',
-                'partnership',
-                'passion',
-                'patience',
-                'patriotism',
-                'peace',
-                'permanance',
-                'perseverance',
-                'play',
-                'power',
-                'quality',
-                'readiness',
-                'relaxation',
-                'reliability',
-                'reliability',
-                'resilience',
-                'respect',
-                'rest',
-                'restraint',
-                'safety',
-                'self-reliance',
-                'service',
-                'simplicity',
-                'skill',
-                'stewardship',
-                'structure',
-                'support',
-                'sustainability',
-                'tradition',
-                'transparency',
-                'trust',
-                'truth',
-                'versatility',
-                'wealth',
-                'winning',
-            ];
+            const table = await fetchCached('/assets/values.json', 'values');
             const value = rng.select(table);
             return {
                 type: 'value',

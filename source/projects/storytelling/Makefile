@@ -10,6 +10,15 @@ clean:
 	git clean -dfX
 
 #
+# ensure
+#
+.PHONY: ensure
+ensure:
+	make -C ../core build-pack
+	make -C ../react-ex build-pack
+	npm i
+
+#
 # build
 #
 
