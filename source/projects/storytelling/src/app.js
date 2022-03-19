@@ -273,7 +273,22 @@ export function App() {
             const value = rng.select(['spring', 'summer', 'fall', 'winter']);
             return {
                 type: 'season',
-                value: `season = ${value}`,
+                value: `${value}`,
+            };
+        },
+        Profession: () => {
+            const value = rng.select([
+                'village farmer', //
+                'corporate farmer',
+                'barrister',
+                'sailor',
+                'merchant',
+                'pilgrim',
+                'sellsword',
+            ]);
+            return {
+                type: 'profession',
+                value,
             };
         },
         D20: () => {
