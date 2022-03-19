@@ -7,8 +7,7 @@ BUILD_FLAGS ?=
 
 .PHONY: clean
 clean:
-	echo "TODO"
-
+	git clean -dfX
 
 #
 # build

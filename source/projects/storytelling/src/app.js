@@ -18,7 +18,7 @@ export function App() {
     const rng = makeRNG();
 
     const generators = {
-        Theme: () => {
+        Theme: async () => {
             const table = [
                 'adventure',
                 'romance',
@@ -37,14 +37,14 @@ export function App() {
             };
         },
 
-        Character: () => {
+        Character: async () => {
             return {
                 type: 'character',
                 props: {
-                    name: generators.Name().value,
-                    'primary value': `${generators.Value().value}`,
-                    'secondary value': `${generators.Value().value}`,
-                    trigger: `${generators.Value().value}`,
+                    name: await generators.Name().value,
+                    'primary value': `${(await generators.Value()).value}`,
+                    'secondary value': `${(await generators.Value()).value}`,
+                    trigger: `${(await generators.Value()).value}`,
                 },
                 description: `
                     As a fictional character, the character *always* looks at problems
@@ -58,12 +58,12 @@ export function App() {
                     `.trim(),
             };
         },
-        Conflict: () => {
+        Conflict: async () => {
             return {
                 type: 'conflict',
                 props: {
-                    problem: `${generators.Problem().value}`,
-                    complication: `${generators.Problem().value}`,
+                    problem: `${(await generators.Problem()).value}`,
+                    complication: `${(await generators.Problem()).value}`,
                 },
             };
         },
@@ -95,7 +95,7 @@ export function App() {
                 value: rng.select(table),
             };
         },
-        Clue: () => {
+        Clue: async () => {
             const table = [
                 'a letter',
                 'an inheritance',
@@ -108,7 +108,7 @@ export function App() {
                 value: rng.select(table),
             };
         },
-        Secret: () => {
+        Secret: async () => {
             const table = [
                 'is a child of a famous person',
                 'is a child of a politician',
@@ -127,7 +127,7 @@ export function App() {
                 value: rng.select(table),
             };
         },
-        Value: () => {
+        Value: async () => {
             const table = [
                 'acceptance',
                 'achievement',
@@ -231,7 +231,7 @@ export function App() {
                 value,
             };
         },
-        Name: () => {
+        Name: async () => {
             const table = [
                 'Kestrel',
                 'Graham',
@@ -248,7 +248,7 @@ export function App() {
             };
         },
 
-        Mood: () => {
+        Mood: async () => {
             const table = [
                 'cheery', //
                 'sad',
@@ -272,14 +272,14 @@ export function App() {
                 value: `mood = ${value}`,
             };
         },
-        Season: () => {
+        Season: async () => {
             const value = rng.select(['spring', 'summer', 'fall', 'winter']);
             return {
                 type: 'season',
                 value: `${value}`,
             };
         },
-        Profession: () => {
+        Profession: async () => {
             const value = rng.select([
                 'village farmer', //
                 'corporate farmer',
@@ -296,13 +296,13 @@ export function App() {
                 value,
             };
         },
-        D20: () => {
+        D20: async () => {
             return {
                 type: 'd20',
                 value: `roll = ${rng.rangei(1, 21)}`,
             };
         },
-        Choice: () => {
+        Choice: async () => {
             const table = [
                 { weight: 10, value: 'No, but...' },
                 { weight: 40, value: 'No' },
