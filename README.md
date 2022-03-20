@@ -24,8 +24,8 @@ Work is categorized into the following projects:
 * [**Storytelling**](source/projects/storytelling) - computer-aided, "pen & paper" solo storytelling rpg ([demo](https://storytelling.raiment.studio/))
 * [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
 * **Project** - lighweight project manager simplifying Company processes
-* **Wiki** - lightweight custom wiki used for the Worldbuilding and Company projects
-* **Build** - build tool used to simplify and enforce the Company conventions
+* **Wiki** - lightweight custom wiki used for the Worldbuilding and organizational projects
+* **Build** - build tool used to simplify and enforce the organizational conventions
 * **Marketing** - public website and material to encourage participation
 * **Core**
 * **Engine**

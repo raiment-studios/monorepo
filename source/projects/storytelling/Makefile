@@ -55,7 +55,7 @@ run:
 #
 
 .PHONY: dev dev-watch
-dev:
+dev: ensure
 	npx concurrently "make run" "make dev-watch" "make dev-watch-react-ex" "make dev-watch-core"
 dev-watch:
 	npx nodemon -q \

@@ -8,6 +8,7 @@ async function main() {
 
     await Promise.all(
         [
+            'tome',
             'values', //
             'problems',
         ].map((name) => transformYAML(name))

@@ -157,19 +157,7 @@ export function App() {
             };
         },
         Secret: async () => {
-            const table = [
-                'is a child of a famous person',
-                'is a child of a politician',
-                'has great wealth',
-                'has no money',
-                'is not who they say they are',
-                'knows state secrets',
-                'is a spy',
-                'is an assassin',
-                'accidentally killed a family member',
-                'is an alcoholic',
-                'is disowned from their family',
-            ];
+            const table = await fetchCached('/assets/tome.json', 'secrets');
             return {
                 type: 'secret',
                 value: rng.select(table),
