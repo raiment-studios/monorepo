@@ -48,7 +48,7 @@ build:
 
 .PHONY: run
 run:
-	npx http-server -c0 dist
+	npx http-server -c0 dist --silent
 
 #
 # dev
@@ -59,6 +59,7 @@ dev: ensure
 	npx concurrently "make run" "make dev-watch" "make dev-watch-react-ex" "make dev-watch-core"
 dev-watch:
 	npx nodemon -q \
+		--ext js,yaml,yml,jsx,json \
 		--watch "src/**/*" \
 		--exec "DEVELOPMENT_MODE=1 make build"
 

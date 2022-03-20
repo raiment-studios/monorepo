@@ -17,9 +17,13 @@ async function main() {
 main();
 
 async function transformYAML(name) {
-    const src = `./src/assets/${name}.yaml`;
-    const dst = `./dist/assets/${name}.json`;
-    const input = await fs.readFile(src, 'utf8');
-    const output = JSON.stringify(parseYAML(input), null, 4);
-    return fs.writeFile(dst, output);
+    try {
+        const src = `./src/assets/${name}.yaml`;
+        const dst = `./dist/assets/${name}.json`;
+        const input = await fs.readFile(src, 'utf8');
+        const output = JSON.stringify(parseYAML(input), null, 4);
+        fs.writeFile(dst, output);
+    } catch (err) {
+        console.log('Ignoring error', err);
+    }
 }

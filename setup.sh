@@ -70,6 +70,7 @@ function __shortcut_cmd {
     "")       $1 $MONOREPO_ROOT ;;
     /)        $1 $MONOREPO_ROOT ;;
     st*)      $1 $MONOREPO_ROOT/source/projects/storytelling ;;
+    co*)      $1 $MONOREPO_ROOT/source/projects/core ;;
     *)        $1 $MONOREPO_ROOT ;;
     esac
 }

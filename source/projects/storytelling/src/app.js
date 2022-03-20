@@ -30,19 +30,46 @@ export function App() {
 
     const rng = makeRNG();
 
+    async function processDesc(desc) {
+        if (typeof desc === 'string') {
+            return desc;
+        }
+
+        const vars = {};
+        const props = {};
+        if (desc.variables) {
+            for (let [key, value] of Object.entries(desc.variables)) {
+                let isProp = key.endsWith('@');
+                if (isProp) {
+                    key = key.replace(/@$/, '');
+                }
+                const table = await fetchCached('/assets/tome.json', value);
+                const desc = rng.select(table);
+                vars[key] = await processDesc(desc);
+                if (isProp) {
+                    props[key] = vars[key];
+                }
+            }
+        }
+
+        let description = undefined;
+        if (desc.template) {
+            console.log(desc.template);
+            description = desc.template.replace(/\$\{(.+?)\}/g, (m, varName) => {
+                const value = get(vars, varName);
+                console.log('MATCH ', varName, value, vars);
+                return value || m;
+            });
+        }
+
+        const resolved = Object.assign({}, desc, { props, description });
+        console.log({ resolved });
+        return resolved;
+    }
+
     const generators = {
         Theme: async () => {
-            const table = [
-                'adventure',
-                'romance',
-                'mystery',
-                'exploration',
-                'escape',
-                'discovery',
-                'fortune-hunting',
-                'love',
-                'survival',
-            ];
+            const table = await fetchCached('/assets/tome.json', 'theme');
             const value = rng.select(table);
             return {
                 type: 'theme',
@@ -51,43 +78,27 @@ export function App() {
         },
 
         Character: async () => {
+            const table = await fetchCached('/assets/tome.json', 'character');
+            const character = rng.select(table);
+
+            const fields = await processDesc(character);
+
             return {
                 type: 'character',
-                props: {
-                    name: (await generators.Name()).value,
-                    motivation: (await generators.Motivation()).value,
-                    'primary value': `${(await generators.Value()).value}`,
-                    'secondary value': `${(await generators.Value()).value}`,
-                    trigger: `${(await generators.Value()).value}`,
-                    mood: `${(await generators.Mood()).value}`,
-                },
-                description: `
-                    As a fictional character, the character *always* looks at problems
-                    in terms of their primary_value. They then give weight to their 
-                    secondary_value as well in how they decide to act. Their actions 
-                    should always promote those values.
-                    
-                    Their trigger_value is a blind-spot in their character: a place where
-                    they have extreme, irrational reactions when they see others following this
-                    value and do not listen to the logic of others.
-
-                    In generating the backstory, answer the question *why* for each
-                    of these values.
-                    `.trim(),
+                rules: character.rules,
+                ...fields,
             };
         },
         Arc: async () => {
+            const table = await fetchCached('/assets/tome.json', 'arc');
+            const arc = rng.select(table);
+
+            const fields = await processDesc(arc);
+
             return {
                 type: 'arc',
-                value: 'todo',
-                props: {
-                    scenes: rng.rangei(2, 5),
-                },
-                description: `
-                same motivation and character,
-                set of escalating problems,
-                resolution
-                `.trim(),
+                name: arc.name,
+                ...fields,
             };
         },
         Location: async () => {
@@ -116,14 +127,9 @@ export function App() {
             };
         },
         Motivation: async () => {
-            const table = [
-                'find their creator',
-                'forgiveness for an evil',
-                'closure for a murder',
-                'closure for a group tragedy',
-            ];
+            const table = await fetchCached('/assets/problems.json', 'motivation');
             return {
-                type: 'secret',
+                type: 'motivation',
                 value: rng.select(table),
             };
         },
@@ -164,7 +170,7 @@ export function App() {
             };
         },
         Value: async () => {
-            const table = await fetchCached('/assets/values.json', 'values');
+            const table = await fetchCached('/assets/tome.json', 'value');
             const value = rng.select(table);
             return {
                 type: 'value',
@@ -172,16 +178,7 @@ export function App() {
             };
         },
         Name: async () => {
-            const table = [
-                'Kestrel',
-                'Graham',
-                'Cedric',
-                'Morgan',
-                'Tristan',
-                'Alice',
-                'Ingrid',
-                'Ramjin',
-            ];
+            const table = await fetchCached('/assets/tome.json', 'character_name');
             return {
                 type: 'name',
                 value: rng.select(table),
@@ -189,23 +186,7 @@ export function App() {
         },
 
         Mood: async () => {
-            const table = [
-                'cheery', //
-                'sad',
-                'content',
-                'distracted',
-                'focused',
-                'confused',
-                'irritated',
-                'despondent',
-                'inspired',
-                'hopeful',
-                'hopeless',
-                'optimistic',
-                'pessimistic',
-                'friendly',
-                'distant',
-            ];
+            const table = await fetchCached('/assets/tome.json', 'mood');
             const value = rng.select(table);
             return {
                 type: 'mood',
@@ -251,7 +232,7 @@ export function App() {
             ];
             return {
                 type: 'choice',
-                value: `${rng.selectWeighted(table, (item) => item.weight).value}`,
+                value: `${rng.select(table, (item) => item.weight).value}`,
             };
         },
     };
@@ -410,7 +391,6 @@ function Card({ card, onRemove }) {
                                 .filter(([key]) => key !== 'name')
                                 .map(([key, value]) => (
                                     <div key={key} className="flex-row">
-                                        <div style={{ flex: '1 0 0' }}>{value}</div>
                                         <div
                                             style={{
                                                 flex: '0 0 8rem',
@@ -419,6 +399,20 @@ function Card({ card, onRemove }) {
                                             }}
                                         >
                                             {key}
+                                        </div>
+                                        <div style={{ flex: '1 0 0' }}>
+                                            <a
+                                                target="_blank"
+                                                href={`https://www.etymonline.com/search?q=${encodeURIComponent(
+                                                    value
+                                                )}`}
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    color: 'inherit',
+                                                }}
+                                            >
+                                                {value}
+                                            </a>
                                         </div>
                                     </div>
                                 ))}
@@ -432,6 +426,27 @@ function Card({ card, onRemove }) {
                                 }}
                             >
                                 {card.description
+                                    .split('\n')
+                                    .map((line) => line.trim())
+                                    .join('\n')
+                                    .split('\n\n')
+                                    .map((p, i) => (
+                                        <div key={i} style={{ marginBottom: '0.35rem' }}>
+                                            {p}
+                                        </div>
+                                    ))}
+                            </div>
+                        )}
+                        {card.rules && (
+                            <div
+                                style={{
+                                    margin: '0.5rem 0',
+                                    fontSize: '80%',
+                                    fontStyle: 'italic',
+                                    opacity: 0.8,
+                                }}
+                            >
+                                {card.rules
                                     .split('\n')
                                     .map((line) => line.trim())
                                     .join('\n')

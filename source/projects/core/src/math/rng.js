@@ -72,12 +72,16 @@ class RNG {
 
     // -- Arrays ----------------------------------------------------------- //
 
-    select(arr) {
+    select(arr, weightFunc, count) {
+        if (typeof weightFunc === 'function') {
+            return this._selectWeighted(arr, weightFunc);
+        }
+
         const i = Math.floor(this.random() * arr.length);
         return arr[i];
     }
 
-    selectWeighted(arr, cb) {
+    _selectWeighted(arr, cb) {
         let sum = 0;
         let tally = new Array(arr.length);
         for (let i = 0; i < arr.length; i++) {
