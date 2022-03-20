@@ -1,0 +1,21 @@
+chapters:
+  - name: template
+    theme: adventure
+    protagonist:
+      name: Cedric
+    antagonist:
+    location:
+    plain: |
+      At the entrance to a city-state, the gatekeepers demand a tarriff 
+      of 10 gold. This is not for entrance, but for demanded. This triggers
+      Cedric's sense of principle and he does not want to pay. But they need 
+      to get into the city to find Alcalmen, a collector of Wayland artifacts.
+    scenes:
+      - problem: encounter with the guards
+        resolutions:
+          - battle
+          - pay it
+          - threaten battle
+      - problem:
+      - problem:
+    resolution:
