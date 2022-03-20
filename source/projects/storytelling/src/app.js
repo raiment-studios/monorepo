@@ -54,10 +54,12 @@ export function App() {
             return {
                 type: 'character',
                 props: {
-                    name: await generators.Name().value,
+                    name: (await generators.Name()).value,
+                    motivation: (await generators.Motivation()).value,
                     'primary value': `${(await generators.Value()).value}`,
                     'secondary value': `${(await generators.Value()).value}`,
                     trigger: `${(await generators.Value()).value}`,
+                    mood: `${(await generators.Mood()).value}`,
                 },
                 description: `
                     As a fictional character, the character *always* looks at problems
@@ -68,7 +70,61 @@ export function App() {
                     Their trigger_value is a blind-spot in their character: a place where
                     they have extreme, irrational reactions when they see others following this
                     value and do not listen to the logic of others.
+
+                    In generating the backstory, answer the question *why* for each
+                    of these values.
                     `.trim(),
+            };
+        },
+        Arc: async () => {
+            return {
+                type: 'arc',
+                value: 'todo',
+                props: {
+                    scenes: rng.rangei(2, 5),
+                },
+                description: `
+                same motivation and character,
+                set of escalating problems,
+                resolution
+                `.trim(),
+            };
+        },
+        Location: async () => {
+            const table = [
+                'docks',
+                'garden',
+                'park',
+                'winery',
+                'hut',
+                'barracks',
+                'gatehouse',
+                'inn',
+                'bed and breakfast',
+                'lighthouse',
+                'riverfront',
+                'library',
+                "merchant's quarter",
+                'bazaar',
+                'town center',
+                "blacksmith's",
+                'castle',
+            ];
+            return {
+                type: 'location',
+                value: rng.select(table),
+            };
+        },
+        Motivation: async () => {
+            const table = [
+                'find their creator',
+                'forgiveness for an evil',
+                'closure for a murder',
+                'closure for a group tragedy',
+            ];
+            return {
+                type: 'secret',
+                value: rng.select(table),
             };
         },
         Conflict: async () => {
@@ -165,7 +221,7 @@ export function App() {
             const value = rng.select(table);
             return {
                 type: 'mood',
-                value: `mood = ${value}`,
+                value,
             };
         },
         Season: async () => {
@@ -369,7 +425,7 @@ function Card({ card, onRemove }) {
                                         <div style={{ flex: '1 0 0' }}>{value}</div>
                                         <div
                                             style={{
-                                                flex: '0 0 12rem',
+                                                flex: '0 0 8rem',
                                                 fontStyle: 'italic', //
                                                 fontSize: '85%',
                                             }}
