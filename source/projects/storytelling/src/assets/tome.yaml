@@ -9,43 +9,39 @@ character_name:
     - Logan
     - Ramjin
 npc_name:
-  - Bao
-  - Bowtin
-  - Elin
-  - Ellie
-  - Mangro
-  - Ramjin
-  - Teo
+    - Bao
+    - Bowtin
+    - Elin
+    - Ellie
+    - Mangro
+    - Ramjin
+    - Teo
 theme:
-    [
-        'adventure',
-        'romance',
-        'mystery',
-        'exploration',
-        'escape',
-        'discovery',
-        'fortune-hunting',
-        'love',
-        'survival',
-    ]
+    - adventure
+    - romance
+    - mystery
+    - exploration
+    - escape
+    - discovery
+    - fortune-hunting
+    - love
+    - survival
 mood:
-    [
-        'cheery',
-        'sad',
-        'content',
-        'distracted',
-        'focused',
-        'confused',
-        'irritated',
-        'despondent',
-        'inspired',
-        'hopeful',
-        'hopeless',
-        'optimistic',
-        'pessimistic',
-        'friendly',
-        'distant',
-    ]
+    - cheery
+    - sad
+    - content
+    - distracted
+    - focused
+    - confused
+    - irritated
+    - despondent
+    - inspired
+    - hopeful
+    - hopeless
+    - optimistic
+    - pessimistic
+    - friendly
+    - distant
 arc:
     - name: template
       variables:
@@ -54,22 +50,21 @@ arc:
           character: character
           seller: npc_name
           city_name: city_name
-      template: |
+      template: >
           So begins a tale of ${theme}...
 
           At the entrance to a ${city_name}, the gatekeepers demand a tarriff 
-          of 10 gold. This triggers
-          ${character.props.name}'s sense of principle and they do not want to pay. But they need 
-          to get into the city to find ${seller}, a collector of Wayland artifacts.
+          of 10 gold. This triggers ${character.props.name}'s sense of principle and they do not want to pay.
+          But they need to get into the city to find ${seller}, a collector of Wayland artifacts.
       scenes:
           - problem: encounter with the guards
             resolutions:
                 - battle
                 - pay it
                 - threaten battle
-          - problem:
-          - problem:
-      resolution:
+          - problem: null
+          - problem: null
+      resolution: null
 city_name:
     - Almagore
     - Riverwest
@@ -96,24 +91,22 @@ city_name:
     - Broadhill
     - Brekway
 motivation:
-    [
-        'find their creator',
-        'forgiveness for an evil',
-        'closure for a murder',
-        'closure for a group tragedy',
-    ]
+    - find their creator
+    - forgiveness for an evil
+    - closure for a murder
+    - closure for a group tragedy
 secrets:
-    - 'is a child of a famous person'
-    - 'is a child of a politician'
-    - 'has great wealth'
-    - 'has no money'
-    - 'is not who they say they are'
-    - 'knows state secrets'
-    - 'is a spy'
-    - 'is an assassin'
-    - 'accidentally killed a family member'
-    - 'is an alcoholic'
-    - 'is disowned from their family'
+    - is a child of a famous person
+    - is a child of a politician
+    - has great wealth
+    - has no money
+    - is not who they say they are
+    - knows state secrets
+    - is a spy
+    - is an assassin
+    - accidentally killed a family member
+    - is an alcoholic
+    - is disowned from their family
 character:
     - variables:
           name@: character_name
@@ -122,15 +115,15 @@ character:
           secondary_value@: value
           trigger@: value
           mood@: mood
-      rules: |
+      rules: >
           As a fictional character, the character *always* looks at problems
           in terms of their primary_value. They then give weight to their 
           secondary_value as well in how they decide to act. Their actions 
           should always promote those values.
 
           Their trigger_value is a blind-spot in their character: a place where
-          they have extreme, irrational reactions when they see others following this
-          value and do not listen to the logic of others.
+          they have extreme, irrational reactions when they see others following
+          this value and do not listen to the logic of others.
 
           In generating the backstory, answer the question *why* for each
           of these values.
