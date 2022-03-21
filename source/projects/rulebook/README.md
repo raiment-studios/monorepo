@@ -14,6 +14,25 @@ Story Arcs are constructed as follows:
 4. Plan
 5. Sequences
 
+#### Example
+
+**Goal**: Lucenia wants to escape her horrible life
+
+**Opportunity**: She could escape to her cousin's house far to the north.
+
+**Strategy**: Save enough money to sneak away with the yearly merchant carivan that travels through town most of the way to the north.
+
+**Plan**
+
+* Buy less each week and hide the money
+    * Hide it from her older brother
+    * Hide it from the town constable making her pay her mother's fines
+* Choice...
+    * Sneak onto the carivan
+    * Make friends with someone in the carivan who will hide her
+* 
+
+
 #### Goal
 
 Start with the high-level motivation. The thing the character would want wish for if they had a magic wand and 5 seconds to decide what to wish for. This is a constant. Fiction. This is a **character goal**. Raiment is character-driven so these goals should be attatched a specific character as the primary driver, even if it is a shared goal.
