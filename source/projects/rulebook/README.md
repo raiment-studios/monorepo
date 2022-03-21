@@ -33,6 +33,7 @@ Story Arcs are constructed as follows:
 * 
 
 
+
 #### Goal
 
 Start with the high-level motivation. The thing the character would want wish for if they had a magic wand and 5 seconds to decide what to wish for. This is a constant. Fiction. This is a **character goal**. Raiment is character-driven so these goals should be attatched a specific character as the primary driver, even if it is a shared goal.
@@ -89,8 +90,8 @@ In the context of the game, each attempt should have a known chance of succeedin
 
 | type    | 1st  | 2nd  | 3rd | 4th | 5th | 6th |
 | ------- | ---- | ---- | --- | --- | --- | --- |
-| simple  | 100% | 30%  | 3%  | 1%  | 0%  | 0%  |
-| normal  | 100% | 90%  | 75% | 30% | 5%  | 0%  |
+| simple  | 100% | 30%  | 3%  | 1%  | 1%  | 1%  |
+| normal  | 100% | 90%  | 75% | 30% | 5%  | 1%  |
 | complex | 100% | 100% | 90% | 60% | 20% | 5%  |
 
 # Appendix
