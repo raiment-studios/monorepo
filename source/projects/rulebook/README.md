@@ -4,13 +4,6 @@
 ![](https://img.shields.io/badge/version-v0.1.0-930)
 [![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
 
-* Revenue / Business Goal
-* Market
-* Strategy
-* Pain Points + User Stories
-* Implementation
-
-
 ## Story Arcs
 
 Story Arcs are constructed as follows:
