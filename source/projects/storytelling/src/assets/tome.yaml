@@ -113,7 +113,7 @@ problem:
     - sky is falling
     - lockdown
 arc:
-    - name: template
+    - name: Strongarming Gatekeepers 
       variables:
           theme: theme
           protagonist: character_name

@@ -54,7 +54,6 @@ export function App() {
 
         let description = undefined;
         if (desc.template) {
-            console.log(desc.template);
             description = desc.template.replace(/\$\{(.+?)\}/g, (m, varName) => {
                 const value = get(vars, varName);
                 console.log('MATCH ', varName, value, vars);
@@ -62,8 +61,7 @@ export function App() {
             });
         }
 
-        const resolved = Object.assign({}, desc, { props, description });
-        console.log({ resolved });
+        const resolved = Object.assign({}, cloneDeep(desc), { props, description });
         return resolved;
     }
 
@@ -94,10 +92,9 @@ export function App() {
             const arc = rng.select(table);
 
             const fields = await processDesc(arc);
-
+            console.log(fields);
             return {
                 type: 'arc',
-                name: arc.name,
                 ...fields,
             };
         },
@@ -336,7 +333,7 @@ function Card({ card, onRemove }) {
                         }}
                     >
                         <div style={{ flex: '1 0 0', fontWeight: 'bold' }}>
-                            {card.props?.name || card.value}
+                            {card.props?.name || card.name || card.value}
                         </div>
                         <div style={{ fontSize: '85%' }}>{card.type}</div>
                     </div>
