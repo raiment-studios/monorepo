@@ -48,18 +48,15 @@ mood:
     ]
 arc:
     - name: template
-      theme: adventure
-      protagonist:
-          name: Cedric
-          motivation:
-      antagonist:
-      location:
       variables:
+          theme: theme
           protagonist: character_name
           character: character
           seller: npc_name
           city_name: city_name
       template: |
+          So begins a tale of ${theme}...
+
           At the entrance to a ${city_name}, the gatekeepers demand a tarriff 
           of 10 gold. This triggers
           ${character.props.name}'s sense of principle and they do not want to pay. But they need 
