@@ -16,6 +16,30 @@ npc_name:
     - Mangro
     - Ramjin
     - Teo
+clue:
+    - a letter
+    - an inheritance
+    - a loud-mouthed local
+    - an old statue
+    - similar looks
+location:
+    - docks
+    - garden
+    - park
+    - winery
+    - hut
+    - barracks
+    - gatehouse
+    - inn
+    - bed and breakfast
+    - lighthouse
+    - riverfront
+    - library
+    - merchant's quarter
+    - bazaar
+    - town center
+    - blacksmith's
+    - castle
 theme:
     - adventure
     - romance
@@ -42,6 +66,52 @@ mood:
     - pessimistic
     - friendly
     - distant
+choice:
+    - value: No, but...
+      weight: 10
+    - value: No
+      weight: 40
+    - value: Yes
+      weight: 40
+    - value: Yes, and...
+      weight: 10
+season:
+    - spring
+    - summer
+    - fall
+    - winter
+profession:
+    - village farmer
+    - corporate farmer
+    - barrister
+    - sailor
+    - merchant
+    - pilgrim
+    - sellsword
+    - librarian
+    - bodyguard
+problem:
+    - hunger
+    - sickness
+    - injury
+    - locked entry
+    - betrayal
+    - tarnished reputation
+    - hostile environment
+    - in serious debt
+    - friend needs rescue
+    - been robbed
+    - old enemy returned
+    - mistaken identity
+    - family fued
+    - friend in need
+    - lost heirloom
+    - border dispute
+    - mistaken heroism
+    - imprisonment
+    - a death causes political inbalance
+    - sky is falling
+    - lockdown
 arc:
     - name: template
       variables:

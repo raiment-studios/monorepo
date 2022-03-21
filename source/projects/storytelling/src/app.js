@@ -102,32 +102,14 @@ export function App() {
             };
         },
         Location: async () => {
-            const table = [
-                'docks',
-                'garden',
-                'park',
-                'winery',
-                'hut',
-                'barracks',
-                'gatehouse',
-                'inn',
-                'bed and breakfast',
-                'lighthouse',
-                'riverfront',
-                'library',
-                "merchant's quarter",
-                'bazaar',
-                'town center',
-                "blacksmith's",
-                'castle',
-            ];
+            const table = await fetchCached('/assets/tome.json', 'location');
             return {
                 type: 'location',
                 value: rng.select(table),
             };
         },
         Motivation: async () => {
-            const table = await fetchCached('/assets/problems.json', 'motivation');
+            const table = await fetchCached('/assets/tome.json', 'motivation');
             return {
                 type: 'motivation',
                 value: rng.select(table),
@@ -143,20 +125,14 @@ export function App() {
             };
         },
         Problem: async () => {
-            const table = await fetchCached('/assets/problems.json', 'values');
+            const table = await fetchCached('/assets/tome.json', 'problem');
             return {
                 type: 'problem',
                 value: rng.select(table),
             };
         },
         Clue: async () => {
-            const table = [
-                'a letter',
-                'an inheritance',
-                'a loud-mouthed local',
-                'an old statue',
-                'similar looks',
-            ];
+            const table = await fetchCached('/assets/tome.json', 'clue');
             return {
                 type: 'secret',
                 value: rng.select(table),
@@ -194,27 +170,17 @@ export function App() {
             };
         },
         Season: async () => {
-            const value = rng.select(['spring', 'summer', 'fall', 'winter']);
+            const table = await fetchCached('/assets/tome.json', 'season');
             return {
                 type: 'season',
-                value: `${value}`,
+                value: rng.select(table),
             };
         },
         Profession: async () => {
-            const value = rng.select([
-                'village farmer', //
-                'corporate farmer',
-                'barrister',
-                'sailor',
-                'merchant',
-                'pilgrim',
-                'sellsword',
-                'librarian',
-                'bodyguard',
-            ]);
+            const table = await fetchCached('/assets/tome.json', 'profession');
             return {
                 type: 'profession',
-                value,
+                value: rng.select(table),
             };
         },
         D20: async () => {
@@ -224,15 +190,11 @@ export function App() {
             };
         },
         Choice: async () => {
-            const table = [
-                { weight: 10, value: 'No, but...' },
-                { weight: 40, value: 'No' },
-                { weight: 40, value: 'Yes' },
-                { weight: 10, value: 'Yes, but...' },
-            ];
+            const table = await fetchCached('/assets/tome.json', 'choice');
+            const { value } = rng.select(table, (item) => item.weight);
             return {
                 type: 'choice',
-                value: `${rng.select(table, (item) => item.weight).value}`,
+                value,
             };
         },
     };
