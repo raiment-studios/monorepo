@@ -56,13 +56,13 @@ To determine how a character approaches a conflict, the general pattern is this:
 
 Following patterns of narrative storytelling, each sequence should be composed roughly of the character:
 
-1. Making an attempt to fuifill the plan
-2. They fail. The urgency, importance, and stakes of increase.
-3. They make a second attempt based changed circumstances.
-4. They fail again. The situation becomes even more highenedd.
-5. They make a third attempt.
-6. Perhaps they fail again, this time with finality. As a result, their character and the circumstances are changed permanent. The character is no longer the same (they may be stronger or weaker because of it: but they are not the same). The goal is no longer relevant: it has been seen through to the end.
-7. Or maybe they succeed. The goal is acheived. As a result, their character is changed permanently (the trade-off: an unexpected strengthing or weaking, but they are not the same). The goal is no longer relevant as it been seen through to the end.
+1. They take an action to fuifill the plan
+2. The action does not resolve the situation; instead the urgency, complexity, importance, and stakes only increase.
+3. The circumstances force them to revisit their approach; they take another action trying to fulfill the plan
+4. The action does not resolve the situation; instead the urgency, complexity, importance, and stakes increase even further
+5. The circumstances force them to revisit their approach; they act again trying to fulfill the plan
+6. Perhaps they fail, this time with finality. As a result, their character and the circumstances are changed permanent. The character is no longer the same (they may be stronger or weaker because of it: but they are not the same). The goal is no longer relevant: it has been seen through to the end.
+7. Or they succeed. The goal is acheived (though maybe not exactly as they anticipated). As a result, their character is changed permanently (the trade-off: an unexpected strengthing or weaking, but they are not the same). The goal is no longer relevant as it been seen through to the end.
 
 ⚠️ TODO: "failure" is not the right terminology here. The "lack of resolution" at any scene can be exciting and adding complication in a good way. This draft text equates intricate plot-lines sound like they're always the characters failing at what they attempt.
 
@@ -71,7 +71,7 @@ In the context of the game, each attempt should have a known chance of succeedin
 | type    | 1st  | 2nd  | 3rd | 4th | 5th | 6th |
 | ------- | ---- | ---- | --- | --- | --- | --- |
 | simple  | 100% | 30%  | 3%  | 1%  | 0%  | 0%  |
-| normal  | 100% | 90%  | 75% | 30% | 5% | 0%  |
+| normal  | 100% | 90%  | 75% | 30% | 5%  | 0%  |
 | complex | 100% | 100% | 90% | 60% | 20% | 5%  |
 
 # Appendix
