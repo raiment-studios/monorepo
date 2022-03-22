@@ -26,11 +26,14 @@ Story Arcs are constructed as follows:
 
 * Buy less each week and hide the money
     * Hide it from her older brother
-    * Hide it from the town constable making her pay her mother's fines
+    * Hide it from the town constable who makes her pay her mother's fines
 * Choice...
     * Sneak onto the carivan
     * Make friends with someone in the carivan who will hide her
-* 
+* Survive the 8 week trip with the caravan
+* Avoid being seen in the local towns
+* Find her cousin
+* Survive the trip from the far north city to the house in the woods
 
 
 
