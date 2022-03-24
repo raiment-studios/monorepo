@@ -7,7 +7,6 @@ character_name:
     - Alice
     - Ingrid
     - Logan
-    - Ramjin
 npc_name:
     - Bao
     - Bowtin
@@ -15,7 +14,16 @@ npc_name:
     - Ellie
     - Mangro
     - Ramjin
-    - Teo
+    - Theon
+    - Winta
+    - Donne
+    - Darifan
+    - Alek
+    - Daro
+    - Sahy
+    - Scot
+    - Edgar
+    - Layrim
 clue:
     - a letter
     - an inheritance
@@ -40,6 +48,18 @@ location:
     - town center
     - blacksmith's
     - castle
+event:
+    - town festival
+    - blackmail
+    - imprisonment of a friend
+    - imprisonment of an notorious enemy
+    - eclipse
+    - new star discovered
+    - sunrise ceremony
+    - shipwreck
+    - caravan traveling through town
+    - stranger arrives
+    - strange ship arrives
 theme:
     - adventure
     - romance
@@ -112,8 +132,9 @@ problem:
     - a death causes political inbalance
     - sky is falling
     - lockdown
+    - orphaned
 arc:
-    - name: Strongarming Gatekeepers 
+    - name: Strong-arming Gatekeepers
       variables:
           theme: theme
           protagonist: character_name
@@ -135,6 +156,14 @@ arc:
           - problem: null
           - problem: null
       resolution: null
+conflict:
+    - name: Generic Conflict
+      variables:
+          problem: problem
+          complication: problem
+      props:
+        problem: ${problem}
+        complication: ${complication}
 city_name:
     - Almagore
     - Riverwest

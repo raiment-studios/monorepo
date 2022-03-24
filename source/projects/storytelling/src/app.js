@@ -13,7 +13,10 @@ async function fetchCached(url, field) {
         json = await resp.json();
         cache[url] = json;
     }
-    return get(json, field);
+    if (field === undefined) {
+        return cloneDeep(json);
+    }
+    return cloneDeep(get(json, field));
 }
 
 export function App() {
@@ -29,6 +32,16 @@ export function App() {
     });
 
     const rng = makeRNG();
+
+    async function generate(type) {
+        const tables = await fetchCached('/assets/tome.json');
+        const desc = rng.select(tables[type]);
+        const fields = await processDesc(desc);
+        return {
+            ...fields,
+            type,
+        };
+    }
 
     async function processDesc(desc) {
         if (typeof desc === 'string') {
@@ -52,16 +65,25 @@ export function App() {
             }
         }
 
-        let description = undefined;
-        if (desc.template) {
-            description = desc.template.replace(/\$\{(.+?)\}/g, (m, varName) => {
+        desc.props = desc.props || {};
+        for (let [key, value] of Object.entries(desc.props)) {
+            desc.props[key] = value.replace(/\$\{(.+?)\}/g, (m, varName) => {
                 const value = get(vars, varName);
-                console.log('MATCH ', varName, value, vars);
                 return value || m;
             });
         }
 
-        const resolved = Object.assign({}, cloneDeep(desc), { props, description });
+        let description = undefined;
+        if (desc.template) {
+            description = desc.template.replace(/\$\{(.+?)\}/g, (m, varName) => {
+                const value = get(vars, varName);
+                return value || m;
+            });
+        }
+
+        const resolved = cloneDeep(desc);
+        Object.assign(desc.props, props);
+        Object.assign(resolved, { description });
         return resolved;
     }
 
@@ -85,6 +107,27 @@ export function App() {
                 type: 'character',
                 rules: character.rules,
                 ...fields,
+            };
+        },
+        'Arc Sketch': async () => {
+            const tables = await fetchCached('/assets/tome.json');
+            const props = {};
+
+            const name = rng.select(tables.npc_name);
+            const response = rng.select(['escape', 'overcome']);
+            const problem = rng.select(tables.problem);
+            props.goal = `${name} wants to ${response} ${problem}.`;
+
+            props.theme = rng.select(tables.theme);
+            props.opportunity = rng.select(tables.event);
+            const conflict = await generate('conflict');
+            props.conflict = conflict;
+            props.strategy = 'todo';
+            props.plan = 'todo';
+
+            return {
+                type: 'arc',
+                props,
             };
         },
         Arc: async () => {
@@ -113,13 +156,7 @@ export function App() {
             };
         },
         Conflict: async () => {
-            return {
-                type: 'conflict',
-                props: {
-                    problem: `${(await generators.Problem()).value}`,
-                    complication: `${(await generators.Problem()).value}`,
-                },
-            };
+            return await generate('conflict');
         },
         Problem: async () => {
             const table = await fetchCached('/assets/tome.json', 'problem');
@@ -345,36 +382,14 @@ function Card({ card, onRemove }) {
                         }}
                     >
                         {card.value && <div>{card.value}</div>}
-                        {card.props &&
-                            Object.entries(card.props)
-                                .filter(([key]) => key !== 'name')
-                                .map(([key, value]) => (
-                                    <div key={key} className="flex-row">
-                                        <div
-                                            style={{
-                                                flex: '0 0 8rem',
-                                                fontStyle: 'italic', //
-                                                fontSize: '85%',
-                                            }}
-                                        >
-                                            {key}
-                                        </div>
-                                        <div style={{ flex: '1 0 0' }}>
-                                            <a
-                                                target="_blank"
-                                                href={`https://www.etymonline.com/search?q=${encodeURIComponent(
-                                                    value
-                                                )}`}
-                                                style={{
-                                                    textDecoration: 'none',
-                                                    color: 'inherit',
-                                                }}
-                                            >
-                                                {value}
-                                            </a>
-                                        </div>
-                                    </div>
-                                ))}
+                        {card.props && (
+                            <CardProps
+                                style={{
+                                    fontSize: '85%', //
+                                }}
+                                props={card.props}
+                            />
+                        )}
                         {card.description && (
                             <div
                                 style={{
@@ -431,6 +446,61 @@ function Card({ card, onRemove }) {
                 onClick={onRemove}
             >
                 ✖
+            </div>
+        </div>
+    );
+}
+
+function CardProps({ style, props }) {
+    return (
+        <div style={style}>
+            {Object.entries(props).map(([key, value]) => (
+                <PropRow key={key} name={key} value={value} />
+            ))}
+        </div>
+    );
+}
+
+function PropRow({ name, value }) {
+    if (typeof value !== 'string') {
+        return (
+            <div className="flex-col">
+                <div
+                    style={{
+                        flex: '0 0 8rem',
+                        fontStyle: 'italic', //
+                    }}
+                >
+                    {name}
+                </div>
+                <div style={{ marginLeft: '1rem', flex: '1 0 0' }}>
+                    <CardProps props={value.props} />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex-row">
+            <div
+                style={{
+                    flex: '0 0 8rem',
+                    fontStyle: 'italic', //
+                }}
+            >
+                {name}
+            </div>
+            <div style={{ flex: '1 0 0' }}>
+                <a
+                    target="_blank"
+                    href={`https://www.etymonline.com/search?q=${encodeURIComponent(value)}`}
+                    style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                    }}
+                >
+                    {value}
+                </a>
             </div>
         </div>
     );
