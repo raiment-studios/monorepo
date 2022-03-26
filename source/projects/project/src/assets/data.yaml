@@ -1,0 +1,32 @@
+backlog:
+    - name: Storytelling @P
+    - name: Adventure @P
+    - name: Rulebook @P
+      children:
+          - Define Interactions
+    - name: Project @P
+      children:
+          - name: v1.0 @R
+            children:
+              - name: Basics @M
+                children:
+                  - Document Organization > Project > Release > Milestone > Task > Todo
+                  - Figure out what to do with types not mapping to the heirarchy
+                  - How to enforce a "Show don't tell" process?
+                  - Releases primarily defined by their end date
+                  - Milestones primarily defined by their length
+    - Minecraft example @P
+    - Quake 2 example @P
+    - Unreal 5 version of Adventure @P
+    - Research Express to Firebase @task
+    - Make tasks editable
+    - Consider where User Stories fit into the design
+    - Consider where project requirement docs (PRDs) fit in
+    - Consider where test / acceptance criteria fits in
+    - Create roadmap visualization
+    - world @milestone
+    - Example project @P
+    - Example release @R
+    - Example milestone @M
+    - Example task @T
+    - Example todo @D

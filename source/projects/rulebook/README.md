@@ -11,33 +11,9 @@ Story Arcs are constructed as follows:
 1. Goal
 2. Opportunity
 3. Strategy
-4. Plan
+4. Interactions
 5. Sequences
 
-#### Example
-
-**Goal**: Lucenia wants to escape her horrible life
-
-**Opportunity**: She could escape to her cousin's house far to the north.
-
-**Strategy**: Save enough money to sneak away with the yearly merchant carivan that travels through town most of the way to the north.
-
-**Plan**
-
-* Buy less each week and hide the money
-    * Hide it from her older brother
-    * Hide it from the town constable who makes her pay her mother's fines
-* Choice...
-    * Sneak onto the carivan
-    * Make friends with someone in the carivan who will hide her
-    * Openly ask to join the caravan
-* Survive the 8 week trip with the caravan
-* Avoid being seen in the local towns
-* Find her cousin
-* Survive the trip from the far north city to the house in the woods
-
-
-The plan adds **Interactions** to objects related to the arc. So, for example, when Lucenia interacts with the caravan when it arrives, she has a choice to sneak onto the carivan, to make friends with someone, or openly ask to join the caravan. Each of those actions has consequences (making it an interaction, not just an action).
 
 
 #### Goal
@@ -58,7 +34,7 @@ This also does not change until the goal is resolved in either success or failur
 
 This is the 1-3 lines describing **how** the opportunity will be taken advantage of. This should be high-level enough that it does not change.
 
-### Plan
+### Interactions
 
 This is where we get into the details.
 
@@ -99,6 +75,33 @@ In the context of the game, each attempt should have a known chance of succeedin
 | simple  | 100% | 30%  | 3%  | 1%  | 1%  | 1%  |
 | normal  | 100% | 90%  | 75% | 30% | 5%  | 1%  |
 | complex | 100% | 100% | 90% | 60% | 20% | 5%  |
+
+
+#### Example
+
+**Goal**: Lucenia wants to escape her horrible life
+
+**Opportunity**: She could escape to her cousin's house far to the north.
+
+**Strategy**: Save enough money to sneak away with the yearly merchant carivan that travels through town most of the way to the north.
+
+**Plan**
+
+* Buy less each week and hide the money
+    * Hide it from her older brother
+    * Hide it from the town constable who makes her pay her mother's fines
+* Choice...
+    * Sneak onto the carivan
+    * Make friends with someone in the carivan who will hide her
+    * Openly ask to join the caravan
+* Survive the 8 week trip with the caravan
+* Avoid being seen in the local towns
+* Find her cousin
+* Survive the trip from the far north city to the house in the woods
+
+
+The plan adds **Interactions** to objects related to the arc. So, for example, when Lucenia interacts with the caravan when it arrives, she has a choice to sneak onto the carivan, to make friends with someone, or openly ask to join the caravan. Each of those actions has consequences (making it an interaction, not just an action).
+
 
 # Appendix
 

@@ -69,8 +69,9 @@ function __shortcut_cmd {
     case "$2" in
     "")       $1 $MONOREPO_ROOT ;;
     /)        $1 $MONOREPO_ROOT ;;
-    st*)      $1 $MONOREPO_ROOT/source/projects/storytelling ;;
     co*)      $1 $MONOREPO_ROOT/source/projects/core ;;
+    pr*)      $1 $MONOREPO_ROOT/source/projects/project ;;
+    st*)      $1 $MONOREPO_ROOT/source/projects/storytelling ;;
     *)        $1 $MONOREPO_ROOT ;;
     esac
 }
