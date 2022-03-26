@@ -8,13 +8,16 @@ backlog:
       children:
           - name: v1.0 @R
             children:
-              - name: Basics @M
-                children:
-                  - Document Organization > Project > Release > Milestone > Task > Todo
-                  - Figure out what to do with types not mapping to the heirarchy
-                  - How to enforce a "Show don't tell" process?
-                  - Releases primarily defined by their end date
-                  - Milestones primarily defined by their length
+                - name: Static UI
+                  children:
+                - name: Basics @M
+                  children:
+                      - Document Organization > Project > Release > Milestone > Task > Todo
+                      - Figure out what to do with types not mapping to the heirarchy
+                      - How to enforce a "Show don't tell" process?
+                      - Releases primarily defined by their end date
+                      - Milestones primarily defined by their length
+                      - Add drag and drop
     - Minecraft example @P
     - Quake 2 example @P
     - Unreal 5 version of Adventure @P
