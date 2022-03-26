@@ -30,11 +30,14 @@ Story Arcs are constructed as follows:
 * Choice...
     * Sneak onto the carivan
     * Make friends with someone in the carivan who will hide her
+    * Openly ask to join the caravan
 * Survive the 8 week trip with the caravan
 * Avoid being seen in the local towns
 * Find her cousin
 * Survive the trip from the far north city to the house in the woods
 
+
+The plan adds **Interactions** to objects related to the arc. So, for example, when Lucenia interacts with the caravan when it arrives, she has a choice to sneak onto the carivan, to make friends with someone, or openly ask to join the caravan. Each of those actions has consequences (making it an interaction, not just an action).
 
 
 #### Goal
