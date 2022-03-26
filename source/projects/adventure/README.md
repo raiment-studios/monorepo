@@ -8,4 +8,4 @@ A voxel-based, procedural adventure world.
 
 Imagine the screen-to-screen game play of the original King's Quest I, but instead of 2D screens, there are small 3D voxel scenes the player moves between.
 
-Instead of a hard-coded story, the story is generated in a semi-procedural manner, adding to variations to each playthrough.  Some of these variations may be cosmetic and simply interesting: others may be fundamentally different plot challenges creating emergent behavior in each play through.
+Instead of a hard-coded story, the story is generated in a semi-procedural manner with random "cards" being drawn to evolve the circumstances, which creates variations in each playthrough.  Some of these variations may be cosmetic and simply interesting: others may be fundamentally different plot challenges creating emergent behavior in each playthrough.
