@@ -19,18 +19,19 @@ backlog:
                       - Releases primarily defined by their end date
                       - Milestones primarily defined by their length
                       - Add drag and drop
+          - Figure out Express -> Firebase
     - Minecraft example @P
     - Quake 2 example @P
-    - Unreal 5 version of Adventure @P
+    - Unreal 5 version of Adventure @P 
     - Research Express to Firebase @task
     - Make tasks editable
     - Consider where User Stories fit into the design
     - Consider where project requirement docs (PRDs) fit in
     - Consider where test / acceptance criteria fits in
     - Create roadmap visualization
-    - world @milestone
     - Example project @P
     - Example release @R
     - Example milestone @M
     - Example task @T
     - Example todo @D
+    - Create concept art
