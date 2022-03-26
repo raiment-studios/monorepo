@@ -10,6 +10,7 @@ backlog:
             children:
                 - name: Static UI
                   children:
+                      - Implement project view
                 - name: Basics @M
                   children:
                       - Document Organization > Project > Release > Milestone > Task > Todo
