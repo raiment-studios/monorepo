@@ -24,12 +24,14 @@ npc_name:
     - Scot
     - Edgar
     - Layrim
+    - Scrute
 clue:
     - a letter
     - an inheritance
     - a loud-mouthed local
     - an old statue
     - similar looks
+    - an old friend arrives
 location:
     - docks
     - garden
@@ -48,6 +50,7 @@ location:
     - town center
     - blacksmith's
     - castle
+    - the forest
 event:
     - town festival
     - blackmail
@@ -60,6 +63,7 @@ event:
     - caravan traveling through town
     - stranger arrives
     - strange ship arrives
+    - strange creature seen outside town
 theme:
     - adventure
     - romance
@@ -70,6 +74,8 @@ theme:
     - fortune-hunting
     - love
     - survival
+    - betrayal
+    - heroism
 mood:
     - cheery
     - sad
@@ -78,6 +84,7 @@ mood:
     - focused
     - confused
     - irritated
+    - annoyed
     - despondent
     - inspired
     - hopeful
@@ -86,6 +93,14 @@ mood:
     - pessimistic
     - friendly
     - distant
+    - excited
+    - anxious
+    - confident
+    - expectant
+    - overconfident
+    - angry
+    - frustrated
+    - uncertain
 choice:
     - value: No, but...
       weight: 10
@@ -110,6 +125,12 @@ profession:
     - sellsword
     - librarian
     - bodyguard
+    - farmer
+    - priest
+    - cleric
+    - trader
+    - server
+    - errand server
 problem:
     - hunger
     - sickness
@@ -133,6 +154,11 @@ problem:
     - sky is falling
     - lockdown
     - orphaned
+    - insufficient funds
+    - can't remember
+    - can't betray a secret
+    - don't know the answer
+    - there's a war going on
 arc:
     - name: Strong-arming Gatekeepers
       variables:
@@ -189,6 +215,11 @@ city_name:
     - Brokentop
     - Broadhill
     - Brekway
+    - Aparitown
+    - Icelake
+    - Dunsmath
+    - Eerie
+    - Melslake
 motivation:
     - find their creator
     - forgiveness for an evil
@@ -206,6 +237,7 @@ secrets:
     - accidentally killed a family member
     - is an alcoholic
     - is disowned from their family
+    - is not who they say they are
 character:
     - variables:
           name@: character_name
@@ -311,6 +343,7 @@ value:
     - service
     - simplicity
     - skill
+    - spirituality
     - stewardship
     - structure
     - support
