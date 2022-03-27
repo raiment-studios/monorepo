@@ -6,13 +6,7 @@ async function main() {
     console.log('> Transforming assets...');
     sh.mkdir('-p', 'dist/assets');
 
-    await Promise.all(
-        [
-            'tome',
-            'values', //
-            'problems',
-        ].map((name) => transformYAML(name))
-    );
+    sh.cp('-R', 'assets/', 'dist/');
 }
 main();
 

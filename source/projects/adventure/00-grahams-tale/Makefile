@@ -41,7 +41,7 @@ ensure:
 build:
 	mkdir -p dist	
 	node -e "console.log(Date.now());" > dist/buildstamp.txt
-	node ./src/scripts/transform_assets.js
+	node ./scripts/transform_assets.js
 	cp -f src/*.html dist/
 	npx esbuild \
 		$(BUILD_FLAGS) \
@@ -63,11 +63,23 @@ run:
 
 .PHONY: dev dev-watch
 dev: ensure
-	npx concurrently "make run" "make dev-watch" "make dev-watch-react-ex" "make dev-watch-core"
+	npx concurrently \
+		"make run" \
+		"make dev-watch" \
+		"make dev-watch-assets" \
+		"make dev-watch-react-ex" \
+		"make dev-watch-core"
+
 dev-watch:
 	npx nodemon -q \
 		--ext js,yaml,yml,jsx,json \
 		--watch "src/**/*" \
+		--exec "DEVELOPMENT_MODE=1 make build"
+
+dev-watch-assets:
+	npx nodemon -q \
+		--ext png,jpg,js,yaml,yml,jsx,json \
+		--watch "assets/**/*" \
 		--exec "DEVELOPMENT_MODE=1 make build"
 
 dev-watch-react-ex:
