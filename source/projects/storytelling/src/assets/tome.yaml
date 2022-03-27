@@ -25,6 +25,9 @@ npc_name:
     - Edgar
     - Layrim
     - Scrute
+    - Halvar
+    - Val
+    - Thorn
 clue:
     - a letter
     - an inheritance
@@ -101,6 +104,9 @@ mood:
     - angry
     - frustrated
     - uncertain
+    - disappointed
+    - self-conscious
+    - proud
 choice:
     - value: No, but...
       weight: 10
