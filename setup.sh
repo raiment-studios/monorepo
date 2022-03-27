@@ -91,7 +91,7 @@ alias gs='git status'
 #
 function gcap {
     local arg=$*
-    local message="${arg:='update'}"
+    local message="${arg:=update}"
     pushd $MONOREPO_ROOT > /dev/null
     git pull 
     git add .
