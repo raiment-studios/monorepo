@@ -23,6 +23,10 @@ Work is categorized into the following projects:
 * [**Rulebook**](source/projects/rulebook) - written core rulebook for games set in the world Kestrel
 * [**Storytelling**](source/projects/storytelling) - computer-aided, "pen & paper" solo storytelling rpg ([demo](https://storytelling.raiment.studio/))
 * [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
+    * Milestone 1: [Graham's Quest](https://grahams-quest.raiment.studio/)
+    * Milestone 2: TBD
+    * Milestone 3: TBD
+    * Milestone 4: TBD
 * [**Project**](source/projects/project) - lightweight project manager simplifying organizational processes ([demo](https://project.raiment.studio/))
 * **Wiki** - lightweight custom wiki used for the Worldbuilding and organizational projects
 * **Build** - build tool used to simplify and enforce the organizational conventions
