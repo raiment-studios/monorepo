@@ -110,9 +110,17 @@ In the context of the game, each attempt should have a known chance of succeedin
 
 The plan adds **Interactions** to objects related to the arc. So, for example, when Lucenia interacts with the caravan when it arrives, she has a choice to sneak onto the carivan, to make friends with someone, or openly ask to join the caravan. Each of those actions has consequences (making it an interaction, not just an action).
 
+### Locks & Keys
+
+### Trade-offs
+
+Scenarios should often involve trade-offs rather than absolutes. For example, if there is a quest to find a Wayland artifact, there should multiple people who want that artifact and the player must choose who to give it. That choice will impact the rest of the game.
+
 
 # Appendix
 
 ### Reference notes
+
+- Modifications are done as a series of Cards. Those are the units of contribution. Cards are grouped into Packs. A Game sets up a Deck composed of 1 or more Packs and a Start Card.
 
 -   The Story Arc progression borrows from a product development checklist: (1) What is the large, "fairly obvious" business goal (e.g. a revenue target)? (2) What is the market where that business goal can be met (e.g. market segment + persoans)? (3) What's the brief strategy explaining, without details, how that business goal can be met in that market? (4) If it all makes sense so far, what are the specific pain-points in that market and accompanying user stories, if solved, will implement that strategy? (5) Now iterate on this user stories by creating projects, building features, and getting feedback. Resolve or discard the stories based on external feedback, but don't lose sight of the overall business goal.

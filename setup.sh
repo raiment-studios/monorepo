@@ -72,6 +72,7 @@ function __shortcut_cmd {
     co*)      $1 $MONOREPO_ROOT/source/projects/core ;;
     pr*)      $1 $MONOREPO_ROOT/source/projects/project ;;
     st*)      $1 $MONOREPO_ROOT/source/projects/storytelling ;;
+    gr*)      $1 $MONOREPO_ROOT/source/projects/adventure/01-grahams-tale ;;
     *)        $1 $MONOREPO_ROOT ;;
     esac
 }

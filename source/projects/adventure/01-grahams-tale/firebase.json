@@ -1,0 +1,7 @@
+{
+    "hosting": {
+        "site": "grahams-tale-8e83f",
+        "public": "dist",
+        "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    }
+}

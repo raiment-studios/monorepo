@@ -1,0 +1,363 @@
+character_name:
+    - Kestrel
+    - Graham
+    - Cedric
+    - Morgan
+    - Tristan
+    - Alice
+    - Ingrid
+    - Logan
+npc_name:
+    - Bao
+    - Bowtin
+    - Elin
+    - Ellie
+    - Mangro
+    - Ramjin
+    - Theon
+    - Winta
+    - Donne
+    - Darifan
+    - Alek
+    - Daro
+    - Sahy
+    - Scot
+    - Edgar
+    - Layrim
+    - Scrute
+    - Halvar
+    - Val
+    - Thorn
+clue:
+    - a letter
+    - an inheritance
+    - a loud-mouthed local
+    - an old statue
+    - similar looks
+    - an old friend arrives
+location:
+    - docks
+    - garden
+    - park
+    - winery
+    - hut
+    - barracks
+    - gatehouse
+    - inn
+    - bed and breakfast
+    - lighthouse
+    - riverfront
+    - library
+    - merchant's quarter
+    - bazaar
+    - town center
+    - blacksmith's
+    - castle
+    - the forest
+event:
+    - town festival
+    - blackmail
+    - imprisonment of a friend
+    - imprisonment of an notorious enemy
+    - eclipse
+    - new star discovered
+    - sunrise ceremony
+    - shipwreck
+    - caravan traveling through town
+    - stranger arrives
+    - strange ship arrives
+    - strange creature seen outside town
+theme:
+    - adventure
+    - romance
+    - mystery
+    - exploration
+    - escape
+    - discovery
+    - fortune-hunting
+    - love
+    - survival
+    - betrayal
+    - heroism
+mood:
+    - cheery
+    - sad
+    - content
+    - distracted
+    - focused
+    - confused
+    - irritated
+    - annoyed
+    - despondent
+    - inspired
+    - hopeful
+    - hopeless
+    - optimistic
+    - pessimistic
+    - friendly
+    - distant
+    - excited
+    - anxious
+    - confident
+    - expectant
+    - overconfident
+    - angry
+    - frustrated
+    - uncertain
+    - disappointed
+    - self-conscious
+    - proud
+choice:
+    - value: No, but...
+      weight: 10
+    - value: No
+      weight: 40
+    - value: Yes
+      weight: 40
+    - value: Yes, and...
+      weight: 10
+season:
+    - spring
+    - summer
+    - fall
+    - winter
+profession:
+    - village farmer
+    - corporate farmer
+    - barrister
+    - sailor
+    - merchant
+    - pilgrim
+    - sellsword
+    - librarian
+    - bodyguard
+    - farmer
+    - priest
+    - cleric
+    - trader
+    - server
+    - errand server
+problem:
+    - hunger
+    - sickness
+    - injury
+    - locked entry
+    - betrayal
+    - tarnished reputation
+    - hostile environment
+    - in serious debt
+    - friend needs rescue
+    - been robbed
+    - old enemy returned
+    - mistaken identity
+    - family fued
+    - friend in need
+    - lost heirloom
+    - border dispute
+    - mistaken heroism
+    - imprisonment
+    - a death causes political inbalance
+    - sky is falling
+    - lockdown
+    - orphaned
+    - insufficient funds
+    - can't remember
+    - can't betray a secret
+    - don't know the answer
+    - there's a war going on
+arc:
+    - name: Strong-arming Gatekeepers
+      variables:
+          theme: theme
+          protagonist: character_name
+          character: character
+          seller: npc_name
+          city_name: city_name
+      template: >
+          So begins a tale of ${theme}...
+
+          At the entrance to a ${city_name}, the gatekeepers demand a tarriff 
+          of 10 gold. This triggers ${character.props.name}'s sense of principle and they do not want to pay.
+          But they need to get into the city to find ${seller}, a collector of Wayland artifacts.
+      scenes:
+          - problem: encounter with the guards
+            resolutions:
+                - battle
+                - pay it
+                - threaten battle
+          - problem: null
+          - problem: null
+      resolution: null
+conflict:
+    - name: Generic Conflict
+      variables:
+          problem: problem
+          complication: problem
+      props:
+        problem: ${problem}
+        complication: ${complication}
+city_name:
+    - Almagore
+    - Riverwest
+    - Mathill
+    - Westlin
+    - Oakgrove
+    - Marshfield
+    - Mornbell
+    - Lilyfield
+    - Easttown
+    - Crosstown
+    - Oakbury
+    - Belworth
+    - Concord
+    - Hillsworth
+    - Swordbury
+    - Rivermill
+    - Northcow
+    - Melscraw
+    - Stonebrooke
+    - Sumbrooke
+    - Cherryfield
+    - Brokentop
+    - Broadhill
+    - Brekway
+    - Aparitown
+    - Icelake
+    - Dunsmath
+    - Eerie
+    - Melslake
+motivation:
+    - find their creator
+    - forgiveness for an evil
+    - closure for a murder
+    - closure for a group tragedy
+secrets:
+    - is a child of a famous person
+    - is a child of a politician
+    - has great wealth
+    - has no money
+    - is not who they say they are
+    - knows state secrets
+    - is a spy
+    - is an assassin
+    - accidentally killed a family member
+    - is an alcoholic
+    - is disowned from their family
+    - is not who they say they are
+character:
+    - variables:
+          name@: character_name
+          motivation@: motivation
+          primary_value@: value
+          secondary_value@: value
+          trigger@: value
+          mood@: mood
+      rules: >
+          As a fictional character, the character *always* looks at problems
+          in terms of their primary_value. They then give weight to their 
+          secondary_value as well in how they decide to act. Their actions 
+          should always promote those values.
+
+          Their trigger_value is a blind-spot in their character: a place where
+          they have extreme, irrational reactions when they see others following
+          this value and do not listen to the logic of others.
+
+          In generating the backstory, answer the question *why* for each
+          of these values.
+value:
+    - acceptance
+    - achievement
+    - adaptability
+    - adventure
+    - altruism
+    - appreciation
+    - attention to detail
+    - authenticity
+    - balance
+    - belonging
+    - bravery
+    - calm
+    - candor
+    - challenge
+    - collaboration
+    - communication
+    - community
+    - competition
+    - composure
+    - control
+    - country
+    - creativity
+    - diversity
+    - education
+    - efficiency
+    - enthussiasm
+    - environmentalism
+    - ethics
+    - excellence
+    - experimentation
+    - exploration
+    - fairness
+    - faith
+    - family
+    - fitness
+    - freedom
+    - friendship
+    - fun
+    - generosity
+    - hard-working
+    - health
+    - history
+    - honesty
+    - hope
+    - humor
+    - inclusiveness
+    - independence
+    - influence
+    - integrity
+    - justice
+    - leadership
+    - learning
+    - longevity
+    - love
+    - loyalty
+    - minimalism
+    - moderation
+    - modesty
+    - morality
+    - objectivity
+    - ownership
+    - partnership
+    - passion
+    - patience
+    - patriotism
+    - peace
+    - permanance
+    - perseverance
+    - play
+    - power
+    - quality
+    - readiness
+    - relaxation
+    - reliability
+    - reliability
+    - resilience
+    - respect
+    - rest
+    - restraint
+    - safety
+    - self-reliance
+    - service
+    - simplicity
+    - skill
+    - spirituality
+    - stewardship
+    - structure
+    - support
+    - sustainability
+    - tradition
+    - transparency
+    - trust
+    - truth
+    - versatility
+    - wealth
+    - winning
