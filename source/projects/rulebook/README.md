@@ -4,6 +4,14 @@
 ![](https://img.shields.io/badge/version-v0.1.0-930)
 [![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
 
+## Games
+
+A game is defined by the **Deck** and the **Starting Card**.
+
+The world is composed of **Regions**, **Areas**, **Locations**. There are **Characters** and **Items**.  There are **Events**.
+
+Locations, Characters, and Items have **Interactions**. These are commands that can be applied from the player to the object and often should cause a fork in the evolution of the story via some combination of randomness, current game circumstances, historical circumstances, and player choice.
+
 ## Story Arcs
 
 Story Arcs are constructed as follows:
