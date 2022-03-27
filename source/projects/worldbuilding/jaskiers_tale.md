@@ -8,6 +8,8 @@ Simplifications
 
 ### Plot
 
+Adapted from [King's Quest I](http://gamerwalkthroughs.com/kings-quest-1/)
+
 * Kestrel awakes in an Area with a Castle in it
 * There's a King Graham there
 * Graham will describe Tristan's disappearance & the increasingly dramatic effects of the maelstrom on the world
