@@ -84,7 +84,6 @@ function rcd {
 #  Convenience aliases
 alias gs='git status'
 
-
 # gcap = git commit and pull from the root of the repo
 #
 # This is a convenience for early, solo development (where reviews are not
