@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCommonStyles, makeUseStyles, useLocalStorage, useAsyncEffect } from '@raiment/react-ex';
-import { makeRNG } from '@raiment/core';
+import { generate, makeRNG } from '@raiment/core';
 import { last, cloneDeep, get, clone } from 'lodash';
 
 const useGlobalStyles = makeUseStyles({
@@ -44,6 +44,21 @@ async function loadImage(src) {
 const tiles = {
     grass: {
         offset: [5, 0],
+        alpha: 0.25,
+    },
+    tree: {
+        offset: [0, 1],
+    },
+
+    player: {
+        offset: [26, 1],
+    },
+};
+
+const areas = {
+    forest: {
+        tiles: [],
+        map: [],
     },
 };
 
@@ -56,37 +71,52 @@ function Map() {
         const ctx = canvas.getContext('2d');
         ctx.imageSmoothingEnabled = false;
 
-        const img = await loadImage('/assets/tiles/monochrome_packed.png');
+        const img = await loadImage('/assets/tiles/colored-transparent_packed.png');
         token.check();
 
-        console.log(img);
+        function drawTile(tile, tx, ty) {
+            const sx = tile.offset[0] * 16;
+            const sy = tile.offset[1] * 16;
+            ctx.globalAlpha = tile.alpha || 1.0;
+            ctx.drawImage(img, sx, sy, 16, 16, tx * 32, ty * 32, 32, 32);
+            ctx.globalAlpha = 1.0;
+        }
 
-        ctx.fillStyle = '#300';
-        ctx.fillRect(0, 0, 320, 320);
+        ctx.fillStyle = '#033';
+        ctx.fillRect(0, 0, 640, 640);
 
-        for (let ty = 0; ty < 10; ty++) {
-            for (let tx = 0; tx < 10; tx++) {
-                const sx = tiles.grass.offset[0] * 16;
-                const sy = tiles.grass.offset[1] * 16;
-                ctx.drawImage(img, sx, sy, 16, 16, tx * 32, ty * 32, 32, 32);
+        for (let ty = 0; ty < 20; ty++) {
+            for (let tx = 0; tx < 20; tx++) {
+                drawTile(tiles.grass, tx, ty);
             }
         }
+
+        const rng = makeRNG(237);
+        const trees = generate(8, () => [rng.rangei(0, 20), rng.rangei(0, 20)]);
+        for (let [tx, ty] of trees) {
+            drawTile(tiles.tree, tx, ty);
+        }
+
+        drawTile(tiles.player, 4, 4);
     }, []);
 
     return (
-        <div
-            style={{
-                border: 'solid 1px #CCC',
-            }}
-        >
-            <canvas
-                ref={refCanvas}
-                width={320}
-                height={320}
+        <div className="flex-row">
+            <div
                 style={{
-                    imageRendering: 'pixelated',
+                    flexGrow: 0,
+                    border: 'solid 1px #CCC',
                 }}
-            />
+            >
+                <canvas
+                    ref={refCanvas}
+                    width={640}
+                    height={640}
+                    style={{
+                        imageRendering: 'pixelated',
+                    }}
+                />
+            </div>
         </div>
     );
 }
@@ -99,7 +129,8 @@ export function App() {
         <div className="flex-col">
             <h1>Graham's Tale</h1>
             <Map />
-            <img src="/assets/tiles/monochrome_packed.png" />
+            <div style={{ height: 48 }} />
+            <img src="/assets/tiles/colored-transparent_packed.png" />
         </div>
     );
 }
