@@ -96,7 +96,7 @@ function gcap {
     pushd $MONOREPO_ROOT > /dev/null
     git pull 
     git add .
-    git commit -m \""${message}"\"
+    git commit -m "${message}"
     git push
     popd > /dev/null
 }
