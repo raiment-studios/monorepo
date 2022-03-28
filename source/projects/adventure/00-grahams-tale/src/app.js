@@ -128,9 +128,81 @@ export function App() {
     return (
         <div className="flex-col">
             <h1>Graham's Tale</h1>
-            <Map />
+            <div className="flex-row">
+                <Map />
+                <Cards />
+            </div>
             <div style={{ height: 48 }} />
             <img src="/assets/tiles/colored-transparent_packed.png" />
+        </div>
+    );
+}
+
+function Cards() {
+    return (
+        <div style={{ padding: '1rem' }}>
+            <div
+                className="serif"
+                style={{
+                    flex: '1 0 0',
+                    border: 'solid 1px #111',
+                    borderRadius: 8,
+                    boxSizing: 'border-box',
+                    width: 320,
+                    minWidth: 320,
+                    maxWidth: 320,
+                    height: 400,
+                    minHeight: 480,
+                    maxHeight: 480,
+                    background: '#333',
+                }}
+            >
+                <div
+                    className="flex-row"
+                    style={{
+                        margin: '2px 2px 1px 2px',
+                        padding: '0 4px 1px 4px',
+                        alignItems: 'start',
+                        backgroundColor: 'rgba(0, 0,0,.45)',
+                        fontSize: 14,
+                        borderRadius: 2,
+                    }}
+                >
+                    <div className="flex-col">
+                        <div style={{ fontWeight: 600 }}>Galathea Forest</div>
+                        <div
+                            style={{
+                                opacity: 0.8,
+                                fontSize: 11,
+                                fontWeight: 100,
+                                fontStyle: 'italic',
+                            }}
+                        >
+                            Area
+                        </div>
+                    </div>
+                    <div style={{ flex: '1 0 0' }} />
+                    <div style={{ opacity: 0.8, fontSize: 11, fontWeight: 100 }}>⚅ 1000</div>
+                </div>
+                <div className="flex-row-center" style={{ justifyContent: 'center' }}>
+                    <div
+                        style={{
+                            boxSizing: 'content-box',
+                            border: 'solid 2px rgba(255,255,255,0.05)',
+                            width: 300,
+                            minWidth: 300,
+                            maxWidth: 300,
+                            height: 200,
+                            minHeight: 200,
+                            maxHeight: 200,
+                            backgroundColor: '#555',
+                            backgroundSize: 300,
+                            backgroundImage:
+                                'url(https://c.pxhere.com/photos/03/73/trees_nature_forest_spring_hiking_pennsylvania_creativecommons_trunks-427485.jpg!d)',
+                        }}
+                    ></div>
+                </div>
+            </div>
         </div>
     );
 }
