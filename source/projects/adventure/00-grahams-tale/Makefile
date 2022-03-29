@@ -33,6 +33,13 @@ ensure:
 	make -C $(LIB_DIR)/core build-pack
 	make -C $(LIB_DIR)/react-ex build-pack
 	npm i
+ensure-deps:
+	npm cache clean --force
+	make -C $(LIB_DIR)/core build-pack
+	npm install @raiment/core
+	make -C $(LIB_DIR)/react-ex build-pack
+	npm install @raiment/react-ex
+
 
 #
 # build

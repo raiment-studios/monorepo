@@ -13,6 +13,10 @@ const styles = {
         fontFamily: "'EB Garamond', serif",
     },
 
+    '.flex-col': {
+        display: 'flex',
+        flexDirection: 'column',
+    },
     '.flex-row': {
         display: 'flex',
         flexDirection: 'row',

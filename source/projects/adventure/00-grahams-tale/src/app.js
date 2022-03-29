@@ -139,13 +139,16 @@ export function App() {
 }
 
 function Cards() {
+    const image = '/assets/images/galthea-forest.png';
+    const imageBrightness = 0.17;
+
     return (
         <div style={{ padding: '1rem' }}>
             <div
-                className="serif"
+                className="flex-col serif"
                 style={{
                     flex: '1 0 0',
-                    border: 'solid 1px #111',
+                    border: 'solid 1px #444',
                     borderRadius: 8,
                     boxSizing: 'border-box',
                     width: 320,
@@ -154,7 +157,13 @@ function Cards() {
                     height: 400,
                     minHeight: 480,
                     maxHeight: 480,
-                    background: '#333',
+
+                    backgroundColor: '#333',
+                    backgroundImage: [
+                        `linear-gradient(rgba(50, 0, 0, 0.15), rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.95))`,
+                        `url("${image}")`,
+                    ].join(', '),
+                    backgroundSize: 'cover',
                 }}
             >
                 <div
@@ -163,13 +172,14 @@ function Cards() {
                         margin: '2px 2px 1px 2px',
                         padding: '0 4px 1px 4px',
                         alignItems: 'start',
-                        backgroundColor: 'rgba(0, 0,0,.45)',
+                        backgroundColor: 'rgba(0, 0,0,.55)',
                         fontSize: 14,
                         borderRadius: 2,
+                        backdropFilter: 'blur(8px)',
                     }}
                 >
                     <div className="flex-col">
-                        <div style={{ fontWeight: 600 }}>Galathea Forest</div>
+                        <div style={{ fontWeight: 600 }}>Galthea Forest</div>
                         <div
                             style={{
                                 opacity: 0.8,
@@ -184,11 +194,12 @@ function Cards() {
                     <div style={{ flex: '1 0 0' }} />
                     <div style={{ opacity: 0.8, fontSize: 11, fontWeight: 100 }}>⚅ 1000</div>
                 </div>
-                <div className="flex-row-center" style={{ justifyContent: 'center' }}>
+                <div className="flex-row-center" style={{ justifyContent: 'center', marginTop: 2 }}>
                     <div
+                        className="flex-col"
                         style={{
                             boxSizing: 'content-box',
-                            border: 'solid 2px rgba(255,255,255,0.05)',
+                            border: 'solid 2px rgba(80,80,80,0.95)',
                             width: 300,
                             minWidth: 300,
                             maxWidth: 300,
@@ -196,11 +207,82 @@ function Cards() {
                             minHeight: 200,
                             maxHeight: 200,
                             backgroundColor: '#555',
-                            backgroundSize: 300,
-                            backgroundImage:
-                                'url(https://c.pxhere.com/photos/03/73/trees_nature_forest_spring_hiking_pennsylvania_creativecommons_trunks-427485.jpg!d)',
+                            backgroundSize: 'cover',
+                            backgroundImage: `url(${image})`,
+                            imageRendering: 'pixelated',
+                            justifyContent: 'stretch',
+                            alignItems: 'stretch',
                         }}
                     ></div>
+                </div>
+                <div className="flex-col" style={{ flex: '1 0 0', alignSelf: 'stretch' }}>
+                    <div
+                        className="flex-row"
+                        style={{
+                            margin: '2px 2px 1px 2px',
+                            padding: '0 4px 1px 4px',
+                            alignItems: 'start',
+                            backgroundColor: 'rgba(0, 0,0,.45)',
+                            fontSize: 11,
+                            fontWeight: 100,
+                            borderRadius: 2,
+                            border: 'solid 1px rgba(127, 127, 127, 0.85)',
+                        }}
+                    >
+                        <div></div>
+                        <div style={{ flex: '1 0 0' }} />
+                        <div
+                            style={{
+                                opacity: 0.5,
+                                fontStyle: 'italic',
+                                fontWeight: 100,
+                                fontSize: 9,
+                            }}
+                        >
+                            core
+                        </div>
+                    </div>
+                    <div
+                        className="flex-col"
+                        style={{
+                            flex: '1 0 0',
+                            margin: '2px 2px 1px 2px',
+                            padding: '4px 4px 1px 4px',
+                            lineHeight: '0.80rem',
+                            alignItems: 'start',
+                            backgroundColor: 'rgba(0, 0,0,.45)',
+                            color: '#DDD',
+                            fontSize: 12,
+                            fontWeight: 100,
+                            borderRadius: 2,
+                            border: 'solid 1px rgba(127, 127, 127, 0.85)',
+                        }}
+                    >
+                        <div style={{ marginBottom: '0.75rem', fontStyle: 'italic' }}>
+                            "This place would be a beautiful place for a walk in the afternoon if it
+                            weren't for the constant fear of death."
+                        </div>
+                        <div>
+                            A typical stretch of forest in Galthea: warm, pleasant, and haunted with
+                            the ever-present danger of the Maelstrom.
+                        </div>
+                    </div>
+                    <div
+                        className="flex-row"
+                        style={{
+                            margin: '2px 2px 1px 2px',
+                            padding: '0 4px 1px 4px',
+                            alignItems: 'start',
+                            backgroundColor: 'rgba(0, 0,0,.45)',
+                            fontSize: 8,
+                            fontWeight: 100,
+                            borderRadius: 2,
+                        }}
+                    >
+                        <div style={{ opacity: 0.7 }}>Ridley Winters 2022</div>
+                        <div style={{ flex: '1 0 0 ' }} />
+                        <div style={{ opacity: 0.7 }}>galthea-forest / 6eY3</div>
+                    </div>
                 </div>
             </div>
         </div>
