@@ -1,20 +1,30 @@
 # Graham's Quest
 
-## TODO
+## Roadmap
 
--   [ ] Load forest from Card asset
-    -   [ ] Pixelate forest image
-    -   [ ] Add description
-    -   [ ] Add author
--   [ ] Allow Forest to be edited in game
--   [ ] Add menu
--   [ ] Add random seed
--   [ ] Add text
+-   [ ] Mock UI
+    -   [ ] Load forest from Card asset
+    -   [x] Pixelate forest image
+    -   [x] Add description
+    -   [x] Add author
+    -   [ ] Add random seed
+    -   [ ] Add text
+    -   [ ] Time of day, weather, status
+    -   [ ] Dialogue
+    -   [ ] Inventory
+    -   [ ] Journal
+    -   [ ] Encyclopedia
+- [ ] Mock Editor
+    -   [ ] Allow Forest to be edited in game
 
 Simplifications
 
 -   A single Region (Galthea)
 -   Each area is a fixed rectangular size
+
+Design Choices
+
+-   No "fog of war" (this is an exploration game emphasizing clear visuals)
 
 ### Plot
 

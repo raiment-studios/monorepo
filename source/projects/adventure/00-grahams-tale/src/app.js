@@ -26,6 +26,11 @@ const useGlobalStyles = makeUseStyles({
             background: '#000',
             color: '#EEE',
         },
+        '#client': {
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+        },
     },
 });
 
@@ -101,11 +106,16 @@ function Map() {
     }, []);
 
     return (
-        <div className="flex-row">
+        <div
+            className="flex-row"
+            style={{
+                flex: '0 0 0',
+                height: 640,
+            }}
+        >
             <div
                 style={{
-                    flexGrow: 0,
-                    border: 'solid 1px #CCC',
+                    flex: '0 0 0',
                 }}
             >
                 <canvas
@@ -126,14 +136,135 @@ export function App() {
     useGlobalStyles();
 
     return (
-        <div className="flex-col">
-            <h1>Graham's Tale</h1>
+        <div className="flex-col" style={{ flex: '1 0 0' }}>
+            <Navigation />
             <div className="flex-row">
-                <Map />
+                <div
+                    style={{
+                        margin: 1,
+                        padding: 2,
+                        backgroundColor: '#444',
+                        borderRadius: 4,
+                    }}
+                >
+                    <Map />
+                </div>
                 <Cards />
             </div>
-            <div style={{ height: 48 }} />
-            <img src="/assets/tiles/colored-transparent_packed.png" />
+            <Panel />
+        </div>
+    );
+}
+
+function Navigation() {
+    return (
+        <div
+            className="flex-row-center"
+            style={{
+                margin: 0,
+                padding: '6px 12px',
+                backgroundColor: '#333',
+                fontSize: 14,
+                fontWeight: 100,
+            }}
+        >
+            <div style={{ fontSize: 18, fontWeight: 900 }}>Graham's Tale</div>
+            <div style={{ flex: '0 0 3rem ' }} />
+            <div style={{}}>Game</div>
+            <div style={{ flex: '0 0 1rem ' }} />
+            <div style={{}}>Editor</div>
+            <div style={{ flex: '0 0 1rem ' }} />
+            <div style={{}}>Options</div>
+            <div style={{ flex: '0 0 1rem ' }} />
+            <div style={{}}>About</div>
+        </div>
+    );
+}
+
+function Tab({ label }) {
+    return (
+        <div
+            style={{
+                margin: '0 0.5rem',
+                padding: '0.25rem 1rem',
+                border: 'solid 1px #555',
+                borderRadius: 2,
+            }}
+        >
+            {label}
+        </div>
+    );
+}
+
+function Panel() {
+    return (
+        <div className="flex-col" style={{ flex: '1 0 0' }}>
+            <div
+                className="flex-row-center"
+                style={{
+                    margin: 0,
+                    padding: '6px 12px',
+                    backgroundColor: '#333',
+                    fontSize: 14,
+                    fontWeight: 100,
+                }}
+            >
+                <Tab label="Character" />
+                <Tab label="Inventory" />
+                <Tab label="Skills" />
+                <Tab label="Map" />
+                <Tab label="Journal" />
+                <Tab label="Encyclopedia" />
+            </div>
+            <div
+                style={{
+                    flex: '1 0 0',
+                    backgroundColor: '#555',
+                }}
+            >
+                <Encyclopedia />
+            </div>
+        </div>
+    );
+}
+
+function Encyclopedia() {
+    return (
+        <div
+            className="flex-row"
+            style={{
+                margin: '1rem',
+            }}
+        >
+            <div
+                style={{
+                    flex: '0 0 12rem',
+                    backgroundColor: '#333',
+                    border: 'solid 1px #111',
+                    borderRadius: 4,
+                    padding: '6px 12px 6px 8px',
+                }}
+            >
+                <div>Characters</div>
+                <div>Items</div>
+                <div>Regions</div>
+                <div>Areas</div>
+                <div>Locations</div>
+                <div>Flora</div>
+                <div>Fauna</div>
+                <div>History</div>
+                <div>Politics</div>
+            </div>
+            <div style={{ flex: '0 0 0.5rem' }} />
+            <div
+                style={{
+                    flex: '0 0 62rem',
+                    backgroundColor: '#333',
+                    border: 'solid 1px #111',
+                    borderRadius: 4,
+                    padding: '6px 12px 6px 8px',
+                }}
+            ></div>
         </div>
     );
 }
