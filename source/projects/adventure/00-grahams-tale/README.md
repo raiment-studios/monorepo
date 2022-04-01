@@ -14,7 +14,8 @@
     -   [ ] Inventory
     -   [ ] Journal
     -   [ ] Encyclopedia
-- [ ] Mock Editor
+    -   [ ] Command-line
+-   [ ] Mock Editor
     -   [ ] Allow Forest to be edited in game
 
 Simplifications

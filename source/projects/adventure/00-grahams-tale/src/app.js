@@ -149,7 +149,63 @@ export function App() {
                 >
                     <Map />
                 </div>
-                <Cards />
+
+                <div
+                    className="flex-col"
+                    style={{
+                        width: 480,
+                    }}
+                >
+                    <div
+                        style={{
+                            margin: 1,
+                            padding: 2,
+                            backgroundColor: '#666',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Cards />
+                        Card piles
+                        <div className="flex-row">
+                            <div
+                                style={{
+                                    width: 32,
+                                    height: 40,
+                                    margin: 8,
+                                    border: 'solid 1px #CCC',
+                                    borderRadius: 4,
+                                }}
+                            />
+                            <div
+                                style={{
+                                    width: 32,
+                                    height: 40,
+                                    margin: 8,
+                                    border: 'solid 1px #CCC',
+                                    borderRadius: 4,
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ flex: '1 0 0'}}>
+                        free space
+                    </div>
+                    <div
+                    style={{
+                        margin: 1,
+                        padding: 2,
+                        backgroundColor: '#666',
+                        borderRadius: 4,
+                    }}
+                    >
+                        <input type="text" placeholder="command-line"style={{
+                            width: '100%',
+                            padding: '4px 2px',
+                            backgroundColor: 'black',
+                            color: 'white'
+                        }}/>
+                        </div>
+                </div>
             </div>
             <Panel />
         </div>
@@ -215,6 +271,7 @@ function Panel() {
                 <Tab label="Map" />
                 <Tab label="Journal" />
                 <Tab label="Encyclopedia" />
+                <Tab label="Deck" />
             </div>
             <div
                 style={{
@@ -274,145 +331,150 @@ function Cards() {
     const imageBrightness = 0.17;
 
     return (
-        <div style={{ padding: '1rem' }}>
-            <div
-                className="flex-col serif"
-                style={{
-                    flex: '1 0 0',
-                    border: 'solid 1px #444',
-                    borderRadius: 8,
-                    boxSizing: 'border-box',
-                    width: 320,
-                    minWidth: 320,
-                    maxWidth: 320,
-                    height: 400,
-                    minHeight: 480,
-                    maxHeight: 480,
-
-                    backgroundColor: '#333',
-                    backgroundImage: [
-                        `linear-gradient(rgba(50, 0, 0, 0.15), rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.95))`,
-                        `url("${image}")`,
-                    ].join(', '),
-                    backgroundSize: 'cover',
-                }}
-            >
+        <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', padding: '1rem' }}>
                 <div
-                    className="flex-row"
+                    className="flex-col serif"
                     style={{
-                        margin: '2px 2px 1px 2px',
-                        padding: '0 4px 1px 4px',
-                        alignItems: 'start',
-                        backgroundColor: 'rgba(0, 0,0,.55)',
-                        fontSize: 14,
-                        borderRadius: 2,
-                        backdropFilter: 'blur(8px)',
+                        flex: '1 0 0',
+                        border: 'solid 1px #444',
+                        borderRadius: 8,
+                        boxSizing: 'border-box',
+                        width: 320,
+                        minWidth: 320,
+                        maxWidth: 320,
+                        height: 400,
+                        minHeight: 480,
+                        maxHeight: 480,
+
+                        backgroundColor: '#333',
+                        backgroundImage: [
+                            `linear-gradient(rgba(50, 0, 0, 0.15), rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.95))`,
+                            `url("${image}")`,
+                        ].join(', '),
+                        backgroundSize: 'cover',
                     }}
                 >
-                    <div className="flex-col">
-                        <div style={{ fontWeight: 600 }}>Galthea Forest</div>
+                    <div
+                        className="flex-row"
+                        style={{
+                            margin: '2px 2px 1px 2px',
+                            padding: '0 4px 1px 4px',
+                            alignItems: 'start',
+                            backgroundColor: 'rgba(0, 0,0,.55)',
+                            fontSize: 14,
+                            borderRadius: 2,
+                            backdropFilter: 'blur(8px)',
+                        }}
+                    >
+                        <div className="flex-col">
+                            <div style={{ fontWeight: 600 }}>Galthea Forest</div>
+                            <div
+                                style={{
+                                    opacity: 0.8,
+                                    fontSize: 11,
+                                    fontWeight: 100,
+                                    fontStyle: 'italic',
+                                }}
+                            >
+                                Area
+                            </div>
+                        </div>
+                        <div style={{ flex: '1 0 0' }} />
+                        <div style={{ opacity: 0.8, fontSize: 11, fontWeight: 100 }}>⚅ 1000</div>
+                    </div>
+                    <div
+                        className="flex-row-center"
+                        style={{ justifyContent: 'center', marginTop: 2 }}
+                    >
                         <div
+                            className="flex-col"
                             style={{
-                                opacity: 0.8,
+                                boxSizing: 'content-box',
+                                border: 'solid 2px rgba(80,80,80,0.95)',
+                                width: 300,
+                                minWidth: 300,
+                                maxWidth: 300,
+                                height: 200,
+                                minHeight: 200,
+                                maxHeight: 200,
+                                backgroundColor: '#555',
+                                backgroundSize: 'cover',
+                                backgroundImage: `url(${image})`,
+                                imageRendering: 'pixelated',
+                                justifyContent: 'stretch',
+                                alignItems: 'stretch',
+                            }}
+                        ></div>
+                    </div>
+                    <div className="flex-col" style={{ flex: '1 0 0', alignSelf: 'stretch' }}>
+                        <div
+                            className="flex-row"
+                            style={{
+                                margin: '2px 2px 1px 2px',
+                                padding: '0 4px 1px 4px',
+                                alignItems: 'start',
+                                backgroundColor: 'rgba(0, 0,0,.45)',
                                 fontSize: 11,
                                 fontWeight: 100,
-                                fontStyle: 'italic',
+                                borderRadius: 2,
+                                border: 'solid 1px rgba(127, 127, 127, 0.85)',
                             }}
                         >
-                            Area
+                            <div></div>
+                            <div style={{ flex: '1 0 0' }} />
+                            <div
+                                style={{
+                                    opacity: 0.5,
+                                    fontStyle: 'italic',
+                                    fontWeight: 100,
+                                    fontSize: 9,
+                                }}
+                            >
+                                core
+                            </div>
                         </div>
-                    </div>
-                    <div style={{ flex: '1 0 0' }} />
-                    <div style={{ opacity: 0.8, fontSize: 11, fontWeight: 100 }}>⚅ 1000</div>
-                </div>
-                <div className="flex-row-center" style={{ justifyContent: 'center', marginTop: 2 }}>
-                    <div
-                        className="flex-col"
-                        style={{
-                            boxSizing: 'content-box',
-                            border: 'solid 2px rgba(80,80,80,0.95)',
-                            width: 300,
-                            minWidth: 300,
-                            maxWidth: 300,
-                            height: 200,
-                            minHeight: 200,
-                            maxHeight: 200,
-                            backgroundColor: '#555',
-                            backgroundSize: 'cover',
-                            backgroundImage: `url(${image})`,
-                            imageRendering: 'pixelated',
-                            justifyContent: 'stretch',
-                            alignItems: 'stretch',
-                        }}
-                    ></div>
-                </div>
-                <div className="flex-col" style={{ flex: '1 0 0', alignSelf: 'stretch' }}>
-                    <div
-                        className="flex-row"
-                        style={{
-                            margin: '2px 2px 1px 2px',
-                            padding: '0 4px 1px 4px',
-                            alignItems: 'start',
-                            backgroundColor: 'rgba(0, 0,0,.45)',
-                            fontSize: 11,
-                            fontWeight: 100,
-                            borderRadius: 2,
-                            border: 'solid 1px rgba(127, 127, 127, 0.85)',
-                        }}
-                    >
-                        <div></div>
-                        <div style={{ flex: '1 0 0' }} />
                         <div
+                            className="flex-col"
                             style={{
-                                opacity: 0.5,
-                                fontStyle: 'italic',
+                                flex: '1 0 0',
+                                margin: '2px 2px 1px 2px',
+                                padding: '4px 4px 1px 4px',
+                                lineHeight: '0.80rem',
+                                alignItems: 'start',
+                                backgroundColor: 'rgba(0, 0,0,.45)',
+                                color: '#DDD',
+                                fontSize: 12,
                                 fontWeight: 100,
-                                fontSize: 9,
+                                borderRadius: 2,
+                                border: 'solid 1px rgba(127, 127, 127, 0.85)',
                             }}
                         >
-                            core
+                            <div style={{ marginBottom: '0.75rem', fontStyle: 'italic' }}>
+                                "This place would be a beautiful place for a walk in the afternoon
+                                if it weren't for the constant fear of death."
+                            </div>
+                            <div>
+                                A typical stretch of forest in Galthea: warm, pleasant, and haunted
+                                with the ever-present danger of the Maelstrom.
+                            </div>
                         </div>
-                    </div>
-                    <div
-                        className="flex-col"
-                        style={{
-                            flex: '1 0 0',
-                            margin: '2px 2px 1px 2px',
-                            padding: '4px 4px 1px 4px',
-                            lineHeight: '0.80rem',
-                            alignItems: 'start',
-                            backgroundColor: 'rgba(0, 0,0,.45)',
-                            color: '#DDD',
-                            fontSize: 12,
-                            fontWeight: 100,
-                            borderRadius: 2,
-                            border: 'solid 1px rgba(127, 127, 127, 0.85)',
-                        }}
-                    >
-                        <div style={{ marginBottom: '0.75rem', fontStyle: 'italic' }}>
-                            "This place would be a beautiful place for a walk in the afternoon if it
-                            weren't for the constant fear of death."
+                        <div
+                            className="flex-row"
+                            style={{
+                                margin: '2px 2px 1px 2px',
+                                padding: '0 4px 1px 4px',
+                                alignItems: 'start',
+                                backgroundColor: 'rgba(0, 0,0,.45)',
+                                fontSize: 8,
+                                fontWeight: 100,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <div style={{ opacity: 0.7 }}>Ridley Winters 2022</div>
+                            <div style={{ flex: '1 0 0 ' }} />
+                            <div style={{ opacity: 0.7 }}>galthea-forest / 6eY3</div>
                         </div>
-                        <div>
-                            A typical stretch of forest in Galthea: warm, pleasant, and haunted with
-                            the ever-present danger of the Maelstrom.
-                        </div>
-                    </div>
-                    <div
-                        className="flex-row"
-                        style={{
-                            margin: '2px 2px 1px 2px',
-                            padding: '0 4px 1px 4px',
-                            alignItems: 'start',
-                            backgroundColor: 'rgba(0, 0,0,.45)',
-                            fontSize: 8,
-                            fontWeight: 100,
-                            borderRadius: 2,
-                        }}
-                    >
-                        <div style={{ opacity: 0.7 }}>Ridley Winters 2022</div>
-                        <div style={{ flex: '1 0 0 ' }} />
-                        <div style={{ opacity: 0.7 }}>galthea-forest / 6eY3</div>
                     </div>
                 </div>
             </div>
