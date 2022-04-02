@@ -236,6 +236,11 @@ function JournalPanel() {
 const cards = [
     'Forest', //
     'Mountains',
+    'Swamp',
+    'Marsh',
+    'Seaside',
+    'Cliffs',
+    'Town',
 ].map((desc) => {
     if (typeof desc !== 'string') {
         return desc;
@@ -296,19 +301,25 @@ function DeckPanel() {
                 >
                     {cards.map((card) => (
                         <div
-                            key={card.name}
-                            className="flex-col"
                             style={{
-                                boxSizing: 'content-box',
-                                fontSize: 11,
-                                width: 120,
-                                height: 160,
-                                border: 'solid 1px #CCC',
-                                borderRadius: 6,
-                                padding: 6,
+                                margin: 8,
                             }}
                         >
-                            {card.name}
+                            <div
+                                key={card.name}
+                                className="flex-col"
+                                style={{
+                                    boxSizing: 'content-box',
+                                    fontSize: 10,
+                                    width: 120,
+                                    height: 160,
+                                    border: 'solid 1px #CCC',
+                                    borderRadius: 6,
+                                    padding: 6,
+                                }}
+                            >
+                                {card.name}
+                            </div>
                         </div>
                     ))}
                 </div>
