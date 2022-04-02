@@ -25,6 +25,10 @@ dircolors -p | sed 's/;42/;01/' > ~/.dircolors
 # Ensure rust is set up
 source $HOME/.cargo/env
 
+git lfs install
+git lfs fetch
+git lfs pull
+
 # -----------------------------------------------------------------------------
 # Bash prompt
 # -----------------------------------------------------------------------------

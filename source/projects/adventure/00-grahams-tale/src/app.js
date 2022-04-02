@@ -165,46 +165,8 @@ export function App() {
                         }}
                     >
                         <Cards />
-                        Card piles
-                        <div className="flex-row">
-                            <div
-                                style={{
-                                    width: 32,
-                                    height: 40,
-                                    margin: 8,
-                                    border: 'solid 1px #CCC',
-                                    borderRadius: 4,
-                                }}
-                            />
-                            <div
-                                style={{
-                                    width: 32,
-                                    height: 40,
-                                    margin: 8,
-                                    border: 'solid 1px #CCC',
-                                    borderRadius: 4,
-                                }}
-                            />
-                        </div>
                     </div>
-                    <div style={{ flex: '1 0 0'}}>
-                        free space
-                    </div>
-                    <div
-                    style={{
-                        margin: 1,
-                        padding: 2,
-                        backgroundColor: '#666',
-                        borderRadius: 4,
-                    }}
-                    >
-                        <input type="text" placeholder="command-line"style={{
-                            width: '100%',
-                            padding: '4px 2px',
-                            backgroundColor: 'black',
-                            color: 'white'
-                        }}/>
-                        </div>
+                    <div style={{ flex: '1 0 0' }}>free space</div>
                 </div>
             </div>
             <Panel />
@@ -237,7 +199,7 @@ function Navigation() {
     );
 }
 
-function Tab({ label }) {
+function Tab({ label, active = false, onClick }) {
     return (
         <div
             style={{
@@ -245,7 +207,11 @@ function Tab({ label }) {
                 padding: '0.25rem 1rem',
                 border: 'solid 1px #555',
                 borderRadius: 2,
+                userSelect: 'none',
+                cursor: 'pointer',
+                backgroundColor: active ? '#666' : 'transparent',
             }}
+            onClick={onClick}
         >
             {label}
         </div>
@@ -253,6 +219,31 @@ function Tab({ label }) {
 }
 
 function Panel() {
+    const [activePanel, setActivePanel] = useLocalStorage('active-panel-2we74q', 'interact');
+
+    const tabs = [
+        'Interact',
+        'Character',
+        'Inventory',
+        'Skills',
+        'Map',
+        'Journal',
+        'Encyclopedia',
+        'Deck',
+    ];
+
+    const ActivePanelComponent =
+        {
+            interact: Interact,
+            character: Encyclopedia,
+            inventory: Encyclopedia,
+            skills: Encyclopedia,
+            map: Encyclopedia,
+            journal: Encyclopedia,
+            encyclopedia: Encyclopedia,
+            deck: Encyclopedia,
+        }[activePanel] || (() => null);
+
     return (
         <div className="flex-col" style={{ flex: '1 0 0' }}>
             <div
@@ -265,21 +256,94 @@ function Panel() {
                     fontWeight: 100,
                 }}
             >
-                <Tab label="Character" />
-                <Tab label="Inventory" />
-                <Tab label="Skills" />
-                <Tab label="Map" />
-                <Tab label="Journal" />
-                <Tab label="Encyclopedia" />
-                <Tab label="Deck" />
+                {tabs.map((tab, index) => (
+                    <Tab
+                        key={tab}
+                        label={tab}
+                        active={tab.toLowerCase() == activePanel}
+                        onClick={() => setActivePanel(tab.toLowerCase())}
+                    />
+                ))}
             </div>
             <div
+                className="flex-col"
                 style={{
                     flex: '1 0 0',
                     backgroundColor: '#555',
+                    padding: '1rem',
                 }}
             >
-                <Encyclopedia />
+                <ActivePanelComponent />
+            </div>
+        </div>
+    );
+}
+
+function Interact() {
+    return (
+        <div className="flex-row">
+            <div className="flex-col" style={{ flex: '0 0 42rem' }}>
+                <div
+                    style={{
+                        fontFamily: 'monospace',
+                        height: '16rem',
+                        borderRadius: 8,
+                        padding: 16,
+                        color: 'white',
+                        backgroundColor: 'black',
+                    }}
+                >
+                    <div>
+                        Welcome to <strong>Graham's World</strong>, a game prototype set in the
+                        world of Kestrel.
+                    </div>
+                </div>
+                <input
+                    type="text"
+                    placeholder="Enter a command: [verb] [object] [indirect object]"
+                    style={{
+                        fontFamily: 'monospace',
+                        borderRadius: 8,
+                        marginTop: 2,
+                        padding: 8,
+                        color: 'white',
+                        backgroundColor: 'black',
+                        outline: 'none',
+                        border: 'none',
+                    }}
+                />
+            </div>
+            <div style={{ flex: '0 0 12px' }} />
+            <div className="flex-col">
+                <div
+                    style={{
+                        background: '#666',
+                        borderRadius: 8,
+                        padding: 16,
+                    }}
+                >
+                    Card piles
+                    <div className="flex-row">
+                        <div
+                            style={{
+                                width: 64,
+                                height: 80,
+                                margin: 8,
+                                border: 'solid 1px #CCC',
+                                borderRadius: 4,
+                            }}
+                        />
+                        <div
+                            style={{
+                                width: 64,
+                                height: 80,
+                                margin: 8,
+                                border: 'solid 1px #CCC',
+                                borderRadius: 4,
+                            }}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -287,12 +351,7 @@ function Panel() {
 
 function Encyclopedia() {
     return (
-        <div
-            className="flex-row"
-            style={{
-                margin: '1rem',
-            }}
-        >
+        <div className="flex-row" style={{}}>
             <div
                 style={{
                     flex: '0 0 12rem',
@@ -321,7 +380,13 @@ function Encyclopedia() {
                     borderRadius: 4,
                     padding: '6px 12px 6px 8px',
                 }}
-            ></div>
+            >
+                <p>
+                    The Encyclopedia describes the current, created world - the output of the draw
+                    cards and progression of the world. It is dynamic and differs every playthrough
+                </p>
+                <p>The Deck by comparison describes the set of generation cards used in the game</p>
+            </div>
         </div>
     );
 }
