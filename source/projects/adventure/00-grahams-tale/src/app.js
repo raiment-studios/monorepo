@@ -234,20 +234,39 @@ function JournalPanel() {
 }
 
 const cards = [
-    'Forest', //
-    'Mountains',
-    'Swamp',
+    'Forest|T:region', //
+    'Mountains|T:region',
+    'Swamp|T:region',
     'Marsh',
     'Seaside',
     'Cliffs',
     'Town',
+    'Kestrel',
+    'Cedric',
+    'Logan',
+    'Farmer|T:character',
+    'Ranger|T:character',
+    'Potion',
+    'Harp',
+    'Flower',
+    'Key',
+    'Book',
 ].map((desc) => {
     if (typeof desc !== 'string') {
         return desc;
     }
-    return {
-        name: desc,
+    const parts = desc.split('|').map((s) => s.trim());
+    const obj = {
+        name: parts[0],
     };
+
+    for (let p of parts) {
+        let m;
+        if ((m = p.match(/^T:(.+)$/))) {
+            obj.type = m[1];
+        }
+    }
+    return obj;
 });
 
 function DeckPanel() {
@@ -313,12 +332,35 @@ function DeckPanel() {
                                     fontSize: 10,
                                     width: 120,
                                     height: 160,
-                                    border: 'solid 1px #CCC',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    border: 'solid 1px #666',
                                     borderRadius: 6,
-                                    padding: 6,
+                                    padding: 1,
                                 }}
                             >
-                                {card.name}
+                                <div
+                                    style={{
+                                        margin: 1,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            padding: 2,
+                                            background: '#555',
+                                            borderRadius: 4,
+                                        }}
+                                    >
+                                        {card.name}
+                                    </div>
+                                    <div
+                                        style={{
+                                            padding: '1px 2px',
+                                            fontSize: 7,
+                                        }}
+                                    >
+                                        {card.type || ' '}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}
