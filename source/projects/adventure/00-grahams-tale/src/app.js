@@ -156,15 +156,14 @@ export function App() {
                         width: 480,
                     }}
                 >
-                    <div
-                        style={{
-                            margin: 1,
-                            padding: 2,
-                            backgroundColor: '#666',
-                            borderRadius: 4,
-                        }}
-                    >
+                    <div style={{}}>
                         <Cards />
+                    </div>
+                    <div>
+                        Time of day
+                        <br />
+                        Weather
+                        <br />
                     </div>
                     <div style={{ flex: '1 0 0' }}>free space</div>
                 </div>
@@ -218,6 +217,63 @@ function Tab({ label, active = false, onClick }) {
     );
 }
 
+function CharacterPanel() {
+    return null;
+}
+function InventoryPanel() {
+    return null;
+}
+function SkillsPanel() {
+    return null;
+}
+function MapPanel() {
+    return null;
+}
+function JournalPanel() {
+    return null;
+}
+function DeckPanel() {
+    return (
+        <div className="flex-row" style={{}}>
+            <div
+                style={{
+                    flex: '0 0 12rem',
+                    backgroundColor: '#333',
+                    border: 'solid 1px #111',
+                    borderRadius: 4,
+                    padding: '6px 12px 6px 8px',
+                }}
+            >
+                <div>Characters</div>
+                <div>Items</div>
+                <div>Regions</div>
+                <div>Areas</div>
+                <div>Locations</div>
+                <div>Flora</div>
+                <div>Fauna</div>
+                <div>History</div>
+                <div>Politics</div>
+            </div>
+            <div style={{ flex: '0 0 0.5rem' }} />
+            <div
+                style={{
+                    flex: '0 0 62rem',
+                    backgroundColor: '#333',
+                    border: 'solid 1px #111',
+                    borderRadius: 4,
+                    padding: '6px 12px 6px 8px',
+                }}
+            >
+                <p>The Deck describes the set of generation cards used in the game</p>
+                <p>
+                    This should include a search, filter, and random selection. It shows the cards.
+                    Potentially allows them to be edited.
+                </p>
+            </div>
+        </div>
+    );
+}
+
 function Panel() {
     const [activePanel, setActivePanel] = useLocalStorage('active-panel-2we74q', 'interact');
 
@@ -235,13 +291,13 @@ function Panel() {
     const ActivePanelComponent =
         {
             interact: Interact,
-            character: Encyclopedia,
-            inventory: Encyclopedia,
-            skills: Encyclopedia,
-            map: Encyclopedia,
-            journal: Encyclopedia,
+            character: CharacterPanel,
+            inventory: InventoryPanel,
+            skills: SkillsPanel,
+            map: MapPanel,
+            journal: JournalPanel,
             encyclopedia: Encyclopedia,
-            deck: Encyclopedia,
+            deck: DeckPanel,
         }[activePanel] || (() => null);
 
     return (
