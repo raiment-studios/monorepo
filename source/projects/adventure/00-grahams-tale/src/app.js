@@ -251,6 +251,14 @@ const cards = [
     'Flower',
     'Key',
     'Book',
+    'Spoon',
+    'Fork',
+    'Kitchen knife',
+    'Leather bag',
+    'Dull dagger',
+    'Leather pouch',
+    'Sunglasses',
+    'Wool hat',
 ].map((desc) => {
     if (typeof desc !== 'string') {
         return desc;
