@@ -232,7 +232,22 @@ function MapPanel() {
 function JournalPanel() {
     return null;
 }
+
+const cards = [
+    'Forest', //
+    'Mountains',
+].map((desc) => {
+    if (typeof desc !== 'string') {
+        return desc;
+    }
+    return {
+        name: desc,
+    };
+});
+
 function DeckPanel() {
+    const [filter, setFilter] = useLocalStorage('filter-hweh3', null);
+
     return (
         <div className="flex-row" style={{}}>
             <div
@@ -244,6 +259,7 @@ function DeckPanel() {
                     padding: '6px 12px 6px 8px',
                 }}
             >
+                <div>All</div>
                 <div>Characters</div>
                 <div>Items</div>
                 <div>Regions</div>
@@ -269,6 +285,33 @@ function DeckPanel() {
                     This should include a search, filter, and random selection. It shows the cards.
                     Potentially allows them to be edited.
                 </p>
+                <p>Should all filter by pack as well</p>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                    }}
+                >
+                    {cards.map((card) => (
+                        <div
+                            key={card.name}
+                            className="flex-col"
+                            style={{
+                                boxSizing: 'content-box',
+                                fontSize: 11,
+                                width: 120,
+                                height: 160,
+                                border: 'solid 1px #CCC',
+                                borderRadius: 6,
+                                padding: 6,
+                            }}
+                        >
+                            {card.name}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
