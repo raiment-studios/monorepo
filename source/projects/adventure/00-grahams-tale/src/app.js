@@ -233,50 +233,6 @@ function JournalPanel() {
     return null;
 }
 
-const cards = [
-    'Forest|T:region', //
-    'Mountains|T:region',
-    'Swamp|T:region',
-    'Marsh',
-    'Seaside',
-    'Cliffs',
-    'Town',
-    'Kestrel',
-    'Cedric',
-    'Logan',
-    'Farmer|T:character',
-    'Ranger|T:character',
-    'Potion',
-    'Harp',
-    'Flower',
-    'Key',
-    'Book',
-    'Spoon',
-    'Fork',
-    'Kitchen knife',
-    'Leather bag',
-    'Dull dagger',
-    'Leather pouch',
-    'Sunglasses',
-    'Wool hat',
-].map((desc) => {
-    if (typeof desc !== 'string') {
-        return desc;
-    }
-    const parts = desc.split('|').map((s) => s.trim());
-    const obj = {
-        name: parts[0],
-    };
-
-    for (let p of parts) {
-        let m;
-        if ((m = p.match(/^T:(.+)$/))) {
-            obj.type = m[1];
-        }
-    }
-    return obj;
-});
-
 function GenerationCard({ card }) {
     return (
         <div
@@ -320,8 +276,17 @@ function GenerationCard({ card }) {
 }
 
 function DeckPanel() {
+    const [cards, setCards] = React.useState(null);
     const [filter, setFilter] = useLocalStorage('filter-hweh3', null);
     const [focusCard, setFocusCard] = useLocalStorage('focus-card-j48sd', null);
+
+    useAsyncEffect(async (token) => {
+        const resp = await fetch('/assets/cards/base.json');
+        const json = await resp.json();
+
+        token.check();
+        setCards(json.cards);
+    });
 
     return (
         <div className="flex-row" style={{}}>
@@ -370,7 +335,7 @@ function DeckPanel() {
                         flexWrap: 'wrap',
                     }}
                 >
-                    {cards.map((card) => (
+                    {(cards || []).map((card) => (
                         <div
                             key={card.name}
                             style={{

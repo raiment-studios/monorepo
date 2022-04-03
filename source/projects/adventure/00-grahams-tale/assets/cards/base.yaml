@@ -1,0 +1,34 @@
+cards:
+  - name: Forest
+    type: region
+  - name: Mountains
+    type: region
+  - name: Swamp
+    type: region
+  - name: Marsh
+  - name: Seaside
+  - name: Cliffs
+  - name: Town
+  - name: Kestrel
+  - name: Cedric
+  - name: Logan
+  - name: Farmer
+    type: character
+  - name: Ranger
+    type: character
+  - name: Potion
+    type: item
+  - name: Harp
+    type: item
+  - name: Flower
+  - name: Key
+  - name: Book
+  - name: Spoon
+  - name: Fork
+  - name: Kitchen knife
+  - name: Leather bag
+  - name: Dull dagger
+  - name: Leather pouch
+  - name: Sunglasses
+  - name: Wool hat
+  - name: Crowbar
