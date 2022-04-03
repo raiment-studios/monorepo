@@ -49,3 +49,8 @@ Todo
 The game itself is defined as a particular "game" asset: this defines the deck to use (i.e. what assets are in play) and the starting card (set starting conditions). The notion of multiple "games" makes it easier to set up test scenarios focused on specifics.
 
 A major motivation for Raiment is ease of contribution: the default mode is "game mode" and that should be immersive, but it is possible to edit and replay cards during the actual game, thus making playing and improving the game a somewhat fluid, single experience.
+
+
+## Notes
+
+A generation card take a seed value and the current context and generates a specific instance card. TODO: make the forest card generate a tilemap. Standardize the tilemap representatioin. Add path-finding so that the forest always has exit points on each side of the map.
