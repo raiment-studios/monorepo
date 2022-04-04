@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCommonStyles, makeUseStyles, useLocalStorage, useAsyncEffect } from '@raiment/react-ex';
-import { generate, makeRNG } from '@raiment/core';
-import { last, cloneDeep, get, clone } from 'lodash';
+import { generate, makeRNG, stringifyYAML } from '@raiment/core';
+import { last, cloneDeep, get, clone, isArray } from 'lodash';
 
 const useGlobalStyles = makeUseStyles({
     '@global': {
@@ -233,31 +233,66 @@ function JournalPanel() {
     return null;
 }
 
+function generateCard(desc, seed = Math.floor(Math.random() * 8192)) {
+    const card = {
+        name: 'Unnamed',
+        type: 'Any',
+    };
+
+    const rng = makeRNG(seed);
+
+    if (desc.name !== undefined) {
+        card.name = desc.name;
+    }
+    if (desc.type !== undefined) {
+        card.type = desc.type;
+    }
+    if (desc.quote !== undefined) {
+        if (_.isArray(desc.quote)) {
+            card.quote = rng.select(desc.quote)
+        }
+    }
+
+    return card;
+}
+
 function GenerationCard({ card }) {
+    const [seed, setSeed] = useLocalStorage('seed-7347h', Math.floor(Math.random() * 8192));
+    const instance = generateCard(card, seed);
+
     return (
         <div
             style={{
                 margin: '2rem auto',
                 width: '62rem',
                 minHeight: '62rem',
+                padding: 8,
                 background: '#333',
                 border: 'solid 1px #555',
                 borderRadius: 8,
             }}
         >
-            <div className="flex-row-center">
-                <div style={{ padding: '8px 8px', fontSize: 24, fontWeight: 600 }}>{card.name}</div>
+            <div style={{ marginBottom: '1rem' }}>
+                <div className="flex-row-center">
+                    <div style={{ fontSize: 24, fontWeight: 600 }}>{card.name}</div>
+                </div>
+                <div style={{ height: 16 }} />
+                <div>This is where general description text of the generation itself goes</div>
             </div>
-            <div className="flex-row" style={{ margin: '2rem' }}>
+            <div className="flex-row">
                 <div
                     style={{
                         flex: '1 0 0',
                     }}
                 >
-                    TODO
+                    <pre>{stringifyYAML(card)}</pre>
                 </div>
+                <div>
+                
+                <pre>{stringifyYAML(instance)}</pre>
+                    </div>
                 <div
-                    className="flex-row"
+                    className="flex-col"
                     style={{
                         flex: '0 0 400px',
                         padding: '2rem 0',
@@ -266,10 +301,21 @@ function GenerationCard({ card }) {
                         borderRadius: 8,
                     }}
                 >
-                    <div style={{ flex: '1 0 0' }} />
-                    <CardFull />
-                    <div style={{ flex: '1 0 0' }} />
+                    <div className="flex-row">
+                        <div style={{ flex: '1 0 0' }} />
+                        <CardFull card={instance} />
+                        <div style={{ flex: '1 0 0' }} />
+                    </div>
+                    <div
+                        style={{
+                            margin: '1rem',
+                        }}
+                    >
+                        <div>Seed {seed}</div>
+                    </div>
                 </div>
+
+                <div style={{ flex: '0 0 2rem' }} />
             </div>
         </div>
     );
@@ -285,6 +331,7 @@ function DeckPanel() {
         const json = await resp.json();
 
         token.check();
+        console.log(json.cards);
         setCards(json.cards);
     });
 
@@ -595,7 +642,7 @@ function Encyclopedia() {
     );
 }
 
-function CardFull() {
+function CardFull({ card }) {
     const image = '/assets/images/galthea-forest.png';
     const imageBrightness = 0.17;
     return (
@@ -746,9 +793,7 @@ function CardFull() {
 function Cards() {
     return (
         <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', padding: '1rem' }}>
-                <CardFull />
-            </div>
+            <div style={{ position: 'absolute', padding: '1rem' }}></div>
         </div>
     );
 }

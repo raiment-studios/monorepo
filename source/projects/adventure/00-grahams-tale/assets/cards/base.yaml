@@ -1,34 +1,38 @@
 cards:
-  - name: Forest
-    type: region
-  - name: Mountains
-    type: region
-  - name: Swamp
-    type: region
-  - name: Marsh
-  - name: Seaside
-  - name: Cliffs
-  - name: Town
-  - name: Kestrel
-  - name: Cedric
-  - name: Logan
-  - name: Farmer
-    type: character
-  - name: Ranger
-    type: character
-  - name: Potion
-    type: item
-  - name: Harp
-    type: item
-  - name: Flower
-  - name: Key
-  - name: Book
-  - name: Spoon
-  - name: Fork
-  - name: Kitchen knife
-  - name: Leather bag
-  - name: Dull dagger
-  - name: Leather pouch
-  - name: Sunglasses
-  - name: Wool hat
-  - name: Crowbar
+    - name: Forest
+      type: region
+      quote:
+          - This place would be a beautiful place for a walk in the afternoon if it weren't for the constant fear of death -- Balistar
+          - Beware of the forest -- Meldoni the Botanist
+          - If you can see the forest from the trees, you're not paying enough attention to your surroundings. -- Timbo Guilode
+    - name: Mountains
+      type: region
+    - name: Swamp
+      type: region
+    - name: Marsh
+    - name: Seaside
+    - name: Cliffs
+    - name: Town
+    - name: Kestrel
+    - name: Cedric
+    - name: Logan
+    - name: Farmer
+      type: character
+    - name: Ranger
+      type: character
+    - name: Potion
+      type: item
+    - name: Harp
+      type: item
+    - name: Flower
+    - name: Key
+    - name: Book
+    - name: Spoon
+    - name: Fork
+    - name: Kitchen knife
+    - name: Leather bag
+    - name: Dull dagger
+    - name: Leather pouch
+    - name: Sunglasses
+    - name: Wool hat
+    - name: Crowbar
