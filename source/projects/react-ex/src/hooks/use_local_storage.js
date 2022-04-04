@@ -13,22 +13,6 @@ export function useLocalStorage(key, initialValue) {
         throw new Error('Incorrect number of arguments');
     }
 
-    // Pass initial state function to useState so logic is only executed once
-    const [storedValue, setStoredValue] = React.useState(() => {
-        try {
-            const item = window.localStorage.getItem(key);
-            if (!item) {
-                return initialValue;
-            }
-            const data = JSON.parse(item);
-            return data.value;
-        } catch (error) {
-            // If error also return initialValue
-            console.log(error);
-            return initialValue;
-        }
-    });
-
     const setValue = (value) => {
         try {
             // Allow value to be a function so we have same API as useState
@@ -40,6 +24,24 @@ export function useLocalStorage(key, initialValue) {
             console.log(error);
         }
     };
+
+    // Pass initial state function to useState so logic is only executed once
+    const [storedValue, setStoredValue] = React.useState(() => {
+        try {
+            const item = window.localStorage.getItem(key);
+            if (!item) {
+                setValue(initialValue)
+                return initialValue;
+            }
+            const data = JSON.parse(item);
+            return data.value;
+        } catch (error) {
+            // If error also return initialValue
+            console.log(error);
+            return initialValue;
+        }
+    });
+
 
     return [storedValue, setValue];
 }

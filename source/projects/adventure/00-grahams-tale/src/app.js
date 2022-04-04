@@ -248,8 +248,8 @@ function generateCard(desc, seed = Math.floor(Math.random() * 8192)) {
         card.type = desc.type;
     }
     if (desc.quote !== undefined) {
-        if (_.isArray(desc.quote)) {
-            card.quote = rng.select(desc.quote)
+        if (isArray(desc.quote)) {
+            card.quote = rng.select(desc.quote);
         }
     }
 
@@ -279,43 +279,46 @@ function GenerationCard({ card }) {
                 <div style={{ height: 16 }} />
                 <div>This is where general description text of the generation itself goes</div>
             </div>
-            <div className="flex-row">
-                <div
-                    style={{
-                        flex: '1 0 0',
-                    }}
-                >
+            <div className="flex-col">
+                <div>
                     <pre>{stringifyYAML(card)}</pre>
                 </div>
-                <div>
-                
-                <pre>{stringifyYAML(instance)}</pre>
-                    </div>
-                <div
-                    className="flex-col"
-                    style={{
-                        flex: '0 0 400px',
-                        padding: '2rem 0',
-                        backgroundColor: 'rgba(0,0,0,.5)',
-                        border: 'solid 1px rgba(255, 255, 255, .1)',
-                        borderRadius: 8,
-                    }}
-                >
-                    <div className="flex-row">
-                        <div style={{ flex: '1 0 0' }} />
-                        <CardFull card={instance} />
-                        <div style={{ flex: '1 0 0' }} />
+                <div className="flex-row">
+                    <div style={{ flex: '1 0 0' }}>
+                        <pre>{stringifyYAML(instance)}</pre>
                     </div>
                     <div
                         style={{
-                            margin: '1rem',
+                            padding: '2rem',
+                            minWidth: '300px',
+                            backgroundColor: 'rgba(0,0,0,.5)',
+                            border: 'solid 1px rgba(255, 255, 255, .1)',
+                            borderRadius: 8,
                         }}
                     >
-                        <div>Seed {seed}</div>
+                        <div
+                            className="flex-col"
+                            style={{
+                                flex: '0 0 400px',
+                            }}
+                        >
+                            <div className="flex-row">
+                                <div style={{ flex: '1 0 0' }} />
+                                <CardFull card={instance} />
+                                <div style={{ flex: '1 0 0' }} />
+                            </div>
+                            <div
+                                style={{
+                                    margin: '1rem 0',
+                                }}
+                            >
+                                <div>Seed {seed}</div>
+                            </div>
+                        </div>
+
+                        <div style={{ flex: '0 0 1rem' }} />
                     </div>
                 </div>
-
-                <div style={{ flex: '0 0 2rem' }} />
             </div>
         </div>
     );
@@ -645,6 +648,15 @@ function Encyclopedia() {
 function CardFull({ card }) {
     const image = '/assets/images/galthea-forest.png';
     const imageBrightness = 0.17;
+
+    let quote = card.quote;
+    if (quote) {
+        if (quote.match(/--/)) {
+            const p = quote.split(/--/);
+            quote = `“${p[0].trim()}” — ${p[1].trim()}`;
+        }
+    }
+
     return (
         <div
             className="flex-col serif"
@@ -760,10 +772,9 @@ function CardFull({ card }) {
                         border: 'solid 1px rgba(127, 127, 127, 0.85)',
                     }}
                 >
-                    <div style={{ marginBottom: '0.75rem', fontStyle: 'italic' }}>
-                        "This place would be a beautiful place for a walk in the afternoon if it
-                        weren't for the constant fear of death."
-                    </div>
+                    {quote && (
+                        <div style={{ marginBottom: '0.75rem', fontStyle: 'italic' }}>{quote}</div>
+                    )}
                     <div>
                         A typical stretch of forest in Galthea: warm, pleasant, and haunted with the
                         ever-present danger of the Maelstrom.
