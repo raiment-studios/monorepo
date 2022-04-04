@@ -13,24 +13,14 @@ export function useLocalStorage(key, initialValue) {
         throw new Error('Incorrect number of arguments');
     }
 
-    const setValue = (value) => {
-        try {
-            // Allow value to be a function so we have same API as useState
-            const valueToStore = value instanceof Function ? value(storedValue) : value;
-            setStoredValue(valueToStore);
-
-            window.localStorage.setItem(key, JSON.stringify({ value: valueToStore }));
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     // Pass initial state function to useState so logic is only executed once
     const [storedValue, setStoredValue] = React.useState(() => {
         try {
             const item = window.localStorage.getItem(key);
             if (!item) {
-                setValue(initialValue)
+                const valueToStore =
+                    initialValue instanceof Function ? value(storedValue) : initialValue;
+                window.localStorage.setItem(key, JSON.stringify({ value: valueToStore }));
                 return initialValue;
             }
             const data = JSON.parse(item);
@@ -42,6 +32,17 @@ export function useLocalStorage(key, initialValue) {
         }
     });
 
+    const setValue = (value) => {
+        try {
+            // Allow value to be a function so we have same API as useState
+            const valueToStore = value instanceof Function ? value(storedValue) : value;
+            setStoredValue(valueToStore);
+
+            window.localStorage.setItem(key, JSON.stringify({ value: valueToStore }));
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return [storedValue, setValue];
 }
