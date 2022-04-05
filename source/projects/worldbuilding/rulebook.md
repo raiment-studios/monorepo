@@ -4,6 +4,29 @@
 ![](https://img.shields.io/badge/version-v0.1.0-930)
 [![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
 
+## Objective
+
+The player takes on the role of Kestrel who is searching to find, Tristan, her creator. The game is set in world of Galthea, a massive world haunted by the cosmic force known as the Maelstrom which creates shifts in time, history, and reality.
+
+## Gameplay
+
+The game is a deck-based game: as Kestrel explores the world, new cards are drawn to define the world, people, politics, and relationships that determine Kestrel uncovers. This creates a new story of Kestrel's adventure for each playthrough. Previous plays can optionally be used to seed the new playthrough creating new evolving variations of the world.
+
+### Winning the game
+
+The game ends when one of three things happens: Kestrel discovers find Tristan, Kestrel is defeated by her environment or enemies, the world itself ends.  
+
+Raiment is a story-based game. Defeating a number of monsters or scoring a number of points is not the purpose of the game.  The purpose of is to create an interesting story. 
+
+Another form of success is that a playthrough creates a story that is interesting enough that the player wants to contribute more to the world of Raiment and thus expand the game itself for future players.
+
+(In digitally run versions of the game, the **Story** is an artifact that is saved and can be shared when the game ends. Different people can then compare to see how variations of the game played out.)
+
+## Theme
+
+
+
+
 ## Games
 
 A game is defined by the **Deck** and the **Starting Card**.

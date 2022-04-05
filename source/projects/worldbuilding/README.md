@@ -7,6 +7,12 @@
 _These notes are not yet very organized!_
 
 
+* [Rulebook](rulebook.md)
+
+## Principles
+
+* Favor creation over destruction: building, exploration, addition, etc. should be more part of the world than destruction or combat 
+
 ## Roadmap
 
 ### March 2022: Thoughts on the roadmap
