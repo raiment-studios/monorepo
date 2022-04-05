@@ -19,8 +19,7 @@ Raiment Studios is creating an open source world designed to be enjoyable and ea
 Work is categorized into the following projects:
 
 * [**Organization**](source/projects/organization) - how we work: consistent processes aimed to make communications & decisions clear
-* [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel
-* [**Rulebook**](source/projects/rulebook) - written core rulebook for games set in the world Kestrel
+* [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel, including a rulebook, concept art, etc.
 * [**Storytelling**](source/projects/storytelling) - computer-aided, "pen & paper" solo storytelling rpg ([demo](https://storytelling.raiment.studio/))
 * [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
     * Milestone 1: [Graham's Quest](https://grahams-quest.raiment.studio/)
