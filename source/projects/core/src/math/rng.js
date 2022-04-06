@@ -76,16 +76,51 @@ class RNG {
 
     // -- Arrays ----------------------------------------------------------- //
 
-    select(arr, weightFunc, count) {
-        if (typeof weightFunc === 'function') {
-            return this._selectWeighted(arr, weightFunc);
+    select(arr, count, weightFunc) {
+        //
+        // Normalize based on arguments
+        //
+        if (arguments.length === 1) {
+            count = 1;
+        } else if (arguments.length === 2) {
+            if (typeof count === 'function') {
+                weightFunc = count;
+                count = 1;
+            }
         }
 
-        const i = Math.floor(this.random() * arr.length);
-        return arr[i];
+        //
+        // Handle different cases
+        //
+        if (count === 1) {
+            if (!weightFunc) {
+                const i = Math.floor(this.random() * arr.length);
+                return arr[i];
+            } else {
+                const i = this._selectWeightedIndex(arr, weightFunc);
+                return arr[i];
+            }
+        } else {
+            const b = [...arr];
+            const results = [];
+
+            while (count > 0 && b.length > 0) {
+                let i;
+                if (!weightFunc) {
+                    i = Math.floor(this.random() * b.length);
+                } else {
+                    i = this._selectWeightedIndex(b, weightFunc);
+                }
+                const t = b[i];
+                b[i] = b[b.length - 1];
+                b.pop();
+                results.push(t);
+            }
+            return results;
+        }
     }
 
-    _selectWeighted(arr, cb) {
+    _selectWeightedIndex(arr, cb) {
         let sum = 0;
         let tally = new Array(arr.length);
         for (let i = 0; i < arr.length; i++) {
@@ -99,7 +134,7 @@ class RNG {
         const roll = this.range(0, sum);
         for (let i = 0; i < arr.length; i++) {
             if (roll < tally[i]) {
-                return arr[i];
+                return i;
             }
         }
         throw new Error('RUNTIME_ERROR: Index out of range');

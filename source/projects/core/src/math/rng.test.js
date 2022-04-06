@@ -39,4 +39,34 @@ describe('random number generator (RNG)', () => {
             }
         });
     });
+
+    describe('select', () => {
+        it('should return a single value when passed an array', () => {
+            const rng = makeRNG();
+            const r = rng.select([1, 2, 3]);
+            expect(typeof r).toBe('number');
+        });
+        it('should return an array when passed an array and count', () => {
+            const rng = makeRNG();
+            const r = rng.select([1, 2, 3], 3);
+            expect(r.length).toBe(3);
+            expect(typeof r[0]).toBe('number');
+            expect(typeof r[1]).toBe('number');
+            expect(typeof r[2]).toBe('number');
+        });
+        it('should return a single value when passed an array and weight function', () => {
+            const rng = makeRNG();
+            const r = rng.select([1, 2, 3], (w) => w);
+            expect(typeof r).toBe('number');
+        });
+
+        it('should return an array when passed an array, count, and weight function', () => {
+            const rng = makeRNG();
+            const r = rng.select([1, 2, 3], 3, (w) => w);
+            expect(r.length).toBe(3);
+            expect(typeof r[0]).toBe('number');
+            expect(typeof r[1]).toBe('number');
+            expect(typeof r[2]).toBe('number');
+        });
+    });
 });

@@ -5,4 +5,4 @@ build-pack:
 	cd dist && npm pack ..
 
 test:
-	npx jest .
+	npx jest --verbose .
