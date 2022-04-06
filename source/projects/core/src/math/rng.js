@@ -35,6 +35,10 @@ class RNG {
         return this._rng.random();
     }
 
+    bool() {
+        return this._rng.random() < 0.5 ? false : true;
+    }
+
     int31() {
         return this._rng.random_int31();
     }

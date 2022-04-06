@@ -1,0 +1,7 @@
+{
+    "transform": {
+        "^.+\\.js?$": [ "esbuild-jest", {
+            "sourcemap": "inline"
+        }]
+    }
+}
