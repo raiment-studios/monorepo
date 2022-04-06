@@ -1,10 +1,10 @@
 # Raiment Studios monorepo (WIP)
 
 ![](https://img.shields.io/badge/status-pre--alpha-c44)
-![](https://img.shields.io/badge/license-MIT-039) 
 ![unit tests](https://github.com/raiment-studios/monorepo/actions/workflows/unit-test.yml/badge.svg)
-[![](https://img.shields.io/badge/chat-zulip-73a)](https://raiment-studios.zulipchat.com/)
-[![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
+![](https://img.shields.io/badge/license-MIT-039)
+[![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
+[![](https://img.shields.io/badge/chat-zulip-36c)](https://raiment-studios.zulipchat.com/)
 
 ## What is the "Raiment"?
 
