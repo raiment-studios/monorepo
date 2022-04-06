@@ -59,7 +59,7 @@ class RNG {
     // -- Strings ---------------------------------------------------------- //
 
     _s4() {
-        return Math.floor(this.real() * 0x10000)
+        return Math.floor(this.random() * 0x10000)
             .toString(16)
             .substring(1);
     }
