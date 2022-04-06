@@ -52,6 +52,18 @@ describe('random number generator (RNG)', () => {
         });
     });
 
+    describe('uuid', () => {
+        it('should generate strings', () => {
+            for (let i = 0; i < 10; i++) {
+                const rng = makeRNG(Math.floor(Math.random() * 1e6));
+                for (let j = 0; j < 50; j++) {
+                    const value = rng.uuid();
+                    expect(typeof value).toBe('string');
+                }
+            }
+        });
+    });
+
     describe('select', () => {
         it('should return a single value when passed an array', () => {
             const rng = makeRNG();
