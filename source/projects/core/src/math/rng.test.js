@@ -27,6 +27,18 @@ describe('random number generator (RNG)', () => {
         });
     });
 
+    describe('range', () => {
+        it('should generate numbers in the [0, N) range', () => {
+            for (let i = 0; i < 10; i++) {
+                const rng = makeRNG(Math.floor(Math.random() * 1e6));
+                for (let j = 0; j < 1000; j++) {
+                    const value = rng.rangei(0, 1000);
+                    expect(value >= 0 && value < 1000).toBe(true);
+                }
+            }
+        });
+    });
+
     describe('rangei', () => {
         it('should generate numbers in the [0, N) range', () => {
             for (let i = 0; i < 10; i++) {
@@ -67,6 +79,24 @@ describe('random number generator (RNG)', () => {
             expect(typeof r[0]).toBe('number');
             expect(typeof r[1]).toBe('number');
             expect(typeof r[2]).toBe('number');
+        });
+
+        it('should return undefined when passed any empty array', () => {
+            const rng = makeRNG();
+            const r = rng.select([]);
+            expect(r).toBe(undefined);
+        });
+
+        it('should return the full array when the count is greater than the array length', () => {
+            const rng = makeRNG();
+            const r = rng.select([1, 2, 3], 10);
+            expect(r.length).toBe(3);
+        });
+
+        it('should return the full array when the count is greater than the array length', () => {
+            const rng = makeRNG();
+            const r = rng.select([1, 2, 3], 10, (w) => w);
+            expect(r.length).toBe(3);
         });
     });
 });
