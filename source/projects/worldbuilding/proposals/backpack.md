@@ -1,4 +1,4 @@
-Feature proposal
+# Feature proposal
 
 When leaving a city or safe zone, the player can equip a pre-defined pack. 
 
