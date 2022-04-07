@@ -11,10 +11,13 @@ Interactions are always player initiated.  They are described as imperative stat
 
 Common interactions 
 
-* ASK property
+* ASK topic
     * NAME
+    * LOCATION
 * BUY / BARTER FOR item
 * FIGHT
+* GIVE item
+* STEAL item
 
 
 _🛈 Note: each playthrough of Raiment is not necessarily "winnable" in the sense that players can take actions that, be taking them, make it impossible for the player to find Tristan.  For example, players have the freedom to "fight" every character they meet and even if they "win" each fight, in doing so, either kill or earn the distrust of characters who have player needs the help of to find Tristan._
