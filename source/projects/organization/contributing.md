@@ -10,6 +10,18 @@
 
 This project attempts to make GitHub codespaces a trivial way to make contributsions to the project.
 
+## Environment
+
+To reduce the amount of time spent on environment and tooling setup, the "officially" supported development environment is to work with the monorepo from a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). 
+
+## Directory structure
+
+* `deploy` - publishing & deploying
+* `source`
+    * `projects`
+    * `lib`
+    * `sandbox`
+
 ## Type of contributions
 
 ### Content
