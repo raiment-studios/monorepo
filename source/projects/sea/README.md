@@ -10,6 +10,14 @@ The overall goal is to produce a tool that makes working on Raiment simple, cons
 
 What this may mean...
 
+* A build tool
+* A code sandbox
+* A static site generator
+* A content management system
+* A wiki
+* A project manager
+* A deployment tool
+
 A build tool that hides all the complexity of distributed systems tooling, from Terraform to eslint to WASM to Kubernetes to CRUD.  In practice, Sea may end up being a front-end to encapsulate the tooling and options on many of these other tools: thus trading some of their flexibility for simplicity by conforming the tools to specifics for the Raiment project.
 
 A programming language similar to Rust but with first-class support for a garbage-collected variant type.
