@@ -9,3 +9,4 @@ Every project should have a `Makefile` that defines the following commands that 
 * `test`
 * `benchmark`
 * `publish`
+

@@ -20,6 +20,7 @@ By having written principles, these are intended to make behaviors more _objecti
 1. [Gitops driven](#gitops-driven)
 1. [Proactively ask for questions](#proactively-ask-for-questions)
 1. [Try to always explain why](#try-to-always-explain-why)
+1. [Other potential principles](#other-potential-principles)
 
 <!-- /TOC -->
 
@@ -155,3 +156,6 @@ The motivation and the intent are most important and, generally, convey more inf
 
 
 
+## Other potential principles
+
+* No surprises - boring & expected is good when collaborating with a distributed group :)
