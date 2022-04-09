@@ -25,18 +25,19 @@ Work is categorized into the following projects:
 
 * [**Organization**](source/projects/organization) - how we work: consistent processes aimed to make communications & decisions clear
 * [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel, including a rulebook, concept art, etc.
-* [**Storytelling**](source/projects/storytelling) - computer-aided, "pen & paper" solo storytelling rpg ([demo](https://storytelling.raiment.studio/))
 * [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
     * Milestone 1: [Graham's Quest](https://grahams-quest.raiment.studio/)
     * Milestone 2: TBD
     * Milestone 3: TBD
     * Milestone 4: TBD
-* [**Sea**](source/projects/project) - a opinionated mix of compiler, wiki, CMS, and project manager ([demo](https://project.raiment.studio/))
-* **Marketing** - the public website and material designed to encourage participation
+* [**Storytelling**](source/projects/storytelling) - computer-aided, "pen & paper" solo storytelling rpg ([demo](https://storytelling.raiment.studio/))
 * **Libraries**
     * [**Core**](source/lib/core) - general utilities used across projects
     * [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
     * [**React-Ex**](source/lib/react-ex) - React utilities & extensions used across projects
+* [**Sea**](source/projects/project) - a opinionated mix of compiler, wiki, CMS, and project manager ([demo](https://project.raiment.studio/))
+* **Marketing** - the public website and material designed to encourage participation
+
 
 ## Technology
 
