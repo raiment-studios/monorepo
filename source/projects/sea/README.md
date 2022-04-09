@@ -2,7 +2,15 @@
 
 At the moment, Sea is a loosely formed idea that needs more definition...
 
-A build tool that hides all the complexity of distributed systems tooling, from Terraform to eslint to WASM to Kubernetes to CRUD.
+The overall goal is to produce a tool that makes working on Raiment simple, consistent, and easy.  It should focus on:
+
+* Encouraging incremental, iterative development 
+* Ensuring consistency of conventions
+* Allowing content as well as code contributions & refinements
+
+What this may mean...
+
+A build tool that hides all the complexity of distributed systems tooling, from Terraform to eslint to WASM to Kubernetes to CRUD.  In practice, Sea may end up being a front-end to encapsulate the tooling and options on many of these other tools: thus trading some of their flexibility for simplicity by conforming the tools to specifics for the Raiment project.
 
 A programming language similar to Rust but with first-class support for a garbage-collected variant type.
 
@@ -12,6 +20,5 @@ Supports running locally, running remotely, running a combination of local & rem
 
 Separation of data from interfaces for manipulating, accessing, and viewing that data.
 
----
 
 
