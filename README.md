@@ -8,7 +8,7 @@
 
 ## What is the Raiment?
 
-**Raiment is a Daggerfall-like game set in a voxel-based world that is designed to be enjoyable and easy to contribute to.** 
+**Raiment is a procedural, open world game: think Daggerfall set in a voxel-based world. It is designed specifically to be equally enjoyable to play as it is to contribute to.** 
 
 https://user-images.githubusercontent.com/65878718/162589896-58fd3b08-50e6-49df-ac4d-e45653a95dbb.mp4
 
