@@ -21,4 +21,12 @@ Supports running locally, running remotely, running a combination of local & rem
 Separation of data from interfaces for manipulating, accessing, and viewing that data.
 
 
+---
+
+## ⛈️ Use case brainstorming ⛈️
+
+- [ ] Source file only projects with single target config file
+- [ ] Update README with table of contents
+- [ ] Check Markdown files for broken links
+
 
