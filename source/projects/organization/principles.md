@@ -1,13 +1,15 @@
 # Principles
 
+_Status: Work-in-progress document_
 
-![](https://img.shields.io/badge/status-draft-930) 
-![](https://img.shields.io/badge/version-v0.1.0-930)
-[![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
+- [ ] Fewer, more concise principles
+- [ ] Split out Values
+- [ ] Split out Engineering Principles
+
 
 The company **Principles** are the general guidelines for how work is done as part of the company. 
 
-By having written principles, these are intended to make behaviors more _objective_ and _consistent_.  It should always be okay to politely ask someone to adhere to the company principles to encourage this consistency and objectivity.
+By having written principles, these are intended to make behaviors more _objective_ and _consistent_.  It should _always be okay to politely ask someone to adhere to the company principles_ to encourage this consistency and objectivity.
 
 <!-- TOC depthfrom:2 orderedlist:false withlinks:true bulletcharacter:1. -->
 
@@ -16,54 +18,52 @@ By having written principles, these are intended to make behaviors more _objecti
 1. [Consistent, structured processes](#consistent-structured-processes)
 1. [Straightforward rather than clever](#straightforward-rather-than-clever)
 1. [Gitops driven](#gitops-driven)
-1. [Always ask for questions](#always-ask-for-questions)
-1. [Always explain why](#always-explain-why)
+1. [Proactively ask for questions](#proactively-ask-for-questions)
+1. [Try to always explain why](#try-to-always-explain-why)
 
 <!-- /TOC -->
 
 ## People first
 
-Individuals are and will always be more important than any particular project work, implementation detail, decision, innovation, mistake, disagreement, success, or anything else that comes up as part of this work.  That principle _must always be followed_.  If you do not agree with this principle, this project will be frustrated for you.
+Individuals are and will always be more important than any particular project work, implementation detail, decision, technology, innovation, mistake, disagreement, success, or anything else that comes up as part of this work.  That principle _must always be followed_.  If you do not agree with this principle, this project will likely be frustrating for you.  The Raiment Studios community always puts people first.
 
 The primary goal of the company is to create an environment that is inspiring, safe, and encouraging. Contributions and learning should feel easy within this group.
 
+**Potential benefits of this principle**
 
-**Upsides**
+* Our focus is on the work, not individuals ego or opinions
+* The work itself is more enjoyable, not just the products of that work
 
-* Our focus is on the work, not ego or opinions irrelevant to the actual project
-
-**Risks**
+**Potential risks**
 
 * Overly cautious behavior prevents direct, efficient discussions
+* Decision-making stalls due to a incorrectly preceived need for universal approval 
 * Policing of behaviors creates an exclusionist group of contributors
+* This principle is misinterpreted as 
 
+**Example behaviors**
 
-**⚠️TODO**
+* Code review comments should reference the code, not the code author
 
-* [ ] Split out into a Values page?
 
 
 ## Show don't tell
 
 Rapid prototying, mocks, and demonstration branches are preferred over long documents.  This principle is intended to balance [Consistent, Structured Processes](#consistent-structured-processes) so that process does not _reduce_ efficiency.
 
-**Upsides**
+**Potential benefits**
 
-**Risks**
+* Less documentation and written documentation ("an example is worth a thousand words")
 
-**Examples**
+**Potential risks**
 
-* Protoypes and mini-demos
-* Proposals including sketches
-* Proposals including similar examples from other existing external work
 
-**Pitfalls**
+**Examples behavoirs**
 
-* "Take my word for it"
+* Creating protoypes and mini-demos in place of proposal docs
+* Including sketches and visuals in proposals
+* Referencing existing works that examplify what is being described
 
-**Notes**
-
-* This principle is part of the rationale for the [Wiki](/source/projects//wiki) is considered in-scope for the Raiment project. We want to ensure rapid prototyping that can utilize other assets within the project can be done in a straightforward manner.
 
 ## Consistent, structured processes
 
@@ -71,52 +71,87 @@ Any _non-trivial_ work should follow the same standard set of steps from introdu
 
 Consistent processes should be thought of as "work patterns" (in the "design patterns" sense). 
 
-**Examples**
-
-* Templates & prototypes (in the "copy from an existing example" sense)
-* Self review checkiists
-* Peer review checklists
-
-**Upsides**
+**Potential benefits**
 
 * Low-overhead, efficienct communication
 
-**Risks**
+**Potential risks**
 
 * More rocess overhead than "actual work"
 * Constraints on flexibility or innovation
 * Process before purpose
 
+**Example behaviors**
+
+* Templates & prototypes (in the "copy from an existing example" sense)
+* Self review checkiists
+* Peer review checklists
+
+
 ## Straightforward rather than clever
 
 For iternal work (as opposed to in-game, in-story, marketing, or other contexts), be straightforward and descriptive rather than interesting and unique in choosing names or approaches. This increases understanding and makes for more efficient communication.  The goal of the project is creative _output_ so ensure the creativity is directed at the final product rather than the inner workings.
 
-**Examples**
+**Potential benefits**
 
-**Pitfalls**
+* TODO
 
-* Clever or cute project, service, library names - describe what they do instead. Clever names, while fun, force new contributors to learn new terminology whereas more "boring" but obvious names immediately give them a hint as to purpose of a thing
+**Potential risks**
+
+* TODO
+
+**Example behaviors**
+
+
+* Instead of clever or cute project, service, library names - describe what they do instead. This may feel "less fun" but communicates the purpose of something to new users more immediately.  Save the fun for the content!
 
 ## Gitops driven
 
 Changes should be document with revision history and stored in a single repository.  
 
-**Examples**
 
-**Pitfalls**
+**Potential benefits**
 
-**Upsides**
+* TODO
 
-**Risks**
+**Potential risks**
 
-**Notes**
+* TODO
 
-## Always ask for questions
+**Example behaviors**
 
-## Always explain why
+* TODO
 
-The motivation and the intent are the most important.
 
+## Proactively ask for questions
+
+**Potential benefits**
+
+* TODO
+
+**Potential risks**
+
+* TODO
+
+**Example behaviors**
+
+* TODO
+
+## Try to always explain why
+
+The motivation and the intent are most important and, generally, convey more information to the audience.
+
+**Potential benefits**
+
+* TODO
+
+**Potential risks**
+
+* TODO
+
+**Example behaviors**
+
+* TODO
 
 
 

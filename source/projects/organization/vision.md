@@ -1,15 +1,11 @@
 # Vision
 
-![](https://img.shields.io/badge/status-draft-930) 
-![](https://img.shields.io/badge/version-v0.1.0-930)
-[![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
-
-_The "vision" of an organization can have a lot of different defintiions. Here we define it as optimistic look into the future where the organization has been extremely successful: what does that world look like? What has this organization created? This should be an inspiring and lasting statement that will speak to a variety of projects taken on within the organization.  This should complement and set context for the mission, design goals, and principles the organization follows._
+_The "vision" of an organization can have a lot of different defintions. Here we define it as optimistic look into the future where the organization has been extremely successful: what does that world look like? What has this organization created? This should be an inspiring and lasting statement that will speak to a variety of projects taken on within the organization over the years. This should complement and set context for the mission, design goals, and principles the organization follows._
 
 
 ## Vision
 
-Create an imaginary universe akin to that of the Lord of the Rings, Star Wars, Pathfinder that is entirely open source and without restrictive license so anyone can use it as a basis for any work they want to do.  Accompany this with content that can used directly.
+Create an imaginary universe akin to that of the Lord of the Rings, Star Wars, Pathfinder that is entirely open source and without restrictive license so anyone can use it as a basis for any work they want to do. Provide just enough guidelines to ensure self-consistency in the fictional content and provide plenty of freedom in how that content is used. 
 
 Organize this open content into a unified, self-consistent, versioned "distribution" so the world feels consistent and compelling - not merely a collection of contributions.  As it is open source, others are welcome to fork the content and create their own distributions - not unlike the way Linux distributions work.  And of course, packs of additional content outside the main distribution can always be used.
 
