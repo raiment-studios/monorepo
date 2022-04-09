@@ -25,6 +25,9 @@ dircolors -p | sed 's/;42/;01/' > ~/.dircolors
 # Ensure rust is set up
 source $HOME/.cargo/env
 
+# This is probably *NOT* a best practice, but I always forget to pull the lfs
+# data when starting a new environment and this hasn't had any negative side-effects
+# on my workflow yet.
 git lfs install
 git lfs fetch
 git lfs pull
@@ -73,26 +76,28 @@ function __shortcut_cmd {
     case "$2" in
     "")       $1 $MONOREPO_ROOT ;;
     /)        $1 $MONOREPO_ROOT ;;
-    co*)      $1 $MONOREPO_ROOT/source/projects/core ;;
-    pr*)      $1 $MONOREPO_ROOT/source/projects/project ;;
+    co*)      $1 $MONOREPO_ROOT/source/lib/core ;;
+    se*)      $1 $MONOREPO_ROOT/source/projects/sea ;;
     st*)      $1 $MONOREPO_ROOT/source/projects/storytelling ;;
     gr*)      $1 $MONOREPO_ROOT/source/projects/adventure/00-grahams-tale ;;
     *)        $1 $MONOREPO_ROOT ;;
     esac
 }
 
+# rc = Raiment Change Directory
+# an alias to make jumping between directories easier.
 function rcd {
     __shortcut_cmd "cd" $1 
 }
 
-#  Convenience aliases
+# gs = git status
+# ...since git status is used a lot!
 alias gs='git status'
 
 # gcap = git commit and pull from the root of the repo
 #
 # This is a convenience for early, solo development (where reviews are not
-# yet taking place).
-#
+# yet taking place). This should be removed once the project is more stable.
 function gcap {
     local arg=$*
     local message="${arg:=update}"
