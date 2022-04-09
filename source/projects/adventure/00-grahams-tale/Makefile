@@ -11,7 +11,7 @@ else
 BUILD_FLAGS += --define:DEVELOPMENT_MODE=0 --minify
 endif
 
-LIB_DIR = $(MONOREPO_ROOT)/source/projects
+DIR_LIB = $(MONOREPO_ROOT)/source/lib
 
 ###############################################################################
 # Targets
@@ -30,14 +30,14 @@ clean:
 #
 .PHONY: ensure
 ensure:
-	make -C $(LIB_DIR)/core build-pack
-	make -C $(LIB_DIR)/react-ex build-pack
+	make -C $(DIR_LIB)/core build-pack
+	make -C $(DIR_LIB)/react-ex build-pack
 	npm i
 ensure-deps:
 	npm cache clean --force
-	make -C $(LIB_DIR)/core build-pack
+	make -C $(DIR_LIB)/core build-pack
 	npm install @raiment/core
-	make -C $(LIB_DIR)/react-ex build-pack
+	make -C $(DIR_LIB)/react-ex build-pack
 	npm install @raiment/react-ex
 
 
@@ -91,13 +91,13 @@ dev-watch-assets:
 
 dev-watch-react-ex:
 	npx nodemon -q \
-		--watch ""$(LIB_DIR)/react-ex/src/**/*" \
-		--exec "make -C $(LIB_DIR)/react-ex build-pack && npm i @raiment/react-ex && DEVELOPMENT_MODE=1 make build"
+		--watch ""$(DIR_LIB)/react-ex/src/**/*" \
+		--exec "make -C $(DIR_LIB)/react-ex build-pack && npm i @raiment/react-ex && DEVELOPMENT_MODE=1 make build"
 
 dev-watch-core:
 	npx nodemon -q \
-		--watch "$(LIB_DIR)/core/src/**/*" \
-		--exec "make -C $(LIB_DIR)/core build-pack && npm i @raiment/core && DEVELOPMENT_MODE=1 make build"
+		--watch "$(DIR_LIB)/core/src/**/*" \
+		--exec "make -C $(DIR_LIB)/core build-pack && npm i @raiment/core && DEVELOPMENT_MODE=1 make build"
 
 #
 # test

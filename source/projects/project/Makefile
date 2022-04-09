@@ -65,12 +65,12 @@ dev-watch:
 
 dev-watch-react-ex:
 	npx nodemon -q \
-		--watch "$(MONOREPO_ROOT)/source/projects/react-ex/src/**/*" \
+		--watch "$(MONOREPO_ROOT)/source/lib/react-ex/src/**/*" \
 		--exec "make -C ../react-ex build-pack && npm i @raiment/react-ex && DEVELOPMENT_MODE=1 make build"
 
 dev-watch-core:
 	npx nodemon -q \
-		--watch "$(MONOREPO_ROOT)/source/projects/core/src/**/*" \
+		--watch "$(MONOREPO_ROOT)/source/lib/core/src/**/*" \
 		--exec "make -C ../core build-pack && npm i @raiment/core && DEVELOPMENT_MODE=1 make build"
 
 #
