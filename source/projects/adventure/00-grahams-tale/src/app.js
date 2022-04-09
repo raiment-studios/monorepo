@@ -131,9 +131,57 @@ function Map() {
     );
 }
 
+const defaultAppState = {
+    player: {
+        position: {
+            x: 5,
+            y: 4,
+        },
+    },
+};
+
 export function App() {
+    const [appState, setAppState] = React.useState(defaultAppState);
+
     useCommonStyles();
     useGlobalStyles();
+
+    const handlers = {
+        keydown: (evt) => {
+            // Defer to an active element if there is one
+            if (!!document.activeElement && document.activeElement !== document.body) {
+                return;
+            }
+            evt.preventDefault();
+            evt.stopPropagation();
+
+            const { player } = appState;
+            if (evt.key === 'w') {
+                player.position.y += 1;
+            } else if (evt.key === 's') {
+                player.position.y -= 1;
+            } else if (evt.key === 'a') {
+                player.position.x -= 1;
+            } else if (evt.key === 'd') {
+                player.position.x += 1;
+            } else {
+                console.log(evt.key);
+            }
+
+            setAppState(clone(appState));
+        },
+    };
+
+    React.useEffect(() => {
+        for (let [name, handler] of Object.entries(handlers)) {
+            window.addEventListener(name, handler);
+        }
+        return () => {
+            for (let [name, handler] of Object.entries(handlers)) {
+                window.removeEventListener(name, handler);
+            }
+        };
+    });
 
     return (
         <div className="flex-col" style={{ flex: '1 0 0' }}>
@@ -159,16 +207,24 @@ export function App() {
                     <div style={{}}>
                         <Cards />
                     </div>
-                    <div>
-                        Time of day
-                        <br />
-                        Weather
-                        <br />
-                    </div>
+                    <Conditions appState={appState} />
                     <div style={{ flex: '1 0 0' }}>free space</div>
                 </div>
             </div>
             <Panel />
+        </div>
+    );
+}
+
+function Conditions({ appState }) {
+    return (
+        <div>
+            Time of day
+            <br />
+            Weather
+            <br />
+            Position: {appState.player.position.x}, {appState.player.position.y}
+            <br />
         </div>
     );
 }
