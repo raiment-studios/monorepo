@@ -27,13 +27,13 @@ _The Raiment uses a deck-based approach to procedurally create the world. Users 
 
 Work is categorized into the following projects:
 
-* [**Organization**](source/projects/organization) - how we work: consistent processes aimed to make communications & decisions clear
+* [**Organization**](source/projects/organization) - guidelines on how we work aimed to make contributions easier
 * [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel, including a rulebook, concept art, etc.
 * [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
     * Milestone 1: [Graham's Quest](https://grahams-quest.raiment.studio/) - a simple 2D implementation
-    * Milestone 2: TBD - a 2.5D/3D voxel-based world
-    * Milestone 3: TBD - a fully dynamic 3D voxel-based world
-    * Milestone 4: TBD - multiplayer
+    * Milestone 2: Name TBD - a 2.5D/3D voxel-based world
+    * Milestone 3: Name TBD - a fully dynamic 3D voxel-based world
+    * Milestone 4: Name TBD - multiplayer
 * [**Storytelling**](source/projects/storytelling) - computer-aided "pen & paper" solo storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
 * **Libraries**
     * [**Core**](source/lib/core) - general utilities used across projects
