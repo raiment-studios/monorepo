@@ -36,9 +36,9 @@ Work is categorized into the following projects:
 * **Build** - build tool used to simplify and enforce the organizational conventions
 * **Marketing** - the public website and material designed to encourage participation
 * **Libraries**
-    * [**Core**](source/projects/core) - general utilities used across projects
-    * [**Engine**](source/projects/engine) - the game engine tailored to Raiment's voxel world
-    * [**React-Ex**](source/projects/react-ex) - React utilities & extensions used across projects
+    * [**Core**](source/lib/core) - general utilities used across projects
+    * [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
+    * [**React-Ex**](source/lib/react-ex) - React utilities & extensions used across projects
 
 ## Technology
 
