@@ -2,6 +2,7 @@ import React from 'react';
 import { useCommonStyles, makeUseStyles, useLocalStorage, useAsyncEffect } from '@raiment/react-ex';
 import { generate, makeRNG, stringifyYAML } from '@raiment/core';
 import { last, cloneDeep, get, clone, isArray } from 'lodash';
+import { Game } from './game';
 
 const useGlobalStyles = makeUseStyles({
     '@global': {
@@ -67,43 +68,46 @@ const areas = {
     },
 };
 
-function Map() {
+function Map({ game, round }) {
     const refCanvas = React.useRef(null);
 
-    useAsyncEffect(async (token) => {
-        const canvas = refCanvas.current;
+    useAsyncEffect(
+        async (token) => {
+            const canvas = refCanvas.current;
 
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
 
-        const img = await loadImage('/assets/tiles/colored-transparent_packed.png');
-        token.check();
+            const img = await loadImage('/assets/tiles/colored-transparent_packed.png');
+            token.check();
 
-        function drawTile(tile, tx, ty) {
-            const sx = tile.offset[0] * 16;
-            const sy = tile.offset[1] * 16;
-            ctx.globalAlpha = tile.alpha || 1.0;
-            ctx.drawImage(img, sx, sy, 16, 16, tx * 32, ty * 32, 32, 32);
-            ctx.globalAlpha = 1.0;
-        }
-
-        ctx.fillStyle = '#033';
-        ctx.fillRect(0, 0, 640, 640);
-
-        for (let ty = 0; ty < 20; ty++) {
-            for (let tx = 0; tx < 20; tx++) {
-                drawTile(tiles.grass, tx, ty);
+            function drawTile(tile, tx, ty) {
+                const sx = tile.offset[0] * 16;
+                const sy = tile.offset[1] * 16;
+                ctx.globalAlpha = tile.alpha || 1.0;
+                ctx.drawImage(img, sx, sy, 16, 16, tx * 32, ty * 32, 32, 32);
+                ctx.globalAlpha = 1.0;
             }
-        }
 
-        const rng = makeRNG(237);
-        const trees = generate(8, () => [rng.rangei(0, 20), rng.rangei(0, 20)]);
-        for (let [tx, ty] of trees) {
-            drawTile(tiles.tree, tx, ty);
-        }
+            ctx.fillStyle = '#033';
+            ctx.fillRect(0, 0, 640, 640);
 
-        drawTile(tiles.player, 4, 4);
-    }, []);
+            for (let ty = 0; ty < 20; ty++) {
+                for (let tx = 0; tx < 20; tx++) {
+                    drawTile(tiles.grass, tx, ty);
+                }
+            }
+
+            const rng = makeRNG(game.seed);
+            const trees = generate(8, () => [rng.rangei(0, 20), rng.rangei(0, 20)]);
+            for (let [tx, ty] of trees) {
+                drawTile(tiles.tree, tx, ty);
+            }
+
+            drawTile(tiles.player, game.player.position.x, 20 - game.player.position.y);
+        },
+        [round]
+    );
 
     return (
         <div
@@ -131,17 +135,9 @@ function Map() {
     );
 }
 
-const defaultAppState = {
-    player: {
-        position: {
-            x: 5,
-            y: 4,
-        },
-    },
-};
-
 export function App() {
-    const [appState, setAppState] = React.useState(defaultAppState);
+    const [game] = React.useState(new Game());
+    const [round, setRound] = React.useState(game.round);
 
     useCommonStyles();
     useGlobalStyles();
@@ -155,20 +151,16 @@ export function App() {
             evt.preventDefault();
             evt.stopPropagation();
 
-            const { player } = appState;
-            if (evt.key === 'w') {
-                player.position.y += 1;
-            } else if (evt.key === 's') {
-                player.position.y -= 1;
-            } else if (evt.key === 'a') {
-                player.position.x -= 1;
-            } else if (evt.key === 'd') {
-                player.position.x += 1;
-            } else {
-                console.log(evt.key);
-            }
+            ((
+                {
+                    w: () => game.command('move', 0, 1),
+                    s: () => game.command('move', 0, -1),
+                    a: () => game.command('move', -1, 0),
+                    d: () => game.command('move', 1, 0),
+                }[evt.key] || (() => {})
+            )());
 
-            setAppState(clone(appState));
+            setRound(game.round);
         },
     };
 
@@ -195,7 +187,7 @@ export function App() {
                         borderRadius: 4,
                     }}
                 >
-                    <Map />
+                    <Map game={game} round={game.round} />
                 </div>
 
                 <div
@@ -207,7 +199,7 @@ export function App() {
                     <div style={{}}>
                         <Cards />
                     </div>
-                    <Conditions appState={appState} />
+                    <Conditions game={game} round={game.round} />
                     <div style={{ flex: '1 0 0' }}>free space</div>
                 </div>
             </div>
@@ -216,15 +208,17 @@ export function App() {
     );
 }
 
-function Conditions({ appState }) {
+function Conditions({ game }) {
     return (
         <div>
             Time of day
             <br />
             Weather
             <br />
-            Position: {appState.player.position.x}, {appState.player.position.y}
+            Position: {game.player.position.x}, {game.player.position.y}
             <br />
+            <div>Round: {game.round}</div>
+            <div>Seed: {game.seed}</div>
         </div>
     );
 }
