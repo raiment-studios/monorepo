@@ -9,23 +9,25 @@
         "files.autoSave": "off",
         "workbench.colorTheme": "Default Dark+",
 
+        "editor.formatOnSaveMode": "file",
+        "editor.formatOnSave": true,
         "prettier.tabWidth": 4,
         "prettier.printWidth": 100,
         "prettier.singleQuote": true,
 
+        "[javascript]": {
+            "editor.formatOnSave": true,
+            "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[json]": {
+            "editor.formatOnSave": true,
+            "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
         "[markdown]": {
             "editor.quickSuggestions": false,
             "editor.formatOnSave": false,
             "editor.wordWrap": "wordWrapColumn",
             "editor.wordWrapColumn": 80
-        },
-        "[javascript]": {
-            "editor.formatOnSave": true,
-            "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-		"[json]": {
-            "editor.formatOnSave": true,
-            	"editor.defaultFormatter": "esbenp.prettier-vscode"
         }
     },
     "extensions": [
