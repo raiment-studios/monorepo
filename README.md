@@ -8,7 +8,11 @@
 
 ## What is the "Raiment"?
 
-Raiment Studios is creating an open source world designed to be enjoyable and easy to contribute to. The projects include worldbuilding content (art, stories, assets, etc.), a rulebook, a voxel-based game engine, and a set of tools designed to make contributions easy. Please take a look at our [Vision statement](source/projects/organization/vision.md) to see if this is a project you'd like to contribute to!
+Raiment Studios is creating an open source world designed to be enjoyable and easy to contribute to. 
+
+**Think a Daggerfall-like game set in a voxel-based world that's easy to contribute to.**
+
+The projects include worldbuilding content (art, stories, assets, etc.), a rulebook, a voxel-based game engine, and a set of tools designed to make contributions easy. Please take a look at our [Vision statement](source/projects/organization/vision.md) to see if this is a project you'd like to contribute to!
 
 **Design goals**
 
