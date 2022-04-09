@@ -17,7 +17,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       - name: Run unit tests
-        working-directory: source/projects/core
+        working-directory: source/lib/core
         run: |
           npm install
           make test
