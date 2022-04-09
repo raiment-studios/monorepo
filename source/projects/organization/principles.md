@@ -1,11 +1,11 @@
-# Principles
-
 _Status: Work-in-progress document_
 
 - [ ] Fewer, more concise principles
 - [ ] Split out Values
 - [ ] Split out Engineering Principles
 
+
+# Principles
 
 The company **Principles** are the general guidelines for how work is done as part of the company. 
 
