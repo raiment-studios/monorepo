@@ -10,6 +10,8 @@ A wiki for self-documenting code & ideas that allows incremental development fro
 
 Supports running locally, running remotely, running a combination of local & remote.  Supports hot-reloading and fast rebuilds.
 
+Separation of data from interfaces for manipulating, accessing, and viewing that data.
+
 ---
 
 
