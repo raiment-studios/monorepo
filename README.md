@@ -6,17 +6,18 @@
 [![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
 [![](https://img.shields.io/badge/chat-zulip-36c)](https://raiment-studios.zulipchat.com/)
 
-## What is the "Raiment"?
+## What is the Raiment?
 
-Raiment Studios is creating an open source world designed to be enjoyable and easy to contribute to. **A Daggerfall-like game set in a voxel-based world that's designed for to be easy to contribute to.**
+**Raiment is a Daggerfall-like game set in a voxel-based world that is designed to be enjoyable and easy to contribute to.** 
 
 https://user-images.githubusercontent.com/65878718/162589896-58fd3b08-50e6-49df-ac4d-e45653a95dbb.mp4
 
-The projects include worldbuilding content (art, stories, assets, etc.), a rulebook, a voxel-based game engine, and a set of tools designed to make contributions easy. Please take a look at our [Vision statement](source/projects/organization/vision.md) to see if this is a project you'd like to contribute to!
+The projects within Raiment include worldbuilding content (art, stories, assets, etc.), a rulebook, a voxel-based game engine, and a set of tools designed to make contributions easy. Please take a look at our [Vision statement](source/projects/organization/vision.md) to see if this is a project you'd like to contribute to!
 
 **Design goals**
 
 * **Ease and enjoyable to contribute to**: a friendly community and straightforward process to make small contributions possible for anyone
+* **Visually appealing and also accessible on low-end devices**
 
 ## Work
 
