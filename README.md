@@ -34,15 +34,17 @@ Work is categorized into the following projects:
 * [**Project**](source/projects/project) - lightweight project manager simplifying organizational processes ([demo](https://project.raiment.studio/))
 * **Wiki** - lightweight custom wiki used for the Worldbuilding and organizational projects
 * **Build** - build tool used to simplify and enforce the organizational conventions
-* **Marketing** - public website and material to encourage participation
-* **Core**
-* **Engine**
+* **Marketing** - the public website and material designed to encourage participation
+* **Libraries**
+    * [**Core**](source/projects/core) - general utilities used across projects
+    * [**Engine**](source/projects/engine) - the game engine tailored to Raiment's voxel world
+    * [**React-Ex**](source/projects/react-ex) - React utilities & extensions used across projects
 
 ## Technology
 
-The project is currently coded primarily in JavaScript in order to rapidly flesh out the first prototypes of the project and ensure they are easily accesible on the web.
+The project is currently coded primarily in `JavaScript` in order to rapidly flesh out the first prototypes of the project and ensure they are easily accesible on the web.
 
-After the initial prototyping stabilizes, the project intends to migrate towards a Rust and JavaScript mix, utilizing WASM when appropriate.
+After the initial prototyping stabilizes, the project intends to migrate towards a `Rust` and `JavaScript` mix, utilizing `WASM` when appropriate.
 
 ## Contributing
 
