@@ -31,7 +31,7 @@ Work is categorized into the following projects:
     * Milestone 2: TBD
     * Milestone 3: TBD
     * Milestone 4: TBD
-* [**Sea**](source/projects/project) - a opinionated tool for content creation combining aspects of a compiler, wiki, content management system, and project manager ([demo](https://project.raiment.studio/))
+* [**Sea**](source/projects/project) - a opinionated mix of compiler, wiki, CMS, and project manager ([demo](https://project.raiment.studio/))
 * **Marketing** - the public website and material designed to encourage participation
 * **Libraries**
     * [**Core**](source/lib/core) - general utilities used across projects
