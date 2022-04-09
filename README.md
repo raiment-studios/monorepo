@@ -31,7 +31,7 @@ Work is categorized into the following projects:
     * Milestone 2: TBD
     * Milestone 3: TBD
     * Milestone 4: TBD
-* [**Project**](source/projects/project) - lightweight project manager simplifying organizational processes ([demo](https://project.raiment.studio/))
+* [**Sea**](source/projects/project) - a opinionated tool for content creation that combines aspect of a wiki, compiler, and project manager ([demo](https://project.raiment.studio/))
 * **Wiki** - lightweight custom wiki used for the Worldbuilding and organizational projects
 * **Build** - build tool used to simplify and enforce the organizational conventions
 * **Marketing** - the public website and material designed to encourage participation

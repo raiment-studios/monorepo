@@ -1,4 +1,4 @@
-# sea
+# Sea
 
 At the moment, Sea is a loosely formed idea that needs more definition...
 
