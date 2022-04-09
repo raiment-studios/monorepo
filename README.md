@@ -19,6 +19,10 @@ The projects within Raiment include worldbuilding content (art, stories, assets,
 * **Ease and enjoyable to contribute to**: a friendly community and straightforward process to make small contributions possible for anyone
 * **Visually appealing and also accessible on low-end devices**
 
+![image](https://user-images.githubusercontent.com/65878718/162591525-b9be3729-4611-4c85-9146-ce003426f3d6.png)
+
+_The Raiment uses a deck-based approach to procedurally create the world. Users define the deck they want to use for a play-through and those cards effectively become the "mods" that define that playythrough._
+
 ## Work
 
 Work is categorized into the following projects:
