@@ -1,34 +1,33 @@
 {
-	"name": "raiment-env",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"args": { "VARIANT": "hirsute", "USERNAME" : "vscode" }
-	},
+    "name": "raiment-env",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": { "VARIANT": "hirsute", "USERNAME": "vscode" }
+    },
 
-	"settings": {
-		"files.autoSave": "off",
-		"workbench.colorTheme": "Default Dark+",		
+    "settings": {
+        "files.autoSave": "off",
+        "workbench.colorTheme": "Default Dark+",
 
-		"prettier.tabWidth": 4,
+        "prettier.tabWidth": 4,
         "prettier.printWidth": 100,
         "prettier.singleQuote": true,
 
-		"[markdown]": {
+        "[markdown]": {
             "editor.quickSuggestions": false,
             "editor.formatOnSave": false,
             "editor.wordWrap": "wordWrapColumn",
             "editor.wordWrapColumn": 80
-            
         },
-		"[javascript]": {
+        "[javascript]": {
             "editor.formatOnSave": true,
             "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-	},
-	"extensions": [
-		"esbenp.prettier-vscode",
-		"ms-azuretools.vscode-docker",
-		"huntertran.auto-markdown-toc"
-	],
-	"remoteUser": "vscode"
+        }
+    },
+    "extensions": [
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "huntertran.auto-markdown-toc"
+    ],
+    "remoteUser": "vscode"
 }
