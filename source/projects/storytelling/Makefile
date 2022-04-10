@@ -1,6 +1,8 @@
 DEVELOPMENT_MODE ?= 0
 BUILD_FLAGS ?=
 
+DIR_LIB = $(MONOREPO_ROOT)/source/lib
+
 #
 # clean
 #
@@ -14,8 +16,8 @@ clean:
 #
 .PHONY: ensure
 ensure:
-	make -C ../core build-pack
-	make -C ../react-ex build-pack
+	make -C $(DIR_LIB)/core build-pack
+	make -C $(DIR_LIB)/react-ex build-pack
 	npm i
 
 #
