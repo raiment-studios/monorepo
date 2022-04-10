@@ -8,8 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Run unit tests
+      - name: "@raiment/core unit tests"
         working-directory: source/lib/core
         run: |
           npm install
           make test
+      - name: Publish milestone 1
+        working-directory: source/projects/adventure/01-milestone
+        run: |
+          npm install
+          make publish
