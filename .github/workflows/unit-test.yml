@@ -14,12 +14,12 @@ jobs:
       - name: "@raiment/core unit tests"      
         working-directory: source/lib/core
         run: |
-          export MONOREPO_ROOT=$(GITHUB_WORKSPACE)
+          export MONOREPO_ROOT=$GITHUB_WORKSPACE
           npm install
           make test
       - name: Publish milestone 1
         working-directory: source/projects/adventure/01-milestone        
         run: |
-          export MONOREPO_ROOT=$(GITHUB_WORKSPACE)
+          export MONOREPO_ROOT=$GITHUB_WORKSPACE
           make ensure
           make publish
