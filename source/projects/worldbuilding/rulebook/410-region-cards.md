@@ -35,6 +35,10 @@ In generating regions, the basic algorithm:
 
 This "overlay" model may produce discontiguous regions when looking at the world as a whole.
 
+![image](https://user-images.githubusercontent.com/65878718/162629918-4112f84e-b806-47e1-be6c-e485d0db1d32.png)
+
+![image](https://user-images.githubusercontent.com/65878718/162629932-ce8a224e-09e6-4bb3-93ee-4b6e5f57370b.png)
+
 
 ## Additional notes
 
