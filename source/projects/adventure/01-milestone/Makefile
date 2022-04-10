@@ -113,5 +113,5 @@ test:
 
 .PHONY: publish
 publish: build
-	npx firebase deploy
+	npx firebase deploy --token $(FIREBASE_TOKEN)
 
