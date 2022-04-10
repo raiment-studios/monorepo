@@ -22,4 +22,5 @@ jobs:
         run: |
           export MONOREPO_ROOT=$GITHUB_WORKSPACE
           make ensure
-          make publish
+          make build
+          npx firebase deploy --token ${{secrets.FIREBASE_TOKEN}}
