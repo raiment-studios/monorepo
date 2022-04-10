@@ -39,7 +39,7 @@ Work is categorized into the following projects:
     * [**Core**](source/lib/core) - general utilities used across projects
     * [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
     * [**React-Ex**](source/lib/react-ex) - React utilities & extensions used across projects
-* [**Sea**](source/projects/project) - a opinionated mix of compiler, wiki, CMS, and project manager ([demo](https://project.raiment.studio/))
+* [**Sea**](source/projects/sea) - a opinionated mix of compiler, wiki, CMS, and project manager ([demo](https://project.raiment.studio/))
 * **Marketing** - the public website and material designed to encourage participation
 
 
