@@ -25,3 +25,7 @@ The world-scale artificial intelligences of Galthea of the past are gone save fo
 Kestrel is a strange anomaly in this pattern: individual android-like artificial intelligences (know as a Aneides) is a idea of fiction in modern Galthea.  That Kestrel exists is difficult to explain.
 
 It is said in some incarnations of Galthea, there may be other Aneides - but they lack of stability and skewed intelligences may hint at why Kestrel is so rare.
+
+## Dragons, trolls, unicorns, etc.
+
+Mythical creatures do exist in the world of Galthea, but they are rare products of the maelstrom. The maelstrom can create the _seemingly impossible_ as long as it is not provably impossible. Whether the maelstrom itself has a form of intelligence is unknown, but it somehow gravitates toward forms of complexity and information instrinsic to intelligence and at time mimics the imagination of that which is consumes...
