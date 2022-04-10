@@ -11,6 +11,11 @@ jobs:
     runs-on: ubuntu-latest    
     steps:
       - uses: actions/checkout@v3
+      - name: basic setup
+        run: |
+          export MONOREPO_ROOT=$GITHUB_WORKSPACE
+          git lfs install
+          git lfs pull
       - name: "@raiment/core unit tests"      
         working-directory: source/lib/core
         run: |
@@ -20,7 +25,7 @@ jobs:
       - name: Publish milestone 1
         working-directory: source/projects/adventure/01-milestone        
         run: |
-          export MONOREPO_ROOT=$GITHUB_WORKSPACE
+          export MONOREPO_ROOT=$GITHUB_WORKSPACE          
           make ensure
           make build
           npx firebase deploy --token ${{secrets.FIREBASE_TOKEN}}
