@@ -1,6 +1,6 @@
 # Feature proposal
 
-When leaving a city or safe zone, the player can equip a pre-defined pack. 
+When leaving a city or safe zone, the player can equip a pre-defined pack. This a loadout mechanic.
 
 In the game, equipment (and characters) are not intended to linearly get more and more powerful, but rather (like a deck-building game) rely on combinations of equipment that allows for different capabilities, each configuration with its own strengths and weaknesses.
 
