@@ -30,6 +30,8 @@ clean:
 #
 .PHONY: ensure
 ensure:
+	pwd
+	ls $(DIR_LIB)/core build-pack
 	make -C $(DIR_LIB)/core build-pack
 	make -C $(DIR_LIB)/react-ex build-pack
 	npm i
