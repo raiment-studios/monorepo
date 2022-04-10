@@ -38,10 +38,3 @@ This milestone will convert the screen-based approach into an open world. The en
 The expansiveness of Daggerfall and openness of Skyrim, set in an adventure world of puzzles, choices, and storytelling reminscent of the original King's Quest I with a hint of the edge and grit of the world of the Witcher 3, with the visual style like a modern, fine-grained voxel world like Minecraft. 
 
 
-### Influences
-
-* [Shadow of the Wyrm](https://www.shadowofthewyrm.org/)
-* [King's Quest I](http://gamerwalkthroughs.com/kings-quest-1/)
-* Daggerfall
-* Skyrim
-* Witcher 3
