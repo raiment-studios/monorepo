@@ -235,7 +235,7 @@ function Navigation() {
                 fontWeight: 100,
             }}
         >
-            <div style={{ fontSize: 18, fontWeight: 900 }}>Graham's Tale</div>
+            <div style={{ fontSize: 18, fontWeight: 900 }}>Graham's Quest</div>
             <div style={{ flex: '0 0 3rem ' }} />
             <div style={{}}>Game</div>
             <div style={{ flex: '0 0 1rem ' }} />
