@@ -16,5 +16,5 @@ jobs:
       - name: Publish milestone 1
         working-directory: source/projects/adventure/01-milestone
         run: |
-          npm install
+          make ensure
           make publish
