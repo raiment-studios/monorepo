@@ -24,24 +24,20 @@ Aesthetically, factions are given a distinct color palette composed a primary, s
 
 Outliers should borrow from factions defined in other regions and usually represent an expatriot. Characters who are outliers generally face prejudice in most city-states.
 
-
 ## Geography
 
 In generating regions, the basic algorithm:
 
-- Generate a contiguous, 2d shape that is can be either convex or concave (something akin to [blobmaker](https://www.blobmaker.app/))
-- Overlay that region on the existing set of regions, retaining an ordered list in which they were added
-- When determining what region a particular point in the world belongs to, the point belongs to the _first_ region in the list that contains that point
+-   Generate a contiguous, 2d shape that is can be either convex or concave (something akin to [blobmaker](https://www.blobmaker.app/))
+-   Overlay that region on the existing set of regions, retaining an ordered list in which they were added
+-   When determining what region a particular point in the world belongs to, the point belongs to the _first_ region in the list that contains that point
 
 This "overlay" model may produce discontiguous regions when looking at the world as a whole.
 
 ![image](https://user-images.githubusercontent.com/65878718/162629918-4112f84e-b806-47e1-be6c-e485d0db1d32.png)
 
-![image](https://user-images.githubusercontent.com/65878718/162629932-ce8a224e-09e6-4bb3-93ee-4b6e5f57370b.png)
-
-
 ## Additional notes
 
 #### Cultural boundaries
 
-The Regions have distinct boundary lines.  The politics and culture _do_ change right on that line. In the fictional world, this exaggerated change by design.
+The Regions have distinct boundary lines. The politics and culture _do_ change right on that line. In the fictional world, this exaggerated change by design.
