@@ -1,22 +1,16 @@
 # Graham's Quest
 
-## Roadmap
 
--   [ ] Mock UI
-    -   [ ] Load forest from Card asset
-    -   [x] Pixelate forest image
-    -   [x] Add description
-    -   [x] Add author
-    -   [ ] Add random seed
-    -   [ ] Add text
-    -   [ ] Time of day, weather, status
-    -   [ ] Dialogue
-    -   [ ] Inventory
-    -   [ ] Journal
-    -   [ ] Encyclopedia
-    -   [ ] Command-line
--   [ ] Mock Editor
-    -   [ ] Allow Forest to be edited in game
+## Objective
+
+You play Kestrel, the a human-like Aneide, who has awoken with confused memories of her past. She must seek out Tristan, her creator to understand the story of her creation.  Along the way, she uncovers the history of the Maelstrom and world of Galthea.
+
+## Story
+
+_Note: this contains some spoilers!_
+
+
+## Roadmap
 
 Simplifications
 
