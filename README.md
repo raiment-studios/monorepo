@@ -31,8 +31,8 @@ Work is categorized into the following projects:
 * [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel, including a rulebook, concept art, etc.
 * [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
     * Milestone 1: [Graham's Quest](https://grahams-quest.raiment.studio/) - a simple 2D implementation
-    * Milestone 2: Name TBD - a 2.5D/3D voxel-based world
-    * Milestone 3: Name TBD - a fully dynamic 3D voxel-based world
+    * Milestone 2: Rivia - a 2.5D/3D voxel-based world
+    * Milestone 3: Jaskier's Tale - a fully dynamic 3D voxel-based world
     * Milestone 4: Name TBD - multiplayer
 * [**Storytelling**](source/projects/storytelling) - computer-aided "pen & paper" solo storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
 * **Libraries**
