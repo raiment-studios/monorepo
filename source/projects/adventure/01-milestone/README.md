@@ -21,6 +21,12 @@ Design Choices
 
 -   No "fog of war" (this is an exploration game emphasizing clear visuals)
 
+* [ ] Start screen
+* [ ] Random start generation
+* [ ] Score
+* [ ] Ending
+
+
 ### Plot
 
 Adapted from [King's Quest I](http://gamerwalkthroughs.com/kings-quest-1/)

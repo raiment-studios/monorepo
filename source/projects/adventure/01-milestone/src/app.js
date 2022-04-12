@@ -1,8 +1,10 @@
 import React from 'react';
 import { useCommonStyles, makeUseStyles, useLocalStorage, useAsyncEffect } from '@raiment/react-ex';
-import { generate, makeRNG, stringifyYAML } from '@raiment/core';
+import { makeRNG, stringifyYAML } from '@raiment/core';
 import { last, cloneDeep, get, clone, isArray } from 'lodash';
-import { Game } from './game';
+import { Game } from './game/game';
+import { Navigation } from './ui/navigation';
+import { MapView } from './ui/map_view';
 
 const useGlobalStyles = makeUseStyles({
     '@global': {
@@ -35,7 +37,7 @@ const useGlobalStyles = makeUseStyles({
     },
 });
 
-async function loadImage(src) {
+export async function loadImage(src) {
     return new Promise((resolve, reject) => {
         let img = new Image();
         img.onload = () => resolve(img);
@@ -47,7 +49,7 @@ async function loadImage(src) {
     });
 }
 
-const tiles = {
+export const tiles = {
     grass: {
         offset: [5, 0],
         alpha: 0.25,
@@ -67,73 +69,6 @@ const areas = {
         map: [],
     },
 };
-
-function Map({ game, round }) {
-    const refCanvas = React.useRef(null);
-
-    useAsyncEffect(
-        async (token) => {
-            const canvas = refCanvas.current;
-
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-
-            const img = await loadImage('/assets/tiles/colored-transparent_packed.png');
-            token.check();
-
-            function drawTile(tile, tx, ty) {
-                const sx = tile.offset[0] * 16;
-                const sy = tile.offset[1] * 16;
-                ctx.globalAlpha = tile.alpha || 1.0;
-                ctx.drawImage(img, sx, sy, 16, 16, tx * 32, ty * 32, 32, 32);
-                ctx.globalAlpha = 1.0;
-            }
-
-            ctx.fillStyle = '#033';
-            ctx.fillRect(0, 0, 640, 640);
-
-            for (let ty = 0; ty < 20; ty++) {
-                for (let tx = 0; tx < 20; tx++) {
-                    drawTile(tiles.grass, tx, ty);
-                }
-            }
-
-            const rng = makeRNG(game.seed);
-            const trees = generate(8, () => [rng.rangei(0, 20), rng.rangei(0, 20)]);
-            for (let [tx, ty] of trees) {
-                drawTile(tiles.tree, tx, ty);
-            }
-
-            drawTile(tiles.player, game.player.position.x, 20 - game.player.position.y);
-        },
-        [round]
-    );
-
-    return (
-        <div
-            className="flex-row"
-            style={{
-                flex: '0 0 0',
-                height: 640,
-            }}
-        >
-            <div
-                style={{
-                    flex: '0 0 0',
-                }}
-            >
-                <canvas
-                    ref={refCanvas}
-                    width={640}
-                    height={640}
-                    style={{
-                        imageRendering: 'pixelated',
-                    }}
-                />
-            </div>
-        </div>
-    );
-}
 
 export function App() {
     const [game] = React.useState(new Game());
@@ -187,7 +122,7 @@ export function App() {
                         borderRadius: 4,
                     }}
                 >
-                    <Map game={game} round={game.round} />
+                    <MapView game={game} round={game.round} />
                 </div>
 
                 <div
@@ -219,31 +154,6 @@ function Conditions({ game }) {
             <br />
             <div>Round: {game.round}</div>
             <div>Seed: {game.seed}</div>
-        </div>
-    );
-}
-
-function Navigation() {
-    return (
-        <div
-            className="flex-row-center"
-            style={{
-                margin: 0,
-                padding: '6px 12px',
-                backgroundColor: '#333',
-                fontSize: 14,
-                fontWeight: 100,
-            }}
-        >
-            <div style={{ fontSize: 18, fontWeight: 900 }}>Graham's Quest</div>
-            <div style={{ flex: '0 0 3rem ' }} />
-            <div style={{}}>Game</div>
-            <div style={{ flex: '0 0 1rem ' }} />
-            <div style={{}}>Editor</div>
-            <div style={{ flex: '0 0 1rem ' }} />
-            <div style={{}}>Options</div>
-            <div style={{ flex: '0 0 1rem ' }} />
-            <div style={{}}>About</div>
         </div>
     );
 }

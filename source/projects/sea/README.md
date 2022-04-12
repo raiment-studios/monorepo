@@ -33,8 +33,9 @@ Separation of data from interfaces for manipulating, accessing, and viewing that
 
 ## ⛈️ Use case brainstorming ⛈️
 
+- [ ] Root directory _should not_ have 15 config files for different tools
 - [ ] Source file only projects with single target config file
 - [ ] Update README with table of contents
 - [ ] Check Markdown files for broken links
-
+- [ ] Similar to Obsidian Dataview plug-in
 
