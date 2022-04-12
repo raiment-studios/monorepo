@@ -17,32 +17,6 @@ async function makeDrawingInterface(ctx) {
     };
 }
 
-class IndexedGrid2D {
-    constructor() {
-        this._valueToIndex = new Map();
-        this._indexToValue = new Map();
-        this._grid = new Array(20 * 20);
-    }
-
-    set(x, y, value) {
-        let index = this._valueToIndex.get(value);
-
-        if (index === undefined) {
-            index = this._valueToIndex.size + 1;
-            this._valueToIndex.set(value, index);
-            this._indexToValue.set(index, value);
-        }
-        this._grid[y * 20 + x] = index;
-    }
-    get(x, y) {
-        const index = this._grid[y * 20 + x];
-        if (index === undefined) {
-            return undefined;
-        }
-        return this._indexToValue.get(index);
-    }
-}
-
 export function MapView({ game, round }) {
     const refCanvas = React.useRef(null);
 
@@ -65,13 +39,17 @@ export function MapView({ game, round }) {
                 }
             }
 
-            const rng = makeRNG(game.seed);
-            const trees = generate(8, () => [rng.rangei(0, 20), rng.rangei(0, 20)]);
-            for (let [tx, ty] of trees) {
-                gi.drawTile(tiles.tree, tx, ty);
+            const { tilemap } = game;
+            for (let ty = 0; ty < 20; ty++) {
+                for (let tx = 0; tx < 20; tx++) {
+                    const value = tilemap.get(tx, ty);
+                    if (value) {
+                        gi.drawTile(tiles[value], tx, 19 - ty);
+                    }
+                }
             }
 
-            gi.drawTile(tiles.player, game.player.position.x, 20 - game.player.position.y);
+            gi.drawTile(tiles.player, game.player.position.x, 19 - game.player.position.y);
         },
         [round]
     );
