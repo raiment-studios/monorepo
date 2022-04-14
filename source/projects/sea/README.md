@@ -71,3 +71,36 @@ Task data model
 - tags (keys and key-values)
 - status (idea, todo, wip, done)
 - markdown description
+
+
+## Ideas
+
+Sea is about deploying a system. A system is composed of 1 or more resources. resources can be dynamic programs or static assets. These run on nodes. Resources and instances of resources are named.
+
+Context includes: the node id, instance id, resource id, thread id, transaction id.
+
+Resources are compoesd of named symbols. Some are exported.
+
+What does resource lifetime mean? What's the lifetime of static content.  Deployed resources are accessible somehow. A PNG would have some URI. Everything is executed upon retreival.
+
+Publicly exported versus exported within the system versus exported within the resource.  Anything publicly exposed in the system gets a URL. Single domain + sub-domain (??).
+
+How does a single-page webapp work where different URLs should represent different views within the same program? Should Sea enforce that unique URLs refer to unique resources? (The portion of the app being used could easily be expressed as the hash.)  A single-page webapp is essentially a single stateful core with a number of different exported resource views.
+
+
+```
+// main/main.sea
+public function main() -> string {
+    return "Hello, world!";
+}
+```
+
+```
+system {
+    server main {
+        // how many instances?
+        // where is it accessible?
+        // what determines if it's a web asset vs. CLI?
+    }
+}
+```
