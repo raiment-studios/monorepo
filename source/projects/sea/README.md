@@ -104,3 +104,9 @@ system {
     }
 }
 ```
+
+Visiting a URL is equivalent to running a command on the command-line.  QUery arguments are equivalent to command-line arguments. 
+
+To implement this, a leader WSP might exist that provides the normalized HTML enviroment and does routing. This could allow for centralized management of the browser resources. 
+
+How is a session-length resource created and maintained? How is it reset? Could visit another resource with a create-or-get semantic.  Or perhaps it is a connect-or-run semantic?  Conceptually there are services. There's an implicit init() function and a end-points that can be called whenever it is live.  From this view a website could be a root service and each page an endpoint.  The service runs until a certain timeout?
