@@ -3,6 +3,7 @@ import path from 'path';
 import esbuild from 'esbuild';
 import express from 'express';
 import chalk from 'chalk';
+import meow from 'meow';
 
 // Simple colorized text.  Not a very robust implementation.
 //
@@ -12,7 +13,7 @@ import chalk from 'chalk';
 //
 function con(...args) {
     for (let s of args) {
-        s = s.replace(/{{(obj|loc|brand) (.*?)}}/g, (m, style, string) => {
+        s = s.replace(/{{(obj|loc|err|brand) (.*?)}}/g, (m, style, string) => {
             switch (style) {
                 case 'brand':
                     return chalk.hex('#47a1f5').bold(string);
@@ -20,6 +21,8 @@ function con(...args) {
                     return chalk.hex('#f7de5e')(string);
                 case 'loc':
                     return chalk.hex('#be99cf')(string);
+                case 'err':
+                    return chalk.hex('#d4220b')(string);
             }
             return string;
         });
@@ -27,10 +30,41 @@ function con(...args) {
     }
 }
 
+async function loadPackageJSON() {
+    const filename = path.join(
+        path.dirname(path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''))),
+        '../package.json'
+    );
+    const text = await fs.readFile('package.json', 'utf8');
+    return JSON.parse(text);
+}
+
 async function main() {
+    const pkg = await loadPackageJSON();
+
+    const cli = meow(
+        `
+Usage
+    $ sea-jsx <filename>
+`.trim(),
+        {
+            importMeta: import.meta,
+            flags: {},
+        }
+    );
+
+    if (cli.input.length !== 1) {
+        cli.showHelp();
+    }
+
+    con(
+        '', //
+        `{{brand 〜 sea-jsx ${pkg.version} 〜}}`
+    );
+
     const app = {
         config: {
-            filename: process.argv[2],
+            filename: cli.input[0],
             port: 8080,
         },
         cacheID: generateRandomID(),
@@ -38,28 +72,16 @@ async function main() {
         content: null,
     };
 
+    try {
+        await fs.stat(app.config.filename);
+    } catch (e) {
+        con(`{{err Error:}} could not open file {{obj ${app.config.filename}}}`);
+        process.exit(1);
+    }
+
     con(
-        `{{brand sea-jsx}} running {{obj ${app.config.filename}}} on {{loc ${app.config.port}}}`,
+        `Running {{obj ${app.config.filename}}} on port {{loc ${app.config.port}}}`,
         `Press {{loc CTRL-C}} to exit`
-    );
-
-    process.exit(0);
-
-    console.log(
-        [
-            chalk.hex('#3daad9').bold('sea-jsx'),
-            chalk.hex('#dcedf5')(' running '),
-            chalk.hex('#fff9db')(`${app.config.filename}`),
-            chalk.hex('#dcedf5')(' on '),
-            chalk.hex('#fff9db')(`${app.config.port}`),
-        ].join('')
-    );
-    console.log(
-        [
-            chalk.hex('#dcedf5')('Press '),
-            chalk.hex('#fff9db')(`CTRL-C`),
-            chalk.hex('#dcedf5')(' to exit'),
-        ].join('')
     );
 
     await loadAssets(app);
@@ -104,12 +126,12 @@ function generateRandomID() {
 }
 
 async function loadAssets(app) {
-    const thisfile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
+    const thisFile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
     app.assets['index.html'] = await fs.readFile(
-        path.join(path.dirname(thisfile), 'assets/index.html')
+        path.join(path.dirname(thisFile), 'assets/index.html')
     );
     app.assets['__bootstrap.js'] = await fs.readFile(
-        path.join(path.dirname(thisfile), 'assets/__bootstrap.js')
+        path.join(path.dirname(thisFile), 'assets/__bootstrap.js')
     );
 }
 

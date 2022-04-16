@@ -19,6 +19,8 @@ Eventually these can be treated as individual blocks or nodes in a Sea system gr
     * [ ] Open browser window if not already open
     * [x] Hot-reload on changes
     * [ ] Chalk
+* [ ] Clean-up
+    * [ ] Add [meow](https://github.com/sindresorhus/meow) or other standard CLI flag handler
 * [ ] Host definition
     * [ ] Normalization
     * [ ] Basic themeing
