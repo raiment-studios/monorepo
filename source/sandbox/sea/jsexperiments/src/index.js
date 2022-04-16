@@ -13,11 +13,17 @@ async function main() {
     const htmlBuffer = await fs.readFile(path.join(path.dirname(thisfile), 'assets/index.html'));
     await fs.writeFile(path.join(path.dirname(filename), 'index.html'), htmlBuffer);
 
+    const buffer2 = await fs.readFile(path.join(path.dirname(thisfile), 'assets/__bootstrap.js'));
+    await fs.writeFile(path.join(path.dirname(filename), '__bootstrap.js'), buffer2);
+
+    const buffer3 = await fs.readFile(filename);
+    await fs.writeFile(path.join(path.dirname(filename), '__app.js'), buffer3);
+
     // Copy _bootstrap.js
     // esbuild source file -> client.js
 
     const options = {
-        entryPoints: [filename],
+        entryPoints: [path.join(path.dirname(filename), '__bootstrap.js')],
         bundle: true,
         format: 'cjs',
         loader: {
@@ -29,6 +35,9 @@ async function main() {
 
     const result = await esbuild.build(options);
     //        outfile: path.join(path.dirname(filename), 'client.js'),
+
+    const text = result.outputFiles[0].text;
+    await fs.writeFile(path.join(path.dirname(filename), 'client.js'), text);
 
     console.log('jsexperiments', result);
 }
