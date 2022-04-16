@@ -30,15 +30,16 @@ clean:
 #
 .PHONY: ensure
 ensure:
-	make -C $(DIR_LIB)/core build-pack
-	make -C $(DIR_LIB)/react-ex build-pack
+	make -C $(DIR_LIB)/core build
+	make -C $(DIR_LIB)/react-ex build
 	npm i
 ensure-deps:
-	npm cache clean --force
-	make -C $(DIR_LIB)/core build-pack
-	npm install @raiment/core
-	make -C $(DIR_LIB)/react-ex build-pack
-	npm install @raiment/react-ex
+	make -C $(DIR_LIB)/core build
+	make -C $(DIR_LIB)/react-ex build
+	npm uninstall @raiment/core
+	npm uninstall @raiment/react-ex
+	npm install --save file://$(DIR_LIB)/core/dist/raiment-core-latest.tgz		
+	npm install --save file://$(DIR_LIB)/react-ex/dist/raiment-react-ex-latest.tgz	
 
 
 #
