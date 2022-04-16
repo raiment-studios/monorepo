@@ -16,6 +16,11 @@ jobs:
           export MONOREPO_ROOT=$GITHUB_WORKSPACE
           git lfs install
           git lfs pull
+      - name: "@raiment/core builds"      
+        run: |
+          export MONOREPO_ROOT=$GITHUB_WORKSPACE
+          make -C source/lib/core build
+          make -C source/sandbox/tools/raiment-chdir publish
       - name: "@raiment/core unit tests"      
         working-directory: source/lib/core
         run: |
