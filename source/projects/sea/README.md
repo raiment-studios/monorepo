@@ -187,7 +187,6 @@ node TodoListView {
 }
 
 node TodoApp {
-    type: jsx
     inputs: {
         persistence 
     }
@@ -198,7 +197,7 @@ node TodoApp {
         view : TodoListView { list : nodes.database }
     }
     outputs: {
-        value JSX : view.outputs.view
+        value JSX => view.outputs.view
     }
 }
 
@@ -227,3 +226,24 @@ Algorithm:
         - Need inverse mapping of outputs -> inputs
         - For each mapped output (which may depend on other evals), compute & recompute mapped to node
 ```
+
+- Everything in Sea is a node
+- Even a Markdown doc
+- A Markdown doc has state (the doc itself)
+- It has outputs like....
+    - text: the raw text of the doc
+    - headings: a tree of the headings
+    - word_count: the word count
+    - etc.
+
+Sea can be thought of more as a collection of node instances.  The platform knows how to load these assets and morph the input data into node format so that to other nodes everything looks like a node.
+
+```
+node {
+    type
+    inputs {}
+    outputs {}
+}
+```
+
+
