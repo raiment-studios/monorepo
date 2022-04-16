@@ -1,5 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
+import sh from 'shelljs';
+import esbuild from 'esbuild';
 
 async function main() {
     const filename = process.argv[2];
@@ -11,6 +13,23 @@ async function main() {
     const htmlBuffer = await fs.readFile(path.join(path.dirname(thisfile), 'assets/index.html'));
     await fs.writeFile(path.join(path.dirname(filename), 'index.html'), htmlBuffer);
 
-    console.log('jsexperiments');
+    // Copy _bootstrap.js
+    // esbuild source file -> client.js
+
+    const options = {
+        entryPoints: [filename],
+        bundle: true,
+        format: 'cjs',
+        loader: {
+            '.js': 'jsx',
+        },
+        write: false,
+        //external: [...external, 'react'],
+    };
+
+    const result = await esbuild.build(options);
+    //        outfile: path.join(path.dirname(filename), 'client.js'),
+
+    console.log('jsexperiments', result);
 }
 main();
