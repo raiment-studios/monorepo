@@ -116,3 +116,114 @@ Visiting a URL is equivalent to running a command on the command-line.  QUery ar
 To implement this, a leader WSP might exist that provides the normalized HTML enviroment and does routing. This could allow for centralized management of the browser resources. 
 
 How is a session-length resource created and maintained? How is it reset? Could visit another resource with a create-or-get semantic.  Or perhaps it is a connect-or-run semantic?  Conceptually there are services. There's an implicit init() function and a end-points that can be called whenever it is live.  From this view a website could be a root service and each page an endpoint.  The service runs until a certain timeout?
+
+
+### Nodes
+
+Sea "services" are nodes. They are composed of the following:
+
+- 0 or more named & typed inputs
+- 0 or more named & typed outputs
+- Has internal state
+- Can emit and repond to events
+
+The nodes outputs are reevaluated when the value of an inputs or the internal state changes. [Aside: variant (JSON-ish) is a valid type to keep these easy to prototype.]
+
+
+```
+node multiply (
+    op1 : number,
+    op2 : number
+) -> (
+    result : number 
+) {
+    op1 * op2
+}
+```
+
+This is good for evaluating a graph, but how would a todo app work? Can nodes have persisted internal state?
+
+```
+node TodoDatabase {
+    inputs {}
+    state {
+        list string[]
+    }
+    actions {
+        add(s string) {
+            // "state" is a reserved word
+            // a mutation of a state value automatically 
+            state.list.append(s);
+        }
+    }
+    outputs {
+        list -> string[] {
+            return state.list
+        }
+
+        // Note this will only get reevaluated when the underlying state
+        // or incoming inputs change
+        select (query? string) -> string[] {
+            // compute results of query
+            return results
+        }
+    }
+}
+
+node TodoListView {
+    inputs {
+        list : string[]
+    }
+    outputs {
+        view -> JSX {
+            <div>
+                {inputs.list.map((item) => (
+                    <div>{item}</div>
+                ))}
+            </div>
+        }
+    }
+
+}
+
+node TodoApp {
+    type: jsx
+    inputs: {
+        persistence 
+    }
+    nodes: {
+        database : TodoDatabase{}[
+            state : inputs.persistance
+        ],
+        view : TodoListView { list : nodes.database }
+    }
+    outputs: {
+        value JSX : view.outputs.view
+    }
+}
+
+deployment Remote {
+    host : {
+        type : browser
+        root : self.nodes.app
+    }
+    nodes : {
+        app : TodoApp{
+            persistence : LocalStorage,
+        }
+    }
+}
+```
+
+```
+Algorithm: 
+    - Init
+        - To create a node
+            - First evaluate any inputs (checking for recursion)
+        - Create node
+        - Evaluate
+    - Update
+        - Event causes a state change
+        - Need inverse mapping of outputs -> inputs
+        - For each mapped output (which may depend on other evals), compute & recompute mapped to node
+```
