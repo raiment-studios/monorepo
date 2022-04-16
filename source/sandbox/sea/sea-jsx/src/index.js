@@ -5,40 +5,6 @@ import express from 'express';
 import chalk from 'chalk';
 import meow from 'meow';
 
-// Simple colorized text.  Not a very robust implementation.
-//
-// Limitations:
-// - Doesn't support escaping the {{ }} template blocks
-// - No checks that embedded variables could contain template blocks
-//
-function con(...args) {
-    for (let s of args) {
-        s = s.replace(/{{(obj|loc|err|brand) (.*?)}}/g, (m, style, string) => {
-            switch (style) {
-                case 'brand':
-                    return chalk.hex('#47a1f5').bold(string);
-                case 'obj':
-                    return chalk.hex('#f7de5e')(string);
-                case 'loc':
-                    return chalk.hex('#be99cf')(string);
-                case 'err':
-                    return chalk.hex('#d4220b')(string);
-            }
-            return string;
-        });
-        console.log(chalk.hex('#8a92b8')(s));
-    }
-}
-
-async function loadPackageJSON() {
-    const filename = path.join(
-        path.dirname(path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''))),
-        '../package.json'
-    );
-    const text = await fs.readFile('package.json', 'utf8');
-    return JSON.parse(text);
-}
-
 async function main() {
     const pkg = await loadPackageJSON();
 
@@ -90,6 +56,15 @@ Usage
     await watchLoop(app);
 }
 main();
+
+async function loadPackageJSON() {
+    const filename = path.join(
+        path.dirname(path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''))),
+        '../package.json'
+    );
+    const text = await fs.readFile('package.json', 'utf8');
+    return JSON.parse(text);
+}
 
 async function watchLoop(app) {
     let lastModified = 0;
@@ -187,4 +162,29 @@ async function build(app) {
 
     app.cacheID = generateRandomID();
     app.content = text;
+}
+
+// Simple colorized text.  Not a very robust implementation.
+//
+// Limitations:
+// - Doesn't support escaping the {{ }} template blocks
+// - No checks that embedded variables could contain template blocks
+//
+function con(...args) {
+    for (let s of args) {
+        s = s.replace(/{{(obj|loc|err|brand) (.*?)}}/g, (m, style, string) => {
+            switch (style) {
+                case 'brand':
+                    return chalk.hex('#47a1f5').bold(string);
+                case 'obj':
+                    return chalk.hex('#f7de5e')(string);
+                case 'loc':
+                    return chalk.hex('#be99cf')(string);
+                case 'err':
+                    return chalk.hex('#d4220b')(string);
+            }
+            return string;
+        });
+        console.log(chalk.hex('#8a92b8')(s));
+    }
 }
