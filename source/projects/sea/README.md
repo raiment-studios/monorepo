@@ -105,6 +105,12 @@ system {
 }
 ```
 
+```yaml
+type: raiment/react-webapp
+host: 
+    platform: raiment/browser-normalized    
+```
+
 Visiting a URL is equivalent to running a command on the command-line.  QUery arguments are equivalent to command-line arguments. 
 
 To implement this, a leader WSP might exist that provides the normalized HTML enviroment and does routing. This could allow for centralized management of the browser resources. 
