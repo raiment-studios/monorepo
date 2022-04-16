@@ -1,3 +1,7 @@
+# sea-jsx
+
+A host for running a JSX React function with hot reloading.
+
 
 ## Vision
 
@@ -13,6 +17,9 @@ Eventually these can be treated as individual blocks or nodes in a Sea system gr
     * [ ] Implicitly create index.html & normalize
     * [ ] Implicitly create bootstrap container
     * [ ] Open browser window if not already open
-    * [ ] Hot-reload on changes
-
+    * [x] Hot-reload on changes
+    * [ ] Chalk
+* [ ] Host definition
+    * [ ] Normalization
+    * [ ] Basic themeing
 
