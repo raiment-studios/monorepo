@@ -67,28 +67,27 @@ __bash_prompt() {
 }
 __bash_prompt
 
+
+# -----------------------------------------------------------------------------
+# Tools and scripts
+# -----------------------------------------------------------------------------
+
+make -C source/sandbox/tools/raiment-chdir publish
+make -C source/projects/sea/apps/sea-jsx publish
+
 # -----------------------------------------------------------------------------
 # Aliases and short-cuts
 # -----------------------------------------------------------------------------
 
 
-function __shortcut_cmd {
-    case "$2" in
-    "")       $1 $MONOREPO_ROOT ;;
-    /)        $1 $MONOREPO_ROOT ;;
-    co*)      $1 $MONOREPO_ROOT/source/lib/core ;;
-    se*)      $1 $MONOREPO_ROOT/source/projects/sea ;;
-    st*)      $1 $MONOREPO_ROOT/source/projects/storytelling ;;
-    gr*)      $1 $MONOREPO_ROOT/source/projects/adventure/01-milestone ;;
-    m1*)      $1 $MONOREPO_ROOT/source/projects/adventure/01-milestone ;;
-    *)        $1 $MONOREPO_ROOT ;;
-    esac
-}
-
 # rc = Raiment Change Directory
 # an alias to make jumping between directories easier.
 function rcd {
-    __shortcut_cmd "cd" $1 
+    case "$1" in
+    "")       cd $MONOREPO_ROOT ;;
+    /)        cd $MONOREPO_ROOT ;;
+    *)        cd $(raiment-chdir $1) ;;
+    esac
 }
 
 # gs = git status

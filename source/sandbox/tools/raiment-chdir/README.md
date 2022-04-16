@@ -1,0 +1,4 @@
+- Scan MONOREPO_ROOT for folders.
+- Skip known subtrees
+- Build a table
+- Take string distance

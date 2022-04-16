@@ -1,0 +1,12 @@
+{
+    "name": "@raiment/raiment-chdir",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "src/index.js",
+    "bin": {
+        "raiment-chdir": "src/cli.js"
+    },
+    "dependencies": {
+        "@raiment/core": "file:../../../lib/core/dist/raiment-core-latest.tgz"
+    }
+}
