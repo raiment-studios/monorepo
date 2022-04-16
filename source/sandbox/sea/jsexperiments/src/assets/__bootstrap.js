@@ -1,19 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './__app';
+import App from './__app.js';
 
 const container = document.getElementById('client');
 const root = ReactDOM.createRoot(container);
 
 root.render(
     <>
-        <ContentPoll url="/buildstamp.txt" onChange={() => window.location.reload()} />
+        <ContentPoll url="/cache-id" onChange={() => window.location.reload()} />
         <App />
     </>
 );
 
 function ContentPoll({ url, onChange }) {
-    console.log('Running development build');
     React.useEffect(() => {
         let value = {
             last: null,
