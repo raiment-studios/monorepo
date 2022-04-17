@@ -56,6 +56,7 @@ For more details, see the [contributing page](source/projects/organization/contr
 * [Chat Server](https://raiment-studios.zulipchat.com/)
 * [Forums](https://github.com/raiment-studios/monorepo/discussions)
 * ⚠️TODO: Community knowledge base
+* [npm registry](https://www.npmjs.com/package/@raiment)
 
 ## Roadmap
 
