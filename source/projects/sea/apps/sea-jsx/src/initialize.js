@@ -34,7 +34,8 @@ export async function initialize() {
             },
             version: {
                 type: 'boolean',
-                alias: 'v',
+                // Do *not* use "v" as that can be confused with "verbose"
+                // alias: 'v',
                 default: false,
                 isRequired: false,
                 isMultiple: false,
