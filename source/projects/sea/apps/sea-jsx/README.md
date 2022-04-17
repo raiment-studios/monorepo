@@ -1,10 +1,10 @@
 # sea-jsx
 
-A host for running a JSX React function with hot reloading.
+A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration.
 
 ## Vision
 
-A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without an project setup. This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.
+A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration.  This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.
 
 ## Checkpoints
 
