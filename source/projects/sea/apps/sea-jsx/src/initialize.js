@@ -51,7 +51,7 @@ export async function initialize() {
     //
     // Check for unrecognized flags
     //
-    for (let [name, value] of Object.entries(cli.flags)) {
+    for (let name of Object.keys(cli.flags)) {
         if (options.flags[name] === undefined) {
             print(`{{err ERROR}}: Unknown flag {{obj --${name}}}`);
             process.exit(1);
