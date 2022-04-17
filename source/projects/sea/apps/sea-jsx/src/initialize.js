@@ -16,6 +16,11 @@ import { print } from './ui.js';
 export async function initialize() {
     const pkg = await loadPackageJSON();
 
+    // Leverage "meow" for the flags parsing
+    //
+    // Note: some additional flags used internally (not by meow)
+    // are included in the flag definition.
+    //
     const options = {
         importMeta: import.meta,
         flags: {
@@ -40,8 +45,12 @@ export async function initialize() {
         autoVersion: false,
         allowUnknownFlags: true, // We'll check ourselves
     };
+
     const cli = meow(options);
 
+    //
+    // Check for unrecognized flags
+    //
     for (let [name, value] of Object.entries(cli.flags)) {
         if (options.flags[name] === undefined) {
             print(`{{err ERROR}}: Unknown flag {{obj --${name}}}`);
@@ -49,14 +58,19 @@ export async function initialize() {
         }
     }
 
+    //
+    // --help
+    //
     const brandBanner = `{{brand ≅≅≅ sea-jsx v${pkg.version} ≅≅≅}}`;
-
+    const usageStrings = [
+        'Usage', //
+        '$ {{brand sea-jsx}} [...{{obj flags}}] <{{obj filename}}>',
+    ];
     if (cli.flags.help) {
         print(
-            brandBanner,
+            brandBanner, //
             '',
-            'Usage',
-            '$ {{brand sea-jsx}} [...{{obj flags}}] <{{obj filename}}>',
+            ...usageStrings,
             '',
             'Flags'
         );
@@ -65,21 +79,38 @@ export async function initialize() {
         }
         process.exit(0);
     }
+
+    //
+    // --version
+    //
     if (cli.flags.version) {
         print(`v${pkg.version}`);
         process.exit(0);
     }
 
+    //
+    // Check input file
+    //
     if (cli.input.length !== 1) {
-        print('Exiting');
+        print(...usageStrings, '', `{{err ERROR}}: A single filename must be provided`);
         process.exit(1);
     }
 
-    print(brandBanner);
+    const inputFilename = cli.input[0];
+    try {
+        await fs.stat(inputFilename);
+    } catch (e) {
+        console.error(e);
+        print(`{{err ERROR}}: could not open file {{obj ${inputFilename}}}`);
+        process.exit(1);
+    }
 
+    //
+    // Preconditions seem good so far.  Set up the context to get the program started.
+    //
     const ctx = {
         config: {
-            filename: cli.input[0],
+            filename: inputFilename,
             port: 8080,
         },
         cacheID: generateRandomID(),
@@ -89,13 +120,7 @@ export async function initialize() {
         print: print,
     };
 
-    try {
-        await fs.stat(ctx.config.filename);
-    } catch (e) {
-        print(`{{err Error:}} could not open file {{obj ${ctx.config.filename}}}`);
-        process.exit(1);
-    }
-
+    print(brandBanner);
     await loadAssets(ctx);
 
     return ctx;
