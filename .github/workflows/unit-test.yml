@@ -3,34 +3,35 @@
 #
 name: Unit Tests
 on:
-  push:
-    branches: [ main ]
+    push:
+        branches: [main]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest    
-    steps:
-      - uses: actions/checkout@v3
-      - name: basic setup
-        run: |
-          export MONOREPO_ROOT=$GITHUB_WORKSPACE
-          git lfs install
-          git lfs pull
-      - name: "@raiment/core builds"      
-        run: |
-          export MONOREPO_ROOT=$GITHUB_WORKSPACE
-          make -C source/lib/core build
-          make -C source/sandbox/tools/raiment-chdir publish
-      - name: "@raiment/core unit tests"      
-        working-directory: source/lib/core
-        run: |
-          export MONOREPO_ROOT=$GITHUB_WORKSPACE
-          npm install
-          make test
-      - name: Publish milestone 1
-        working-directory: source/projects/adventure/01-milestone        
-        run: |
-          export MONOREPO_ROOT=$GITHUB_WORKSPACE          
-          make ensure
-          make build
-          npx firebase deploy --token ${{secrets.FIREBASE_TOKEN}}
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: basic setup
+              run: |
+                  export MONOREPO_ROOT=$GITHUB_WORKSPACE
+                  git lfs install
+                  git lfs pull
+            - name: '@raiment/core builds'
+              run: |
+                  export MONOREPO_ROOT=$GITHUB_WORKSPACE
+                  make -C source/lib/core build
+                  make -C source/sandbox/tools/raiment-chdir publish
+            - name: '@raiment/core unit tests'
+              working-directory: source/lib/core
+              run: |
+                  export MONOREPO_ROOT=$GITHUB_WORKSPACE
+                  npm install
+                  make test
+            - name: Publish milestone 1
+              working-directory: source/projects/adventure/01-milestone
+              run: |
+                  export MONOREPO_ROOT=$GITHUB_WORKSPACE          
+                  make ensure-deps
+                  npm i
+                  make build
+                  npx firebase deploy --token ${{secrets.FIREBASE_TOKEN}}
