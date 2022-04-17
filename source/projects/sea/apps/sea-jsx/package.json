@@ -1,6 +1,6 @@
 {
     "name": "@raiment/sea-jsx",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "type": "module",
     "main": "src/main.js",
     "bin": {
@@ -15,5 +15,19 @@
         "react-dom": "^18.0.0"
     },
     "license": "MIT",
-    "author": "https://github.com/raiment-studios"
+    "author": "https://github.com/raiment-studios",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/raiment-studios/monorepo.git"
+    },
+    "homepage": "https://github.com/raiment-studios/monorepo/tree/main/source/projects/sea/apps/sea-jsx",
+    "keywords": [
+        "jsx",
+        "react",
+        "sandbox",
+        "simple",
+        "esbuild",
+        "hot-reload",
+        "prototyping"
+    ]
 }

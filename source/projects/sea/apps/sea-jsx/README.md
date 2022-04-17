@@ -2,19 +2,46 @@
 
 A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration.
 
+## Getting started
+
+Step 1: install sea-jsx
+
+```bash
+npm install --global @raiment/sea-jsx
+```
+
+Step 2: Create a simple JSX file (`hello-world.js`)
+
+```javascript
+import React from 'react';
+
+export default function () {
+    return <h1>Hello World!!</h1>;
+}
+```
+
+Step 3: Run sea-jsx see the output.  Any updates to `hellow-world.js` will hot-reload.
+
+```bash
+sea-jsx hello-world.js
+```
+
+
 ## Vision
 
 A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration.  This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.
 
-## Checkpoints
+## Roadmap checkpoints
 
-* [ ] Basic functionality (v0.1)
+* [x] Basic functionality (v0.1)
     * [x] Implicitly create index.html & bootstrap.js
     * [x] Hot-reload on changes
     * [x] Hello world example
     * [x] Basic CLI flags
 * [ ] Package management (v0.2)
-    * [ ] What happens when a module is referenced?
+    * [ ] Allow "front-matter" comments to define package versions
+    * [ ] Load latest version for unspecified packages
+    * [ ] Document package management process
 * [ ] Good practices
     * [ ] Standard Makefile
     * [ ] Unit tests
