@@ -49,6 +49,11 @@ export async function initialize() {
 
     const cli = meow(options);
 
+    // Treat no arguments whatsoever as equivalent to "--help"
+    if (process.argv.length === 2) {
+        cli.flags.help = true;
+    }
+
     //
     // Check for unrecognized flags
     //
@@ -62,7 +67,7 @@ export async function initialize() {
     //
     // --help
     //
-    const brandBanner = `{{brand ≅≅≅ sea-jsx v${pkg.version} ≅≅≅}}`;
+    const brandBanner = `{{brand ≅≅≅  sea-jsx v${pkg.version}  ≅≅≅}}`;
     const usageStrings = [
         'Usage', //
         '$ {{brand sea-jsx}} [...{{obj flags}}] <{{obj filename}}>',
