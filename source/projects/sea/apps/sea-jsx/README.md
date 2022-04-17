@@ -45,6 +45,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     * [ ] Load latest version for unspecified packages
     * [ ] Document package management process
 * [ ] Good practices
+    * [ ] Publicly accessible demo
     * [ ] Standard Makefile
     * [ ] Unit tests
     * [ ] Benchmarks
