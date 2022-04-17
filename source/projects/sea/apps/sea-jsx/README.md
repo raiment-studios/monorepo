@@ -8,15 +8,14 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ## Checkpoints
 
-* [ ] Basic functionality
+* [ ] Basic functionality (v0.1)
     * [x] Implicitly create index.html & bootstrap.js
     * [x] Hot-reload on changes
-    * [ ] Open browser window if not already open
     * [x] Hello world example
     * [x] Basic CLI flags
-* [ ] Package management
+* [ ] Package management (v0.2)
     * [ ] What happens when a module is referenced?
-* [ ] Good praactices
+* [ ] Good practices
     * [ ] Standard Makefile
     * [ ] Unit tests
     * [ ] Benchmarks
@@ -26,6 +25,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
 * [ ] Host definition
     * [ ] Normalization
     * [ ] Basic themeing
+* [ ] Backlog
+    * [ ] Open browser window if not already open
 
 ## Design
 
