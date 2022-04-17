@@ -31,7 +31,9 @@ sea-jsx hello-world.js
 
 A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration.  This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.
 
-## Roadmap checkpoints
+## Roadmap
+
+### v1.0 Checkpoints
 
 * [x] Basic functionality (v0.1)
     * [x] Implicitly create index.html & bootstrap.js
@@ -50,10 +52,14 @@ A quick, simple command-line tool to run single JavaScript React Components with
     * [ ] Add verbose mode (debug, info, warn)
     * [ ] Add metrics
 * [ ] Host definition
-    * [ ] Normalization
-    * [ ] Basic themeing
-* [ ] Backlog
-    * [ ] Open browser window if not already open
+    * [ ] Allow basic host definition in "front-matter"
+    * [ ] Document host definition
+
+### Backlog
+
+* [ ] Open browser window if not already open
+* [ ] Modules of multiple files
+* [ ] Automatic deployment
 
 ## Design
 
