@@ -133,7 +133,7 @@ export async function initialize() {
         content: null,
 
         print: print,
-        printV1: cli.flags.verbose ? print : () => {},
+        printV1: cli.flags.verbose.length > 0 ? print : () => {},
     };
 
     ctx.print(brandBanner);

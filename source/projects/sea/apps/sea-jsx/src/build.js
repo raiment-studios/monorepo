@@ -44,13 +44,18 @@ export async function build(ctx) {
                 let result = await build.resolve(packageName, { resolveDir: dir });
                 if (result.errors.length > 0) {
                     if (!sh.test('-e', `${dir}/node_modules/${packageName}`)) {
-                        ctx.print(`Installing latest version of {{obj ${packageName}}}...`);
+                        const start = Date.now();
+                        ctx.printV1(`Installing latest version of {{obj ${packageName}}}...`);
                         sh.config.silent = true;
                         sh.pushd(dir);
                         sh.exec(`npm i ${packageName}`);
                         sh.popd();
                         sh.config.silent = false;
-                        ctx.print(`Done installing {{obj ${packageName}}}.`);
+                        const duration = Date.now() - start;
+
+                        ctx.print(
+                            `Installed latest version of {{obj ${packageName}}} ({{loc ${duration}ms}}).`
+                        );
                     }
                     result = await build.resolve(packageName, { resolveDir: dir });
                 }
@@ -86,9 +91,34 @@ export async function build(ctx) {
         plugins: [plugin],
     };
 
-    const result = await esbuild.build(options);
-    const text = result.outputFiles[0].text;
+    // Catch any compilation errors.  Do not have the exception take down the host
+    // process, but rather notify the user there's a error in their source code.
+    try {
+        const result = await esbuild.build(options);
+        const text = result.outputFiles[0].text;
 
-    ctx.cacheID = generateRandomID();
-    ctx.content = text;
+        ctx.cacheID = generateRandomID();
+        ctx.content = text;
+    } catch (e) {
+        //
+        // TODO: improve the error messaging. This seems a bit hacky
+        //
+        console.error(e);
+
+        builtinFiles['./__app.js'] = [
+            `import React from 'react';`,
+            `export default function() {`,
+            `   const msg = ${JSON.stringify(e.message)};`,
+            `   return (<div>`,
+            `       <h1>Build error in user source file</h1>`,
+            `       <pre>{msg}</pre>`,
+            `   </div>);`,
+            '}',
+        ].join('\n');
+        const result = await esbuild.build(options);
+        const text = result.outputFiles[0].text;
+
+        ctx.cacheID = generateRandomID();
+        ctx.content = text;
+    }
 }

@@ -20,48 +20,48 @@ export default function () {
 }
 ```
 
-Step 3: Run sea-jsx see the output.  Any updates to `hellow-world.js` will hot-reload.
+Step 3: Run sea-jsx see the output. Any updates to `hello-world.js` will hot-reload.
 
 ```bash
 sea-jsx hello-world.js
 ```
 
-
 ## Vision
 
-A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration.  This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.
+A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration. This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.
 
 ## Roadmap
 
 ### v1.0 Checkpoints
 
-* [x] Basic functionality (v0.1)
-    * [x] Implicitly create index.html & bootstrap.js
-    * [x] Hot-reload on changes
-    * [x] Hello world example
-    * [x] Basic CLI flags
-* [ ] Package management (v0.2)
-    * [x] Load latest version for unspecified packages
-    * [ ] Allow "front-matter" comments to define package versions
-    * [ ] Cache between runs
-    * [ ] Document package management process
-* [ ] Good practices
-    * [ ] Publicly accessible demo
-    * [ ] Standard Makefile
-    * [ ] Unit tests
-    * [ ] Benchmarks
-    * [ ] Publish to package repository
-    * [ ] Add verbose mode (debug, info, warn)
-    * [ ] Add metrics
-* [ ] Host definition
-    * [ ] Allow basic host definition in "front-matter"
-    * [ ] Document host definition
+-   [x] Basic functionality (v0.1)
+    -   [x] Implicitly create index.html & bootstrap.js
+    -   [x] Hot-reload on changes
+    -   [x] Hello world example
+    -   [x] Basic CLI flags
+-   [ ] Package management (v0.2)
+    -   [x] Load latest version for unspecified packages
+    -   [ ] Allow "front-matter" comments to define package versions
+    -   [ ] Cache between runs
+    -   [ ] Document package management process
+    -   [ ] Fix resolution of imports from within packages (e.g. `react/dom-client`)
+-   [ ] Good practices
+    -   [ ] Publicly accessible demo
+    -   [ ] Standard Makefile
+    -   [ ] Unit tests
+    -   [ ] Benchmarks
+    -   [ ] Publish to package repository
+    -   [ ] Add verbose mode (debug, info, warn)
+    -   [ ] Add metrics
+-   [ ] Host definition
+    -   [ ] Allow basic host definition in "front-matter"
+    -   [ ] Document host definition
 
 ### Backlog
 
-* [ ] Open browser window if not already open
-* [ ] Modules of multiple files
-* [ ] Automatic deployment
+-   [ ] Open browser window if not already open
+-   [ ] Modules of multiple files
+-   [ ] Automatic deployment
 
 ## Design
 
