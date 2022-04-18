@@ -40,6 +40,7 @@ Work is categorized into the following projects:
     * [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
     * [**React-Ex**](source/lib/react-ex) - React utilities & extensions used across projects
 * [**Sea**](source/projects/sea) - a opinionated mix of compiler, wiki, CMS, and project manager ([demo](https://project.raiment.studio/))
+    * [**sea-jsx**](source/projects/sea/apps/sea-jsx) - app for quickly prototyping React Components
 * **Marketing** - the public website and material designed to encourage participation
 
 
