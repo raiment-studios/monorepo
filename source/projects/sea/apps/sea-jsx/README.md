@@ -55,7 +55,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     * [ ] Standard Makefile
     * [ ] Unit tests
     * [ ] Benchmarks
-    * [ ] Publish to package repository
+    * [x] Publish to package repository
     * [ ] Add verbose mode (debug, info, warn)
     * [ ] Add metrics
 * [ ] Host definition
