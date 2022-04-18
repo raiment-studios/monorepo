@@ -1,3 +1,5 @@
+![version]([https://img.shields.io/github/package-json/v/raiment-studios/monorepo?filename=source%2Fprojects%2Fsea%2Fapps%2Fsea-jsx%2Fpackage.json)
+
 # sea-jsx
 
 A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration.
