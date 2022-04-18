@@ -41,8 +41,9 @@ A quick, simple command-line tool to run single JavaScript React Components with
     * [x] Hello world example
     * [x] Basic CLI flags
 * [ ] Package management (v0.2)
+    * [x] Load latest version for unspecified packages
     * [ ] Allow "front-matter" comments to define package versions
-    * [ ] Load latest version for unspecified packages
+    * [ ] Cache between runs
     * [ ] Document package management process
 * [ ] Good practices
     * [ ] Publicly accessible demo

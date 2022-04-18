@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import meow from 'meow';
+import tmp from 'tmp';
 import { generateRandomID } from './util.js';
 import { print } from './ui.js';
 
@@ -40,6 +41,13 @@ export async function initialize() {
                 isRequired: false,
                 isMultiple: false,
                 description: 'displays program version',
+            },
+            verbose: {
+                type: 'boolean',
+                default: false,
+                isRequired: false,
+                isMultiple: true,
+                description: 'sets verbose output',
             },
         },
         autoHelp: false,
@@ -121,12 +129,24 @@ export async function initialize() {
         },
         cacheID: generateRandomID(),
         assets: {},
+        tempDirectory: null,
         content: null,
 
         print: print,
+        printV1: cli.flags.verbose ? print : () => {},
     };
 
-    print(brandBanner);
+    ctx.print(brandBanner);
+
+    //
+    // Temp directory
+    //
+    tmp.setGracefulCleanup();
+    const tmpObject = tmp.dirSync({ mode: 0x1e8, prefix: 'sea_' });
+    ctx.tempDirectory = tmpObject.name;
+
+    ctx.printV1(`temporary directory: {{obj ${ctx.tempDirectory}}}`);
+
     await loadAssets(ctx);
 
     return ctx;

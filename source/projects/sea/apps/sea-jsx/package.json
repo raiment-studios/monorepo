@@ -1,6 +1,6 @@
 {
     "name": "@raiment/sea-jsx",
-    "version": "0.1.9",
+    "version": "0.1.10",
     "type": "module",
     "main": "src/main.js",
     "bin": {
@@ -12,7 +12,9 @@
         "express": "^4.17.3",
         "meow": "^10.1.2",
         "react": "^18.0.0",
-        "react-dom": "^18.0.0"
+        "react-dom": "^18.0.0",
+        "shelljs": "^0.8.5",
+        "tmp": "^0.2.1"
     },
     "license": "MIT",
     "author": "https://github.com/raiment-studios",
