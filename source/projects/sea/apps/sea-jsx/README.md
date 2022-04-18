@@ -1,4 +1,4 @@
-![version]([https://img.shields.io/github/package-json/v/raiment-studios/monorepo?filename=source%2Fprojects%2Fsea%2Fapps%2Fsea-jsx%2Fpackage.json)
+![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/raiment-studios/monorepo?filename=source%2Fprojects%2Fsea%2Fapps%2Fsea-jsx%2Fpackage.json)
 
 # sea-jsx
 
