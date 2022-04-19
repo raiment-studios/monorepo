@@ -5,6 +5,8 @@ const useStyles = createUseStyles({
     '@global': {
         body: {
             backgroundColor: '#f7f0e6',
+            fontFamily: "'Open Sans', sans-serif",
+            fontSize: '9pt',
         },
         '.flex-row': {
             display: 'flex',
@@ -22,6 +24,7 @@ const useStyles = createUseStyles({
         borderRadius: 4,
     },
     label: {
+        marginBottom: 4,
         fontStyle: 'italic',
         fontSize: '70%',
         opacity: 0.7,
@@ -33,6 +36,9 @@ const useStyles = createUseStyles({
 });
 
 export default function () {
+    useGoogleFont(
+        'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap'
+    );
     const classes = useStyles();
 
     return (
@@ -46,8 +52,6 @@ export default function () {
                 padding: '6px 12px',
                 backgroundColor: '#faf8f5',
                 boxShadow: '4px 4px 10px 3px rgba(0,0,0,0.08)',
-                fontFamily: 'sans-serif',
-                fontSize: '11pt',
             }}
         >
             <div
@@ -93,11 +97,16 @@ export default function () {
                     </Section>
                 </div>
                 <div className="flex1">
-                    <Section label="Social" height="8rem">
-                        content
+                    <Section label="Social" height="auto">
+                        <div className={classes.line} />
+                        <div className={classes.line} />
+                        <div className={classes.line} />
+                        <div style={{ height: '1rem' }} />
                     </Section>
                     <Section label="Entertainment" height="8rem">
-                        content
+                        <div>Reading</div>
+                        <div>Video</div>
+                        <div>Games</div>
                     </Section>
                     <Section label="Projects" height="8rem">
                         content
@@ -117,4 +126,38 @@ function Section({ label, height, children }) {
             <div>{children}</div>
         </div>
     );
+}
+
+function useGoogleFont(href) {
+    const ensureLinkNode = (nodes, rel, href) => {
+        const link = document.createElement('link');
+        link.rel = rel;
+        link.href = href;
+
+        // Do the comparison after creating the node so that any normalization, for example
+        // of the URL, occurs and the comparison will match.
+        for (let node of nodes) {
+            if (node.rel === link.rel && node.href === link.href) {
+                console.log('Skipping', href);
+                return null;
+            }
+        }
+        document.head.appendChild(link);
+        return link;
+    };
+
+    React.useEffect(() => {
+        const nodes = document.querySelectorAll('link');
+        const link1 = ensureLinkNode(nodes, 'preconnect', 'https://fonts.gstatic.com');
+        const link2 = ensureLinkNode(nodes, 'stylesheet', href);
+
+        return () => {
+            if (link2) {
+                document.head.removeChild(link2);
+            }
+            if (link1) {
+                document.head.removeChild(link1);
+            }
+        };
+    }, []);
 }
