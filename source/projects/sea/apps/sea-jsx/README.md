@@ -45,7 +45,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Basic CLI flags
 -   [ ] Package management (v0.2)
     -   [x] Load latest version for unspecified packages
-    -   [ ] Allow "front-matter" comments to define package versions
+    -   [x] Allow "front-matter" comments to define package versions
     -   [ ] Cache between runs
     -   [ ] Document package management process
     -   [ ] Fix resolution of imports from within packages (e.g. `react/dom-client`)
@@ -57,6 +57,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Publish to package repository
     -   [ ] Add verbose mode (debug, info, warn)
     -   [ ] Add metrics
+    -   [ ] Changelog
+    -   [ ] Proper release process
 -   [ ] Host definition
     -   [ ] Allow basic host definition in "front-matter"
     -   [ ] Document host definition
