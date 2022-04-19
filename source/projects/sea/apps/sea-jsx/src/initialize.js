@@ -161,7 +161,13 @@ async function loadPackageJSON() {
         path.dirname(path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''))),
         '../package.json'
     );
-    const text = await fs.readFile('package.json', 'utf8');
+    let text = '';
+    try {
+        text = await fs.readFile('package.json', 'utf8');
+    } catch (e) {
+        console.error(`Could not log package.json at "${filename}"`);
+        process.exit(1);
+    }
     return JSON.parse(text);
 }
 
