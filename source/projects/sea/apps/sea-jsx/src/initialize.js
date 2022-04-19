@@ -157,15 +157,17 @@ export async function initialize() {
  * Helper to load the package file for version info, etc.
  */
 async function loadPackageJSON() {
-    const filename = path.join(
-        path.dirname(path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''))),
-        '../package.json'
+    const filename = path.resolve(
+        path.join(
+            path.dirname(path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''))),
+            '../package.json'
+        )
     );
     let text = '';
     try {
-        text = await fs.readFile('package.json', 'utf8');
+        text = await fs.readFile(filename, 'utf8');
     } catch (e) {
-        console.error(`Could not log package.json at "${filename}"`);
+        console.error(`Could not load package.json at "${filename}"`);
         process.exit(1);
     }
     return JSON.parse(text);
