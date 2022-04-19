@@ -2,7 +2,10 @@ import fs from 'fs/promises';
 import path from 'path';
 import esbuild from 'esbuild';
 import sh from 'shelljs';
+import yaml from 'yaml';
 import { generateRandomID } from './util.js';
+
+let previousFrontmatter;
 
 /**
  * Compiles the user-specified input file along with necessary bootstraping.
@@ -15,6 +18,35 @@ export async function build(ctx) {
         './__bootstrap.js': ctx.assets['__bootstrap.js'],
     };
 
+    //
+    // Read configuration
+    //
+    const userFrontmatter = parseFrontMatter(builtinFiles['./__app.js'].toString());
+    const frontmatter = Object.assign(
+        {
+            type: 'sea-jsx@v1',
+            imports: {},
+        },
+        userFrontmatter
+    );
+
+    if (ctx.config.verbosity > 0) {
+        const text = yaml.stringify(frontmatter);
+
+        // Only print this the first time and on changes to the front matter
+        if (previousFrontmatter !== text) {
+            ctx.print('Frontmatter configuration:');
+            const lines = text.split('\n');
+            for (let line of lines) {
+                ctx.print(`  {{loc ${line}}}`);
+            }
+        }
+        previousFrontmatter = text;
+    }
+
+    //
+    // Use a custom plug-in to handle implicit packages
+    //
     const plugin = {
         name: 'sea-js',
         setup: function (build) {
@@ -45,16 +77,39 @@ export async function build(ctx) {
                 if (result.errors.length > 0) {
                     if (!sh.test('-e', `${dir}/node_modules/${packageName}`)) {
                         const start = Date.now();
-                        ctx.printV1(`Installing latest version of {{obj ${packageName}}}...`);
+
+                        // Check if a specific version is being requested or if the latest
+                        // should be used.  The version is passed along directly to npm so
+                        // follows that format.
+                        let packageIdentifier;
+                        const version = frontmatter.imports[packageName];
+                        if (version) {
+                            ctx.printV1(`Using {{loc ${version}}}`);
+                            packageIdentifier = `${packageName}@${version}`;
+                        } else {
+                            ctx.printV1('Using latest version');
+                            packageIdentifier = packageName;
+                        }
+
+                        ctx.printV1(`Installing {{obj ${packageIdentifier}}}...`);
                         sh.config.silent = true;
                         sh.pushd(dir);
-                        sh.exec(`npm i ${packageName}`);
+                        sh.exec(`npm i ${packageIdentifier}`);
                         sh.popd();
                         sh.config.silent = false;
-                        const duration = Date.now() - start;
 
+                        // Read the version of what was just installed
+                        // TODO: what if package.json doesn't exist?
+                        const pkgJSON = JSON.parse(
+                            await fs.readFile(
+                                path.join(dir, 'node_modules', packageName, 'package.json'),
+                                'utf8'
+                            )
+                        );
+
+                        const duration = Date.now() - start;
                         ctx.print(
-                            `Installed latest version of {{obj ${packageName}}} ({{loc ${duration}ms}}).`
+                            `Installed {{obj ${packageName}}} {{loc v${pkgJSON.version}}} ({{loc ${duration}ms}}).`
                         );
                     }
                     result = await build.resolve(packageName, { resolveDir: dir });
@@ -63,6 +118,8 @@ export async function build(ctx) {
                 if (result.errors.length > 0) {
                     return { errors: result.errors };
                 }
+
+                ctx.printV1(`Path {{obj ${result.path}}}`);
                 return { path: result.path, namespace: result.namespace, external: false };
             });
 
@@ -121,4 +178,33 @@ export async function build(ctx) {
         ctx.cacheID = generateRandomID();
         ctx.content = text;
     }
+}
+
+/**
+ * Scan the entry-point file for front-matter data that will be used in
+ * configuration.
+ *
+ * @param {*} source
+ *
+ * TODO: make this more efficient. It is currently written for simplicity
+ * with no thought to efficiency.
+ */
+function parseFrontMatter(source) {
+    const lines = source.split('\n');
+    const start = lines.findIndex((line) => line.trim().startsWith('/*!@sea:header'));
+
+    // There's no front-matter defined
+    if (start === -1) {
+        return null;
+    }
+
+    const end = lines.slice(start + 1).findIndex((line) => line.trim() === '*/');
+    if (end === -1) {
+        console.error('Error: found front-matter begin token without end token');
+        process.exit(1);
+    }
+
+    const content = lines.slice(start + 1, start + end + 1).join('\n');
+    const obj = yaml.parse(content);
+    return obj;
 }

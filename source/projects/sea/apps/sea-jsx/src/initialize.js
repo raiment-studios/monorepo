@@ -126,6 +126,7 @@ export async function initialize() {
         config: {
             filename: inputFilename,
             port: 8080,
+            verbosity: cli.flags.verbose.length,
         },
         cacheID: generateRandomID(),
         assets: {},

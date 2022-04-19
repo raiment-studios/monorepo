@@ -60,6 +60,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
 -   [ ] Host definition
     -   [ ] Allow basic host definition in "front-matter"
     -   [ ] Document host definition
+    -   [ ] Add a renderToString "host" definition
 
 ### Backlog
 
@@ -72,3 +73,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
 The process can be thought of in two parts: (1) creating a "host environment" out of the browser with a known HTML base configuration, (2) executing the given program in that environment.
 
 A future direction is to create a target types of Markdown and extended Markdown that can also be quickly displayed.
+
+### Sea conventions
+
+-   File-base / Gitops compatible
+-   Uses existing, documented formats when possible
