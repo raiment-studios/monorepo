@@ -80,16 +80,25 @@ A few goals of `sea-jsx` is to work with single, independent files and avoid clu
 
 ```javascript
 /*!@sea:header
-    imports:
-        lodash: 4
- */
+
+imports:
+    lodash: 4
+
+*/
+
+import _ from 'lodash';
 
 export default function() {
-    return (<div>Hello World</div>);
+    return (<div>{_.snakeCase(Hello World)}</div>);
 }
 ```
 
-`sea-jsx` looks for the first comment using the special sequence `/*!@sea:headder` and parses the contents of that comment as YAML. That object is then used as the `sea-jsx` configuration.
+`sea-jsx` looks for the first comment using the special sequence `/*!@sea:headder` and parses the contents of that comment as YAML. That object is then used as the `sea-jsx` configuration.  In this particular case, the configuration is telling `sea-jsx` to use lodash version 4.
+
+### Configuration options
+
+* `imports` - a set of key-value pairs specifying the npm version to use when importing that particular package
+
 
 ## Design
 
