@@ -1,7 +1,9 @@
-# Raiment Studios monorepo (WIP)
+# Raiment Studios monorepo
 
 ![](https://img.shields.io/badge/status-pre--alpha-c44)
 ![unit tests](https://github.com/raiment-studios/monorepo/actions/workflows/unit-test.yml/badge.svg)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/raiment-studios/monorepo)
+![GitHub last commit](https://img.shields.io/github/last-commit/raiment-studios/monorepo)
 ![](https://img.shields.io/badge/license-MIT-039)
 [![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
 [![](https://img.shields.io/badge/chat-zulip-36c)](https://raiment-studios.zulipchat.com/)
