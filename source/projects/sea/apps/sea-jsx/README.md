@@ -70,6 +70,27 @@ A quick, simple command-line tool to run single JavaScript React Components with
 -   [ ] Modules of multiple files
 -   [ ] Automatic deployment
 
+## User documentation
+
+### Frontmatter
+
+A few goals of `sea-jsx` is to work with single, independent files and avoid cluttering a workspace with configuration files. Another goal is to use JavaScript / JSX that can copied into other projects and it will "just work".  A challenge though is `sea-jsx` does require _some_ configuration to handle data that is not easily expressed in compliant JavaScript.  As such `sea-jsx` borrows the notion of ["front matter"](https://www.merriam-webster.com/dictionary/front%20matter) [as used in Markdown-like variants](https://assemble.io/docs/YAML-front-matter.html).
+
+**Example**
+
+```javascript
+/*!@sea:header
+    imports:
+        lodash: 4
+ */
+
+export default function() {
+    return (<div>Hello World</div>);
+}
+```
+
+`sea-jsx` looks for the first comment using the special sequence `/*!@sea:headder` and parses the contents of that comment as YAML. That object is then used as the `sea-jsx` configuration.
+
 ## Design
 
 The process can be thought of in two parts: (1) creating a "host environment" out of the browser with a known HTML base configuration, (2) executing the given program in that environment.
@@ -78,5 +99,7 @@ A future direction is to create a target types of Markdown and extended Markdown
 
 ### Sea conventions
 
--   File-base / Gitops compatible
--   Uses existing, documented formats when possible
+`sea-jsx` is part of the Sea suite (yes, that's a joke) of tools and attempts to follow the principles of that line of tooling:
+
+-  [x] File-based and git-ops compatible
+-  [x] Minimize use of custom or non-standard data formats or languages
