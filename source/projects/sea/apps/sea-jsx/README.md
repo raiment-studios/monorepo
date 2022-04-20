@@ -45,7 +45,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Basic CLI flags
 -   [ ] Package management (v0.2)
     -   [x] Load latest version for unspecified packages
-    -   [x] Allow "front-matter" comments to define package versions
+    -   [x] Allow front matter comments to define package versions
     -   [ ] Cache between runs
     -   [ ] Document package management process
     -   [ ] Fix resolution of imports from within packages (e.g. `react/dom-client`)
@@ -60,7 +60,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Changelog
     -   [ ] Proper release process
 -   [ ] Host definition
-    -   [ ] Allow basic host definition in "front-matter"
+    -   [ ] Allow basic host definition in front matter
     -   [ ] Document host definition
     -   [ ] Add a renderToString "host" definition
 
@@ -72,7 +72,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ## User documentation
 
-### Frontmatter
+### Front matter
 
 A few goals of `sea-jsx` is to work with single, independent files and avoid cluttering a workspace with configuration files. Another goal is to use JavaScript / JSX that can copied into other projects and it will "just work".  A challenge though is `sea-jsx` does require _some_ configuration to handle data that is not easily expressed in compliant JavaScript.  As such `sea-jsx` borrows the notion of ["front matter"](https://www.merriam-webster.com/dictionary/front%20matter) [as used in Markdown-like variants](https://assemble.io/docs/YAML-front-matter.html).
 
