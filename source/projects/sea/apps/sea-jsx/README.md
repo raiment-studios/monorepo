@@ -49,6 +49,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Cache between runs
     -   [ ] Document package management process
     -   [ ] Fix resolution of imports from within packages (e.g. `react/dom-client`)
+    -   [ ] Ensure works properly with namespaced packages
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile
@@ -74,7 +75,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ### Front matter
 
-A few goals of `sea-jsx` is to work with single, independent files and avoid cluttering a workspace with configuration files. Another goal is to use JavaScript / JSX that can copied into other projects and it will "just work".  A challenge though is `sea-jsx` does require _some_ configuration to handle data that is not easily expressed in compliant JavaScript.  As such `sea-jsx` borrows the notion of ["front matter"](https://www.merriam-webster.com/dictionary/front%20matter) [as used in Markdown-like variants](https://assemble.io/docs/YAML-front-matter.html).
+A few goals of `sea-jsx` is to work with single, independent files and avoid cluttering a workspace with configuration files. Another goal is to use JavaScript / JSX that can copied into other projects and it will "just work". A challenge though is `sea-jsx` does require _some_ configuration to handle data that is not easily expressed in compliant JavaScript. As such `sea-jsx` borrows the notion of ["front matter"](https://www.merriam-webster.com/dictionary/front%20matter) [as used in Markdown-like variants](https://assemble.io/docs/YAML-front-matter.html).
 
 **Example**
 
@@ -93,12 +94,11 @@ export default function() {
 }
 ```
 
-`sea-jsx` looks for the first comment using the special sequence `/*!@sea:headder` and parses the contents of that comment as YAML. That object is then used as the `sea-jsx` configuration.  In this particular case, the configuration is telling `sea-jsx` to use lodash version 4.
+`sea-jsx` looks for the first comment using the special sequence `/*!@sea:headder` and parses the contents of that comment as YAML. That object is then used as the `sea-jsx` configuration. In this particular case, the configuration is telling `sea-jsx` to use lodash version 4.
 
 ### Configuration options
 
-* `imports` - a set of key-value pairs specifying the npm version to use when importing that particular package
-
+-   `imports` - a set of key-value pairs specifying the npm version to use when importing that particular package
 
 ## Design
 
@@ -110,5 +110,5 @@ A future direction is to create a target types of Markdown and extended Markdown
 
 `sea-jsx` is part of the Sea suite (yes, that's a joke) of tools and attempts to follow the principles of that line of tooling:
 
--  [x] File-based and git-ops compatible
--  [x] Minimize use of custom or non-standard data formats or languages
+-   [x] File-based and git-ops compatible
+-   [x] Minimize use of custom or non-standard data formats or languages

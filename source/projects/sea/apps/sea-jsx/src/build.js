@@ -112,7 +112,23 @@ export async function build(ctx) {
                             `Installed {{obj ${packageName}}} {{loc v${pkgJSON.version}}} ({{loc ${duration}ms}}).`
                         );
                     }
+
+                    // It's been installed, now ask esbuild to find it in the new directory.
+                    // This shouldn't fail, so print out a fairly verbose error for debugging.
+                    //
                     result = await build.resolve(packageName, { resolveDir: dir });
+                    if (result.errors.length > 0) {
+                        console.error(`Could not resolve installed package ${packageName}`);
+                        console.error('esbuild error:');
+                        console.error(result.errors);
+                        console.error('context:');
+                        console.error({
+                            packageName,
+                            resolveDir: dir,
+                        });
+                        console.error(sh.ls(`${dir}/node_modules/${packageName}`).stdout);
+                        process.exit(1);
+                    }
                 }
 
                 if (result.errors.length > 0) {

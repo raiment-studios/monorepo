@@ -42,75 +42,83 @@ export default function () {
     const classes = useStyles();
 
     return (
-        <div
-            style={{
-                width: '42rem',
-                height: '68rem',
-                margin: '2rem auto',
-                border: 'solid 1px #AAA',
-                borderRadius: 8,
-                padding: '6px 12px',
-                backgroundColor: '#faf8f5',
-                boxShadow: '4px 4px 10px 3px rgba(0,0,0,0.08)',
-            }}
-        >
+        <div>
             <div
                 style={{
-                    fontStyle: 'italic',
-                    marginBottom: 6,
-                    opacity: 0.5,
-                    textAlign: 'right',
+                    width: '42rem',
+                    height: '68rem',
+                    margin: '2rem auto',
+                    border: 'solid 1px #AAA',
+                    borderRadius: 8,
+                    padding: '6px 12px',
+                    backgroundColor: '#faf8f5',
+                    boxShadow: '4px 4px 10px 3px rgba(0,0,0,0.08)',
                 }}
             >
-                Guidebook
-            </div>
-            <Section label="Date" height="1.6rem">
-                <div>{`${new Date()}`}</div>
-            </Section>
-            <div className="flex-row">
-                <div className="flex1">
-                    <Section label="Adventure" height="12rem">
-                        <div style={{ margin: '0 0.5rem 0 1rem' }}>
-                            <div className={classes.line} />
-                            <div className={classes.line} />
-                            <div className={classes.line} />
-                            <div className={classes.line} />
-                            <div className={classes.line} />
-                            <div className={classes.line} />
-                            <div className={classes.line} />
-                        </div>
-                    </Section>
-                    <Section label="Fitness" height="16rem">
-                        <div>☒ 10,000 steps</div>
-                        <div>☐ Run</div>
-                        <div>☐ Gym</div>
-                        <div style={{ marginTop: '0.5rem' }}>
-                            <div>Food</div>
+                <div
+                    style={{
+                        fontStyle: 'italic',
+                        marginBottom: 6,
+                        opacity: 0.5,
+                        textAlign: 'right',
+                    }}
+                >
+                    Guidebook
+                </div>
+                <Section label="Date" height="1.6rem">
+                    <div>{`${new Date()}`}</div>
+                </Section>
+                <div className="flex-row">
+                    <div className="flex1">
+                        <Section label="Adventure" height="12rem">
                             <div style={{ margin: '0 0.5rem 0 1rem' }}>
                                 <div className={classes.line} />
                                 <div className={classes.line} />
                                 <div className={classes.line} />
                                 <div className={classes.line} />
                                 <div className={classes.line} />
+                                <div className={classes.line} />
+                                <div className={classes.line} />
                             </div>
-                        </div>
-                    </Section>
-                </div>
-                <div className="flex1">
-                    <Section label="Social" height="auto">
-                        <div className={classes.line} />
-                        <div className={classes.line} />
-                        <div className={classes.line} />
-                        <div style={{ height: '1rem' }} />
-                    </Section>
-                    <Section label="Entertainment" height="8rem">
-                        <div>Reading</div>
-                        <div>Movies / Shows</div>
-                        <div>Games</div>
-                    </Section>
-                    <Section label="Projects" height="8rem">
-                        content
-                    </Section>
+                        </Section>
+                        <Section label="Fitness" height="16rem">
+                            <div>☒ 10,000 steps</div>
+                            <div>☐ Run</div>
+                            <div>☐ Gym</div>
+                            <div style={{ marginTop: '0.5rem' }}>
+                                <div>Food</div>
+                                <div style={{ margin: '0 0.5rem 0 1rem' }}>
+                                    <div className={classes.line} />
+                                    <div className={classes.line} />
+                                    <div className={classes.line} />
+                                    <div className={classes.line} />
+                                    <div className={classes.line} />
+                                </div>
+                            </div>
+                        </Section>
+                    </div>
+                    <div className="flex1">
+                        <Section label="Social" height="auto">
+                            <div className={classes.line} />
+                            <div className={classes.line} />
+                            <div className={classes.line} />
+                            <div style={{ height: '1rem' }} />
+                        </Section>
+                        <Section label="Entertainment" height="8rem">
+                            <div>Reading</div>
+                            <div className={classes.line} />
+                            <div className={classes.line} />
+                            <div>Movies / Shows</div>
+                            <div className={classes.line} />
+                            <div className={classes.line} />
+                            <div>Games</div>
+                            <div className={classes.line} />
+                            <div className={classes.line} />
+                        </Section>
+                        <Section label="Projects" height="8rem">
+                            content
+                        </Section>
+                    </div>
                 </div>
             </div>
         </div>
@@ -121,7 +129,7 @@ function Section({ label, height, children }) {
     const classes = useStyles();
 
     return (
-        <div className={classes.group} style={{ height }}>
+        <div className={classes.group} style={{ minHeight: height }}>
             <div className={classes.label}>{label}</div>
             <div>{children}</div>
         </div>

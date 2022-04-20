@@ -62,7 +62,8 @@ __bash_prompt() {
     local removecolor='\[\033[0m\]'
     PS1="${userpart} ${lightblue}\w ${gitbranch}${removecolor}\$ "
 
-    PS1="\n\[${RT_BLUE}\]${userpart} ${gitbranch}\[${RT_RESET}\] \[${RT_GRAY50}\]\w\[${RT_RESET}\]\n\[${RT_PURPLE}\]$ \[${RT_RESET}\]"
+    # By design: show the full path ($PWD instead of \w), so that CTRL-CLICK will work in VSCODE to jump to that path
+    PS1="\n\[${RT_BLUE}\]${userpart} ${gitbranch}\[${RT_RESET}\] \[${RT_GRAY50}\]\$PWD\[${RT_RESET}\]\n\[${RT_PURPLE}\]$ \[${RT_RESET}\]"
     unset -f __bash_prompt
 }
 __bash_prompt
