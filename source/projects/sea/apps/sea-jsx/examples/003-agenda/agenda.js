@@ -105,7 +105,7 @@ export default function () {
                     </Section>
                     <Section label="Entertainment" height="8rem">
                         <div>Reading</div>
-                        <div>Video</div>
+                        <div>Movies / Shows</div>
                         <div>Games</div>
                     </Section>
                     <Section label="Projects" height="8rem">

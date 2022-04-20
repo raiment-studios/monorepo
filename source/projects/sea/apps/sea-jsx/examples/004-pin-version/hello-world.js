@@ -20,6 +20,6 @@ const people = [
 
 export default function () {
     // Intentionally use the _.pluck function that was deprecated in v4+
-    // to ensure the frontmatter is being processed correctly
+    // to ensure the front matter is being processed correctly
     return <h1>Hello {_.pluck(people, 'name')[0]}</h1>;
 }
