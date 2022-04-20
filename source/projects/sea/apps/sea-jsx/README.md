@@ -46,10 +46,10 @@ A quick, simple command-line tool to run single JavaScript React Components with
 -   [ ] Package management (v0.2)
     -   [x] Load latest version for unspecified packages
     -   [x] Allow front matter comments to define package versions
+    -   [x] Fix resolution of imports from within packages (e.g. `react/dom-client`)
+    -   [x] Ensure works properly with namespaced packages
     -   [ ] Cache between runs
     -   [ ] Document package management process
-    -   [ ] Fix resolution of imports from within packages (e.g. `react/dom-client`)
-    -   [ ] Ensure works properly with namespaced packages
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile

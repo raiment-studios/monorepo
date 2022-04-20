@@ -73,7 +73,7 @@ export async function build(ctx) {
                 ctx.printV1(`Resolving {{obj ${packageName}}}`);
 
                 const dir = ctx.tempDirectory;
-                let result = await build.resolve(packageName, { resolveDir: dir });
+                let result = await build.resolve(args.path, { resolveDir: dir });
                 if (result.errors.length > 0) {
                     if (!sh.test('-e', `${dir}/node_modules/${packageName}`)) {
                         const start = Date.now();
