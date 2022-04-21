@@ -1,11 +1,12 @@
 import React from 'react';
 import { createUseStyles } from 'react-jss';
-
 // https://react-icons.github.io/react-icons/icons?name=vsc
 import { IconContext } from 'react-icons';
 import { VscMenu } from 'react-icons/vsc';
 
-const useStyles = createUseStyles({
+import { Section } from './section.js';
+
+export const useStyles = createUseStyles({
     '@global': {
         body: {
             backgroundColor: '#f7f0e6',
@@ -133,17 +134,6 @@ export default function () {
                 </div>
             </div>
         </IconContext.Provider>
-    );
-}
-
-function Section({ label, height, children }) {
-    const classes = useStyles();
-
-    return (
-        <div className={classes.group} style={{ minHeight: height }}>
-            <div className={classes.label}>{label}</div>
-            <div>{children}</div>
-        </div>
     );
 }
 

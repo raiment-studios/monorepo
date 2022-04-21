@@ -50,6 +50,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Ensure works properly with namespaced packages
     -   [x] Document package management process
     -   [x] Cache modules between runs for fewer fetches
+    -   [x] Automatically try appending '.js' to imports 
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile
@@ -73,6 +74,20 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ## User documentation
 
+### Command-line usage
+
+```
+Usage
+$ sea-jsx [...flags] <filename>
+
+Flags
+  help                  displays help information
+  version               displays program version
+  verbose               sets verbose output
+  clean                 removes all cached modules before proceeding
+```
+
+
 ### Front matter
 
 While `sea-jsx` is designed to minimize configuration, when it is required (such as to specify a particular package version), a commaent-based front matter syntax can be used to provide YAML configuration:
@@ -83,7 +98,7 @@ While `sea-jsx` is designed to minimize configuration, when it is required (such
 ```javascript
 /*!@sea:header
 
-imports:
+modules:
     lodash: 4
 
 */
@@ -97,7 +112,7 @@ export default function() {
 
 ### Configuration options
 
--   `imports` - a set of key-value pairs specifying the npm version to use when importing that particular package.  Imports not listed in the configuration will use the latest available version.
+-   `modules` - a set of key-value pairs specifying the npm version to use when importing that particular package.  Imports not listed in the module configuration will attempt to use the latest available version.
 
 ## Design
 

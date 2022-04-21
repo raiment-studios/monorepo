@@ -51,6 +51,13 @@ export async function initialize() {
                 isMultiple: true,
                 description: 'sets verbose output',
             },
+            clean: {
+                type: 'boolean',
+                default: false,
+                isRequired: false,
+                isMultiple: false,
+                description: 'removes all cached modules before proceeding',
+            },
         },
         autoHelp: false,
         autoVersion: false,
@@ -129,6 +136,7 @@ export async function initialize() {
             filename: inputFilename,
             port: 8080,
             verbosity: cli.flags.verbose.length,
+            clean: cli.flags.clean,
         },
         cacheID: generateRandomID(),
         assets: {},
@@ -138,6 +146,12 @@ export async function initialize() {
         print,
         printV1: cli.flags.verbose.length > 0 ? print : () => {},
         error,
+
+        runtime: {
+            buildCount: 0,
+            priorFrontMatter: null,
+            cachedModules: {},
+        },
     };
 
     ctx.print(brandBanner);

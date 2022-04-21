@@ -1,6 +1,6 @@
 /*!@sea:header
 
-    imports: 
+    modules: 
         lodash: 3        
  */
 
