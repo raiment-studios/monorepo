@@ -1,9 +1,11 @@
 import fs from 'fs/promises';
+import { constants } from 'fs';
 import path from 'path';
+import os from 'os';
 import meow from 'meow';
 import tmp from 'tmp';
 import { generateRandomID } from './util.js';
-import { print } from './ui.js';
+import { print, error } from './ui.js';
 
 /**
  * One-time initialization of the program
@@ -67,7 +69,7 @@ export async function initialize() {
     //
     for (let name of Object.keys(cli.flags)) {
         if (options.flags[name] === undefined) {
-            print(`{{err ERROR}}: Unknown flag {{obj --${name}}}`);
+            error(`{{err ERROR}}: Unknown flag {{obj --${name}}}`);
             process.exit(1);
         }
     }
@@ -106,7 +108,7 @@ export async function initialize() {
     // Check input file
     //
     if (cli.input.length !== 1) {
-        print(...usageStrings, '', `{{err ERROR}}: A single filename must be provided`);
+        error(...usageStrings, '', `{{err ERROR}}: A single filename must be provided`);
         process.exit(1);
     }
 
@@ -115,7 +117,7 @@ export async function initialize() {
         await fs.stat(inputFilename);
     } catch (e) {
         console.error(e);
-        print(`{{err ERROR}}: could not open file {{obj ${inputFilename}}}`);
+        error(`{{err ERROR}}: could not open file {{obj ${inputFilename}}}`);
         process.exit(1);
     }
 
@@ -133,8 +135,9 @@ export async function initialize() {
         tempDirectory: null,
         content: null,
 
-        print: print,
+        print,
         printV1: cli.flags.verbose.length > 0 ? print : () => {},
+        error,
     };
 
     ctx.print(brandBanner);
@@ -142,9 +145,20 @@ export async function initialize() {
     //
     // Temp directory
     //
-    tmp.setGracefulCleanup();
-    const tmpObject = tmp.dirSync({ mode: 0x1e8, prefix: 'sea_' });
-    ctx.tempDirectory = tmpObject.name;
+    // TODO: is this a violation of any recommended practices to reuse the same
+    // temp directory?
+    //
+    const tempDirectory = path.join(os.tmpdir(), `sea-temp-${pkg.version}`);
+    try {
+        await fs.access(tempDirectory, constants.W_OK);
+    } catch (e) {
+        if (e.code == 'ENOENT') {
+            await fs.mkdir(tempDirectory, { mode: 0x1e8 });
+        } else {
+            throw e;
+        }
+    }
+    ctx.tempDirectory = tempDirectory;
 
     ctx.printV1(`temporary directory: {{obj ${ctx.tempDirectory}}}`);
 

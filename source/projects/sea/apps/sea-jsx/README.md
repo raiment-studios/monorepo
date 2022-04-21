@@ -43,13 +43,13 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Hot-reload on changes
     -   [x] Hello world example
     -   [x] Basic CLI flags
--   [ ] Package management (v0.2)
+-   [x] Package management (v0.2)
     -   [x] Load latest version for unspecified packages
     -   [x] Allow front matter comments to define package versions
     -   [x] Fix resolution of imports from within packages (e.g. `react/dom-client`)
     -   [x] Ensure works properly with namespaced packages
-    -   [ ] Cache between runs
-    -   [ ] Document package management process
+    -   [x] Document package management process
+    -   [x] Cache modules between runs for fewer fetches
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile
@@ -75,7 +75,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ### Front matter
 
-A few goals of `sea-jsx` is to work with single, independent files and avoid cluttering a workspace with configuration files. Another goal is to use JavaScript / JSX that can copied into other projects and it will "just work". A challenge though is `sea-jsx` does require _some_ configuration to handle data that is not easily expressed in compliant JavaScript. As such `sea-jsx` borrows the notion of ["front matter"](https://www.merriam-webster.com/dictionary/front%20matter) [as used in Markdown-like variants](https://assemble.io/docs/YAML-front-matter.html).
+While `sea-jsx` is designed to minimize configuration, when it is required (such as to specify a particular package version), a commaent-based front matter syntax can be used to provide YAML configuration:
+
 
 **Example**
 
@@ -94,11 +95,9 @@ export default function() {
 }
 ```
 
-`sea-jsx` looks for the first comment using the special sequence `/*!@sea:headder` and parses the contents of that comment as YAML. That object is then used as the `sea-jsx` configuration. In this particular case, the configuration is telling `sea-jsx` to use lodash version 4.
-
 ### Configuration options
 
--   `imports` - a set of key-value pairs specifying the npm version to use when importing that particular package
+-   `imports` - a set of key-value pairs specifying the npm version to use when importing that particular package.  Imports not listed in the configuration will use the latest available version.
 
 ## Design
 
