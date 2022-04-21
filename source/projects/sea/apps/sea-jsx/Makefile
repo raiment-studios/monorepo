@@ -13,10 +13,9 @@ test:
 benchmark:
 	echo "TODO"
 
-publish-force:
+publish-local:
 	-sudo npm uninstall --global @raiment/sea-jsx
-	npm version patch
 	sudo npm install --global .
 
 publish:
-	sudo npm install --global .
+	npm publish
