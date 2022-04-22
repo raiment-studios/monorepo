@@ -47,7 +47,7 @@ Project work is categorized into the following:
     * [**Core**](source/lib/core) - general utilities used across projects
     * [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
     * [**React-Ex**](source/lib/react-ex) - React utilities & extensions used across projects
-* [**Sea**](source/projects/sea) - a opinionated mix of compiler, wiki, CMS, and project manager ([demo](https://project.raiment.studio/))
+* [**Sea**](source/projects/sea) - a opinionated mix of compiler, wiki, CMS, and project manager
     * [**sea-jsx**](source/projects/sea/apps/sea-jsx) - app for quickly prototyping React Components
 * **Marketing** - the public website and material designed to encourage participation
 
@@ -63,8 +63,7 @@ For more details, see the [contributing page](source/projects/organization/contr
 ## Community
 
 * [Chat Server](https://raiment-studios.zulipchat.com/)
-* [Forums](https://github.com/raiment-studios/monorepo/discussions)
-* ⚠️TODO: Community knowledge base
+* [Discussion forums](https://github.com/raiment-studios/monorepo/discussions)
 * [npm registry](https://www.npmjs.com/package/@raiment)
 
 ## Roadmap
@@ -81,9 +80,7 @@ For more details, see the [contributing page](source/projects/organization/contr
 
 ## License
 
-All code and content within this repository, unless specifically noted otherwise, is licensed under:
+All code and content within this repository, unless specifically noted otherwise, is licensed under the **[MIT License](./LICENSE)**.
 
-* [MIT License](./LICENSE)
-
-Unless stated explicitly otherwise any contribution intentionally submitted for inclusion in this repository or otherwise to the project shall be licensed as stated above without any additional terms or conditions.
+Unless stated explicitly otherwise, any contribution intentionally submitted for inclusion in this repository or otherwise to the project shall be licensed as stated above without any additional terms or conditions.
 
