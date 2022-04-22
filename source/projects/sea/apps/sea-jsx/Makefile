@@ -1,3 +1,6 @@
+ensure:
+	echo "TODO"
+
 build:
 	echo "TODO"
 
