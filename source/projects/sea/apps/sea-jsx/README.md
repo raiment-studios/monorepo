@@ -50,7 +50,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Ensure works properly with namespaced packages
     -   [x] Document package management process
     -   [x] Cache modules between runs for fewer fetches
-    -   [x] Automatically try appending '.js' to imports 
+    -   [x] Allow multiple files
+    -   [x] Automatically try appending '.js' to imports
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile
@@ -69,7 +70,6 @@ A quick, simple command-line tool to run single JavaScript React Components with
 ### Backlog
 
 -   [ ] Open browser window if not already open
--   [ ] Modules of multiple files
 -   [ ] Automatic deployment
 
 ## User documentation
@@ -87,11 +87,9 @@ Flags
   clean                 removes all cached modules before proceeding
 ```
 
-
 ### Front matter
 
 While `sea-jsx` is designed to minimize configuration, when it is required (such as to specify a particular package version), a commaent-based front matter syntax can be used to provide YAML configuration:
-
 
 **Example**
 
@@ -112,7 +110,7 @@ export default function() {
 
 ### Configuration options
 
--   `modules` - a set of key-value pairs specifying the npm version to use when importing that particular package.  Imports not listed in the module configuration will attempt to use the latest available version.
+-   `modules` - a set of key-value pairs specifying the npm version to use when importing that particular package. Imports not listed in the module configuration will attempt to use the latest available version.
 
 ## Design
 
@@ -124,7 +122,7 @@ export default function() {
 
 1. Minimal setup and configuration
 2. Standard JSX that will be transferable into production code
-3. Sharing via rapid, minimal configuration deployment 
+3. Sharing via rapid, minimal configuration deployment
 
 These design goals follow from the primary use case.
 
@@ -143,11 +141,11 @@ A future direction is to create a target types of Markdown and extended Markdown
 
 #### Out of scope
 
-* **Automatic routing** - sea-jsx is not intended to be a site generator. Routing should be handled via external packages.
-* **Unit testing** - sea-jsx is primarily for rapid prototyping, not production code so has no built-in mechanisms to facilitate unit testing
+-   **Automatic routing** - sea-jsx is not intended to be a site generator. Routing should be handled via external packages.
+-   **Unit testing** - sea-jsx is primarily for rapid prototyping, not production code so has no built-in mechanisms to facilitate unit testing
 
 ## FAQ
 
 #### How does sea-jsx compare to, say, Next.js?
 
-In short, sea-jsx does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration.  The primary use case is prototyping and rapid experimeentation.
+In short, sea-jsx does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration. The primary use case is prototyping and rapid experimeentation.
