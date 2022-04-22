@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/license-MIT-039)
 ![unit tests](https://github.com/raiment-studios/monorepo/actions/workflows/unit-test.yml/badge.svg)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/raiment-studios/monorepo)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/raiment-studios/monorepo)
 ![GitHub last commit](https://img.shields.io/github/last-commit/raiment-studios/monorepo)
 [![](https://img.shields.io/badge/discussions-welcome!-489)](https://github.com/raiment-studios/monorepo/discussions)
 [![](https://img.shields.io/badge/chat-zulip-386)](https://raiment-studios.zulipchat.com/)
