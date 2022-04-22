@@ -66,10 +66,6 @@ For more details, see the [contributing page](source/projects/organization/contr
 * [Discussion forums](https://github.com/raiment-studios/monorepo/discussions)
 * [npm registry](https://www.npmjs.com/package/@raiment)
 
-## Roadmap
-
-⚠️TODO
-
 ## FAQ
 
 ⚠️TODO
