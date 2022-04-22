@@ -64,7 +64,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Proper release process
 -   [ ] Host definition
     -   [ ] Allow basic host definition in front matter
-    -   [ ] Document host definition
+    -   [ ] Document host definition 
     -   [ ] Add a renderToString "host" definition
 
 ### Backlog
@@ -114,11 +114,11 @@ export default function() {
 
 ## Design
 
-#### Primary use case
+### Primary use case
 
 **Rapid prototyping and experimentation of JSX Components in isolation**
 
-#### Design goals
+### Design goals
 
 1. Minimal setup and configuration
 2. Standard JSX that will be transferable into production code
@@ -126,26 +126,30 @@ export default function() {
 
 These design goals follow from the primary use case.
 
-#### Sea conventions
+### Sea conventions
 
 `sea-jsx` is part of the `sea` suite (pun intended) of tools and attempts to follow the general workflow principles of the `sea` tooling:
 
 -   [x] File-based and git-ops compatible
 -   [x] Minimize use of custom or non-standard data formats or languages
 
-#### Architectural overview
+### Architectural overview
 
 The process can be thought of in two parts: (1) creating a "host environment" out of the browser with a known HTML base configuration, (2) executing the given program in that environment.
 
 A future direction is to create a target types of Markdown and extended Markdown that can also be quickly displayed.
 
-#### Out of scope
+### Out of scope
 
 -   **Automatic routing** - sea-jsx is not intended to be a site generator. Routing should be handled via external packages.
 -   **Unit testing** - sea-jsx is primarily for rapid prototyping, not production code so has no built-in mechanisms to facilitate unit testing
 
 ## FAQ
 
-#### How does sea-jsx compare to, say, Next.js?
+#### What are some of the reasons to use `sea-jsx`?
+
+It's simple, fast, and doesn't lock you into any non-standard structures or configurations while you're working small, quick prototypes.
+
+#### How does `sea-jsx` compare to, say, [Next.js](https://nextjs.org/)?
 
 In short, sea-jsx does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration. The primary use case is prototyping and rapid experimeentation.
