@@ -4,7 +4,8 @@ import path from 'path';
 import esbuild from 'esbuild';
 import sh from 'shelljs';
 import yaml from 'yaml';
-import { generateRandomID } from './util.js';
+import { generateRandomID } from '../util.js';
+import { parseFrontMatter } from './parse_front_matter';
 
 /**
  * Compiles the user-specified input file along with necessary bootstraping.
@@ -284,33 +285,4 @@ export async function build(ctx) {
         ctx.cacheID = generateRandomID();
         ctx.content = text;
     }
-}
-
-/**
- * Scan the entry-point file for front-matter data that will be used in
- * configuration.
- *
- * @param {*} source
- *
- * TODO: make this more efficient. It is currently written for simplicity
- * with no thought to efficiency.
- */
-function parseFrontMatter(source) {
-    const lines = source.split('\n');
-    const start = lines.findIndex((line) => line.trim().startsWith('/*!@sea:header'));
-
-    // There's no front-matter defined
-    if (start === -1) {
-        return null;
-    }
-
-    const end = lines.slice(start + 1).findIndex((line) => line.trim() === '*/');
-    if (end === -1) {
-        console.error('Error: found front-matter begin token without end token');
-        process.exit(1);
-    }
-
-    const content = lines.slice(start + 1, start + end + 1).join('\n');
-    const obj = yaml.parse(content);
-    return obj;
 }

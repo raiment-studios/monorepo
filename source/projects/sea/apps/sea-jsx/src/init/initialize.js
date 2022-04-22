@@ -4,8 +4,8 @@ import path from 'path';
 import os from 'os';
 import meow from 'meow';
 import tmp from 'tmp';
-import { generateRandomID } from './util.js';
-import { print, error } from './ui.js';
+import { generateRandomID } from '../util.js';
+import { print, error } from '../ui.js';
 
 /**
  * One-time initialization of the program

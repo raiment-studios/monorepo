@@ -11,7 +11,7 @@ run:
 	node . examples/001-hello-world/hello-world.js
 
 test:
-	echo "TODO"
+	npx jest --verbose .
 
 benchmark:
 	echo "TODO"

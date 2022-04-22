@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parseFrontMatter arbitrary YAML is parsed 1`] = `
+Object {
+  "hello": "world",
+  "list": Array [
+    1,
+    2,
+    3,
+    Object {
+      "nested1": "value1",
+      "nested2": "value2",
+    },
+  ],
+}
+`;
+
+exports[`parseFrontMatter empty string 1`] = `null`;
+
+exports[`parseFrontMatter indented 1`] = `
+Object {
+  "hello": "world",
+}
+`;
+
+exports[`parseFrontMatter no comment header 1`] = `null`;
+
+exports[`parseFrontMatter no comments 1`] = `null`;

@@ -1,6 +1,6 @@
 import { watchLoop } from './watch.js';
 import { startServer } from './server.js';
-import { build } from './build.js';
+import { build } from './build/build.js';
 import { initialize } from './initialize.js';
 import sh from 'shelljs';
 
