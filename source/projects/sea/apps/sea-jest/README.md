@@ -53,8 +53,8 @@ test:
 
 ## FAQ
 
-#### Why not just use `jest` directly instead of `sea-jes`?
+#### Why not just use `jest` directly instead of `sea-jest`?
 
 For many users, this will be the right choice!
 
-`sea-jest` was created as minimal wrapper to avoid the duplicate boilerplate common to all Raiment Studios projects. 
+`sea-jest` was created as minimal wrapper to avoid the duplicate boilerplate common to all Raiment Studios projects. If you like the "sea" conventions in general, then using sea-jest is presumably convenience, otherwise it's likely not for a value add for you!
