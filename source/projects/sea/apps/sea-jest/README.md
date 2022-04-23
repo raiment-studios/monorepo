@@ -37,16 +37,6 @@ test:
     -   [ ] Add a `--help` flag that `sea-jest` catches
     -   [ ] Add a `--version` flag that `sea-jest` catches
     -   [ ] Add basic colors to match sea conventions
--   [ ] TODO
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
--   [ ] TODO
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
 
 ## User documentation
 
