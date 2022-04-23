@@ -16,9 +16,5 @@ test:
 benchmark:
 	echo "TODO"
 
-publish-local:
-	-sudo npm uninstall --global @raiment/sea-todo
-	sudo npm install --global .
-
 publish:
-	npm publish
+	echo "TODO"

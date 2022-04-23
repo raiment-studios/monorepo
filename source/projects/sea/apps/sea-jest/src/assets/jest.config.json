@@ -1,0 +1,11 @@
+{
+    "transform": {
+        "^.+\\.js?$": [
+            "/workspaces/monorepo/source/projects/sea/apps/sea-jest/node_modules/esbuild-jest",
+            {
+                "sourcemap": "inline"
+            }
+        ]
+    },
+    "snapshotResolver": "./jest.snapshot-resolver.cjs"
+}
