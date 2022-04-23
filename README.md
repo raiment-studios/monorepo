@@ -49,6 +49,8 @@ Project work is categorized into the following:
     * [**React-Ex**](source/lib/react-ex) - React utilities & extensions used across projects
 * [**Sea**](source/projects/sea) - a opinionated mix of compiler, wiki, CMS, and project manager
     * [**sea-jsx**](source/projects/sea/apps/sea-jsx) - app for quickly prototyping React Components
+    * [**sea-jest**](source/projects/sea/apps/sea-jest) - wrapper on Jest to avoid config file clutter
+    * [**sea-todo**](source/projects/sea/apps/sea-todo) - todo 😄
 * **Marketing** - the public website and material designed to encourage participation
 
 
