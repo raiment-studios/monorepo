@@ -28,7 +28,7 @@ test:
 
 ## Roadmap
 
-### v1.0 Checkpoints
+### 🏁 v1.0 Checkpoints
 
 -   [x] v0.1 Basic functionality
     -   [x] Invoke jest and pass all arguments

@@ -36,7 +36,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ## Roadmap
 
-### v1.0 Checkpoints
+### 🏁 v1.0 Checkpoints
 
 -   [x] Basic functionality (v0.1)
     -   [x] Implicitly create index.html & bootstrap.js
@@ -67,7 +67,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Document host definition 
     -   [ ] Add a renderToString "host" definition
 
-### Backlog
+### 📓 Backlog
 
 -   [ ] Open browser window if not already open
 -   [ ] Automatic deployment
