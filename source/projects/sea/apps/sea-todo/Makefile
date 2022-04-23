@@ -11,7 +11,7 @@ run:
 	node . 
 
 test:
-	npx jest --verbose .
+	npx sea-jest --verbose .
 
 benchmark:
 	echo "TODO"
