@@ -1,20 +1,14 @@
 {
-    "name": "@raiment/sea-jsx",
-    "version": "0.2.1",
+    "name": "@raiment/sea-todo",
+    "version": "0.1.0",
     "type": "module",
     "main": "src/main.js",
-    "bin": {
-        "sea-jsx": "src/cli.js"
-    },
     "dependencies": {
         "chalk": "^5.0.1",
-        "esbuild": "^0.14.36",
         "express": "^4.17.3",
         "meow": "^10.1.2",
         "react": "^18.0.0",
-        "react-dom": "^18.0.0",
-        "shelljs": "^0.8.5",
-        "yaml": "^2.0.1"
+        "react-dom": "^18.0.0"
     },
     "license": "MIT",
     "author": "https://github.com/raiment-studios",
@@ -22,18 +16,14 @@
         "type": "git",
         "url": "https://github.com/raiment-studios/monorepo.git"
     },
-    "homepage": "https://github.com/raiment-studios/monorepo/tree/main/source/projects/sea/apps/sea-jsx",
+    "homepage": "https://github.com/raiment-studios/monorepo/tree/main/source/projects/sea/apps/sea-todo",
     "keywords": [
         "jsx",
-        "react",
-        "sandbox",
-        "simple",
-        "esbuild",
-        "hot-reload",
-        "prototyping"
+        "react"
     ],
     "devDependencies": {
         "esbuild-jest": "^0.5.0",
-        "jest": "^27.5.1"
+        "jest": "^27.5.1",
+        "nodemon": "^2.0.15"
     }
 }

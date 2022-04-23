@@ -1,0 +1,11 @@
+{
+    "transform": {
+        "^.+\\.js?$": [
+            "esbuild-jest",
+            {
+                "sourcemap": "inline"
+            }
+        ]
+    },
+    "snapshotResolver": "./jest.snapshot-resolver.cjs"
+}

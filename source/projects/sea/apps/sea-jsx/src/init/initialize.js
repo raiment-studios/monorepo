@@ -3,7 +3,6 @@ import { constants } from 'fs';
 import path from 'path';
 import os from 'os';
 import meow from 'meow';
-import tmp from 'tmp';
 import {} from '../util/util.js';
 import { generateRandomID, print, error } from '../util/index.js';
 import { loadPackageJSON } from './load_package_json.js';
