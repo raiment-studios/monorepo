@@ -32,5 +32,7 @@
         "hot-reload",
         "prototyping"
     ],
-    "devDependencies": {}
+    "devDependencies": {
+        "@raiment/sea-jest": "^0.1.1"
+    }
 }

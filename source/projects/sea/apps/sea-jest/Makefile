@@ -21,4 +21,4 @@ publish-local:
 	sudo npm install --global .
 
 publish:
-	npm publish
+	npm publish --access public
