@@ -81,5 +81,5 @@ async function esbuildJestPath(ctx) {
         console.error('Attempts', attempts);
         process.exit(1);
     }
-    return process.resolve(pkgPath);
+    return path.resolve(pkgPath);
 }
