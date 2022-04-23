@@ -68,6 +68,9 @@ async function jestPath(ctx) {
 
 async function esbuildJestPath(ctx) {
     const thisFile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
-    const pkgPath = path.join(path.dirname(thisFile), '../node_modules/esbuild-jest');
+    let pkgPath = path.join(path.dirname(thisFile), '../node_modules/esbuild-jest');
+    if (!sh.test('-e', pkgPath)) {
+        pkgPath = path.join(path.dirname(thisFile), '../../../esbuild-jest');
+    }
     return pkgPath;
 }
