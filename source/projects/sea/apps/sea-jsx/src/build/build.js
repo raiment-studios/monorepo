@@ -4,8 +4,8 @@ import path from 'path';
 import esbuild from 'esbuild';
 import sh from 'shelljs';
 import yaml from 'yaml';
-import { generateRandomID } from '../util.js';
-import { parseFrontMatter } from './parse_front_matter';
+import { generateRandomID } from '../util/util.js';
+import { parseFrontMatter } from './parse_front_matter.js';
 
 /**
  * Compiles the user-specified input file along with necessary bootstraping.

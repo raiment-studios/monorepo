@@ -4,8 +4,10 @@ import path from 'path';
 import os from 'os';
 import meow from 'meow';
 import tmp from 'tmp';
-import { generateRandomID } from '../util.js';
-import { print, error } from '../ui.js';
+import {} from '../util/util.js';
+import { generateRandomID, print, error } from '../util/index.js';
+import { loadPackageJSON } from './load_package_json.js';
+import { loadAssets } from './load_assets.js';
 
 /**
  * One-time initialization of the program
@@ -179,38 +181,4 @@ export async function initialize() {
     await loadAssets(ctx);
 
     return ctx;
-}
-
-/**
- * Helper to load the package file for version info, etc.
- */
-async function loadPackageJSON() {
-    const filename = path.resolve(
-        path.join(
-            path.dirname(path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''))),
-            '../package.json'
-        )
-    );
-    let text = '';
-    try {
-        text = await fs.readFile(filename, 'utf8');
-    } catch (e) {
-        console.error(`Could not load package.json at "${filename}"`);
-        process.exit(1);
-    }
-    return JSON.parse(text);
-}
-
-/**
- * Helper to load the bootstrap, scaffolding content into memory once for
- * future use.
- */
-async function loadAssets(ctx) {
-    const thisFile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
-    ctx.assets['index.html'] = await fs.readFile(
-        path.join(path.dirname(thisFile), 'assets/index.html')
-    );
-    ctx.assets['__bootstrap.js'] = await fs.readFile(
-        path.join(path.dirname(thisFile), 'assets/__bootstrap.js')
-    );
 }

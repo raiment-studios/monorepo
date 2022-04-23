@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import { build } from './build/build.js';
+import { build } from '../build/build.js';
 
 export async function watchLoop(app) {
     let lastModified = 0;
