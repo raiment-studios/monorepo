@@ -68,9 +68,19 @@ async function jestPath(ctx) {
 
 async function esbuildJestPath(ctx) {
     const thisFile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
+
+    const attempts = [];
     let pkgPath = path.join(path.dirname(thisFile), '../node_modules/esbuild-jest');
+    attempts.push(pkgPath);
     if (!sh.test('-e', pkgPath)) {
         pkgPath = path.join(path.dirname(thisFile), '../../../esbuild-jest');
+        attempts.push(pkgPath);
     }
+    if (!sh.test('-e', pkgPath)) {
+        console.error('Could not locate path to esbuild-jest');
+        console.error('Attempts', attempts);
+        process.exit(1);
+    }
+
     return pkgPath;
 }

@@ -1,6 +1,6 @@
 {
     "name": "@raiment/sea-jest",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "type": "module",
     "main": "src/main.js",
     "bin": {
