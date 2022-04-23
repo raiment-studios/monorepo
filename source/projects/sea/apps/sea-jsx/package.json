@@ -33,6 +33,6 @@
         "prototyping"
     ],
     "devDependencies": {
-        "@raiment/sea-jest": "^0.1.1"
+        "@raiment/sea-jest": "^0.1.4"
     }
 }

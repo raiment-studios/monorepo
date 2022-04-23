@@ -55,7 +55,11 @@ function exec(cmd, args = [], options = {}) {
 
 async function jestPath(ctx) {
     const thisFile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
-    const pkgPath = path.join(path.dirname(thisFile), '../node_modules/jest');
+    let pkgPath = path.join(path.dirname(thisFile), '../node_modules/jest');
+    if (!sh.test('-e', pkgPath)) {
+        pkgPath = path.join(path.dirname(thisFile), '../../../jest');
+    }
+
     const pkg = JSON.parse(await fs.readFile(path.join(pkgPath, 'package.json'), 'utf8'));
 
     const fullpath = path.join(pkgPath, pkg.bin);
