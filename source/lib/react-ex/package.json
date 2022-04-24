@@ -4,7 +4,7 @@
     "type": "module",
     "main": "src/index.js",
     "peerDependencies": {
-        "react": "^17.0.2"
+        "react": "*"
     },
     "dependencies": {
         "react-jss": "^10.9.0"

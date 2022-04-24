@@ -20,9 +20,7 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 
 -   [ ] Basics
     -   [ ] Support tags
-    -   [ ] Open file
-    -   [ ] todo
-    -   [ ] todo
+    -   [ ] Read and write local files
 -   [ ] Future 
     -   [ ] Filter by tag
     -   [ ] Sync to git repo
