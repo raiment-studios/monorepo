@@ -1,7 +1,5 @@
-/**
- * Main program entry-point.
- */
-async function main() {
-    console.log('Hello world!');
+import React from 'react';
+
+export default function () {
+    return <div>Hello Todo</div>;
 }
-main();

@@ -5,7 +5,7 @@ build:
 	echo "TODO"
 
 dev:
-	echo "TODO"
+	npx sea-jsx src/main.js
 
 run:
 	node . 

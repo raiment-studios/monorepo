@@ -4,9 +4,6 @@
     "type": "module",
     "main": "src/main.js",
     "dependencies": {
-        "chalk": "^5.0.1",
-        "express": "^4.17.3",
-        "meow": "^10.1.2",
         "react": "^18.0.0",
         "react-dom": "^18.0.0"
     },
@@ -23,6 +20,7 @@
     ],
     "devDependencies": {
         "@raiment/sea-jest": "^0.1.9",
+        "@raiment/sea-jsx": "^0.2.1",
         "esbuild-jest": "^0.5.0",
         "jest": "^27.5.1",
         "nodemon": "^2.0.15"

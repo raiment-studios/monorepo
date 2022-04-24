@@ -16,23 +16,18 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 
 ## Roadmap
 
-### v1.0 Checkpoints
+### 🏁 v1.0 Checkpoints
 
--   [ ] TODO
+-   [ ] Basics
+    -   [ ] Support tags
+    -   [ ] Open file
     -   [ ] todo
     -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
--   [ ] TODO
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
--   [ ] TODO
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo
-    -   [ ] todo    
+-   [ ] Future 
+    -   [ ] Filter by tag
+    -   [ ] Sync to git repo
+    -   [ ] Mobile support
+    -   [ ] Progress Web App
 
 ## User documentation
 
