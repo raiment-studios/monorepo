@@ -21,11 +21,12 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 -   [ ] Basics
     -   [ ] Support tags
     -   [ ] Read and write local files
--   [ ] Future 
+-   [ ] Future
     -   [ ] Filter by tag
-    -   [ ] Sync to git repo
+    -   [ ] Sync to GitHub repo
     -   [ ] Mobile support
     -   [ ] Progress Web App
+    -   [ ] Terraform deployment
 
 ## User documentation
 
