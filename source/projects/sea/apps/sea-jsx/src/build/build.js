@@ -10,15 +10,15 @@ import { parseFrontMatter } from './parse_front_matter.js';
 /**
  * Compiles the user-specified input file along with necessary bootstraping.
  *
- * @param {*} ctx
+ * @param {*} app
  */
-export async function build(ctx) {
+export async function build(app) {
     const builtinFiles = {
-        './__app.js': await fs.readFile(ctx.config.filename),
-        './__bootstrap.js': ctx.assets['__bootstrap.js'],
+        './__app.js': await fs.readFile(app.config.filename),
+        './__bootstrap.js': app.assets['__bootstrap.js'],
     };
 
-    ctx.runtime.buildCount++;
+    app.runtime.buildCount++;
 
     //
     // Read configuration
@@ -32,18 +32,18 @@ export async function build(ctx) {
         userFrontmatter
     );
 
-    if (ctx.config.verbosity > 0) {
+    if (app.config.verbosity > 0) {
         const text = yaml.stringify(frontmatter);
 
         // Only print this the first time and on changes to the front matter
-        if (ctx.runtime.priorFrontMatter !== text) {
-            ctx.print('Frontmatter configuration:');
+        if (app.runtime.priorFrontMatter !== text) {
+            app.print('Frontmatter configuration:');
             const lines = text.split('\n');
             for (let line of lines) {
-                ctx.print(`  {{loc ${line}}}`);
+                app.print(`  {{loc ${line}}}`);
             }
         }
-        ctx.runtime.priorFrontMatter = text;
+        app.runtime.priorFrontMatter = text;
     }
 
     //
@@ -54,7 +54,11 @@ export async function build(ctx) {
     // not very good (I should review the actual code).  This likely could be implemented
     // more simply.
     //
-    const workingDir = path.dirname(ctx.config.filename);
+    const workingDir = path.dirname(app.config.filename);
+
+    app.watches[path.relative(process.cwd(), app.config.filename)] = (
+        await fs.stat(app.config.filename)
+    ).mtime;
 
     const plugin = {
         name: 'sea-js',
@@ -111,13 +115,15 @@ export async function build(ctx) {
                         readable = await canRead(relpath);
                     }
                     if (readable) {
+                        const watchPath = path.relative(process.cwd(), relpath);
+                        app.watches[watchPath] = (await fs.stat(watchPath)).mtime;
                         return {
                             path: relpath,
                             namespace: 'relative',
                         };
                     }
                 } catch (e) {
-                    ctx.error(`{{err Error}} ${e}`);
+                    app.error(`{{err Error}} ${e}`);
                     process.exit(1);
                 }
             };
@@ -134,9 +140,9 @@ export async function build(ctx) {
                 let parts = args.path.split('/');
                 const packageName = parts[0].startsWith('@') ? `${parts[0]}/${parts[1]}` : parts[0];
 
-                ctx.printV1(`Resolving {{obj ${packageName}}}`);
+                app.printV1(`Resolving {{obj ${packageName}}}`);
 
-                const dir = ctx.tempDirectory;
+                const dir = app.tempDirectory;
                 let result = await build.resolve(args.path, { resolveDir: dir });
                 if (result.errors.length > 0) {
                     if (!sh.test('-e', `${dir}/node_modules/${packageName}`)) {
@@ -148,14 +154,14 @@ export async function build(ctx) {
                         let packageIdentifier;
                         const version = frontmatter.modules[packageName];
                         if (version) {
-                            ctx.printV1(`Using {{loc ${version}}}`);
+                            app.printV1(`Using {{loc ${version}}}`);
                             packageIdentifier = `${packageName}@${version}`;
                         } else {
-                            ctx.printV1('Using latest version');
+                            app.printV1('Using latest version');
                             packageIdentifier = packageName;
                         }
 
-                        ctx.printV1(`Installing {{obj ${packageIdentifier}}}...`);
+                        app.printV1(`Installing {{obj ${packageIdentifier}}}...`);
                         sh.config.silent = true;
                         sh.pushd(dir);
                         sh.exec(`npm i ${packageIdentifier}`);
@@ -172,8 +178,8 @@ export async function build(ctx) {
                         );
 
                         const duration = Date.now() - start;
-                        ctx.runtime.cachedModules[packageName] = true;
-                        ctx.print(
+                        app.runtime.cachedModules[packageName] = true;
+                        app.print(
                             `Installed {{obj ${packageName}}} {{loc v${pkgJSON.version}}} ({{loc ${duration}ms}}).`
                         );
                     }
@@ -199,24 +205,24 @@ export async function build(ctx) {
                 if (result.errors.length > 0) {
                     return { errors: result.errors };
                 } else if (
-                    !ctx.runtime.cachedModules[packageName] &&
+                    !app.runtime.cachedModules[packageName] &&
                     args.importer.startsWith('./') &&
                     args.importer !== './__bootstrap.js'
                 ) {
                     // Display to the user the cached module as such just once
-                    ctx.runtime.cachedModules[packageName] = true;
+                    app.runtime.cachedModules[packageName] = true;
                     const pkgJSON = JSON.parse(
                         await fs.readFile(
                             path.join(dir, 'node_modules', packageName, 'package.json'),
                             'utf8'
                         )
                     );
-                    ctx.print(
+                    app.print(
                         `Using cached module {{obj ${packageName}}} {{loc v${pkgJSON.version}}}.`
                     );
                 }
 
-                ctx.printV1(`Path {{obj ${result.path}}}`);
+                app.printV1(`Path {{obj ${result.path}}}`);
                 return { path: result.path, namespace: result.namespace, external: false };
             };
 
@@ -261,8 +267,8 @@ export async function build(ctx) {
         const result = await esbuild.build(options);
         const text = result.outputFiles[0].text;
 
-        ctx.cacheID = generateRandomID();
-        ctx.content = text;
+        app.cacheID = generateRandomID();
+        app.content = text;
     } catch (e) {
         //
         // TODO: improve the error messaging. This seems a bit hacky
@@ -282,7 +288,7 @@ export async function build(ctx) {
         const result = await esbuild.build(options);
         const text = result.outputFiles[0].text;
 
-        ctx.cacheID = generateRandomID();
-        ctx.content = text;
+        app.cacheID = generateRandomID();
+        app.content = text;
     }
 }

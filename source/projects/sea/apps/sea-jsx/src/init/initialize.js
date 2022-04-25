@@ -143,6 +143,7 @@ export async function initialize() {
         assets: {},
         tempDirectory: null,
         content: null,
+        watches: {}, // map relative path -> last modification
 
         print,
         printV1: cli.flags.verbose.length > 0 ? print : () => {},

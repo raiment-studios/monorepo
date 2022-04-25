@@ -52,6 +52,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Cache modules between runs for fewer fetches
     -   [x] Allow multiple files
     -   [x] Automatically try appending '.js' to imports
+-   [ ] User experience enhancements
+    -   [x] Automatically refresh on any imported user file
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile
@@ -64,10 +66,10 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Proper release process
 -   [ ] Host definition
     -   [ ] Allow basic host definition in front matter
-    -   [ ] Document host definition 
+    -   [ ] Document host definition
     -   [ ] Add a renderToString "host" definition
 
-### 📓 Backlog
+### 🎄 Backlog
 
 -   [ ] Open browser window if not already open
 -   [ ] Automatic deployment
