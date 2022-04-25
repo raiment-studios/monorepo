@@ -17,6 +17,16 @@ todos:
 `)
 );
 
+class Database {
+    constructor() {
+        this._data = data;
+    }
+
+    select() {
+        return this._data;
+    }
+}
+
 export default function () {
     ReactEx.useCommonStyles();
     return (
@@ -32,25 +42,57 @@ export default function () {
                 sea-todo
             </div>
             <div>
-                {data.todos.map((item) => (
-                    <Item key={item.id} item={item} />
-                ))}
+                <TodoList todos={data.todos} />
             </div>
         </AppFrame>
     );
 }
 
+function TodoList({ todos }) {
+    return (
+        <>
+            {todos.map((item) => (
+                <ItemRow key={item.id} item={item} />
+            ))}
+        </>
+    );
+}
+
+class Item {
+    constructor(json) {
+        this._data = Object.assign(
+            {
+                id: core.shortID(),
+                title: '',
+                done: false,
+            },
+            json
+        );
+    }
+
+    get title() {
+        return this._data.title;
+    }
+    get id() {
+        return this._data.id;
+    }
+    get done() {
+        return this._data.done;
+    }
+}
+
 function transformData(data) {
     data.todos = data.todos.map((item) => {
-        return {
+        return new Item({
             id: core.shortID(),
             title: item,
-        };
+            done: false,
+        });
     });
     return data;
 }
 
-function Item({ item }) {
+function ItemRow({ item }) {
     return (
         <div
             className="flex-row-center"
@@ -63,7 +105,8 @@ function Item({ item }) {
                 style={{
                     width: 14,
                     height: 14,
-                    border: 'solid 1px #CCC',
+                    border: 'solid 1px #777',
+                    background: item.done ? '#CCC' : 'transparent',
                     borderRadius: 14,
                     cursor: 'pointer',
                     userSelect: 'none',
