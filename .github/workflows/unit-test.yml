@@ -36,7 +36,8 @@ jobs:
             - name: Publish milestone 1
               working-directory: source/projects/adventure/01-milestone
               run: |
-                  export MONOREPO_ROOT=$GITHUB_WORKSPACE          
+                  export MONOREPO_ROOT=$GITHUB_WORKSPACE
+                  rm package-lock.json
                   make ensure-deps
                   npm i
                   make build
