@@ -52,8 +52,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Cache modules between runs for fewer fetches
     -   [x] Allow multiple files
     -   [x] Automatically try appending '.js' to imports
--   [ ] User experience enhancements
-    -   [x] Automatically refresh on any imported user file
+    -   [x] Automatically refresh on any imported user file   
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile
