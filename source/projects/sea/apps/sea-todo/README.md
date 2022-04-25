@@ -4,7 +4,7 @@
 ![](https://img.shields.io/badge/license-MIT-039)
 [![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
 
-A todo app.
+A simple todo app designed to provide examples of recommended coding practices.
 
 ## Getting started
 
@@ -21,12 +21,23 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 -   [ ] Basics
     -   [ ] Support tags
     -   [ ] Read and write local files
--   [ ] Future
+-   [ ] Improved functionality
+    -   [ ] Tag hierachy
     -   [ ] Filter by tag
+-   [ ] UI/UX
+    -   [ ] Drag and drop
+-   [ ] GitOps
     -   [ ] Sync to GitHub repo
+-   [ ] Application robustness
     -   [ ] Mobile support
     -   [ ] Progress Web App
     -   [ ] Terraform deployment
+
+### 🏁 Worth considering?
+
+-   [ ] Lightweight roadmapping
+    -   [ ] Target date
+    -   [ ] Dependencies (by tag)?
 
 ## User documentation
 
@@ -34,7 +45,10 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 
 ## Design
 
-⚠️ TODO
+### Out of scope
+
+-   **"Projects"** - use tag hierachies instead
+-   **Lengthy task descriptions** - not intended to be a knowledge capture system
 
 ## FAQ
 
