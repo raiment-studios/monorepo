@@ -24,7 +24,7 @@ test:
 
 ## Vision
 
-⚠️ TODO
+A JavaScript test framework that is so straightforward that it encourages adding unit tests to even the most trivial projects.
 
 ## Roadmap
 
@@ -33,10 +33,15 @@ test:
 -   [x] v0.1 Basic functionality
     -   [x] Invoke jest and pass all arguments
     -   [x] Encapsulate jest dependencies (so no user install is needed)
+    -   [ ] Store snapshots next to test files
 -   [ ] v0.2 Testing
     -   [ ] Add a `--help` flag that `sea-jest` catches
     -   [ ] Add a `--version` flag that `sea-jest` catches
     -   [ ] Add basic colors to match sea conventions
+
+### 🎄 Backlog
+
+-   [ ] Automate explicit addition of global names
 
 ## User documentation
 
@@ -55,6 +60,6 @@ test:
 
 #### Why not just use `jest` directly instead of `sea-jest`?
 
-For many users, this will be the right choice!
+For many users, using [Jest](https://jestjs.io/) directly is the right choice!
 
 `sea-jest` was created as minimal wrapper to avoid the duplicate boilerplate common to all Raiment Studios projects. If you like the "sea" conventions in general, then using sea-jest is presumably convenience, otherwise it's likely not for a value add for you!
