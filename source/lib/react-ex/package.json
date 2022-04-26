@@ -1,6 +1,6 @@
 {
     "name": "@raiment/react-ex",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "type": "module",
     "main": "src/index.js",
     "repository": "https://github.com/raiment-studios/monorepo",
