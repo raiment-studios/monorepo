@@ -76,9 +76,30 @@ For more details, see the [contributing page](source/projects/organization/contr
 
 ⚠️TODO 
 
+
+
+## CHANGELOG
+
+#### TODO (next)
+
+-   [ ] 🗃️ Remove npm tgz packaging build and file:// references from projects
+-   [ ] 🗃️ Organize sea-todo files
+
+#### 2022.04.26
+
+-   [x] 🗃️ Simplify publishing npm packages (using Codespace secrets)
+-   [x] 📚 Created CHANGELOG.md
+
+#### 2022.04.25
+
+-   [x] 🛠️ Fix automated builds to workaround package-lock.json not liking tgz changes
+-   [x] 🗃️ Organize / improve sea-todo database code
+-   [x] ➕ Add sea-jsx watch/refresh on all referenced user files
+-   [x] ➕ Add EventEmitter to @raiment/core
+
+
 ## License
 
 All code and content within this repository, unless specifically noted otherwise, is licensed under the **[MIT License](./LICENSE)**.
 
 Unless stated explicitly otherwise, any contribution intentionally submitted for inclusion in this repository or otherwise to the project shall be licensed as stated above without any additional terms or conditions.
-
