@@ -1,4 +1,5 @@
 import * as core from '@raiment/core';
+import _ from 'lodash';
 
 /**
  * A single source of truth on the application data.
@@ -8,26 +9,39 @@ import * as core from '@raiment/core';
  * are recreated to trigger React updates.
  */
 export class Database {
-    constructor() {
+    constructor({
+        name, //
+        fileHandle,
+    }) {
         this._data = {
+            name,
+            fileHandle: fileHandle,
             items: [],
         };
 
-        // TODO: split into proper EventEmitter class
-        // Access as database.events.fire('name');
-        this._eventCallbacks = {
-            update: [],
-        };
+        this.events = new core.EventEmitter();
     }
 
-    // TODO: change to event emitter
-    on(event, cb) {
-        this._eventCallbacks[event].push(cb);
+    get fileHandle() {
+        return this._data.fileHandle;
     }
-    fire(event) {
-        for (let notificationCb of this._eventCallbacks[event]) {
-            notificationCb(this);
-        }
+
+    export() {
+        const obj = {
+            todos: [],
+        };
+
+        obj.todos = this._data.items.map((item) =>
+            [
+                item.title.trim() ?? 'untitled', //
+                item.done ? '!done' : '',
+            ]
+                .filter((s) => !!s)
+                .join(' ')
+                .trim()
+        );
+
+        return obj;
     }
 
     transaction(cb) {
@@ -48,6 +62,11 @@ export class DatabaseDM {
     constructor(host) {
         this._host = host;
     }
+
+    get name() {
+        return this._host._data.name;
+    }
+
     select(query) {
         return this._host._data.items.map((item) => {
             return new ItemDM(item, this._host);
@@ -77,7 +96,7 @@ class ItemDM {
         for (let [key, value] of Object.entries(fields)) {
             this._json[key] = value;
         }
-        this._host.fire('update');
+        this._host.events.fire('update');
     }
 
     get title() {

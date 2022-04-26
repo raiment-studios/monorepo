@@ -154,4 +154,18 @@ It's simple, fast, and doesn't lock you into any non-standard structures or conf
 
 #### How does `sea-jsx` compare to, say, [Next.js](https://nextjs.org/)?
 
-In short, sea-jsx does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration. The primary use case is prototyping and rapid experimeentation.
+sea-jsx does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration. The primary use case is prototyping and rapid experimentation.
+
+There are no
+
+#### How do I change the header, page title, add CSS, etc.?
+
+The recommended way is to do so through libraries or the [standard Web APIs](https://developer.mozilla.org/en-US/docs/Web/API/Document).  
+
+Here's trivial example of code that could be used put in an outer component to set the page title:
+
+```javascript
+React.useEffect(() => {
+    document.title = "My personal homepage (under construction!)";
+})
+```
