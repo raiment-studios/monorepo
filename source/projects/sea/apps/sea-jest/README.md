@@ -42,6 +42,7 @@ A JavaScript test framework that is so straightforward that it encourages adding
 ### 🎄 Backlog
 
 -   [ ] Automate explicit addition of global names
+-   [ ] Incorporate easier React testing
 
 ## User documentation
 
