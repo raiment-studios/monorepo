@@ -4,9 +4,6 @@
     "type": "module",
     "main": "src/index.js",
     "repository": "https://github.com/raiment-studios/monorepo",
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com"
-    },
     "dependencies": {
         "js-levenshtein": "^1.1.6",
         "mersenne-twister": "^1.1.0",
