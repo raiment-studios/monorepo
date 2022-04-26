@@ -33,7 +33,7 @@ A clean, complete, well-documented, clearly code application that demonstrates m
     -   [ ] Progress Web App
     -   [ ] Terraform deployment
 
-### 🏁 Worth considering?
+### 🎄 Backlog
 
 -   [ ] Lightweight roadmapping
     -   [ ] Target date
