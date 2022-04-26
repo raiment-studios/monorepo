@@ -20,9 +20,10 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 
 -   [ ] Basics
     -   [ ] Support tags
-    -   [ ] Read and write local files
+    -   [x] Read and write local files
+    -   [ ] Automatically load last used file   
 -   [ ] Improved functionality
-    -   [ ] Tag hierachy
+    -   [ ] Tag hierachy in side panel
     -   [ ] Filter by tag
 -   [ ] UI/UX
     -   [ ] Drag and drop
