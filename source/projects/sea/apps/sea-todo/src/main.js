@@ -1,9 +1,3 @@
-/*!@sea:header
-modules:
-    "@raiment/core":     file:///workspaces/monorepo/source/lib/core/dist/raiment-core-latest.tgz
-    "@raiment/react-ex": file:///workspaces/monorepo/source/lib/react-ex/dist/raiment-react-ex-latest.tgz
- */
-
 import React from 'react';
 import * as core from '@raiment/core';
 import * as ReactEx from '@raiment/react-ex';
@@ -188,6 +182,7 @@ function AppFrame({
                         let fileHandle;
 
                         async function getFile() {
+                            // https://web.dev/file-system-access/
                             [fileHandle] = await window.showOpenFilePicker();
                             if (fileHandle.kind !== 'file') {
                                 return;
