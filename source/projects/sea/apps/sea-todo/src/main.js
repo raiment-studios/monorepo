@@ -4,6 +4,12 @@ import * as ReactEx from '@raiment/react-ex';
 import { Database } from './datamodel/database';
 import { IconContext } from 'react-icons';
 import { VscMenu, VscFile, VscSearch, VscSave, VscSettingsGear } from 'react-icons/vsc';
+import { get as idbGet, set as idbSet } from 'idb-keyval';
+
+const browserDB = {
+    get: idbGet,
+    set: idbSet,
+};
 
 function transformData(databaseSource) {
     const db = new Database({
@@ -187,6 +193,9 @@ function AppFrame({
                             if (fileHandle.kind !== 'file') {
                                 return;
                             }
+
+                            browserDB.set('last-fileHandle', fileHandle);
+
                             const fileData = await fileHandle.getFile();
                             const text = await fileData.text();
                             onChangeDatabase({
