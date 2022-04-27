@@ -85,6 +85,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### TODO (next)
 
+-   [ ] ➕ Add "remember last file" to sea-todo
 -   [ ] 🗃️ Remove npm tgz packaging build and file:// references from projects
 -   [ ] 🗃️ Organize sea-todo files
 
