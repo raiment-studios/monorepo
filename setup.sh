@@ -74,7 +74,6 @@ __bash_prompt
 # -----------------------------------------------------------------------------
 
 make -C source/sandbox/tools/raiment-chdir publish
-make -C source/projects/sea/apps/sea-jsx publish
 
 # -----------------------------------------------------------------------------
 # Aliases and short-cuts

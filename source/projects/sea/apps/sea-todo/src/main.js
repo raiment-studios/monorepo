@@ -47,6 +47,7 @@ todos:
 });
 
 export default function () {
+    const [previousFileHandle, setPreviousFilehandle] = React.useState(undefined);
     const [database, setDatabase] = React.useState(defaultDatabase);
     const [databaseView, setDatabaseView] = React.useState(null);
 
@@ -61,6 +62,40 @@ export default function () {
         },
         [database]
     );
+
+    if (previousFileHandle == undefined) {
+        browserDB.get('last-fileHandle').then((fh) => {
+            setPreviousFilehandle(fh ?? null);
+        });
+    }
+
+    const handleReload = () => {
+        if (database === defaultDatabase) {
+            (async function () {
+                // https://developer.mozilla.org/en-US/docs/Web/API/FileSystemHandle/requestPermission
+                // https://stackoverflow.com/questions/66935991/react-useeffect-hook-causes-domexception-user-activation-is-required-to-request
+                const fileHandle = await browserDB.get('last-fileHandle');
+                console.log(fileHandle);
+
+                const opts = { mode: 'readwrite' };
+                if ((await fileHandle.queryPermission(opts)) === 'granted') {
+                    console.log('granted');
+                } else {
+                    console.log('not granted');
+                    const result = await fileHandle.requestPermission(opts);
+                    console.log('not granted', result);
+                }
+
+                const fileData = await fileHandle.getFile();
+                const text = await fileData.text();
+                handleChangeDatabase({
+                    name: fileData.name,
+                    fileHandle,
+                    text,
+                });
+            })();
+        }
+    };
 
     // TODO: what if current file is modified?
     const handleChangeDatabase = (databaseSource) => {
@@ -106,7 +141,11 @@ export default function () {
                     </div>
                 </div>
                 <div>
-                    <TodoList database={databaseView} />
+                    {previousFileHandle && database === defaultDatabase ? (
+                        <button onClick={handleReload}>Reopen {previousFileHandle.name}</button>
+                    ) : (
+                        <TodoList database={databaseView} />
+                    )}
                 </div>
             </AppFrame>
         </IconContext.Provider>

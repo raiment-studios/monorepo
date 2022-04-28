@@ -21,7 +21,7 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 -   [ ] Basics
     -   [ ] Support tags
     -   [x] Read and write local files
-    -   [ ] Automatically load last used file   
+    -   [x] Automatically load last used file   
 -   [ ] Improved functionality
     -   [ ] Tag hierachy in side panel
     -   [ ] Filter by tag
