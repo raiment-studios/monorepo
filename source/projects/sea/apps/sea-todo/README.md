@@ -18,17 +18,18 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 
 ### 🏁 v1.0 Checkpoints
 
--   [ ] Basics
+-   [ ] Basics (v0.2)
     -   [ ] Support tags
     -   [x] Read and write local files
     -   [ ] Automatically load last used file   
--   [ ] Improved functionality
+-   [ ] GitOps functionality - GitHub sync (v0.3)
+    -   [ ] Single file sync to Git by specifying URL + API key
+    -   [ ] Document single file sync
+-   [ ] Improved functionality 
     -   [ ] Tag hierachy in side panel
     -   [ ] Filter by tag
 -   [ ] UI/UX
     -   [ ] Drag and drop
--   [ ] GitOps
-    -   [ ] Sync to GitHub repo
 -   [ ] Application robustness
     -   [ ] Mobile support
     -   [ ] Progress Web App
