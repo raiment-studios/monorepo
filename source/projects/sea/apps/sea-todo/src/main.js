@@ -142,7 +142,24 @@ export default function () {
                 </div>
                 <div>
                     {previousFileHandle && database === defaultDatabase ? (
-                        <button onClick={handleReload}>Reopen {previousFileHandle.name}</button>
+                        <div
+                            className="flex-col"
+                            style={{
+                                alignItems: 'center',
+                            }}
+                        >
+                            <div style={{ margin: '16px 0 18px' }}>
+                                <button onClick={handleReload}>
+                                    Reopen {previousFileHandle.name}
+                                </button>
+                            </div>
+                            <div style={{ margin: '6px 0' }}>
+                                <button onClick={handleReload}>New File</button>
+                            </div>
+                            <div style={{ margin: '6px 0' }}>
+                                <button onClick={handleReload}>Open Existing File</button>
+                            </div>
+                        </div>
                     ) : (
                         <TodoList database={databaseView} />
                     )}
