@@ -1,0 +1,25 @@
+{
+    "name": "@raiment/sea-raytracer",
+    "version": "0.0.0",
+    "type": "module",
+    "main": "src/main.js",
+    "dependencies": {
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
+    },
+    "license": "MIT",
+    "author": "https://github.com/raiment-studios",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/raiment-studios/monorepo.git"
+    },
+    "homepage": "https://github.com/raiment-studios/monorepo/tree/main/source/projects/sea/apps/sea-raytracer",
+    "keywords": [
+        "jsx",
+        "react"
+    ],
+    "devDependencies": {
+        "@raiment/sea-jest": "*",
+        "@raiment/sea-jsx": "*"
+    }
+}
