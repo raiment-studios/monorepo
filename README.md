@@ -51,6 +51,7 @@ Project work is categorized into the following:
     -   [**sea-jsx**](source/projects/sea/apps/sea-jsx) - app for quickly prototyping React Components
     -   [**sea-jest**](source/projects/sea/apps/sea-jest) - wrapper on Jest to avoid config file clutter
     -   [**sea-todo**](source/projects/sea/apps/sea-todo) - todo 😄
+    -   [**sea-raytracer**](source/projects/sea/apps/sea-raytracer) - example application
 -   **Marketing** - the public website and material designed to encourage participation
 
 ## Technology
