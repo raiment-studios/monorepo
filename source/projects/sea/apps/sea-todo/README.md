@@ -21,11 +21,12 @@ A clean, complete, well-documented, clearly code application that demonstrates m
 -   [ ] Basics (v0.2)
     -   [ ] Support tags
     -   [x] Read and write local files
-    -   [x] Automatically load last used file   
+    -   [x] Automatically load last used file
+    -   [ ] Deploy to todo.raiment.studios
 -   [ ] GitOps functionality - GitHub sync (v0.3)
     -   [ ] Single file sync to Git by specifying URL + API key
     -   [ ] Document single file sync
--   [ ] Improved functionality 
+-   [ ] Improved functionality
     -   [ ] Tag hierachy in side panel
     -   [ ] Filter by tag
 -   [ ] UI/UX

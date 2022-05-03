@@ -3,6 +3,7 @@ import { startServer } from './server/server.js';
 import { build } from './build/build.js';
 import { initialize } from './init/initialize.js';
 import sh from 'shelljs';
+import fs from 'fs/promises';
 
 /**
  * Main program entry-point.
@@ -18,14 +19,18 @@ async function main() {
         console.log(sh.ls(ctx.tempDirectory).stdout);
     }
 
-    ctx.print(
-        `Running {{obj ${ctx.config.filename}}} on port {{loc ${ctx.config.port}}}`,
-        `Press {{loc CTRL-C}} to exit`,
-        ''
-    );
-
+    ctx.print(`Building {{obj ${ctx.config.filename}}}`);
     await build(ctx);
-    await startServer(ctx);
-    await watchLoop(ctx);
+
+    if (ctx.config.build) {
+        sh.mkdir('-p', 'dist');
+        await fs.writeFile('dist/client.js', ctx.content);
+        await fs.writeFile('dist/cache-id', `${Date.now()}`);
+        await fs.writeFile('dist/index.html', ctx.assets['index.html']);
+    } else {
+        ctx.print(`Running on port {{loc ${ctx.config.port}}}`, `Press {{loc CTRL-C}} to exit`, '');
+        await startServer(ctx);
+        await watchLoop(ctx);
+    }
 }
 main();

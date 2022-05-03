@@ -52,6 +52,13 @@ export async function initialize() {
                 isMultiple: true,
                 description: 'sets verbose output',
             },
+            build: {
+                type: 'boolean',
+                default: false,
+                isRequired: false,
+                isMultiple: false,
+                description: 'builds a bundle',
+            },
             clean: {
                 type: 'boolean',
                 default: false,
@@ -138,6 +145,7 @@ export async function initialize() {
             port: 8080,
             verbosity: cli.flags.verbose.length,
             clean: cli.flags.clean,
+            build: cli.flags.build,
         },
         cacheID: generateRandomID(),
         assets: {},

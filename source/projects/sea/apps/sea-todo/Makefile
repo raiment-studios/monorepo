@@ -2,7 +2,7 @@ ensure:
 	echo "TODO"
 
 build:
-	echo "TODO"
+	npx sea-jsx --build src/main.js
 
 dev:
 	npx sea-jsx src/main.js
@@ -16,5 +16,5 @@ test:
 benchmark:
 	echo "TODO"
 
-publish:
-	echo "TODO"
+publish: build
+	npx firebase deploy --token $(FIREBASE_TOKEN)
