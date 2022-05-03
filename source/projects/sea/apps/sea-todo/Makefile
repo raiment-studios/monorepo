@@ -17,4 +17,4 @@ benchmark:
 	echo "TODO"
 
 publish: build
-	npx firebase deploy --token $(FIREBASE_TOKEN)
+	npx firebase deploy --only hosting:sea-todo --token $(FIREBASE_TOKEN)

@@ -8,7 +8,9 @@ A simple todo app designed to provide examples of recommended coding practices.
 
 ## Getting started
 
-⚠️ TODO
+Step 1: visit [todo.raiment.studio/](https://todo.raiment.studio/)
+
+Step 2: there is no step 2!
 
 ## Vision
 
@@ -22,7 +24,7 @@ A clean, complete, well-documented, clearly code application that demonstrates m
     -   [ ] Support tags
     -   [x] Read and write local files
     -   [x] Automatically load last used file
-    -   [ ] Deploy to todo.raiment.studios
+    -   [x] Deploy to todo.raiment.studios
 -   [ ] GitOps functionality - GitHub sync (v0.3)
     -   [ ] Single file sync to Git by specifying URL + API key
     -   [ ] Document single file sync
