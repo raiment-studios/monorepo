@@ -85,6 +85,7 @@ Flags
   help                  displays help information
   version               displays program version
   verbose               sets verbose output
+  build                 produce a single dist/index.html bundle
   clean                 removes all cached modules before proceeding
 ```
 

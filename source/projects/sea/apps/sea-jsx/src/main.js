@@ -16,17 +16,17 @@ async function main() {
         sh.rm('-rf', `${ctx.tempDirectory}/node_modules`);
         sh.rm('-f', `${ctx.tempDirectory}/package.json`);
         sh.rm('-f', `${ctx.tempDirectory}/package-lock.json`);
-        console.log(sh.ls(ctx.tempDirectory).stdout);
     }
 
     ctx.print(`Building {{obj ${ctx.config.filename}}}`);
     await build(ctx);
 
     if (ctx.config.build) {
+        // Note: different assets are loaded for the --build flag
+        const text = ctx.assets['index.html'].toString().replace('{{client-source}}', ctx.content);
+
         sh.mkdir('-p', 'dist');
-        await fs.writeFile('dist/client.js', ctx.content);
-        await fs.writeFile('dist/cache-id', `${Date.now()}`);
-        await fs.writeFile('dist/index.html', ctx.assets['index.html']);
+        await fs.writeFile('dist/index.html', text);
     } else {
         ctx.print(`Running on port {{loc ${ctx.config.port}}}`, `Press {{loc CTRL-C}} to exit`, '');
         await startServer(ctx);

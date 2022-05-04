@@ -6,11 +6,14 @@ import path from 'path';
  * future use.
  */
 export async function loadAssets(ctx) {
+    const prefix = ctx.config.build ? `production/` : '';
+
     const thisFile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
     ctx.assets['index.html'] = await fs.readFile(
-        path.join(path.dirname(thisFile), '../assets/index.html')
+        path.join(path.dirname(thisFile), `../assets/${prefix}index.html`)
     );
+
     ctx.assets['__bootstrap.js'] = await fs.readFile(
-        path.join(path.dirname(thisFile), '../assets/__bootstrap.js')
+        path.join(path.dirname(thisFile), `../assets/${prefix}__bootstrap.js`)
     );
 }
