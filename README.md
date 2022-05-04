@@ -84,11 +84,21 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 ## CHANGELOG
 
+➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release
+
 #### TODO (next)
 
 -   [ ] ➕ Add "remember last file" to sea-todo
 -   [ ] 🗃️ Remove npm tgz packaging build and file:// references from projects
 -   [ ] 🗃️ Organize sea-todo files
+
+#### 2022.05.04
+
+-   [x] ➕ `sea-jsx --build` now creates a single index.html with inlined JS
+
+#### 2022.05.02
+
+-   [x] 📣 sea-todo publishes to todo.raiment.studio
 
 #### 2022.04.26
 
