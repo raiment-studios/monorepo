@@ -1,6 +1,10 @@
 ensure:
 	echo "TODO"
 
+.PHONY: clean
+clean:
+	git clean -dfX
+
 build:
 	npx sea-jsx --build src/main.js
 
