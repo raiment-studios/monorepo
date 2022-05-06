@@ -3,8 +3,17 @@ import * as core from '@raiment/core';
 import * as ReactEx from '@raiment/react-ex';
 import { Database } from './datamodel/database';
 import { IconContext } from 'react-icons';
-import { VscMenu, VscFile, VscSearch, VscSave, VscSettingsGear } from 'react-icons/vsc';
+import {
+    VscMenu,
+    VscFiles,
+    VscSearch,
+    VscSave,
+    VscSettingsGear,
+    VscAccount,
+} from 'react-icons/vsc';
 import { get as idbGet, set as idbSet } from 'idb-keyval';
+import { EditorZeroState } from './views/editor_zero_state';
+import { TodoList } from './views/todo_list';
 
 const browserDB = {
     get: idbGet,
@@ -75,7 +84,6 @@ export default function () {
                 // https://developer.mozilla.org/en-US/docs/Web/API/FileSystemHandle/requestPermission
                 // https://stackoverflow.com/questions/66935991/react-useeffect-hook-causes-domexception-user-activation-is-required-to-request
                 const fileHandle = await browserDB.get('last-fileHandle');
-                console.log(fileHandle);
 
                 const opts = { mode: 'readwrite' };
                 if ((await fileHandle.queryPermission(opts)) === 'granted') {
@@ -105,7 +113,6 @@ export default function () {
     const handleSave = async () => {
         const obj = database.export();
         const text = core.stringifyYAML(obj);
-        console.log(text);
 
         let handle = database.fileHandle;
         if (!handle) {
@@ -121,7 +128,7 @@ export default function () {
     }
 
     return (
-        <IconContext.Provider value={{ size: '1rem' }}>
+        <IconContext.Provider value={{ size: '20px' }}>
             <AppFrame onChangeDatabase={handleChangeDatabase} onSave={handleSave}>
                 <div
                     className="flex-row"
@@ -142,71 +149,16 @@ export default function () {
                 </div>
                 <div>
                     {previousFileHandle && database === defaultDatabase ? (
-                        <div
-                            className="flex-col"
-                            style={{
-                                alignItems: 'center',
-                            }}
-                        >
-                            <div style={{ margin: '16px 0 18px' }}>
-                                <button onClick={handleReload}>
-                                    Reopen {previousFileHandle.name}
-                                </button>
-                            </div>
-                            <div style={{ margin: '6px 0' }}>
-                                <button onClick={handleReload}>New File</button>
-                            </div>
-                            <div style={{ margin: '6px 0' }}>
-                                <button onClick={handleReload}>Open Existing File</button>
-                            </div>
-                        </div>
+                        <EditorZeroState
+                            onReload={handleReload}
+                            previousFileHandle={previousFileHandle}
+                        />
                     ) : (
                         <TodoList database={databaseView} />
                     )}
                 </div>
             </AppFrame>
         </IconContext.Provider>
-    );
-}
-
-function TodoList({ database }) {
-    console.count('TodoList.render');
-    return (
-        <>
-            {database.select().map((item) => (
-                <ItemRow key={item.id} item={item} />
-            ))}
-        </>
-    );
-}
-
-function ItemRow({ item }) {
-    return (
-        <div
-            className="flex-row-center"
-            style={{
-                margin: '4px 0',
-            }}
-        >
-            <div style={{ width: 2 }} />
-            <div
-                style={{
-                    width: 12,
-                    height: 12,
-                    margin: 2,
-                    border: 'solid 1px #777',
-                    background: item.done ? '#CCC' : 'transparent',
-                    borderRadius: 12,
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                }}
-                onClick={() => {
-                    item.update({ done: !item.done });
-                }}
-            />
-            <div style={{ width: 8 }} />
-            <div>{item.title}</div>
-        </div>
     );
 }
 
@@ -222,7 +174,7 @@ function AppFrame({
     }, []);
 
     const buttonStyle = {
-        padding: 4,
+        padding: '6px 4px',
         userSelect: 'none',
         cursor: 'pointer',
     };
@@ -232,7 +184,10 @@ function AppFrame({
             <div
                 className="flex-col"
                 style={{
-                    padding: 8,
+                    padding: '8px 8px 16px 8px',
+                    height: '100vh',
+                    borderRight: 'solid 1px rgba(0,0,0,.08)',
+                    background: 'rgba(0,0,0,.01)',
                 }}
             >
                 <div style={buttonStyle} onClick={() => alert('Not yet implemented')}>
@@ -263,7 +218,7 @@ function AppFrame({
                         getFile();
                     }}
                 >
-                    <VscFile />
+                    <VscFiles />
                 </div>
                 <div
                     style={buttonStyle}
@@ -276,9 +231,14 @@ function AppFrame({
                 <div style={buttonStyle} onClick={() => alert('Not yet implemented')}>
                     <VscSearch />
                 </div>
+                <div style={{ flex: '1 0 0' }} />
+                <div style={buttonStyle} onClick={() => alert('Not yet implemented')}>
+                    <VscAccount />
+                </div>
                 <div style={buttonStyle} onClick={() => alert('Not yet implemented')}>
                     <VscSettingsGear />
                 </div>
+                <div style={{ flex: '0 0 8px' }} />
             </div>
 
             <div

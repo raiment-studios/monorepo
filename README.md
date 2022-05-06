@@ -85,6 +85,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 -   [ ] ➕ Add "remember last file" to sea-todo
 -   [ ] 🗃️ Remove npm tgz packaging build and file:// references from projects
 -   [ ] 🗃️ Organize sea-todo files
+-   [ ] ➕ sea-jsx: reload the main Component on changes without session reset
 
 #### 2022.05.04
 
