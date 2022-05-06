@@ -44,7 +44,7 @@ Project work is categorized into the following:
 -   [**Sea**](source/projects/sea) - a opinionated mix of compiler, wiki, CMS, and project manager
     -   [**sea-jsx**](source/projects/sea/apps/sea-jsx) - app for quickly prototyping React Components
     -   [**sea-jest**](source/projects/sea/apps/sea-jest) - wrapper on Jest to avoid config file clutter
-    -   [**sea-todo**](source/projects/sea/apps/sea-todo) - todo 😄
+    -   [**sea-todo**](source/projects/sea/apps/sea-todo) - example todo web app ([demo](https://todo.raiment.studio/))
     -   [**sea-raytracer**](source/projects/sea/apps/sea-raytracer) - example application
 -   **Marketing** - the public website and material designed to encourage participation
 
@@ -82,10 +82,13 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### TODO (next)
 
--   [ ] ➕ Add "remember last file" to sea-todo
 -   [ ] 🗃️ Remove npm tgz packaging build and file:// references from projects
 -   [ ] 🗃️ Organize sea-todo files
 -   [ ] ➕ sea-jsx: reload the main Component on changes without session reset
+
+#### 2022.05.06
+
+-   [x] ➕ Add "remember last file" to sea-todo
 
 #### 2022.05.04
 
