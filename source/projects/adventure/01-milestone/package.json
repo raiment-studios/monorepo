@@ -1,8 +1,8 @@
 {
     "type": "module",
     "dependencies": {
-        "@raiment/core": "file:../../../lib/core/dist/raiment-core-latest.tgz",
-        "@raiment/react-ex": "file:../../../lib/react-ex/dist/raiment-react-ex-latest.tgz",
+        "@raiment/core": "^0.1.1",
+        "@raiment/react-ex": "*",
         "firebase": "^9.6.8",
         "glob": "^7.2.0",
         "lodash": "^4.17.21",

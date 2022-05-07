@@ -4,7 +4,7 @@ import { parseYAML } from '@raiment/core';
 
 async function main() {
     console.log('> Transforming assets...');
-    sh.mkdir('-p', 'dist/assets');
+    sh.mkdir('-pf', 'dist/assets');
 
     sh.cp('-R', 'assets/', 'dist/');
     await transformYAML('cards/base');
@@ -17,7 +17,7 @@ async function transformYAML(name) {
         const dst = `./dist/assets/${name}.json`;
         const input = await fs.readFile(src, 'utf8');
         const output = JSON.stringify(parseYAML(input), null, 4);
-        fs.writeFile(dst, output);
+        await fs.writeFile(dst, output);
     } catch (err) {
         console.log('Ignoring error', err);
     }
