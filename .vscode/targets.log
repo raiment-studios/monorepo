@@ -1,0 +1,228 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** No rule to make target 'all'.  Stop.
+
+# GNU Make 4.3
+# Built for x86_64-pc-linux-gnu
+# Copyright (C) 1988-2020 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Sat May  7 15:04:06 2022
+
+# Variables
+
+# environment
+LC_ALL = C
+# environment
+FIREBASE_TOKEN = 1//06Xhx1kmdfKfvCgYIARAAGAYSNwF-L9IrZkUkZh5daASeC25AeqEkpCvxQz8klaDXPxmkEnOkPke04lDqE4uCfhh0F7L0VPNHkwg
+# environment
+VSCODE_CWD = /vscode/bin/linux-x64/57fd6d0195bb9b9d1b49f6da5db789060795de47
+# environment
+GIT_COMMITTER_NAME = GitHub
+# default
+MAKE_COMMAND := make
+# environment
+VSCODE_HANDLES_SIGPIPE = true
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+.VARIABLES := 
+# environment
+PWD = /workspaces/monorepo
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+HOSTNAME = codespaces_4ba1cb
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+VSCODE_LOG_STACK = false
+# automatic
+%F = $(notdir $%)
+# environment
+RAIMENT_NPM_PUBLISH_TOKEN = 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
+# environment
+LANG = C
+# environment
+GITHUB_SERVER_URL = https://github.com
+# default
+.LOADED := 
+# default
+.INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
+# environment
+GITHUB_API_URL = https://api.github.com
+# makefile
+MAKEFLAGS = pqrR
+# makefile
+CURDIR := /workspaces/monorepo
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+MFLAGS = -pqrR
+# default
+.SHELLFLAGS := -c
+# environment
+GITHUB_USER = ridleywinters
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+ContainerVersion = 12
+# makefile
+MAKEFILE_LIST := 
+# automatic
+@F = $(notdir $@)
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+INTERNAL_VSCS_TARGET_URL = https://westus2.online.visualstudio.com
+# automatic
+*F = $(notdir $*)
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-US","availableLanguages":{}}
+# default
+MAKE_HOST := x86_64-pc-linux-gnu
+# makefile
+SHELL = /bin/sh
+# default
+MAKECMDGOALS := all
+# environment
+GITHUB_TOKEN = ghu_FV2rpHgSL899ecF2plRwdSd8i9DXe238P8kG
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+PATH = /vscode/bin/linux-x64/57fd6d0195bb9b9d1b49f6da5db789060795de47/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin
+# default
+MAKEFILES := 
+# automatic
+^F = $(notdir $^)
+# environment
+GIT_COMMITTER_EMAIL = noreply@github.com
+# environment
+CODESPACES = true
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?F = $(notdir $?)
+# automatic
++F = $(notdir $+)
+# 'override' directive
+GNUMAKEFLAGS := 
+# environment
+BROWSER = /vscode/bin/linux-x64/57fd6d0195bb9b9d1b49f6da5db789060795de47/bin/helpers/browser.sh
+# makefile
+.DEFAULT_GOAL := 
+# default
+MAKE_VERSION := 4.3
+# environment
+VSCODE_EXTHOST_WILL_SEND_SOCKET = true
+# environment
+VSCODE_AGENT_FOLDER = /home/vscode/.vscode-remote
+# environment
+CODESPACE_NAME = ridleywinters-raiment-studios-monorepo-g4qwrpv9vcw4v
+# environment
+VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-d472c3f0-1c5a-47a9-92b5-cc4992554ea6.sock
+# environment
+CLOUDENV_ENVIRONMENT_ID = ed6cb294-8886-4ebd-9fee-14684eb69181
+# environment
+GITHUB_REPOSITORY = raiment-studios/monorepo
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /home/vscode
+# environment
+GITHUB_GRAPHQL_URL = https://api.github.com/graphql
+# environment
+RepositoryName = monorepo
+# environment
+GITHUB_CODESPACE_TOKEN = APWTVPWOJGHGY7YGQV6GQRTCO4XXBANCNFSM4ABOXKNQ
+# default
+.RECIPEPREFIX := 
+# automatic
+<F = $(notdir $<)
+# default
+SUFFIXES := 
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink load
+# variable set hash-table stats:
+# Load=72/1024=7%, Rehash=0, Collisions=2/99=2%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 1792, inode 1310870): 13 files, no impossibilities.
+
+# 13 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+# Not a target:
+makefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+GNUmakefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# files hash-table stats:
+# Load=6/1024=1%, Rehash=0, Collisions=0/15=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 21 / storage = 192 B / avg = 9 B
+# current buf: size = 8162 B / used = 192 B / count = 21 / avg = 9 B
+
+# strcache performance: lookups = 24 / hit rate = 12%
+# hash-table stats:
+# Load=21/8192=0%, Rehash=0, Collisions=0/24=0%
+# Finished Make data base on Sat May  7 15:04:06 2022
+
+ 
