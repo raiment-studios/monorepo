@@ -78,7 +78,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 ## CHANGELOG
 
-➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release
+➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release, 🧬 for sandboxes or experiments
 
 #### TODO (next)
 
@@ -87,6 +87,8 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### 2022.05
 
+-   09
+    -   [x] 🧬 Sandbox for GitHub repo [file access](source/sandbox/github/file-access/)
 -   07
     -   [x] 🗃️ Remove npm tgz packaging build and file:// references from projects
 -   06
