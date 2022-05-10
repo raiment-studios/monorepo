@@ -82,14 +82,15 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### TODO (next)
 
+-   [ ] Automate `file-access` deploy to GitHub pages via sea-jsx header config
 -   [ ] 🗃️ Organize sea-todo files
 -   [ ] ➕ sea-jsx: reload the main Component on changes without session reset
 
 #### 2022.05
 
--   09-15
+-   Week 19
     -   [x] 🧬 Sandbox for GitHub repo [file access](source/sandbox/github/file-access/) via web
--   02-08
+-   Week 18
     -   [x] 🗃️ Remove npm tgz packaging build and file:// references from projects
     -   [x] ➕ Add "remember last file" to sea-todo
     -   [x] ➕ `sea-jsx --build` now creates a single index.html with inlined JS
@@ -97,10 +98,12 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### 2022.04
 
--   25-30
+-   Week 17
     -   [x] 🗃️ Simplify publishing npm packages (using Codespace secrets)
     -   [x] 📚 Created CHANGELOG.md
     -   [x] 🛠️ Fix automated builds to workaround package-lock.json not liking tgz changes
     -   [x] 🗃️ Organize / improve sea-todo database code
     -   [x] ➕ Add sea-jsx watch/refresh on all referenced user files
     -   [x] ➕ Add EventEmitter to @raiment/core
+-   Week 1-16
+    -   [_Prehistory_](https://en.wikipedia.org/wiki/Prehistory)
