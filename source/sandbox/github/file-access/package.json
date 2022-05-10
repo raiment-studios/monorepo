@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@raiment/sea-jsx": "^0.2.5"
+  },
+  "dependencies": {
+    "@raiment/core": "^0.1.1"
+  }
+}

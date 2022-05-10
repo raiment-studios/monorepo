@@ -87,23 +87,19 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### 2022.05
 
--   09
-    -   [x] 🧬 Sandbox for GitHub repo [file access](source/sandbox/github/file-access/)
--   07
+-   09-15
+    -   [x] 🧬 Sandbox for GitHub repo [file access](source/sandbox/github/file-access/) via web
+-   02-08
     -   [x] 🗃️ Remove npm tgz packaging build and file:// references from projects
--   06
     -   [x] ➕ Add "remember last file" to sea-todo
--   04
     -   [x] ➕ `sea-jsx --build` now creates a single index.html with inlined JS
--   02
     -   [x] 📣 sea-todo publishes to todo.raiment.studio
 
 #### 2022.04
 
--   26
+-   25-30
     -   [x] 🗃️ Simplify publishing npm packages (using Codespace secrets)
     -   [x] 📚 Created CHANGELOG.md
--   25
     -   [x] 🛠️ Fix automated builds to workaround package-lock.json not liking tgz changes
     -   [x] 🗃️ Organize / improve sea-todo database code
     -   [x] ➕ Add sea-jsx watch/refresh on all referenced user files
