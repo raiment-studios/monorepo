@@ -35,5 +35,8 @@
     ],
     "devDependencies": {
         "@raiment/sea-jest": "^0.1.9"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
     }
 }
