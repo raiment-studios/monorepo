@@ -52,7 +52,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Cache modules between runs for fewer fetches
     -   [x] Allow multiple files
     -   [x] Automatically try appending '.js' to imports
-    -   [x] Automatically refresh on any imported user file   
+    -   [x] Automatically refresh on any imported user file
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
     -   [ ] Standard Makefile
@@ -85,22 +85,26 @@ Flags
   help                  displays help information
   version               displays program version
   verbose               sets verbose output
-  build                 produce a single dist/index.html bundle
+  build                 builds a bundle
+  publish               builds and deploys a bundle
   clean                 removes all cached modules before proceeding
 ```
 
 ### Front matter
 
-While `sea-jsx` is designed to minimize configuration, when it is required (such as to specify a particular package version), a commaent-based front matter syntax can be used to provide YAML configuration:
+While `sea-jsx` is designed to minimize configuration, when it is required (such as to specify a particular package version), a comment-based front matter syntax **can optionally be used** to provide YAML configuration:
 
 **Example**
 
 ```javascript
 /*!@sea:header
 
-modules:
-    lodash: 4
-
+    modules:
+        lodash: 4
+    publish:
+        type: '@raiment/github-pages'
+        org: raiment-studios
+        path: hello/world.html
 */
 
 import _ from 'lodash';
@@ -110,9 +114,16 @@ export default function() {
 }
 ```
 
+In this particular case, the package version for `lodash` is pinned to `4` and a deployment target on GitHub Pages is specified so the resulting build can easily be shared publicly.
+
 ### Configuration options
 
 -   `modules` - a set of key-value pairs specifying the npm version to use when importing that particular package. Imports not listed in the module configuration will attempt to use the latest available version.
+
+-   `publish` - a configuration describing how to publish the built code. This is intended to support simple destinations for quick public sharing of code.
+    -   `type` - currently only `@raiment/github-pages` is supported as a publish type. This will upload the built file to a [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages) respository. This is a minimal effort static HTML hosting target.
+    -   `[@raiment/github-pages]` `org` - the name of the GitHub org to publish to
+    -   `[@raiment/github-pages]` `path` - the path within the respository to upload the file to. Existing files are that path will be overwritten without confirmation.
 
 ## Design
 
@@ -156,16 +167,14 @@ It's simple, fast, and doesn't lock you into any non-standard structures or conf
 
 sea-jsx does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration. The primary use case is prototyping and rapid experimentation.
 
-There are no
-
 #### How do I change the header, page title, add CSS, etc.?
 
-The recommended way is to do so through libraries or the [standard Web APIs](https://developer.mozilla.org/en-US/docs/Web/API/Document).  
+The recommended way is to do so through libraries or the [standard Web APIs](https://developer.mozilla.org/en-US/docs/Web/API/Document).
 
 Here's trivial example of code that could be used put in an outer component to set the page title:
 
 ```javascript
 React.useEffect(() => {
-    document.title = "My personal homepage (under construction!)";
-})
+    document.title = 'My personal homepage (under construction!)';
+});
 ```

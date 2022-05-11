@@ -59,6 +59,13 @@ export async function initialize() {
                 isMultiple: false,
                 description: 'builds a bundle',
             },
+            publish: {
+                type: 'boolean',
+                default: false,
+                isRequired: false,
+                isMultiple: false,
+                description: 'builds and deploys a bundle',
+            },
             clean: {
                 type: 'boolean',
                 default: false,
@@ -146,12 +153,15 @@ export async function initialize() {
             verbosity: cli.flags.verbose.length,
             clean: cli.flags.clean,
             build: cli.flags.build,
+            publish: cli.flags.publish,
+            bundle: cli.flags.build || cli.flags.publish,
         },
         cacheID: generateRandomID(),
         assets: {},
         tempDirectory: null,
         content: null,
         watches: {}, // map relative path -> last modification
+        frontmatter: null,
 
         print,
         printV1: cli.flags.verbose.length > 0 ? print : () => {},

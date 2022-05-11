@@ -6,7 +6,7 @@ import path from 'path';
  * future use.
  */
 export async function loadAssets(ctx) {
-    const prefix = ctx.config.build ? `production/` : '';
+    const prefix = ctx.config.bundle ? `production/` : '';
 
     const thisFile = path.relative(process.cwd(), import.meta.url.replace(/^file:\/\//, ''));
     ctx.assets['index.html'] = await fs.readFile(

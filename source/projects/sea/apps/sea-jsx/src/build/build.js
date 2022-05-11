@@ -31,6 +31,7 @@ export async function build(app) {
         },
         userFrontmatter
     );
+    app.frontmatter = frontmatter;
 
     if (app.config.verbosity > 0) {
         const text = yaml.stringify(frontmatter);
