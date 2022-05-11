@@ -1,6 +1,6 @@
 {
     "name": "@raiment/sea-jsx",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "type": "module",
     "main": "src/main.js",
     "bin": {
