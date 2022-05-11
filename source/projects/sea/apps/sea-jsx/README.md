@@ -63,15 +63,14 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Add metrics
     -   [ ] Changelog
     -   [ ] Proper release process
--   [ ] Host definition
-    -   [ ] Allow basic host definition in front matter
-    -   [ ] Document host definition
-    -   [ ] Add a renderToString "host" definition
+-   [ ] Publication
+    -   [x] Allow basic publication definition in front matter
+    -   [x] Add GitHub Pages as a publish destination
+    -   [ ] Add a renderToString publish definition
 
 ### 🎄 Backlog
 
 -   [ ] Open browser window if not already open
--   [ ] Automatic deployment
 
 ## User documentation
 

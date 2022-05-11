@@ -113,6 +113,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 19
+    -   [x] ➕ sea-jsx: support publish to GitHub Pages 
     -   [x] 🧬 Sandbox for GitHub repo [file access](source/sandbox/github/file-access/) via web
 -   Week 18
     -   [x] 🗃️ Remove npm tgz packaging build and file:// references from projects
