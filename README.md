@@ -106,7 +106,6 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### TODO (next)
 
--   [ ] Automate `file-access` deploy to GitHub pages via sea-jsx header config
 -   [ ] 🗃️ Organize sea-todo files
 -   [ ] ➕ sea-jsx: reload the main Component on changes without session reset
 
