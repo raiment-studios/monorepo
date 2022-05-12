@@ -23,29 +23,28 @@ export async function build(app) {
     //
     // Read configuration
     //
-    const userFrontmatter = parseFrontMatter(builtinFiles['./__app.js'].toString());
     const frontmatter = Object.assign(
         {
             type: 'sea-jsx@v1',
             modules: {},
         },
-        userFrontmatter
+        parseFrontMatter(builtinFiles['./__app.js'].toString())
     );
-    app.frontmatter = frontmatter;
 
     if (app.config.verbosity > 0) {
         const text = yaml.stringify(frontmatter);
 
         // Only print this the first time and on changes to the front matter
-        if (app.runtime.priorFrontMatter !== text) {
+        if (yaml.stringify(app.frontmatter) !== text) {
             app.print('Frontmatter configuration:');
             const lines = text.split('\n');
             for (let line of lines) {
                 app.print(`  {{loc ${line}}}`);
             }
         }
-        app.runtime.priorFrontMatter = text;
     }
+
+    app.frontmatter = frontmatter;
 
     //
     // Use a custom plug-in to handle implicit packages

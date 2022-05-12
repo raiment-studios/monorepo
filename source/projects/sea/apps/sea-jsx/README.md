@@ -53,9 +53,18 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Allow multiple files
     -   [x] Automatically try appending '.js' to imports
     -   [x] Automatically refresh on any imported user file
+-   [ ] Allow use as a library (v0.3)
+    -   [ ] Change to `sea-jsx <command> [options]`
+    -   [ ] Allow inclusion as a library
+    -   [ ] Example script that publishes a tree (using glob)
+-   [ ] Publication (v0.4)
+    -   [x] Allow basic publication definition in front matter
+    -   [x] Add GitHub Pages as a publish destination
+    -   [ ] Add a renderToString publish definition
+    -   [ ] Use production esbuild on publish
 -   [ ] Good practices
     -   [ ] Publicly accessible demo
-    -   [ ] Standard Makefile
+    -   [x] Standard Makefile
     -   [ ] Unit tests
     -   [ ] Benchmarks
     -   [x] Publish to package repository
@@ -63,10 +72,6 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Add metrics
     -   [ ] Changelog
     -   [ ] Proper release process
--   [ ] Publication
-    -   [x] Allow basic publication definition in front matter
-    -   [x] Add GitHub Pages as a publish destination
-    -   [ ] Add a renderToString publish definition
 
 ### 🎄 Backlog
 

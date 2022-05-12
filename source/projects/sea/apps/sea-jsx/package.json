@@ -17,6 +17,9 @@
         "shelljs": "^0.8.5",
         "yaml": "^2.0.1"
     },
+    "devDependencies": {
+        "@raiment/sea-jest": "^0.1.9"
+    },
     "license": "MIT",
     "author": "https://github.com/raiment-studios",
     "repository": {
@@ -33,9 +36,6 @@
         "hot-reload",
         "prototyping"
     ],
-    "devDependencies": {
-        "@raiment/sea-jest": "^0.1.9"
-    },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     }
