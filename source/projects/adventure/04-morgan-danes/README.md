@@ -4,6 +4,8 @@
 
 ⚠️ TODO: summary
 
+The "kitchen sink", "when it's done" catch-all project for the ultimate version of the Kestrel Adventure.
+
 ## Getting started
 
 ⚠️ TODO
