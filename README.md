@@ -32,10 +32,10 @@ Project work is categorized into the following:
 -   [**Organization**](source/projects/organization) - guidelines on how we work aimed to make contributions easier
 -   [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel, including a rulebook, concept art, etc.
 -   [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
-    -   Milestone 1: [Graham's Quest](https://grahams-quest.raiment.studio/) - a simple 2D implementation
-    -   Milestone 2: Rivia - a 2.5D/3D voxel-based world
-    -   Milestone 3: Jaskier's Tale - a fully dynamic 3D voxel-based world
-    -   Milestone 4: Name TBD - multiplayer
+    -   Milestone 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
+    -   Milestone 2: [Rivia](source/projects/adventure/02-rivia/) - a 2.5D/3D voxel-based world
+    -   Milestone 3: [Jaskier's Tale](source/projects/adventure/03-jaskiers-tale/) - a fully dynamic 3D voxel-based world
+    -   Milestone 4: [Morgan Danes](source/projects/adventure/04-morgan-danes/) - distributed, multiplayer multiverse
 -   [**Storytelling**](source/projects/storytelling) - computer-aided "pen & paper" solo storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
 -   **Libraries**
     -   [**Core**](source/lib/core) - general utilities used across projects
@@ -48,7 +48,7 @@ Project work is categorized into the following:
     -   [**sea-raytracer**](source/projects/sea/apps/sea-raytracer) - example application
 -   **Marketing** - the public website and material designed to encourage participation
 
-## Technology
+## Technology / Architecture
 
 The project is currently coded primarily in `JavaScript` in order to rapidly flesh out the first prototypes of the project and ensure they are easily accesible on the web. After the initial prototyping stabilizes, the project intends to migrate towards a `Rust` and `JavaScript` mix, utilizing `WASM` when appropriate.
 

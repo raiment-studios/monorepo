@@ -13,18 +13,22 @@ By having written principles, these are intended to make behaviors more _objecti
 
 <!-- TOC depthfrom:2 orderedlist:false withlinks:true bulletcharacter:1. -->
 
-1. [People first](#people-first)
-1. [Show don't tell](#show-dont-tell)
-1. [Consistent, structured processes](#consistent-structured-processes)
-1. [Straightforward rather than clever](#straightforward-rather-than-clever)
-1. [Gitops driven](#gitops-driven)
-1. [Proactively ask for questions](#proactively-ask-for-questions)
-1. [Try to always explain why](#try-to-always-explain-why)
+1. [Organizational Principles](#organizational-principles)
+    1. [People first](#people-first)
+    1. [Ask for questions](#ask-for-questions)
+    1. [Explain why](#explain-why)
+1. [Development Principles](#development-principles)
+    1. [Show don't tell](#show-dont-tell)
+    1. [Consistent, structured processes](#consistent-structured-processes)
+    1. [Straightforward, not clever](#straightforward-not-clever)
+    1. [Gitops driven](#gitops-driven)
 1. [Other potential principles](#other-potential-principles)
 
 <!-- /TOC -->
 
-## People first
+## Organizational Principles
+
+### People first
 
 Individuals are and will always be more important than any particular project work, implementation detail, decision, technology, innovation, mistake, disagreement, success, or anything else that comes up as part of this work.  That principle _must always be followed_.  If you do not agree with this principle, this project will likely be frustrating for you.  The Raiment Studios community always puts people first.
 
@@ -46,9 +50,40 @@ The primary goal of the company is to create an environment that is inspiring, s
 
 * Code review comments should reference the code, not the code author
 
+### Ask for questions
+
+**Potential benefits**
+
+* TODO
+
+**Potential risks**
+
+* TODO
+
+**Example behaviors**
+
+* TODO
+
+### Explain why
+
+The motivation and the intent are most important and, generally, convey more information to the audience.
+
+**Potential benefits**
+
+* TODO
+
+**Potential risks**
+
+* TODO
+
+**Example behaviors**
+
+* TODO
 
 
-## Show don't tell
+## Development Principles
+
+### Show don't tell
 
 Rapid prototying, mocks, and demonstration branches are preferred over long documents.  This principle is intended to balance [Consistent, Structured Processes](#consistent-structured-processes) so that process does not _reduce_ efficiency.
 
@@ -66,7 +101,7 @@ Rapid prototying, mocks, and demonstration branches are preferred over long docu
 * Referencing existing works that examplify what is being described
 
 
-## Consistent, structured processes
+### Consistent, structured processes
 
 Any _non-trivial_ work should follow the same standard set of steps from introducing the proposal, implementing it, reviewing it, testing it, and releasing it. The purpose of this structure is that consistency allows more efficient, objective work to be done as less time is lost to confusion due to an ill-defined process. This is particularly important for distributed, community-driven, creative work.
 
@@ -89,9 +124,9 @@ Consistent processes should be thought of as "work patterns" (in the "design pat
 * Peer review checklists
 
 
-## Straightforward rather than clever
+### Straightforward, not clever
 
-For iternal work (as opposed to in-game, in-story, marketing, or other contexts), be straightforward and descriptive rather than interesting and unique in choosing names or approaches. This increases understanding and makes for more efficient communication.  The goal of the project is creative _output_ so ensure the creativity is directed at the final product rather than the inner workings.
+For internal work (as opposed to in-game, in-story, marketing, or other contexts), be straightforward and descriptive rather than intriguing and unique in choosing names or approaches. This increases understanding and makes for more efficient communication.  The goal of the project is creative _output_ so ensure the creativity is directed at the final product rather than the inner workings.  Output can be clever (to draw in the users), but the implementations - the means to accomplish something - should be plain, approachable, and whenever possible, obvious.
 
 **Potential benefits**
 
@@ -106,7 +141,7 @@ For iternal work (as opposed to in-game, in-story, marketing, or other contexts)
 
 * Instead of clever or cute project, service, library names - describe what they do instead. This may feel "less fun" but communicates the purpose of something to new users more immediately.  Save the fun for the content!
 
-## Gitops driven
+### Gitops driven
 
 Changes should be document with revision history and stored in a single repository.  
 
@@ -124,35 +159,7 @@ Changes should be document with revision history and stored in a single reposito
 * TODO
 
 
-## Proactively ask for questions
 
-**Potential benefits**
-
-* TODO
-
-**Potential risks**
-
-* TODO
-
-**Example behaviors**
-
-* TODO
-
-## Try to always explain why
-
-The motivation and the intent are most important and, generally, convey more information to the audience.
-
-**Potential benefits**
-
-* TODO
-
-**Potential risks**
-
-* TODO
-
-**Example behaviors**
-
-* TODO
 
 
 

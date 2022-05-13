@@ -34,7 +34,7 @@ jobs:
                   npm install
                   make test
             - name: Publish milestone 1
-              working-directory: source/projects/adventure/01-milestone
+              working-directory: source/projects/adventure/01-grahams-quest
               run: |
                   export MONOREPO_ROOT=$GITHUB_WORKSPACE
                   rm package-lock.json
