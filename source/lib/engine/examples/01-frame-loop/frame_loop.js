@@ -2,6 +2,21 @@ import React from 'react';
 import { FrameLoop } from '../..';
 
 export default function () {
+    return (
+        <div
+            style={{
+                margin: '1rem auto 6rem',
+                width: '62rem',
+            }}
+        >
+            <h1>Frame Loop</h1>
+            <LoopRunner />
+            <LoopRunner />
+        </div>
+    );
+}
+
+function LoopRunner() {
     const [frameData, setFrameData] = React.useState({
         frameNumber: 0,
     });
@@ -16,7 +31,7 @@ export default function () {
                 });
             },
             {
-                maxFPS: 30,
+                maxFPS: 60,
             }
         );
         frameLoop.start();
@@ -29,11 +44,12 @@ export default function () {
     return (
         <div
             style={{
-                margin: '1rem auto 6rem',
-                width: '62rem',
+                margin: '1rem 0',
+                padding: 16,
+                border: 'solid 1px #CCC',
+                borderRadius: 8,
             }}
         >
-            <h1>Hello World!</h1>
             <div>
                 <code>frameNumber: {frameData.frameNumber}</code>
             </div>
