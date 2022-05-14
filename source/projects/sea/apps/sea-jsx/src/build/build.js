@@ -70,6 +70,7 @@ export async function build(app) {
                 // The logic is more opaque than ideal.  We check that the source of the
                 // input is a user file or, by proxy of the 'relative' namespace haveing
                 // been assigned, is included via a chain of user imports.
+
                 if (
                     args.importer.length > 0 &&
                     !args.importer.match(/^[\.]/) &&
@@ -91,7 +92,7 @@ export async function build(app) {
                 try {
                     async function canRead(s) {
                         try {
-                            await fs.access(relpath, constants.R_OK);
+                            await fs.access(s, constants.R_OK);
                             return true;
                         } catch (e) {
                             return false;
@@ -108,6 +109,23 @@ export async function build(app) {
                     let relpath = path.resolve(
                         path.relative(process.cwd(), path.join(path.dirname(base), args.path))
                     );
+
+                    // Resolve directories to the entry-point file
+                    const stat = await fs.stat(relpath);
+                    if (stat.isDirectory()) {
+                        let mainFile;
+                        const pkgPath = `${relpath}/package.json`;
+                        if (await canRead(pkgPath)) {
+                            const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
+                            mainFile = pkg.main;
+                        } else {
+                            mainFile = 'index.js';
+                        }
+                        relpath = `${relpath}/${mainFile}`;
+                        app.printV1(
+                            `Resolved directory {{obj ${args.path}}} to {{obj ${relpath}}}`
+                        );
+                    }
 
                     let readable = await canRead(relpath);
                     if (!readable) {
@@ -128,7 +146,7 @@ export async function build(app) {
                 }
             };
 
-            build.onResolve({ filter: /^.\/.*/ }, resolveRelative);
+            build.onResolve({ filter: /^\.\.?\/.*/ }, resolveRelative);
 
             const resolvePackage = async (args) => {
                 // Only use this custom resolution if the import comes from the user files

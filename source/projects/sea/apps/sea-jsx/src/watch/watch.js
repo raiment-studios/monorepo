@@ -2,6 +2,14 @@ import fs from 'fs/promises';
 import { build } from '../build/build.js';
 
 export async function watchLoop(app) {
+    const printV1Watches = () => {
+        for (let [filename] of Object.entries(app.watches)) {
+            app.printV1(`Watching {{obj ${filename}}}`);
+        }
+    };
+
+    printV1Watches();
+
     while (true) {
         let dirty = false;
         for (let [filename, modified] of Object.entries(app.watches)) {
@@ -9,6 +17,8 @@ export async function watchLoop(app) {
             if (mtime > modified) {
                 app.print(`Refreshing ({{obj ${filename}}} modified).`);
                 app.watches[filename] = mtime;
+
+                printV1Watches();
                 dirty = true;
             }
 
