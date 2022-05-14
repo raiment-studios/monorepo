@@ -23,6 +23,9 @@ export class FrameLoop {
 
         const targetDurationMs = 1000 / maxFPS;
 
+        const beginTimeBuffer = new RingBuffer(60);
+        beginTimeBuffer.fill(window.performance.now());
+
         const ctx = {
             frameNumber: 0,
             frameTimeMS: 0,
@@ -32,6 +35,7 @@ export class FrameLoop {
             frameSkipCount: 0,
             frameLoopBeginMS: 0,
             frameLoopTimeMS: 0,
+            frameFPS: 0,
             frameAverageFPS: 0,
         };
         const asyncFrame = async () => {
@@ -53,6 +57,12 @@ export class FrameLoop {
                 ctx.frameTimeMS += dt;
                 ctx.frameEndMS = t1;
                 ctx.frameDurationMS = dt;
+
+                const start = beginTimeBuffer.first();
+                beginTimeBuffer.push(t0);
+
+                ctx.frameFPS = (1000 * beginTimeBuffer.length) / (t1 - start);
+                ctx.frameAverageFPS = (1000 * ctx.frameNumber) / (t1 - ctx.frameLoopBeginMS);
 
                 if (t1 - t0 > slowFrameMs) {
                     onSlowFrame(ctx);
@@ -96,5 +106,31 @@ export class FrameLoop {
     dispose() {
         this.stop();
         this._callback = null;
+    }
+}
+
+class RingBuffer {
+    constructor(len) {
+        this._buffer = new Array(len);
+        this._index = 0;
+    }
+    get length() {
+        return this._buffer.length;
+    }
+
+    fill(value) {
+        this._buffer.fill(value);
+    }
+
+    first() {
+        return this._buffer[this._index];
+    }
+    last() {
+        const i = (this._index + this.buffer.length - 1) % this._buffer.length;
+        return this._buffer[i];
+    }
+    push(value) {
+        this._buffer[this._index] = value;
+        this._index = (this._index + 1) % this._buffer.length;
     }
 }

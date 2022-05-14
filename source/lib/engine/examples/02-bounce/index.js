@@ -99,6 +99,9 @@ class Actor {
 
 function Bounce() {
     const refCanvas = React.useRef(null);
+    const [fps, setFPS] = React.useState(0);
+    const [avgFPS, setAvgFPS] = React.useState(0);
+
     React.useEffect(() => {
         const canvas = refCanvas.current;
         const g2d = canvas.getContext('2d');
@@ -106,7 +109,7 @@ function Bounce() {
         const rng = core.makeRNG();
 
         const actors = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 1500; i++) {
             const radius = 4 * rng.rangei(4, 6);
             const actor = new Actor({
                 x: rng.range(radius, canvas.width - radius),
@@ -136,6 +139,11 @@ function Bounce() {
             for (let actor of actors) {
                 actor.render(null, g2d);
             }
+
+            if (ctx.frameNumber % 20 === 0) {
+                setFPS(ctx.frameFPS);
+                setAvgFPS(ctx.frameAverageFPS);
+            }
         });
 
         frameLoop.start();
@@ -157,9 +165,17 @@ function Bounce() {
                 style={{
                     display: 'block',
                     margin: '0 auto',
-                    border: 'solid 1px #555',
+                    //border: 'solid 1px #555',
                 }}
             />
+            <div
+                style={{
+                    marginTop: 8,
+                    textAlign: 'center',
+                }}
+            >
+                FPS {Math.round(fps * 10) / 10} ({avgFPS.toFixed(1)})
+            </div>
         </div>
     );
 }
