@@ -112,6 +112,8 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 19
+    -   [x] ➕ Minify sea-jsx published builds and skip the file write
+    -   [x] ➕ Add RNG.sign() to @raiment/core
     -   [x] ➕ Add FrameLoop to @raiment/engine    
     -   [x] 🛠️ Fix file watching for sea-jsx directory imports
     -   [x] ➕ sea-jsx: support publish to GitHub Pages 
