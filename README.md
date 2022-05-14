@@ -112,6 +112,8 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 19
+    -   [x] ➕ Add FrameLoop to @raiment/engine    
+    -   [x] 🛠️ Fix file watching for sea-jsx directory imports
     -   [x] ➕ sea-jsx: support publish to GitHub Pages 
     -   [x] 🧬 Sandbox for GitHub repo [file access](source/sandbox/github/file-access/) via web
 -   Week 18
