@@ -20,7 +20,7 @@ async function main() {
     ctx.print(`Building {{obj ${ctx.config.filename}}}`);
     await build(ctx);
 
-    if (ctx.config.bundle) {
+    if (ctx.config.build) {
         // Note: different assets are loaded for the --build flag
         const text = ctx.assets['index.html'].toString().replace('{{client-source}}', ctx.content);
 

@@ -10,15 +10,15 @@ import { parseFrontMatter } from './parse_front_matter.js';
 /**
  * Compiles the user-specified input file along with necessary bootstraping.
  *
- * @param {*} app
+ * @param {*} ctx
  */
-export async function build(app) {
+export async function build(ctx) {
     const builtinFiles = {
-        './__app.js': await fs.readFile(app.config.filename),
-        './__bootstrap.js': app.assets['__bootstrap.js'],
+        './__app.js': await fs.readFile(ctx.config.filename),
+        './__bootstrap.js': ctx.assets['__bootstrap.js'],
     };
 
-    app.runtime.buildCount++;
+    ctx.runtime.buildCount++;
 
     //
     // Read configuration
@@ -31,20 +31,20 @@ export async function build(app) {
         parseFrontMatter(builtinFiles['./__app.js'].toString())
     );
 
-    if (app.config.verbosity > 0) {
+    if (ctx.config.verbosity > 0) {
         const text = yaml.stringify(frontmatter);
 
         // Only print this the first time and on changes to the front matter
-        if (yaml.stringify(app.frontmatter) !== text) {
-            app.print('Frontmatter configuration:');
+        if (yaml.stringify(ctx.frontmatter) !== text) {
+            ctx.print('Frontmatter configuration:');
             const lines = text.split('\n');
             for (let line of lines) {
-                app.print(`  {{loc ${line}}}`);
+                ctx.print(`  {{loc ${line}}}`);
             }
         }
     }
 
-    app.frontmatter = frontmatter;
+    ctx.frontmatter = frontmatter;
 
     //
     // Use a custom plug-in to handle implicit packages
@@ -54,10 +54,10 @@ export async function build(app) {
     // not very good (I should review the actual code).  This likely could be implemented
     // more simply.
     //
-    const workingDir = path.dirname(app.config.filename);
+    const workingDir = path.dirname(ctx.config.filename);
 
-    app.watches[path.relative(process.cwd(), app.config.filename)] = (
-        await fs.stat(app.config.filename)
+    ctx.watches[path.relative(process.cwd(), ctx.config.filename)] = (
+        await fs.stat(ctx.config.filename)
     ).mtime;
 
     const plugin = {
@@ -107,11 +107,17 @@ export async function build(app) {
                             ? path.join(path.dirname(args.importer), args.path)
                             : path.join(workingDir, args.importer);
                     let relpath = path.resolve(
-                        path.relative(process.cwd(), path.join(path.dirname(base), args.path))
+                        path.relative(
+                            process.cwd(),
+                            args.namespace === 'relative'
+                                ? base
+                                : path.join(path.dirname(base), args.path)
+                        )
                     );
 
                     // Resolve directories to the entry-point file
                     const stat = await fs.stat(relpath);
+
                     if (stat.isDirectory()) {
                         let mainFile;
                         const pkgPath = `${relpath}/package.json`;
@@ -122,7 +128,7 @@ export async function build(app) {
                             mainFile = 'index.js';
                         }
                         relpath = `${relpath}/${mainFile}`;
-                        app.printV1(
+                        ctx.printV1(
                             `Resolved directory {{obj ${args.path}}} to {{obj ${relpath}}}`
                         );
                     }
@@ -134,14 +140,14 @@ export async function build(app) {
                     }
                     if (readable) {
                         const watchPath = path.relative(process.cwd(), relpath);
-                        app.watches[watchPath] = (await fs.stat(watchPath)).mtime;
+                        ctx.watches[watchPath] = (await fs.stat(watchPath)).mtime;
                         return {
                             path: relpath,
                             namespace: 'relative',
                         };
                     }
                 } catch (e) {
-                    app.error(`{{err Error}} ${e}`);
+                    ctx.error(`{{err Error}} ${e}`);
                     process.exit(1);
                 }
             };
@@ -158,9 +164,9 @@ export async function build(app) {
                 let parts = args.path.split('/');
                 const packageName = parts[0].startsWith('@') ? `${parts[0]}/${parts[1]}` : parts[0];
 
-                app.printV1(`Resolving {{obj ${packageName}}}`);
+                ctx.printV1(`Resolving {{obj ${packageName}}}`);
 
-                const dir = app.tempDirectory;
+                const dir = ctx.tempDirectory;
                 let result = await build.resolve(args.path, { resolveDir: dir });
                 if (result.errors.length > 0) {
                     if (!sh.test('-e', `${dir}/node_modules/${packageName}`)) {
@@ -172,14 +178,14 @@ export async function build(app) {
                         let packageIdentifier;
                         const version = frontmatter.modules[packageName];
                         if (version) {
-                            app.printV1(`Using {{loc ${version}}}`);
+                            ctx.printV1(`Using {{loc ${version}}}`);
                             packageIdentifier = `${packageName}@${version}`;
                         } else {
-                            app.printV1('Using latest version');
+                            ctx.printV1('Using latest version');
                             packageIdentifier = packageName;
                         }
 
-                        app.printV1(`Installing {{obj ${packageIdentifier}}}...`);
+                        ctx.printV1(`Installing {{obj ${packageIdentifier}}}...`);
                         sh.config.silent = true;
                         sh.pushd(dir);
                         sh.exec(`npm i ${packageIdentifier}`);
@@ -196,8 +202,8 @@ export async function build(app) {
                         );
 
                         const duration = Date.now() - start;
-                        app.runtime.cachedModules[packageName] = true;
-                        app.print(
+                        ctx.runtime.cachedModules[packageName] = true;
+                        ctx.print(
                             `Installed {{obj ${packageName}}} {{loc v${pkgJSON.version}}} ({{loc ${duration}ms}}).`
                         );
                     }
@@ -223,24 +229,24 @@ export async function build(app) {
                 if (result.errors.length > 0) {
                     return { errors: result.errors };
                 } else if (
-                    !app.runtime.cachedModules[packageName] &&
+                    !ctx.runtime.cachedModules[packageName] &&
                     args.importer.startsWith('./') &&
                     args.importer !== './__bootstrap.js'
                 ) {
                     // Display to the user the cached module as such just once
-                    app.runtime.cachedModules[packageName] = true;
+                    ctx.runtime.cachedModules[packageName] = true;
                     const pkgJSON = JSON.parse(
                         await fs.readFile(
                             path.join(dir, 'node_modules', packageName, 'package.json'),
                             'utf8'
                         )
                     );
-                    app.print(
+                    ctx.print(
                         `Using cached module {{obj ${packageName}}} {{loc v${pkgJSON.version}}}.`
                     );
                 }
 
-                app.printV1(`Path {{obj ${result.path}}}`);
+                ctx.printV1(`Path {{obj ${result.path}}}`);
                 return { path: result.path, namespace: result.namespace, external: false };
             };
 
@@ -277,6 +283,8 @@ export async function build(app) {
         write: false,
         //external: [...external, 'react'],
         plugins: [plugin],
+
+        minify: !!ctx.config.bundle,
     };
 
     // Catch any compilation errors.  Do not have the exception take down the host
@@ -285,8 +293,8 @@ export async function build(app) {
         const result = await esbuild.build(options);
         const text = result.outputFiles[0].text;
 
-        app.cacheID = generateRandomID();
-        app.content = text;
+        ctx.cacheID = generateRandomID();
+        ctx.content = text;
     } catch (e) {
         //
         // TODO: improve the error messaging. This seems a bit hacky
@@ -306,7 +314,7 @@ export async function build(app) {
         const result = await esbuild.build(options);
         const text = result.outputFiles[0].text;
 
-        app.cacheID = generateRandomID();
-        app.content = text;
+        ctx.cacheID = generateRandomID();
+        ctx.content = text;
     }
 }

@@ -61,7 +61,7 @@ async function updateFileContent(ctx, accessToken, publishURL) {
     }
 
     const sha = json1.sha;
-    const content = await fs.readFile('dist/index.html', 'utf8');
+    const content = ctx.assets['index.html'].toString().replace('{{client-source}}', ctx.content);
 
     const resp = await fetch(publishURL, {
         method: 'PUT',

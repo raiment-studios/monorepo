@@ -35,6 +35,13 @@ class RNG {
         return this._rng.random();
     }
 
+    /**
+     * Return -1 or 1 with equal probability
+     */
+    sign() {
+        return this._rng.random() < 0.5 ? -1 : 1;
+    }
+
     bool() {
         return this._rng.random() < 0.5 ? false : true;
     }
