@@ -35,7 +35,6 @@ function LoopRunner() {
             }
         );
         frameLoop.start();
-        console.log(frameLoop);
         return () => {
             frameLoop.stop();
         };
