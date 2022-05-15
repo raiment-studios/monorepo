@@ -115,9 +115,13 @@ export async function build(ctx) {
                         )
                     );
 
+                    // Account for extension-less imports
+                    if (!(await canRead(relpath)) && (await canRead(`${relpath}.js`))) {
+                        relpath = `${relpath}.js`;
+                    }
+
                     // Resolve directories to the entry-point file
                     const stat = await fs.stat(relpath);
-
                     if (stat.isDirectory()) {
                         let mainFile;
                         const pkgPath = `${relpath}/package.json`;

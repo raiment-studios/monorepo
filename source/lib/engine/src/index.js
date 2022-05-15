@@ -1,1 +1,2 @@
-export * from './frame_loop.js';
+export * from './frame_loop';
+export * from './state_machine';
