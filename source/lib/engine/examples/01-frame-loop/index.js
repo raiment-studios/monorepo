@@ -1,5 +1,5 @@
 import React from 'react';
-import { FrameLoop } from '../..';
+import { FrameLoop } from '../../src';
 
 export default function () {
     return (

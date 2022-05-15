@@ -1,0 +1,7 @@
+{
+    "type": "module",
+    "dependencies": {
+        "glob": "^8.0.3",
+        "shelljs": "^0.8.5"
+    }
+}

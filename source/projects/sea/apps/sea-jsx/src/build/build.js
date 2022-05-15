@@ -285,7 +285,6 @@ export async function build(ctx) {
             '.js': 'jsx',
         },
         write: false,
-        //external: [...external, 'react'],
         plugins: [plugin],
 
         minify: !!ctx.config.bundle,

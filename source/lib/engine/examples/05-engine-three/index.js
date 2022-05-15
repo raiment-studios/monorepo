@@ -70,6 +70,14 @@ class Sphere {
         this.velocity.addScaledVector(this.acceleration, dt);
         this.position.addScaledVector(this.velocity, dt);
 
+        this.velocity.multiplyScalar(0.999);
+
+        for (let key of ['x', 'y', 'z']) {
+            if (Math.abs(this.position[key]) > 128) {
+                this.velocity[key] *= -1;
+            }
+        }
+
         this._mesh.position.copy(this.position);
     }
 

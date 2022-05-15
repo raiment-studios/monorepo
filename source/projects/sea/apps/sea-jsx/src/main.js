@@ -30,7 +30,7 @@ async function main() {
 
     if (ctx.config.publish) {
         await publish(ctx, {
-            accessToken: process.env.SEA_GITHUB_TOKEN,
+            accessToken: ctx.config.token ?? process.env.SEA_GITHUB_TOKEN,
         });
     }
 

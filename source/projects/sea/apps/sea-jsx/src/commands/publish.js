@@ -12,31 +12,50 @@ export async function publish(
 
     if (!accessToken) {
         ctx.error('Access token not specified.');
-        ctx.print('Please set the SEA_GITHUB_TOKEN environment variable');
+        ctx.print('Please set the SEA_GITHUB_TOKEN environment variable or use the --token flag');
     } else {
-        ctx.print('SEA_GITHUB_TOKEN environment variable is defined.');
+        ctx.print('Access token is defined.');
     }
 
-    const publishURL = buildPublishURL(ctx);
-    const { status } = await updateFileContent(ctx, accessToken, publishURL);
+    const { url, org, pathname } = buildPublishURL(ctx);
+    const { status } = await updateFileContent(ctx, accessToken, url);
     if (status === 200) {
-        const { org, path } = ctx.frontmatter.publish;
-        ctx.print(`Success. Published to {{loc ${path}}}.`);
-        ctx.print(`URL: {{loc https://${org}.github.io/${path}}}`);
+        ctx.print(`Success. Published to {{loc ${pathname}}}.`);
+        ctx.print(`URL: {{loc https://${org}.github.io/${pathname}}}`);
     } else {
         ctx.error('Something went wrong.');
     }
 }
 
 function buildPublishURL(ctx) {
+    const baseURL = `https://api.github.com/repos`;
+
+    if (ctx.config.target) {
+        const m = ctx.config.target.match(/^([a-z\-0-9_]+)\.github.io\/(.+)$/);
+        if (m) {
+            ctx.print('Publishing to github.io');
+            const org = m[1];
+            const pathname = m[2];
+            const result = {
+                org: m[1],
+                pathname: m[2],
+                url: `${baseURL}/${org}/${org}.github.io/contents/${pathname}`,
+            };
+            return result;
+        }
+    }
+
     const { publish } = ctx.frontmatter;
 
-    const baseURL = `https://api.github.com/repos`;
     const org = publish.org;
     const repo = `${org}.github.io`;
     const filepath = `contents/${publish.path}`;
 
-    return `${baseURL}/${org}/${repo}/${filepath}`;
+    return {
+        org,
+        pathname: filepath,
+        url: `${baseURL}/${org}/${repo}/${filepath}`,
+    };
 }
 
 async function getFileContent(ctx, accessToken, publishURL) {
@@ -69,7 +88,7 @@ async function updateFileContent(ctx, accessToken, publishURL) {
     const content = ctx.assets['index.html'].toString().replace('{{client-source}}', ctx.content);
 
     const resp = await fetch(publishURL, {
-        method: status === 404 ? 'POST' : 'PUT',
+        method: 'PUT',
         headers: {
             Authorization: `token ${accessToken}`,
         },
@@ -86,7 +105,7 @@ async function updateFileContent(ctx, accessToken, publishURL) {
 
     const json = await resp.json();
 
-    if (resp.status !== 200) {
+    if (resp.status !== 200 && resp.status !== 201) {
         ctx.error(`Status code = ${resp.status}`);
         console.log(json);
     }
