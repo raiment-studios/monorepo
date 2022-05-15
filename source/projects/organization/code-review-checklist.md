@@ -2,25 +2,29 @@ These should be automted linting processes, but are documented here
 
 #### Planning checklist
 
--   Public API
-    -   Versioning
-    -   Backwards compatibility
-    -   Deprecation plans
--   Internal API
--   Configuration
-    -   Feature flags
--   Data / storage
-    -   Data migrations
--   Performance / Scalability
--   Telemetry
-    -   Analytics
-    -   Metrics
-    -   Logs and traces
--   Automation
--   Testing
-    -   Unit tests
-    -   Integration tests
--   Release
+-   [ ] Public API
+    -   [ ] Versioning
+    -   [ ] Backwards compatibility
+    -   [ ] Deprecation plans
+-   [ ] Configuration & Telemetry
+    -   [ ] Feature flags
+    -   [ ] User analytics
+    -   [ ] Metrics & Traces
+    -   [ ] Logs
+-   [ ] Data / storage
+    -   [ ] Data migrations
+    -   [ ] Backwards compatibility
+-   [ ] Performance / Scalability
+    -   [ ] Benchmarks
+    -   [ ] Load tests
+-   [ ] Automation
+    -   [ ] CI/CD
+-   [ ] Testing
+    -   [ ] Manual testing
+    -   [ ] External validation
+    -   [ ] Unit tests
+    -   [ ] Integration tests
+-   [ ] Release
 
 #### Review checklist
 
