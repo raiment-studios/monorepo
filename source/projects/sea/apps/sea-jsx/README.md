@@ -38,12 +38,12 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ### 🏁 v1.0 Checkpoints
 
--   [x] **v0.1**: Basic functionality
+-   [x] **v0.1: Basic functionality**
     -   [x] Implicitly create index.html & bootstrap.js
     -   [x] Hot-reload on changes
     -   [x] Hello world example
     -   [x] Basic CLI flags
--   [x] **v0.2**: Package management
+-   [x] **v0.2: Package management**
     -   [x] Load latest version for unspecified packages
     -   [x] Allow front matter comments to define package versions
     -   [x] Fix resolution of imports from within packages (e.g. `react/dom-client`)
@@ -53,16 +53,16 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Allow multiple files
     -   [x] Automatically try appending '.js' to imports
     -   [x] Automatically refresh on any imported user file
--   [ ] **v0.3**: Allow use as a library
+-   [ ] **v0.3: Allow use as a library**
     -   [ ] Change to `sea-jsx <command> [options]`
     -   [ ] Allow inclusion as a library
     -   [ ] Example script that publishes a tree (using glob)
--   [ ] **v0.4**: Publication
+-   [ ] **v0.4: Publication**
     -   [x] Allow basic publication definition in front matter
     -   [x] Add GitHub Pages as a publish destination
     -   [ ] Add a renderToString publish definition
     -   [ ] Use production esbuild on publish
--   [ ] Good practices
+-   [ ] **Good practices**
     -   [ ] Publicly accessible demo
     -   [x] Standard Makefile
     -   [ ] Unit tests
