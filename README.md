@@ -112,6 +112,8 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 19
+    -   [x] ➕ Add option to bind object to `StateMachine`
+    -   [x] ➕ Add `RendererHUD` to `@raiment/engine` for FPS
     -   [x] ➕ Add `StateMachine` to `@raiment/engine` (and example)
     -   [x] 🛠️ Fix import resolution in `sea-jsx` for extensions-less files
     -   [x] ➕ Add minification to `sea-jsx` published builds
