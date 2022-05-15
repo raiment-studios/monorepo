@@ -112,14 +112,14 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 19
-    -   [x] ➕ Add `StateMachine` to @raiment/engine (and example)
-    -   [x] 🛠️ Fix import resolution in sea-jsx for extensions-less files
-    -   [x] ➕ Minify sea-jsx published builds and skip the file write
-    -   [x] ➕ Add RNG.sign() to @raiment/core
-    -   [x] ➕ Add FrameLoop to @raiment/engine
-    -   [x] 🛠️ Fix file watching for sea-jsx directory imports
-    -   [x] ➕ sea-jsx: support publish to GitHub Pages
-    -   [x] 🧬 Sandbox for GitHub repo [file access](source/sandbox/github/file-access/) via web
+    -   [x] ➕ Add `StateMachine` to `@raiment/engine` (and example)
+    -   [x] 🛠️ Fix import resolution in `sea-jsx` for extensions-less files
+    -   [x] ➕ Add minification to `sea-jsx` published builds
+    -   [x] ➕ Add RNG.sign() to `@raiment/core`
+    -   [x] ➕ Add `FrameLoop` to `@raiment/engine`
+    -   [x] 🛠️ Fix file watching for `sea-jsx` directory imports
+    -   [x] ➕ Add `sea-jsx` support to publish to GitHub Pages
+    -   [x] 🧬 Add sandbox for GitHub repo [file access](source/sandbox/github/file-access/) via web
 -   Week 18
     -   [x] 🗃️ Remove npm tgz packaging build and file:// references from projects
     -   [x] ➕ Add "remember last file" to sea-todo
