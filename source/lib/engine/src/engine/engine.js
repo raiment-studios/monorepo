@@ -7,6 +7,8 @@ export class Engine {
         this._context = {
             engine: this,
             timeMS: 0,
+            frameNumber: 0,
+            frameFPS: 0,
         };
 
         this.renderers = {};
@@ -29,9 +31,11 @@ export class Engine {
         this._frameLoop.stop();
     }
 
-    runFrame() {
+    runFrame({ frameNumber, frameFPS }) {
         const ctx = this._context;
         ctx.timeMS = window.performance.now();
+        ctx.frameNumber = frameNumber;
+        ctx.frameFPS = frameFPS;
 
         // Initialize any newly added actors
         if (this.actors._added.length > 0) {
@@ -56,7 +60,7 @@ export class Engine {
 
         // Render frames
         for (let renderer of Object.values(this.renderers)) {
-            renderer.renderFrame(this);
+            renderer.renderFrame(ctx);
         }
     }
 }

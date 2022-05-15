@@ -12,8 +12,9 @@
 
 export class StateMachine {
     constructor(states) {
+        this._self = states._bind;
         this._states = states; // descriptors
-        this._activeState = states._start();
+        this._activeState = states._start.call(this._self);
         this._waitCycles = 0;
 
         this._frame = 0;
@@ -37,7 +38,7 @@ export class StateMachine {
                 : [result.value, []];
 
             const generator = this._states[nextState];
-            this._activeState = generator ? generator(...nextStateArgs) : null;
+            this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
         } else if (typeof result.value === 'number') {
             this._waitCycles = result.value;
         }
