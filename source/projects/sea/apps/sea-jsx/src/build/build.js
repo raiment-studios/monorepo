@@ -287,7 +287,7 @@ export async function build(ctx) {
         write: false,
         plugins: [plugin],
 
-        minify: !!ctx.config.bundle,
+        minify: false, //!!ctx.config.bundle,
     };
 
     // Catch any compilation errors.  Do not have the exception take down the host
