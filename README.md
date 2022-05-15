@@ -102,7 +102,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 ## CHANGELOG
 
-➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release, 🧬 for sandboxes or experiments
+➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release, 🧬 for sandboxes or experiments, 📚 documentation, guides, or tutorials
 
 #### TODO (next)
 
