@@ -29,7 +29,9 @@ async function main() {
     }
 
     if (ctx.config.publish) {
-        await publish(ctx);
+        await publish(ctx, {
+            accessToken: process.env.SEA_GITHUB_TOKEN,
+        });
     }
 
     if (!ctx.config.bundle) {

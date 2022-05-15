@@ -129,8 +129,8 @@ export async function initialize() {
     //
     // Check input file
     //
-    if (cli.input.length !== 1) {
-        error(...usageStrings, '', `{{err ERROR}}: A single filename must be provided`);
+    if (cli.input.length < 1) {
+        error(...usageStrings, '', `{{err ERROR}}: A filename must be provided`);
         process.exit(1);
     }
 

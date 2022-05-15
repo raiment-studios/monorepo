@@ -1,10 +1,15 @@
 import fs from 'fs/promises';
 import fetch from 'node-fetch';
 
-export async function publish(ctx) {
+export async function publish(
+    ctx,
+    {
+        accessToken, //
+        target,
+    } = {}
+) {
     ctx.print('Publishing...');
 
-    const accessToken = process.env.SEA_GITHUB_TOKEN;
     if (!accessToken) {
         ctx.error('Access token not specified.');
         ctx.print('Please set the SEA_GITHUB_TOKEN environment variable');
@@ -64,7 +69,7 @@ async function updateFileContent(ctx, accessToken, publishURL) {
     const content = ctx.assets['index.html'].toString().replace('{{client-source}}', ctx.content);
 
     const resp = await fetch(publishURL, {
-        method: 'PUT',
+        method: status === 404 ? 'POST' : 'PUT',
         headers: {
             Authorization: `token ${accessToken}`,
         },
