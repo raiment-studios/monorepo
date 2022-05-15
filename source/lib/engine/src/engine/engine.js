@@ -45,7 +45,7 @@ export class Engine {
                 }
 
                 for (let actor of this.actors._added) {
-                    renderer.addActor(actor);
+                    renderer.addActor(ctx, actor);
                 }
             }
         }

@@ -12,3 +12,4 @@ publish:
 	$(call publish_example,03-state-machine)
 	$(call publish_example,04-engine-frame)
 	$(call publish_example,05-engine-three)
+	$(call publish_example,06-engine-lighting)

@@ -29,12 +29,15 @@ export class RendererThree {
     get scene() {
         return this._scene;
     }
+    get renderer() {
+        return this._renderer;
+    }
 
-    addActor(actor) {
+    addActor(ctx, actor) {
         if (!actor.mesh) {
             return;
         }
-        this._scene.add(actor.mesh());
+        this._scene.add(actor.mesh(ctx));
     }
 
     renderFrame() {
