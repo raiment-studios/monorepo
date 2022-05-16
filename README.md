@@ -32,11 +32,12 @@ Project work is categorized into the following:
 -   [**Organization**](source/projects/organization) - guidelines on how we work aimed to make contributions easier
 -   [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel, including a rulebook, concept art, etc.
 -   [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
-    -   Milestone 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
-    -   Milestone 2: [Rivia](source/projects/adventure/02-rivia/) - a 2.5D/3D voxel-based world
-    -   Milestone 3: [Jaskier's Tale](source/projects/adventure/03-jaskiers-tale/) - a fully dynamic 3D voxel-based world
-    -   Milestone 4: [Morgan Danes](source/projects/adventure/04-morgan-danes/) - distributed, multiplayer multiverse
--   [**Storytelling**](source/projects/storytelling) - computer-aided "pen & paper" solo storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
+    -   Release 0: [**Storytelling**](source/projects/storytelling) - computer-aided "pen & paper" solo storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
+    -   Release 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
+    -   Release 1b: TBD - a "single region" voxel-based world
+    -   Release 2: [Rivia](source/projects/adventure/02-rivia/) - a 2.5D/3D voxel-based world
+    -   Release 3: [Jaskier's Tale](source/projects/adventure/03-jaskiers-tale/) - a fully dynamic 3D voxel-based world
+    -   Release 4: [Morgan Danes](source/projects/adventure/04-morgan-danes/) - distributed, multiplayer multiverse
 -   **Libraries**
     -   [**Core**](source/lib/core) - general utilities used across projects
     -   [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
@@ -51,6 +52,8 @@ Project work is categorized into the following:
 ## Technology / Architecture
 
 The project is currently coded primarily in `JavaScript` in order to rapidly flesh out the first prototypes of the project and ensure they are easily accesible on the web. After the initial prototyping stabilizes, the project intends to migrate towards a `Rust` and `JavaScript` mix, utilizing `WASM` when appropriate.
+
+See [tools](source/projects/organization/tools.md) for more details.
 
 ## Contributing
 
@@ -106,9 +109,9 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### TODO (next)
 
--   [ ] ➕ Terrain example for engine
 -   [ ] 📚 Improve game design doc for adventure project
 -   [ ] ➕ sea-jsx: `--target` for local files for build
+-   [ ] ➕ Terrain example for engine
 
 #### 2022.05
 
