@@ -52,7 +52,7 @@ Project work is categorized into the following:
     -   [**sea-jest**](source/projects/sea/apps/sea-jest) - wrapper on Jest to avoid config file clutter
     -   [**sea-todo**](source/projects/sea/apps/sea-todo) - example todo web app ([demo](https://todo.raiment.studio/))
     -   [**sea-raytracer**](source/projects/sea/apps/sea-raytracer) - example application
--   [**Website**](source/projects/website) - the public website and material designed to encourage participation
+-   [**Website**](source/projects/website) - the [public website](https://raiment-studios.github.io/) and material designed to encourage participation
 
 ## Technology / Architecture
 
