@@ -47,7 +47,7 @@ Project work is categorized into the following:
     -   [**Core**](source/lib/core) - general utilities used across projects
     -   [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
     -   [**React-Ex**](source/lib/react-ex) - React utilities & extensions used across projects
--   [**Sea**](source/projects/sea) - a opinionated mix of compiler, wiki, CMS, and project manager
+-   [**Sea**](source/projects/sea) - a opinionated mix of intertwined development & productivity tools
     -   [**sea-jsx**](source/projects/sea/apps/sea-jsx) - app for quickly prototyping React Components
     -   [**sea-jest**](source/projects/sea/apps/sea-jest) - wrapper on Jest to avoid config file clutter
     -   [**sea-todo**](source/projects/sea/apps/sea-todo) - example todo web app ([demo](https://todo.raiment.studio/))
