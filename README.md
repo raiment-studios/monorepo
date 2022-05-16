@@ -31,11 +31,11 @@ Project work is categorized into the following:
 
 -   [**Organization**](source/projects/organization) - guidelines on how we work aimed to make contributions easier
 -   [**Worldbuilding**](source/projects/worldbuilding) - open-content describing the world of Kestrel, including a rulebook, concept art, etc.
-    - Rulebook
-    - Concept art
-    - Encyclopedia
-    - Novel series
-    - Short stories
+    -   Rulebook
+    -   Concept art
+    -   Encyclopedia
+    -   Novel series
+    -   Short stories
 -   [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
     -   Release 0: [Storytelling](source/projects/storytelling) - computer-aided "pen & paper" storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
     -   Release 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
