@@ -46,7 +46,7 @@ Project work is categorized into the following:
     -   [**sea-jest**](source/projects/sea/apps/sea-jest) - wrapper on Jest to avoid config file clutter
     -   [**sea-todo**](source/projects/sea/apps/sea-todo) - example todo web app ([demo](https://todo.raiment.studio/))
     -   [**sea-raytracer**](source/projects/sea/apps/sea-raytracer) - example application
--   **Marketing** - the public website and material designed to encourage participation
+-   [**Website**](source/projects/website) - the public website and material designed to encourage participation
 
 ## Technology / Architecture
 
@@ -106,11 +106,15 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### TODO (next)
 
--   [ ] 🗃️ Organize sea-todo files
--   [ ] ➕ sea-jsx: reload the main Component on changes without session reset
+-   [ ] ➕ Terrain example for engine
+-   [ ] 📚 Improve game design doc for adventure project
+-   [ ] ➕ sea-jsx: `--target` for local files for build
 
 #### 2022.05
 
+-   Week 20
+    -   [x] 🧬 Experiment kicking off [website project](source/projects/website)
+    -   [x] 📚 Update [tools page](source/projects/organization/tools.md)
 -   Week 19
     -   [x] ➕ Add option to bind object to `StateMachine`
     -   [x] ➕ Add `RendererHUD` to `@raiment/engine` for FPS

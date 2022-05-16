@@ -56,7 +56,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
 -   [ ] **v0.3: Allow use as a library**
     -   [ ] Change to `sea-jsx <command> [options]`
     -   [ ] Allow inclusion as a library
-    -   [ ] Example script that publishes a tree (using glob)
+    -   [ ] Example external script that publishes a tree (using glob)
 -   [ ] **v0.4: Publication**
     -   [x] Allow basic publication definition in front matter
     -   [x] Add GitHub Pages as a publish destination
@@ -72,6 +72,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Add metrics
     -   [ ] Changelog
     -   [ ] Proper release process
+-   [ ] **User experience enhancements**
+    -   [ ] ➕ Reload the main Component on changes without session reset
 
 ### 🎄 Backlog
 
