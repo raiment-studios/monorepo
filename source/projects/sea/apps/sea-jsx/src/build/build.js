@@ -287,6 +287,8 @@ export async function build(ctx) {
         write: false,
         plugins: [plugin],
 
+        // TODO: disable minification. Been running into runtime errors when
+        // minfified
         minify: false, //!!ctx.config.bundle,
     };
 
