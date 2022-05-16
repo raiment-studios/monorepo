@@ -37,7 +37,7 @@ Project work is categorized into the following:
     - Novel series
     - Short stories
 -   [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
-    -   Release 0: [**Storytelling**](source/projects/storytelling) - computer-aided "pen & paper" storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
+    -   Release 0: [Storytelling](source/projects/storytelling) - computer-aided "pen & paper" storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
     -   Release 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
     -   Release 1b: TBD - a single-region, "snow globe" voxel-based world
     -   Release 2: [Rivia](source/projects/adventure/02-rivia/) - a 2.5D/3D voxel-based world
