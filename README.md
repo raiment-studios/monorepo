@@ -39,7 +39,7 @@ Project work is categorized into the following:
 -   [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
     -   Release 0: [Storytelling](source/projects/storytelling) - computer-aided "pen & paper" storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
     -   Release 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
-    -   Release 1b: [Snowglobe](source/projects/adventure/01b-snowglobe/)  - a single-region, "snow globe" voxel-based world
+    -   Release 1b: [Snow Globe](source/projects/adventure/01b-snow-globe/)  - a single-region, "snow globe" voxel-based world
     -   Release 2: [Rivia](source/projects/adventure/02-rivia/) - a 2.5D/3D voxel-based world
     -   Release 3: [Jaskier's Tale](source/projects/adventure/03-jaskiers-tale/) - a fully dynamic 3D voxel-based world
     -   Release 4: [Morgan Claire](source/projects/adventure/04-morgan-claire/) - distributed, multiplayer multiverse

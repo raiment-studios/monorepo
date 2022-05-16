@@ -1,8 +1,6 @@
-# Snowglobe
+# Snow Globe
 
 [![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
-
-⚠️ TODO: summary
 
 A single region voxel game where the adventure plays out in a limited space that is constantly changing.  Focus is on storytelling and game mechanics (versus infinite world exploration!).
 
