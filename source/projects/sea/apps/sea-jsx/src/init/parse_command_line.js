@@ -1,5 +1,4 @@
 import yargs from 'yargs/yargs';
-import { loadPackageJSON } from './load_package_json.js';
 
 export async function parseCommandLine(pkg) {
     const config = {
