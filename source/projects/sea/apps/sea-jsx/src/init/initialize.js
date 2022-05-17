@@ -1,11 +1,6 @@
 import fs from 'fs/promises';
-import { constants } from 'fs';
-import path from 'path';
-import os from 'os';
-import {} from '../util/util.js';
 import { generateRandomID, print, error } from '../util/index.js';
 import { loadPackageJSON } from './load_package_json.js';
-import { loadAssets } from './load_assets.js';
 import meow from 'meow';
 
 /**
@@ -193,8 +188,6 @@ export async function initialize() {
     ctx.print(brandBanner);
 
     ctx.printV1(`temporary directory: {{obj ${ctx.tempDirectory}}}`);
-
-    await loadAssets(ctx);
 
     return ctx;
 }

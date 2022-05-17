@@ -1,4 +1,6 @@
+import fs from 'fs/promises';
 import yargs from 'yargs/yargs';
+import { colorize } from '../util/ui.js';
 
 export async function parseCommandLine(pkg) {
     const config = {
@@ -12,8 +14,33 @@ export async function parseCommandLine(pkg) {
         },
     };
 
-    const argv = yargs(process.argv.slice(2))
+    // By design...
+    // Trade design symmetry for pragmatic usability and assume the "dev"
+    // command if the first argument is a JavaScript filename.
+    //
+    let cliArgs = process.argv.slice(2);
+    if (cliArgs.length === 1 && cliArgs[0].match(/\.js$/)) {
+        const filename = cliArgs[0];
+        try {
+            const stat = await fs.stat(filename);
+            if (stat.isFile()) {
+                cliArgs = ['dev', filename];
+            }
+        } catch (ignored) {}
+    }
+
+    const argv = yargs(cliArgs)
         .version(pkg.version)
+        .demandCommand(1)
+        .usage(colorize(`{{brand ≅≅≅  sea-jsx v${pkg.version}  ≅≅≅}}`))
+        .positional('filename', {
+            describe: 'will default to the dev command',
+            type: 'string',
+        })
+        .example([
+            ['$0 index.js', `equivalent to sea-jsx dev index.js`],
+            ['$0 build --clean index.js', 'build without using any cached modules'],
+        ])
         .command(
             'dev <filename>',
             'run the script with automatic reloading',
@@ -46,6 +73,7 @@ export async function parseCommandLine(pkg) {
                     })
                     .option('target', {
                         describe: 'target ',
+                        default: 'dist/index.html',
                     }),
             () => {
                 console.log('build TODO');
@@ -76,6 +104,7 @@ export async function parseCommandLine(pkg) {
             default: 0,
             description: 'Run with verbose logging',
         })
+        .epilogue('')
         .help()
         .strict().argv;
 

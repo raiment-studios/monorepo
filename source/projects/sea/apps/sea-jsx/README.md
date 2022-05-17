@@ -27,12 +27,12 @@ export default function () {
 Step 3: Run sea-jsx see the output. Any updates to `hello-world.js` will hot-reload.
 
 ```bash
-sea-jsx hello-world.js
+sea-jsx dev hello-world.js
 ```
 
 ## Vision
 
-A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration. This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.
+A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration. This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.  Work on the program, not the build configuration.
 
 ## Roadmap
 
@@ -54,7 +54,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [x] Automatically try appending '.js' to imports
     -   [x] Automatically refresh on any imported user file
 -   [ ] **v0.3: Allow use as a library**
-    -   [ ] Change to `sea-jsx <command> [options]`
+    -   [x] Change to `sea-jsx <command> [options]`
     -   [ ] Allow inclusion as a library
     -   [ ] Example external script that publishes a tree (using glob)
 -   [ ] **v0.4: Publication**
@@ -77,23 +77,25 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ### 🎄 Backlog
 
--   [ ] Open browser window if not already open
+- [ ] Add support for running node.js scripts
 
 ## User documentation
 
 ### Command-line usage
 
 ```
-Usage
-$ sea-jsx [...flags] <filename>
+≅≅≅  sea-jsx v0.3.0  ≅≅≅
 
-Flags
-  help                  displays help information
-  version               displays program version
-  verbose               sets verbose output
-  build                 builds a bundle
-  publish               builds and deploys a bundle
-  clean                 removes all cached modules before proceeding
+Commands:
+  sea-jsx dev <filename>      run the script with automatic reloading
+  sea-jsx build <filename>    compile the file to a bundle
+  sea-jsx publish <filename>  build and deploy the target file
+  sea-jsx clean               remove any temporary cached files
+
+Options:
+      --version    Show version number                                 [boolean]
+  -v, --verbosity  Run with verbose logging                [number] [default: 0]
+      --help       Show help                                           [boolean]
 ```
 
 ### Front matter

@@ -20,6 +20,10 @@ export function error(...args) {
     }
 }
 
+export function colorize(...args) {
+    return args.map((s) => templateString(s)).join('\n');
+}
+
 function templateString(s) {
     s = s.replace(/{{(obj|loc|err|brand) (.*?)}}/g, (m, style, string) => {
         switch (style) {
