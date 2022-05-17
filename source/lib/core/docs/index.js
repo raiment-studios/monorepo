@@ -6,15 +6,30 @@ export default function () {
     return (
         <ReactEx.ReadingFrame>
             <h3>RNG</h3>
+            <h4>sign</h4>
+            <ShuffleExample
+                example={`
+rng = core.makeRNG();
+rng.sign()
+rng.sign()
+rng.sign()
+    `}
+            />
+            <h4>int31</h4>
+            <ShuffleExample
+                example={`
+rng = core.makeRNG();
+rng.int31()
+rng.int31()
+rng.int31()
+rng.int31()
+rng.int31()
+rng.int31()
+    `}
+            />
             <h4>shuffle</h4>
-            <ShuffleExample />
-        </ReactEx.ReadingFrame>
-    );
-}
-
-function ShuffleExample() {
-    const [results, setResults] = React.useState([]);
-    const example = `
+            <ShuffleExample
+                example={`
 arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 rng = core.makeRNG();
 
@@ -25,7 +40,14 @@ arr
 
 rng.shuffle(arr)
 rng.shuffle(arr)
-    `;
+    `}
+            />
+        </ReactEx.ReadingFrame>
+    );
+}
+
+function ShuffleExample({ example }) {
+    const [results, setResults] = React.useState([]);
 
     const _state = {};
     const context = {
@@ -97,10 +119,6 @@ rng.shuffle(arr)
 
                             margin: node.type === 'expression' ? '4px 0 ' : 0,
                             padding: node.type === 'expression' ? '4px 0' : 0,
-                            border:
-                                node.type === 'expression'
-                                    ? 'solid 1px #AAA'
-                                    : 'solid 1px rgba(0,0,0,0)',
                             borderRadius: node.type === 'expression' ? 4 : 0,
                             backgroundColor:
                                 node.type === 'expression' ? 'rgba(0,0,255,.05)' : 'transparent',
