@@ -10,6 +10,19 @@ export function makeRNG(...args) {
 class RNG {
     constructor(seed = Math.random() * 1e9) {
         this._rng = new MersenneTwister(seed);
+        this._seed = seed;
+    }
+
+    // -- Properties ------------------------------------------------------- //
+
+    get seed() {
+        return this._seed;
+    }
+
+    // -- General methods ------------------------------------------------- //
+
+    reset() {
+        this._rng = new MersenneTwister(this._seed);
     }
 
     /**
@@ -82,6 +95,18 @@ class RNG {
     }
 
     // -- Arrays ----------------------------------------------------------- //
+
+    shuffle(arr) {
+        const temp = [...arr];
+        const dst = [];
+        while (temp.length) {
+            const i = Math.floor(this.random() * temp.length);
+            dst.push(temp[i]);
+            temp[i] = temp[temp.length - 1];
+            temp.pop();
+        }
+        return dst;
+    }
 
     select(arr, count, weightFunc) {
         //

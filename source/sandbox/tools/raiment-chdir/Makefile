@@ -1,5 +1,3 @@
-
-
 ensure:
 	rm -rf node_modules/@raiment
 	npm uninstall @raiment/core
@@ -7,5 +5,5 @@ ensure:
 	npm i --save file://$(MONOREPO_ROOT)/source/lib/core/dist/raiment-core-latest.tgz
 
 
-publish:
+publish-local:
 	sudo npm install --global .

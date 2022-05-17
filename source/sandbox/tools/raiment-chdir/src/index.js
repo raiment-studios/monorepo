@@ -3,6 +3,15 @@ import fs from 'fs/promises';
 import * as core from '@raiment/core';
 
 async function main(word) {
+    // If the input matches a directory, just use that directly.
+    try {
+        const stat = await fs.stat(word);
+        if (stat.isDirectory()) {
+            console.log(path.resolve(word));
+            process.exit(0);
+        }
+    } catch (_ignored) {}
+
     const root = process.env.MONOREPO_ROOT;
 
     const skipList = {

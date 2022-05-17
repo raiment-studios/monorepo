@@ -78,7 +78,7 @@ source deploy/setup.sh
 # Tools and scripts
 # -----------------------------------------------------------------------------
 
-make -C source/sandbox/tools/raiment-chdir publish
+make -C source/sandbox/tools/raiment-chdir publish-local
 
 # -----------------------------------------------------------------------------
 # Aliases and short-cuts
