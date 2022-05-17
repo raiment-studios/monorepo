@@ -39,7 +39,7 @@ class RNG {
      * any shared length array between calls.
      */
     fork(offset = 0) {
-        return new RNG(this.int31() + offset);
+        return new RNG(this.uint31() + offset);
     }
 
     // -- Numbers -------------------------------------------------------- //
@@ -60,6 +60,10 @@ class RNG {
     }
 
     int31() {
+        return this.sign() * this.uint31();
+    }
+
+    uint31() {
         return this._rng.random_int31();
     }
 

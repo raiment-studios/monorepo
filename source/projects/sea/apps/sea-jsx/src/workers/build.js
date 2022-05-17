@@ -12,13 +12,13 @@ import { parseFrontMatter } from './parse_front_matter.js';
  *
  * @param {*} ctx
  */
-export async function build(ctx) {
+export async function build(ctx, { filename }) {
     const builtinFiles = {
-        './__app.js': await fs.readFile(ctx.config.filename),
-        './__bootstrap.js': ctx.assets['__bootstrap.js'],
+        './__app.js': await fs.readFile(filename),
+        './__bootstrap.js': await ctx.asset('__bootstrap.js'),
     };
 
-    ctx.runtime.buildCount++;
+    ctx.stats.buildCount++;
 
     //
     // Read configuration
@@ -31,7 +31,7 @@ export async function build(ctx) {
         parseFrontMatter(builtinFiles['./__app.js'].toString())
     );
 
-    if (ctx.config.verbosity > 0) {
+    if (ctx.verbosity > 0) {
         const text = yaml.stringify(frontmatter);
 
         // Only print this the first time and on changes to the front matter
@@ -54,11 +54,11 @@ export async function build(ctx) {
     // not very good (I should review the actual code).  This likely could be implemented
     // more simply.
     //
-    const workingDir = path.dirname(ctx.config.filename);
+    const workingDir = path.dirname(filename);
 
-    ctx.watches[path.relative(process.cwd(), ctx.config.filename)] = (
-        await fs.stat(ctx.config.filename)
-    ).mtime;
+    const watches = {
+        [path.relative(process.cwd(), filename)]: (await fs.stat(filename)).mtime,
+    };
 
     const plugin = {
         name: 'sea-js',
@@ -144,7 +144,7 @@ export async function build(ctx) {
                     }
                     if (readable) {
                         const watchPath = path.relative(process.cwd(), relpath);
-                        ctx.watches[watchPath] = (await fs.stat(watchPath)).mtime;
+                        watches[watchPath] = (await fs.stat(watchPath)).mtime;
                         return {
                             path: relpath,
                             namespace: 'relative',
@@ -294,12 +294,12 @@ export async function build(ctx) {
 
     // Catch any compilation errors.  Do not have the exception take down the host
     // process, but rather notify the user there's a error in their source code.
+    let buildID = generateRandomID();
+    let output = undefined;
     try {
         const result = await esbuild.build(options);
         const text = result.outputFiles[0].text;
-
-        ctx.cacheID = generateRandomID();
-        ctx.content = text;
+        output = text;
     } catch (e) {
         //
         // TODO: improve the error messaging. This seems a bit hacky
@@ -318,8 +318,12 @@ export async function build(ctx) {
         ].join('\n');
         const result = await esbuild.build(options);
         const text = result.outputFiles[0].text;
-
-        ctx.cacheID = generateRandomID();
-        ctx.content = text;
+        output = text;
     }
+
+    return {
+        output,
+        buildID,
+        watches,
+    };
 }

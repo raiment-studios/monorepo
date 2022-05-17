@@ -2,11 +2,11 @@ import fs from 'fs/promises';
 import { constants } from 'fs';
 import path from 'path';
 import os from 'os';
-import meow from 'meow';
 import {} from '../util/util.js';
 import { generateRandomID, print, error } from '../util/index.js';
 import { loadPackageJSON } from './load_package_json.js';
 import { loadAssets } from './load_assets.js';
+import meow from 'meow';
 
 /**
  * One-time initialization of the program
@@ -191,24 +191,6 @@ export async function initialize() {
     };
 
     ctx.print(brandBanner);
-
-    //
-    // Temp directory
-    //
-    // TODO: is this a violation of any recommended practices to reuse the same
-    // temp directory?
-    //
-    const tempDirectory = path.join(os.tmpdir(), `sea-temp-${pkg.version}`);
-    try {
-        await fs.access(tempDirectory, constants.W_OK);
-    } catch (e) {
-        if (e.code == 'ENOENT') {
-            await fs.mkdir(tempDirectory, { mode: 0x1e8 });
-        } else {
-            throw e;
-        }
-    }
-    ctx.tempDirectory = tempDirectory;
 
     ctx.printV1(`temporary directory: {{obj ${ctx.tempDirectory}}}`);
 

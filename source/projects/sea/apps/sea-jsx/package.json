@@ -1,6 +1,6 @@
 {
     "name": "@raiment/sea-jsx",
-    "version": "0.2.10",
+    "version": "0.3.0",
     "type": "module",
     "main": "src/main.js",
     "bin": {
@@ -12,10 +12,11 @@
         "express": "^4.17.3",
         "meow": "^10.1.2",
         "node-fetch": "^3.2.4",
-        "react": "^18.0.0",
-        "react-dom": "^18.0.0",
+        "react": "^18.1.0",
+        "react-dom": "^18.1.0",
         "shelljs": "^0.8.5",
-        "yaml": "^2.0.1"
+        "yaml": "^2.0.1",
+        "yargs": "^17.5.1"
     },
     "devDependencies": {
         "@raiment/sea-jest": "^0.1.9"

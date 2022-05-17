@@ -1,16 +1,31 @@
 import sh from 'shelljs';
 import fs from 'fs/promises';
-import { watchLoop } from './watch/watch.js';
-import { startServer } from './server/server.js';
-import { build } from './build/build.js';
+import { watchLoop } from './workers/watch.js';
+import { startServer } from './workers/server.js';
+import { build } from './workers/build.js';
 import { initialize } from './init/initialize.js';
-import { publish } from './commands/publish.js';
-import { clean } from './commands/clean.js';
+import { publish } from './workers/publish.js';
+import { clean } from './workers/clean.js';
+import { parseCommandLine } from './init/parse_command_line.js';
+import { loadPackageJSON } from './init/load_package_json.js';
+import { print } from './util/index.js';
+import { SeaJSX } from './sea_jsx.js';
 
 /**
- * Main program entry-point.
+ * Main program entry-point for command-line execution.
  */
 async function main() {
+    const pkg = await loadPackageJSON();
+    const config = await parseCommandLine(pkg);
+
+    print(`{{brand ≅≅≅  sea-jsx v${pkg.version}  ≅≅≅}}`);
+    const sea = new SeaJSX(config.global);
+
+    // CLI parsing should ensure the method always exists
+    await sea[config.command.name](config.command.options);
+
+    process.exit(1);
+
     const ctx = await initialize();
 
     if (ctx.config.clean) {

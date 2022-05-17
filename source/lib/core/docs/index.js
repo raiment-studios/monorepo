@@ -7,7 +7,7 @@ export default function () {
         <ReactEx.ReadingFrame>
             <h3>RNG</h3>
             <h4>sign</h4>
-            <ShuffleExample
+            <CodeExample
                 example={`
 rng = core.makeRNG();
 rng.sign()
@@ -16,7 +16,7 @@ rng.sign()
     `}
             />
             <h4>int31</h4>
-            <ShuffleExample
+            <CodeExample
                 example={`
 rng = core.makeRNG();
 rng.int31()
@@ -28,7 +28,7 @@ rng.int31()
     `}
             />
             <h4>shuffle</h4>
-            <ShuffleExample
+            <CodeExample
                 example={`
 arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 rng = core.makeRNG();
@@ -46,7 +46,7 @@ rng.shuffle(arr)
     );
 }
 
-function ShuffleExample({ example }) {
+function CodeExample({ example }) {
     const [results, setResults] = React.useState([]);
 
     const _state = {};
@@ -66,7 +66,7 @@ function ShuffleExample({ example }) {
             Object.assign(context, _state);
             result.value = ret;
         } catch (err) {
-            result.exception = ret;
+            result.exception = err;
         }
         return result;
     };
