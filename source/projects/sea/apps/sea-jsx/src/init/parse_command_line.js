@@ -82,8 +82,5 @@ export async function parseCommandLine(pkg) {
 
     config.global.verbosity = argv.verbosity;
 
-    console.log(argv);
-    console.log(JSON.stringify(config, null, 4));
-
     return config;
 }
