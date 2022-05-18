@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    </head>
+    <body style="margin: 0; padding: 0">
+        <div id="client" />
+        <script type="module">
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -304,7 +313,7 @@ var require_react_development = __commonJS({
               return "SuspenseList";
           }
           if (typeof type === "object") {
-            switch (type.$$typeof) {
+            switch (type.$typeof) {
               case REACT_CONTEXT_TYPE:
                 var context = type;
                 return getContextName(context) + ".Consumer";
@@ -409,7 +418,7 @@ var require_react_development = __commonJS({
         }
         var ReactElement = function(type, key, ref, self, source, owner, props) {
           var element = {
-            $$typeof: REACT_ELEMENT_TYPE,
+            $typeof: REACT_ELEMENT_TYPE,
             type,
             key,
             ref,
@@ -560,7 +569,7 @@ var require_react_development = __commonJS({
           return ReactElement(element.type, key, ref, self, source, owner, props);
         }
         function isValidElement(object) {
-          return typeof object === "object" && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+          return typeof object === "object" && object !== null && object.$typeof === REACT_ELEMENT_TYPE;
         }
         var SEPARATOR = ".";
         var SUBSEPARATOR = ":";
@@ -578,7 +587,7 @@ var require_react_development = __commonJS({
         var didWarnAboutMaps = false;
         var userProvidedKeyEscapeRegex = /\/+/g;
         function escapeUserProvidedKey(text) {
-          return text.replace(userProvidedKeyEscapeRegex, "$&/");
+          return text.replace(userProvidedKeyEscapeRegex, "{{client-source}}/");
         }
         function getElementKey(element, index) {
           if (typeof element === "object" && element !== null && element.key != null) {
@@ -604,7 +613,7 @@ var require_react_development = __commonJS({
                 invokeCallback = true;
                 break;
               case "object":
-                switch (children.$$typeof) {
+                switch (children.$typeof) {
                   case REACT_ELEMENT_TYPE:
                   case REACT_PORTAL_TYPE:
                     invokeCallback = true;
@@ -709,7 +718,7 @@ var require_react_development = __commonJS({
         }
         function createContext(defaultValue) {
           var context = {
-            $$typeof: REACT_CONTEXT_TYPE,
+            $typeof: REACT_CONTEXT_TYPE,
             _currentValue: defaultValue,
             _currentValue2: defaultValue,
             _threadCount: 0,
@@ -719,7 +728,7 @@ var require_react_development = __commonJS({
             _globalName: null
           };
           context.Provider = {
-            $$typeof: REACT_PROVIDER_TYPE,
+            $typeof: REACT_PROVIDER_TYPE,
             _context: context
           };
           var hasWarnedAboutUsingNestedContextConsumers = false;
@@ -727,7 +736,7 @@ var require_react_development = __commonJS({
           var hasWarnedAboutDisplayNameOnConsumer = false;
           {
             var Consumer = {
-              $$typeof: REACT_CONTEXT_TYPE,
+              $typeof: REACT_CONTEXT_TYPE,
               _context: context
             };
             Object.defineProperties(Consumer, {
@@ -846,7 +855,7 @@ var require_react_development = __commonJS({
             _result: ctor
           };
           var lazyType = {
-            $$typeof: REACT_LAZY_TYPE,
+            $typeof: REACT_LAZY_TYPE,
             _payload: payload,
             _init: lazyInitializer
           };
@@ -886,7 +895,7 @@ var require_react_development = __commonJS({
         }
         function forwardRef(render) {
           {
-            if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
+            if (render != null && render.$typeof === REACT_MEMO_TYPE) {
               error("forwardRef requires a render function but received a `memo` component. Instead of forwardRef(memo(...)), use memo(forwardRef(...)).");
             } else if (typeof render !== "function") {
               error("forwardRef requires a render function but was given %s.", render === null ? "null" : typeof render);
@@ -902,7 +911,7 @@ var require_react_development = __commonJS({
             }
           }
           var elementType = {
-            $$typeof: REACT_FORWARD_REF_TYPE,
+            $typeof: REACT_FORWARD_REF_TYPE,
             render
           };
           {
@@ -935,7 +944,7 @@ var require_react_development = __commonJS({
             return true;
           }
           if (typeof type === "object" && type !== null) {
-            if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_MODULE_REFERENCE || type.getModuleId !== void 0) {
+            if (type.$typeof === REACT_LAZY_TYPE || type.$typeof === REACT_MEMO_TYPE || type.$typeof === REACT_PROVIDER_TYPE || type.$typeof === REACT_CONTEXT_TYPE || type.$typeof === REACT_FORWARD_REF_TYPE || type.$typeof === REACT_MODULE_REFERENCE || type.getModuleId !== void 0) {
               return true;
             }
           }
@@ -948,7 +957,7 @@ var require_react_development = __commonJS({
             }
           }
           var elementType = {
-            $$typeof: REACT_MEMO_TYPE,
+            $typeof: REACT_MEMO_TYPE,
             type,
             compare: compare === void 0 ? null : compare
           };
@@ -1281,7 +1290,7 @@ var require_react_development = __commonJS({
               return describeBuiltInComponentFrame("SuspenseList");
           }
           if (typeof type === "object") {
-            switch (type.$$typeof) {
+            switch (type.$typeof) {
               case REACT_FORWARD_REF_TYPE:
                 return describeFunctionComponentFrame(type.render);
               case REACT_MEMO_TYPE:
@@ -1451,7 +1460,7 @@ var require_react_development = __commonJS({
             var propTypes;
             if (typeof type === "function") {
               propTypes = type.propTypes;
-            } else if (typeof type === "object" && (type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_MEMO_TYPE)) {
+            } else if (typeof type === "object" && (type.$typeof === REACT_FORWARD_REF_TYPE || type.$typeof === REACT_MEMO_TYPE)) {
               propTypes = type.propTypes;
             } else {
               return;
@@ -1506,7 +1515,7 @@ var require_react_development = __commonJS({
               typeString = "null";
             } else if (isArray(type)) {
               typeString = "array";
-            } else if (type !== void 0 && type.$$typeof === REACT_ELEMENT_TYPE) {
+            } else if (type !== void 0 && type.$typeof === REACT_ELEMENT_TYPE) {
               typeString = "<" + (getComponentNameFromType(type.type) || "Unknown") + " />";
               info = " Did you accidentally export a JSX literal instead of a component?";
             } else {
@@ -3150,7 +3159,7 @@ var require_react_dom_development = __commonJS({
               return describeBuiltInComponentFrame("SuspenseList");
           }
           if (typeof type === "object") {
-            switch (type.$$typeof) {
+            switch (type.$typeof) {
               case REACT_FORWARD_REF_TYPE:
                 return describeFunctionComponentFrame(type.render);
               case REACT_MEMO_TYPE:
@@ -3246,7 +3255,7 @@ var require_react_dom_development = __commonJS({
               return "SuspenseList";
           }
           if (typeof type === "object") {
-            switch (type.$$typeof) {
+            switch (type.$typeof) {
               case REACT_CONTEXT_TYPE:
                 var context = type;
                 return getContextName(context) + ".Consumer";
@@ -11519,7 +11528,7 @@ var require_react_dom_development = __commonJS({
           var contextType = ctor.contextType;
           {
             if ("contextType" in ctor) {
-              var isValid = contextType === null || contextType !== void 0 && contextType.$$typeof === REACT_CONTEXT_TYPE && contextType._context === void 0;
+              var isValid = contextType === null || contextType !== void 0 && contextType.$typeof === REACT_CONTEXT_TYPE && contextType._context === void 0;
               if (!isValid && !didWarnAboutInvalidateContextType.has(ctor)) {
                 didWarnAboutInvalidateContextType.add(ctor);
                 var addendum = "";
@@ -11527,7 +11536,7 @@ var require_react_dom_development = __commonJS({
                   addendum = " However, it is set to undefined. This can be caused by a typo or by mixing up named and default imports. This can also happen due to a circular dependency, so try moving the createContext() call to a separate file.";
                 } else if (typeof contextType !== "object") {
                   addendum = " However, it is set to a " + typeof contextType + ".";
-                } else if (contextType.$$typeof === REACT_PROVIDER_TYPE) {
+                } else if (contextType.$typeof === REACT_PROVIDER_TYPE) {
                   addendum = " Did you accidentally pass the Context.Provider instead?";
                 } else if (contextType._context !== void 0) {
                   addendum = " Did you accidentally pass the Context.Consumer instead?";
@@ -12513,7 +12522,7 @@ var require_react_dom_development = __commonJS({
               return updateFragment2(returnFiber, current2, element.props.children, lanes, element.key);
             }
             if (current2 !== null) {
-              if (current2.elementType === elementType || isCompatibleFamilyForHotReloading(current2, element) || typeof elementType === "object" && elementType !== null && elementType.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === current2.type) {
+              if (current2.elementType === elementType || isCompatibleFamilyForHotReloading(current2, element) || typeof elementType === "object" && elementType !== null && elementType.$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === current2.type) {
                 var existing = useFiber(current2, element.props);
                 existing.ref = coerceRef(returnFiber, current2, element);
                 existing.return = returnFiber;
@@ -12558,7 +12567,7 @@ var require_react_dom_development = __commonJS({
               return created;
             }
             if (typeof newChild === "object" && newChild !== null) {
-              switch (newChild.$$typeof) {
+              switch (newChild.$typeof) {
                 case REACT_ELEMENT_TYPE: {
                   var _created = createFiberFromElement(newChild, returnFiber.mode, lanes);
                   _created.ref = coerceRef(returnFiber, null, newChild);
@@ -12599,7 +12608,7 @@ var require_react_dom_development = __commonJS({
               return updateTextNode(returnFiber, oldFiber, "" + newChild, lanes);
             }
             if (typeof newChild === "object" && newChild !== null) {
-              switch (newChild.$$typeof) {
+              switch (newChild.$typeof) {
                 case REACT_ELEMENT_TYPE: {
                   if (newChild.key === key) {
                     return updateElement(returnFiber, oldFiber, newChild, lanes);
@@ -12641,7 +12650,7 @@ var require_react_dom_development = __commonJS({
               return updateTextNode(returnFiber, matchedFiber, "" + newChild, lanes);
             }
             if (typeof newChild === "object" && newChild !== null) {
-              switch (newChild.$$typeof) {
+              switch (newChild.$typeof) {
                 case REACT_ELEMENT_TYPE: {
                   var _matchedFiber = existingChildren.get(newChild.key === null ? newIdx : newChild.key) || null;
                   return updateElement(returnFiber, _matchedFiber, newChild, lanes);
@@ -12673,7 +12682,7 @@ var require_react_dom_development = __commonJS({
               if (typeof child !== "object" || child === null) {
                 return knownKeys;
               }
-              switch (child.$$typeof) {
+              switch (child.$typeof) {
                 case REACT_ELEMENT_TYPE:
                 case REACT_PORTAL_TYPE:
                   warnForMissingKey(child, returnFiber);
@@ -12954,7 +12963,7 @@ var require_react_dom_development = __commonJS({
                     return existing;
                   }
                 } else {
-                  if (child.elementType === elementType || isCompatibleFamilyForHotReloading(child, element) || typeof elementType === "object" && elementType !== null && elementType.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === child.type) {
+                  if (child.elementType === elementType || isCompatibleFamilyForHotReloading(child, element) || typeof elementType === "object" && elementType !== null && elementType.$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === child.type) {
                     deleteRemainingChildren(returnFiber, child.sibling);
                     var _existing = useFiber(child, element.props);
                     _existing.ref = coerceRef(returnFiber, child, element);
@@ -13013,7 +13022,7 @@ var require_react_dom_development = __commonJS({
               newChild = newChild.props.children;
             }
             if (typeof newChild === "object" && newChild !== null) {
-              switch (newChild.$$typeof) {
+              switch (newChild.$typeof) {
                 case REACT_ELEMENT_TYPE:
                   return placeSingleChild(reconcileSingleElement(returnFiber, currentFirstChild, newChild, lanes));
                 case REACT_PORTAL_TYPE:
@@ -16087,7 +16096,7 @@ var require_react_dom_development = __commonJS({
           {
             if (workInProgress2.type !== workInProgress2.elementType) {
               var outerMemoType = workInProgress2.elementType;
-              if (outerMemoType.$$typeof === REACT_LAZY_TYPE) {
+              if (outerMemoType.$typeof === REACT_LAZY_TYPE) {
                 var lazyComponent = outerMemoType;
                 var payload = lazyComponent._payload;
                 var init = lazyComponent._init;
@@ -16516,7 +16525,7 @@ var require_react_dom_development = __commonJS({
           }
           var hint = "";
           {
-            if (Component !== null && typeof Component === "object" && Component.$$typeof === REACT_LAZY_TYPE) {
+            if (Component !== null && typeof Component === "object" && Component.$typeof === REACT_LAZY_TYPE) {
               hint = " Did you wrap a component in React.lazy() more than once?";
             }
           }
@@ -16581,7 +16590,7 @@ var require_react_dom_development = __commonJS({
           }
           workInProgress2.flags |= PerformedWork;
           {
-            if (typeof value === "object" && value !== null && typeof value.render === "function" && value.$$typeof === void 0) {
+            if (typeof value === "object" && value !== null && typeof value.render === "function" && value.$typeof === void 0) {
               var _componentName = getComponentNameFromType(Component) || "Unknown";
               if (!didWarnAboutModulePatternComponent[_componentName]) {
                 error("The <%s /> component appears to be a function component that returns a class instance. Change %s to a class that extends React.Component instead. If you can't use a class try assigning the prototype on the function as a workaround. `%s.prototype = React.Component.prototype`. Don't use an arrow function since it cannot be called with `new` by React.", _componentName, _componentName, _componentName);
@@ -16589,7 +16598,7 @@ var require_react_dom_development = __commonJS({
               }
             }
           }
-          if (typeof value === "object" && value !== null && typeof value.render === "function" && value.$$typeof === void 0) {
+          if (typeof value === "object" && value !== null && typeof value.render === "function" && value.$typeof === void 0) {
             {
               var _componentName2 = getComponentNameFromType(Component) || "Unknown";
               if (!didWarnAboutModulePatternComponent[_componentName2]) {
@@ -20947,7 +20956,7 @@ var require_react_dom_development = __commonJS({
                 var currentRender = resolveFunctionForHotReloading(type.render);
                 if (type.render !== currentRender) {
                   var syntheticType = {
-                    $$typeof: REACT_FORWARD_REF_TYPE,
+                    $typeof: REACT_FORWARD_REF_TYPE,
                     render: currentRender
                   };
                   if (type.displayName !== void 0) {
@@ -20969,7 +20978,7 @@ var require_react_dom_development = __commonJS({
             var prevType = fiber.elementType;
             var nextType = element.type;
             var needsCompareFamilies = false;
-            var $$typeofNextType = typeof nextType === "object" && nextType !== null ? nextType.$$typeof : null;
+            var $typeofNextType = typeof nextType === "object" && nextType !== null ? nextType.$typeof : null;
             switch (fiber.tag) {
               case ClassComponent: {
                 if (typeof nextType === "function") {
@@ -20980,24 +20989,24 @@ var require_react_dom_development = __commonJS({
               case FunctionComponent: {
                 if (typeof nextType === "function") {
                   needsCompareFamilies = true;
-                } else if ($$typeofNextType === REACT_LAZY_TYPE) {
+                } else if ($typeofNextType === REACT_LAZY_TYPE) {
                   needsCompareFamilies = true;
                 }
                 break;
               }
               case ForwardRef: {
-                if ($$typeofNextType === REACT_FORWARD_REF_TYPE) {
+                if ($typeofNextType === REACT_FORWARD_REF_TYPE) {
                   needsCompareFamilies = true;
-                } else if ($$typeofNextType === REACT_LAZY_TYPE) {
+                } else if ($typeofNextType === REACT_LAZY_TYPE) {
                   needsCompareFamilies = true;
                 }
                 break;
               }
               case MemoComponent:
               case SimpleMemoComponent: {
-                if ($$typeofNextType === REACT_MEMO_TYPE) {
+                if ($typeofNextType === REACT_MEMO_TYPE) {
                   needsCompareFamilies = true;
-                } else if ($$typeofNextType === REACT_LAZY_TYPE) {
+                } else if ($typeofNextType === REACT_LAZY_TYPE) {
                   needsCompareFamilies = true;
                 }
                 break;
@@ -21267,11 +21276,11 @@ var require_react_dom_development = __commonJS({
           if (typeof Component === "function") {
             return shouldConstruct$1(Component) ? ClassComponent : FunctionComponent;
           } else if (Component !== void 0 && Component !== null) {
-            var $$typeof = Component.$$typeof;
-            if ($$typeof === REACT_FORWARD_REF_TYPE) {
+            var $typeof = Component.$typeof;
+            if ($typeof === REACT_FORWARD_REF_TYPE) {
               return ForwardRef;
             }
-            if ($$typeof === REACT_MEMO_TYPE) {
+            if ($typeof === REACT_MEMO_TYPE) {
               return MemoComponent;
             }
           }
@@ -21439,7 +21448,7 @@ var require_react_dom_development = __commonJS({
                 case REACT_DEBUG_TRACING_MODE_TYPE:
                 default: {
                   if (typeof type === "object" && type !== null) {
-                    switch (type.$$typeof) {
+                    switch (type.$typeof) {
                       case REACT_PROVIDER_TYPE:
                         fiberTag = ContextProvider;
                         break getTag;
@@ -21679,7 +21688,7 @@ var require_react_dom_development = __commonJS({
             checkKeyStringCoercion(key);
           }
           return {
-            $$typeof: REACT_PORTAL_TYPE,
+            $typeof: REACT_PORTAL_TYPE,
             key: key == null ? null : "" + key,
             children,
             containerInfo,
@@ -22132,7 +22141,7 @@ var require_react_dom_development = __commonJS({
               if (options2.hydrate) {
                 warn("hydrate through createRoot is deprecated. Use ReactDOMClient.hydrateRoot(container, <App />) instead.");
               } else {
-                if (typeof options2 === "object" && options2 !== null && options2.$$typeof === REACT_ELEMENT_TYPE) {
+                if (typeof options2 === "object" && options2 !== null && options2.$typeof === REACT_ELEMENT_TYPE) {
                   error("You passed a JSX element to createRoot. You probably meant to call root.render instead. Example usage:\n\n  let root = createRoot(domContainer);\n  root.render(<App />);");
                 }
               }
@@ -22638,3 +22647,7 @@ function ContentPoll({ url, onChange }) {
  * @internal
  * @license Modernizr 3.0.0pre (Custom Build) | MIT
  */
+
+        </script>
+    </body>
+</html>

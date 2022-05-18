@@ -60,10 +60,14 @@ export class SeaJSX {
         this.print(`Building {{obj ${options.filename}}}`);
         const { output, buildID, watches } = await build(this, { filename: options.filename });
 
+        const text = (await this.asset('production/index.html'))
+            .toString()
+            .replace('{{client-source}}', output);
+
         // TODO: if target is a GitHub pages site, deploy there
-        const size = Math.floor(output.length / 1024);
+        const size = Math.floor(text.length / 1024);
         this.print(`Writing {{loc ${size}k}} characters to {{obj ${options.target}}}`);
-        await fs.writeFile(options.target, output);
+        await fs.writeFile(options.target, text);
     }
     async publish(options) {
         await this._ready;
