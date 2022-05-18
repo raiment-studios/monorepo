@@ -51,11 +51,23 @@ export class SeaJSX {
         const { filename } = options;
 
         this.print(`Building {{obj ${filename}}}`);
-        const { output, buildID, watches } = await build(this, { filename, sourcemap: true });
+        const { output, watches } = await build(this, { filename, sourcemap: true });
 
         this.print(`Running on port {{loc ${options.port}}}`, `Press {{loc CTRL-C}} to exit`, '');
-        await startServer(this, { port: options.port, content: output, cacheID: buildID });
-        await watchLoop(this, { filename, watchList: watches });
+
+        const content = {
+            output,
+            buildID: 1000,
+        };
+        await startServer(this, { port: options.port, content });
+        await watchLoop(this, {
+            filename,
+            watchList: watches,
+            onBuild: ({ output, buildID }) => {
+                content.output = output;
+                content.buildID++;
+            },
+        });
     }
 
     async build(options) {

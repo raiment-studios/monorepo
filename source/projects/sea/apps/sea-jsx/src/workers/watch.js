@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import { build } from './build.js';
 
-export async function watchLoop(app, { filename, watchList }) {
+export async function watchLoop(app, { filename, watchList, onBuild }) {
     const state = { watchList };
 
     const printV1WatchList = () => {
@@ -28,8 +28,12 @@ export async function watchLoop(app, { filename, watchList }) {
             await sleep(10);
         }
         if (dirty) {
-            const { watches } = await build(app, { filename });
-            state.watchList = watches;
+            const ret = await build(app, { filename });
+            state.watchList = ret.watches;
+            if (onBuild) {
+                onBuild(ret);
+            }
+
             app.cacheID = app.generateRandomID();
         }
         await sleep(250 + Math.floor(Math.random() * 500));

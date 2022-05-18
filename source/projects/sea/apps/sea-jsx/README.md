@@ -32,7 +32,7 @@ sea-jsx dev hello-world.js
 
 ## Vision
 
-A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration. This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files.  Work on the program, not the build configuration.
+A quick, simple command-line tool to run single JavaScript React Components with hot-reloading without tedious project configuration. This allows quick experimentation and iteration without spending time on initial boilerplate and without cluttering workspaces with configuration and intermediate files. Work on the program, not the build configuration.
 
 ## Roadmap
 
@@ -74,10 +74,11 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Proper release process
 -   [ ] **User experience enhancements**
     -   [ ] ➕ Reload the main Component on changes without session reset
+    -   [ ] ➕ Automatically update front-matter to locked versions
 
 ### 🎄 Backlog
 
-- [ ] Add support for running node.js scripts
+-   [ ] Add support for running node.js scripts
 
 ## User documentation
 
