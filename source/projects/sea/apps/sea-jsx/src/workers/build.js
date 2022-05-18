@@ -12,7 +12,7 @@ import { parseFrontMatter } from './parse_front_matter.js';
  *
  * @param {*} ctx
  */
-export async function build(ctx, { filename }) {
+export async function build(ctx, { filename, sourcemap }) {
     if (typeof filename !== 'string') {
         console.error({ filename });
         throw new Error(`Runtime eror: filename is not a string`);
@@ -264,8 +264,9 @@ export async function build(ctx, { filename }) {
             build.onLoad({ filter: /.*/, namespace: 'builtin' }, async (args) => {
                 const builtin = builtinFiles[args.path];
                 if (builtin) {
+                    let contents = builtin.toString().replace('{{app.cacheID}}', 134);
                     return {
-                        contents: builtin,
+                        contents,
                         loader: 'jsx',
                         resolveDir: process.cwd(),
                     };
@@ -291,6 +292,8 @@ export async function build(ctx, { filename }) {
         },
         write: false,
         plugins: [plugin],
+
+        sourcemap: sourcemap ? 'inline' : undefined,
 
         // TODO: disable minification. Been running into runtime errors when
         // minfified

@@ -19,6 +19,7 @@ import { generateRandomID, print, error } from './util/index.js';
  * Currently, it also contains "shared utility" functions that unifies the
  * implementation of the commands. It may make sense split logically into
  * the command interface, the configuration, the cache, and the toolkit.
+ * Could the shared object basically be made read-only?
  */
 export class SeaJSX {
     constructor(config) {
@@ -29,6 +30,7 @@ export class SeaJSX {
         };
         this._tempDirectory = '';
         this._assetCache = {};
+        this._cacheID = generateRandomID();
 
         this.stats = {
             buildCount: 0,
@@ -46,19 +48,21 @@ export class SeaJSX {
     async dev(options) {
         await this._ready;
 
-        this.print(`Building {{obj ${options.filename}}}`);
-        const { output, buildID, watches } = await build(this, { filename: options.filename });
+        const { filename } = options;
+
+        this.print(`Building {{obj ${filename}}}`);
+        const { output, buildID, watches } = await build(this, { filename, sourcemap: true });
 
         this.print(`Running on port {{loc ${options.port}}}`, `Press {{loc CTRL-C}} to exit`, '');
         await startServer(this, { port: options.port, content: output, cacheID: buildID });
-        await watchLoop(this, { watches });
+        await watchLoop(this, { filename, watchList: watches });
     }
 
     async build(options) {
         await this._ready;
 
         this.print(`Building {{obj ${options.filename}}}`);
-        const { output, buildID, watches } = await build(this, { filename: options.filename });
+        const { output } = await build(this, { filename: options.filename });
 
         const text = (await this.asset('production/index.html'))
             .toString()
@@ -69,6 +73,7 @@ export class SeaJSX {
         this.print(`Writing {{loc ${size}k}} characters to {{obj ${options.target}}}`);
         await fs.writeFile(options.target, text);
     }
+
     async publish(options) {
         await this._ready;
     }
@@ -90,7 +95,7 @@ export class SeaJSX {
     }
 
     generateRandomID(...args) {
-        generateRandomID(...args);
+        return generateRandomID(...args);
     }
 
     async asset(filename) {
@@ -117,6 +122,14 @@ export class SeaJSX {
 
     get tempDirectory() {
         return this._tempDirectory;
+    }
+
+    get cacheID() {
+        return this._cacheID;
+    }
+
+    set cacheID(id) {
+        this._cacheID = id;
     }
 
     // -- Internal -------------------------------------------------------- //

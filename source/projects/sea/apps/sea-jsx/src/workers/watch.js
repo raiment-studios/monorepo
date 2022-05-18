@@ -1,27 +1,26 @@
 import fs from 'fs/promises';
 import { build } from './build.js';
 
-export async function watchLoop(app, { watches }) {
-    const ctx = { watches };
+export async function watchLoop(app, { filename, watchList }) {
+    const state = { watchList };
 
-    const printV1Watches = () => {
-        for (let [filename] of Object.entries(ctx.watches)) {
+    const printV1WatchList = () => {
+        for (let [filename] of Object.entries(state.watchList)) {
             app.printV1(`Watching {{obj ${filename}}}`);
         }
     };
 
-    printV1Watches();
+    printV1WatchList();
 
-    console.log(app.verbosity);
     while (true) {
         let dirty = false;
-        for (let [filename, modified] of Object.entries(ctx.watches)) {
+        for (let [filename, modified] of Object.entries(state.watchList)) {
             let { mtime } = await fs.stat(filename);
             if (mtime > modified) {
                 app.print(`Refreshing ({{obj ${filename}}} modified).`);
-                app.watches[filename] = mtime;
+                state.watchList[filename] = mtime;
 
-                printV1Watches();
+                printV1WatchList();
                 dirty = true;
             }
 
@@ -29,8 +28,9 @@ export async function watchLoop(app, { watches }) {
             await sleep(10);
         }
         if (dirty) {
-            const { watches } = await build(app);
-            ctx.watches = watches;
+            const { watches } = await build(app, { filename });
+            state.watchList = watches;
+            app.cacheID = app.generateRandomID();
         }
         await sleep(250 + Math.floor(Math.random() * 500));
     }
