@@ -154,5 +154,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
     -   [x] 🗃️ Organize / improve sea-todo database code
     -   [x] ➕ Add sea-jsx watch/refresh on all referenced user files
     -   [x] ➕ Add EventEmitter to @raiment/core
--   Week 1-16
+
+#### Before that
+
     -   [_Prehistory_](https://en.wikipedia.org/wiki/Prehistory)
