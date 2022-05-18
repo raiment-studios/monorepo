@@ -39,7 +39,7 @@ Project work is categorized into the following:
 -   [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
     -   Release 0: [Storytelling](source/projects/storytelling) - computer-aided "pen & paper" storytelling procedural rpg ([demo](https://storytelling.raiment.studio/))
     -   Release 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
-    -   Release 1b: [Snow Globe](source/projects/adventure/01b-snow-globe/)  - a single-region, "snow globe" voxel-based world
+    -   Release 1b: [Snow Globe](source/projects/adventure/01b-snow-globe/) - a single-region, "snow globe" voxel-based world
     -   Release 2: [Rivia](source/projects/adventure/02-rivia/) - a 2.5D/3D voxel-based world
     -   Release 3: [Jaskier's Tale](source/projects/adventure/03-jaskiers-tale/) - a fully dynamic 3D voxel-based world
     -   Release 4: [Morgan Claire](source/projects/adventure/04-morgan-claire/) - distributed, multiplayer multiverse
@@ -117,10 +117,15 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 -   [ ] 📚 Improve game design doc for adventure project
 -   [ ] ➕ sea-jsx: `--target` for local files for build
 -   [ ] ➕ Terrain example for engine
+-   [x] ➕🗃️🛠️📣🧬📚
 
 #### 2022.05
 
 -   Week 20
+    -   [x] 🧬 Start sea-jsx v0.3.0
+    -   [x] ➕ Update rcd to chdir to exact matches
+    -   [x] ➕ Add seed, reset, shuffle to RNG
+    -   [x] 📚 initial stab at some @raiment/core docs
     -   [x] 🧬 Experiment kicking off [website project](source/projects/website)
     -   [x] 📚 Update [tools page](source/projects/organization/tools.md)
 -   Week 19
