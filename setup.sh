@@ -132,7 +132,7 @@ __intro() {
     printf "${RT_BLUE}-------------------------------${RT_RESET}\n"
     echo
     printf "${RT_PURPLE}Project structure${RT_RESET}\n"
-    tree -d -L 2 -n $(ls -d */)
+    tree -d -L 2 -I node_modules -n $(ls -d */)
     unset -f __intro
 }
 __intro
