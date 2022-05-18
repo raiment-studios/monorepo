@@ -1,6 +1,9 @@
 dev:
 	npx http-server dist -c-1 -d -i -e html --cors 
 
+build:
+	sea-jsx build src/index.js --target=dist/index.html
+
 publish:
 	git clone https://${RAIMENT_GITHUB_PERSONAL_ACCESS_TOKEN}:x-oauth-basic@github.com/raiment-studios/raiment-studios.github.io.git dest || \
 		cd dest && \

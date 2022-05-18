@@ -75,8 +75,13 @@ export async function parseCommandLine(pkg) {
                         describe: 'target ',
                         default: 'dist/index.html',
                     }),
-            () => {
-                console.log('build TODO');
+            (yargs) => {
+                config.command.name = 'build';
+                config.command.options = {
+                    filename: yargs.filename,
+                    clean: yargs.clean,
+                    target: yargs.target,
+                };
             }
         )
         .command(

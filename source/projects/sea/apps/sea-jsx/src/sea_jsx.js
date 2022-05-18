@@ -56,6 +56,14 @@ export class SeaJSX {
 
     async build(options) {
         await this._ready;
+
+        this.print(`Building {{obj ${options.filename}}}`);
+        const { output, buildID, watches } = await build(this, { filename: options.filename });
+
+        // TODO: if target is a GitHub pages site, deploy there
+        const size = Math.floor(output.length / 1024);
+        this.print(`Writing {{loc ${size}k}} characters to {{obj ${options.target}}}`);
+        await fs.writeFile(options.target, output);
     }
     async publish(options) {
         await this._ready;

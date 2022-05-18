@@ -13,6 +13,11 @@ import { parseFrontMatter } from './parse_front_matter.js';
  * @param {*} ctx
  */
 export async function build(ctx, { filename }) {
+    if (typeof filename !== 'string') {
+        console.error({ filename });
+        throw new Error(`Runtime eror: filename is not a string`);
+    }
+
     const builtinFiles = {
         './__app.js': await fs.readFile(filename),
         './__bootstrap.js': await ctx.asset('__bootstrap.js'),

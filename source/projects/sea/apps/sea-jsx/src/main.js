@@ -22,9 +22,14 @@ async function main() {
     const sea = new SeaJSX(config.global);
 
     // CLI parsing should ensure the method always exists
-    await sea[config.command.name](config.command.options);
+    const cmd = sea[config.command.name];
+    if (!cmd) {
+        console.error(`No such command: ${cmd}`);
+        process.exit(1);
+    }
+    await cmd.call(sea, config.command.options);
 
-    process.exit(1);
+    process.exit(0);
 
     const ctx = await initialize();
 
