@@ -70,12 +70,60 @@ export default function () {
 }
 
 function EngineRecorder({ engine }) {
+    const ref = React.useRef(null);
+    const ref2 = React.useRef(null);
+    const [videoBlob, setVideoBlob] = React.useState(null);
+
+    function recordCanvasToBlob(canvas, ms) {
+        return new Promise((resolve) => {
+            const stream = canvas.captureStream(60);
+
+            const mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm; codecs=vp9',
+            });
+
+            let recordedChunks = [];
+            mediaRecorder.ondataavailable = function (evt) {
+                if (evt.data.size > 0) {
+                    recordedChunks.push(evt.data);
+                }
+            };
+            mediaRecorder.onstop = function () {
+                var blob = new Blob(recordedChunks, {
+                    type: 'video/webm;codecs=vp9',
+                });
+                var url = URL.createObjectURL(blob);
+                resolve(url);
+            };
+            mediaRecorder.start(0);
+            setTimeout(() => mediaRecorder.stop(), ms);
+        });
+    }
+
+    const handleRecord = () => {
+        const renderer = engine.renderers.two;
+        const canvas = renderer.canvas;
+        (async () => {
+            const blob = await recordCanvasToBlob(canvas, 1200);
+            setVideoBlob(blob);
+
+            setTimeout(() => {
+                console.log(ref);
+                const ctx = ref.current.getContext('2d');
+                ctx.drawImage(ref2.current, 0, 0, 200, 200);
+            }, 1000);
+        })();
+    };
 
     return (
-        <ReactEx.Flex>
-            <button>record</button>
-        </ReactEx.Flex>
-    )
+        <div>
+            <ReactEx.Flex>
+                <button onClick={handleRecord}>record</button>
+            </ReactEx.Flex>
+            <canvas style={{ border: 'solid 1px #ccc' }} ref={ref} width={400} height={400} />
+            {videoBlob && <video ref={ref2} src={videoBlob} controls />}
+        </div>
+    );
 }
 
 function ControlsBlock({ params, controls, onChange }) {
