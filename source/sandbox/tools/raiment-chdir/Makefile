@@ -1,9 +1,15 @@
+###############################################################################
+# ensure
+###############################################################################
+
+.PHONY: ensure
+
+# Use a sentinel file to avoid invoking npm if not needead as npm install can
+# be slow
 ensure:
-	rm -rf node_modules/@raiment
-	npm uninstall @raiment/core
-	npm cache clean --force
-	npm i --save file://$(MONOREPO_ROOT)/source/lib/core/dist/raiment-core-latest.tgz
+	cmp --silent node_modules/package.sentinel package.json || npm install
+	cp package.json node_modules/package.sentinel
 
 
-publish-local:
+publish-local: ensure
 	sudo npm install --global .

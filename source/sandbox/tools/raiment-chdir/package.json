@@ -7,6 +7,6 @@
         "raiment-chdir": "src/cli.js"
     },
     "dependencies": {
-        "@raiment/core": "file:../../../lib/core/dist/raiment-core-latest.tgz"
+        "@raiment/core": "^0.1.2"
     }
 }
