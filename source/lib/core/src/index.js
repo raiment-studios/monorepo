@@ -1,5 +1,6 @@
 export * from './collections/generate.js';
 export * from './controllers/event_emitter.js';
+export * from './flow/assert.js';
 export * from './math/rng.js';
 export * from './math/simplex_noise.js';
 export * from './strings/short_id.js';

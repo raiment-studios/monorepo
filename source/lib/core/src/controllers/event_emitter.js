@@ -14,9 +14,12 @@ export class EventEmitter {
 
     static composeInto(object) {
         object._events = new EventEmitter();
-        ['on', 'once', 'off', 'fire'].forEach(
+        ['on', 'once', 'off', 'fire', 'enqueue', 'flush'].forEach(
             (name) => (object[name] = EventEmitter.prototype[name])
         );
+        Object.defineProperty(object, 'events', {
+            get: () => object._events,
+        });
     }
 
     // ----------------------------------------------------------------------------------

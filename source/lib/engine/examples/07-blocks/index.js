@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import chroma from 'chroma-js';
 import * as ReactEx from '../../../react-ex';
 import * as core from '../../../core/src';
-import { EngineFrame, OrbitCamera, StateMachine, BasicLighting } from '../..';
+import { TextureAtlas, EngineFrame, OrbitCamera, StateMachine, BasicLighting } from '../..';
 import { Grid } from '../../src/actors/grid';
 
 export default function () {
@@ -22,7 +22,7 @@ export default function () {
 
     return (
         <ReactEx.ReadingFrame>
-            <EngineFrame actors={actors} />
+            <EngineFrame actors={[...actors, h]} />
         </ReactEx.ReadingFrame>
     );
 }
@@ -115,7 +115,6 @@ export class HeightMap {
         this._moisture.fill(0.6);
         this._type.fill(0);
 
-        console.log('H!', core);
         this._rng = core.makeRNG(seed);
         this._generateColor = this._makeGenerateColor();
 
@@ -367,7 +366,7 @@ export class HeightMap {
     //
 
     _initTextureAtlas({ engine }) {
-        this._textureAtlas = new engine.textures.TextureAtlas({
+        this._textureAtlas = new TextureAtlas({
             atlasSize: 256,
             tileSize: 16,
         });
@@ -393,10 +392,10 @@ export class HeightMap {
     init({ engine }) {
         this._initTextureAtlas({ engine });
 
-        engine.world.terrain = this;
-        engine.world.groundHeight = (x, y) => {
-            return this.heightAt(x, y);
-        };
+        //engine.world.terrain = this;
+        //engine.world.groundHeight = (x, y) => {
+        //    return this.heightAt(x, y);
+        //};
 
         // Soft dependency on snow
         engine.events.on('snow.accumulate', (sx, sy) => {
@@ -473,7 +472,6 @@ export class HeightMap {
         geometry.setAttribute('uv', new THREE.Float32BufferAttribute(arrays.uvs, 2));
         geometry.setIndex(new THREE.BufferAttribute(arrays.index, 1));
 
-        //Array.from(arrays.index));
         geometry.computeBoundingBox();
 
         // Add normals so this can be a phong material and lights can be used
@@ -499,6 +497,7 @@ export class HeightMap {
         this._mesh.castShadow = false;
         this._mesh.receiveShadow = true;
 
+        console.log(this._mesh);
         return this._mesh;
     }
 

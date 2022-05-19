@@ -10,9 +10,9 @@ export function EngineFrame({
     const refElem = React.useRef(null);
 
     React.useEffect(() => {
-        engine.renderers['three'] = new RendererThree(refElem.current);
-        engine.renderers['hud'] = new RendererHUD(refElem.current);
-        engine.actors.push(...actors);
+        engine._renderers['three'] = new RendererThree(refElem.current);
+        engine._renderers['hud'] = new RendererHUD(refElem.current);
+        engine._actors.push(...actors);
 
         engine.start();
         return () => {
