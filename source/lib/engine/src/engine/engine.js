@@ -65,6 +65,7 @@ export class Engine {
         ctx.timeMS = window.performance.now();
         ctx.frameNumber = frameNumber;
         ctx.frameFPS = frameFPS;
+        ctx.actors = this._actors;
 
         //
         // Initialize any newly added actors

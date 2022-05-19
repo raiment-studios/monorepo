@@ -1,4 +1,4 @@
-export class RendererHUD {
+export class RendererTwo {
     constructor(hostElement, options) {
         const rect = hostElement.getBoundingClientRect();
         const { width, height } = rect;
@@ -25,25 +25,40 @@ export class RendererHUD {
 
     dispose() {}
 
-    renderFrame({ frameNumber, frameFPS }) {
-        if (frameNumber < 20) {
-            return;
-        }
-        if (frameNumber % 10 !== 0) {
+    addActor(ctx, actor) {
+        if (!actor.init2D) {
             return;
         }
 
         const { width, height } = this._canvas;
-        const { size } = this._options;
+        var ctx = this._canvas.getContext('2d');
 
-        const fps = Math.round(frameFPS * 10) / 10.0;
-        const fpsString = `${fps.toFixed(1)} fps`;
+        ctx.save();
+        actor.init2D({
+            ctx,
+            width,
+            height,
+        });
+        ctx.restore();
+    }
+
+    renderFrame({ actors }) {
+        const { width, height } = this._canvas;
 
         var ctx = this._canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
-        ctx.font = `${size}px monospace`;
-        ctx.fillStyle = 'rgba(255, 255, 0, .75)';
-        const dim = ctx.measureText(fpsString);
-        ctx.fillText(fpsString, width - dim.width - 4, size);
+        ctx.fillStyle = 'rgba(255, 00, 0, .75)';
+
+        ctx.fillRect(0, 0, 100, 100);
+
+        for (let actor of actors.filter((a) => !!a.render2D)) {
+            ctx.save();
+            actor.render2D({
+                ctx,
+                width,
+                height,
+            });
+            ctx.restore();
+        }
     }
 }

@@ -57,7 +57,7 @@ export class SeaJSX {
 
         const content = {
             output,
-            buildID: 1000,
+            buildID: 0,
         };
         await startServer(this, { port: options.port, content });
         await watchLoop(this, {

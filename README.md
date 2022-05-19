@@ -122,6 +122,10 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 20
+    -   [x] ➕ Add Flex component to react-ex
+    -   [x] ➕ Add source map to sea-jsx
+    -   [x] ➕ Improve sea-jsx error handling
+    -   [x] ➕ Add simplex noise to core
     -   [x] 🧬 Start sea-jsx v0.3.0
     -   [x] ➕ Update rcd to chdir to exact matches
     -   [x] ➕ Add seed, reset, shuffle to RNG

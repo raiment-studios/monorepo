@@ -28,7 +28,7 @@ export async function watchLoop(app, { filename, watchList, onBuild }) {
             await sleep(10);
         }
         if (dirty) {
-            const ret = await build(app, { filename });
+            const ret = await build(app, { filename, sourcemap: true });
             state.watchList = ret.watches;
             if (onBuild) {
                 onBuild(ret);
