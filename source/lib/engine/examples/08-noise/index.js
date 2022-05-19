@@ -70,14 +70,16 @@ export default function () {
 }
 
 function EngineRecorder({ engine }) {
-    const ref = React.useRef(null);
-    const ref2 = React.useRef(null);
-    const [videoBlob, setVideoBlob] = React.useState(null);
+    const [recording, setRecording] = React.useState({
+        active: false,
+        ready: false,
+        dataURI: null,
+        countdown: 0,
+    });
 
     function recordCanvasToBlob(canvas, ms) {
         return new Promise((resolve) => {
             const stream = canvas.captureStream(60);
-
             const mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm; codecs=vp9',
             });
@@ -100,28 +102,55 @@ function EngineRecorder({ engine }) {
         });
     }
 
-    const handleRecord = () => {
-        const renderer = engine.renderers.two;
-        const canvas = renderer.canvas;
-        (async () => {
-            const blob = await recordCanvasToBlob(canvas, 1200);
-            setVideoBlob(blob);
+    const handleRecord = async () => {
+        const duration = 12000;
+        const start = Date.now();
 
-            setTimeout(() => {
-                console.log(ref);
-                const ctx = ref.current.getContext('2d');
-                ctx.drawImage(ref2.current, 0, 0, 200, 200);
-            }, 1000);
-        })();
+        setRecording({ active: true, ready: false, dataURI: null, countdown: duration });
+
+        let timer = setInterval(() => {
+            const ellapsed = Date.now() - start;
+            const remaining = Math.max(0, duration - ellapsed);
+            setRecording((r) => ({ ...r, countdown: remaining }));
+        }, 500);
+
+        const canvas = engine.renderers.two.canvas;
+        const dataURI = await recordCanvasToBlob(canvas, duration);
+        clearInterval(timer);
+        setRecording({
+            active: false,
+            ready: true,
+            dataURI,
+        });
     };
 
     return (
         <div>
-            <ReactEx.Flex>
-                <button onClick={handleRecord}>record</button>
+            <ReactEx.Flex
+                style={{
+                    padding: '4px 0',
+                }}
+            >
+                <button
+                    style={{
+                        width: '8rem',
+                    }}
+                    disabled={recording.active}
+                    onClick={handleRecord}
+                >
+                    {recording.active
+                        ? `Recording (${Math.floor(recording.countdown / 1000)})...`
+                        : 'Record'}
+                </button>
+                <div style={{ width: '1rem' }} />
+                <div>
+                    {recording.ready && (
+                        <a href={recording.dataURI} target="_blank">
+                            download
+                        </a>
+                    )}
+                </div>
             </ReactEx.Flex>
-            <canvas style={{ border: 'solid 1px #ccc' }} ref={ref} width={400} height={400} />
-            {videoBlob && <video ref={ref2} src={videoBlob} controls />}
         </div>
     );
 }

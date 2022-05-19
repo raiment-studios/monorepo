@@ -1,4 +1,8 @@
 export class RendererHUD {
+    //-----------------------------------------------------------------------//
+    // Construction
+    //-----------------------------------------------------------------------//
+
     constructor(hostElement, options) {
         const rect = hostElement.getBoundingClientRect();
         const { width, height } = rect;
@@ -24,6 +28,18 @@ export class RendererHUD {
     }
 
     dispose() {}
+
+    //-----------------------------------------------------------------------//
+    // Properties
+    //-----------------------------------------------------------------------//
+
+    get canvas() {
+        return this._canvas;
+    }
+
+    //-----------------------------------------------------------------------//
+    // Methods
+    //-----------------------------------------------------------------------//
 
     renderFrame({ frameNumber, frameFPS }) {
         if (frameNumber < 20) {
