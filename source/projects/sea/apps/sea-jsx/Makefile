@@ -77,7 +77,7 @@ benchmark:
 ###############################################################################
 .PHONY: publish publish-local
 
-publish:
+publish: ensure
 	@git diff --quiet || (git status && echo "\nERROR: Repository is dirty. Canceling publish." && false)
 	git pull
 	@git diff --quiet || (git status && echo "\nERROR: Repository is dirty. Canceling publish." && false)
@@ -87,6 +87,6 @@ publish:
 	git push
 	npm publish
 
-publish-local:
+publish-local: ensure
 	-sudo npm uninstall --global @raiment/sea-jsx
 	sudo npm install --global .

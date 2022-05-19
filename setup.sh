@@ -79,6 +79,7 @@ source deploy/setup.sh
 # -----------------------------------------------------------------------------
 
 make -C source/sandbox/tools/raiment-chdir publish-local
+make -C source/projects/sea/apps/sea-jsx publish-local
 
 # -----------------------------------------------------------------------------
 # Aliases and short-cuts
