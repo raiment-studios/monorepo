@@ -5,9 +5,25 @@ import * as core from '../../../core/src';
 import { EngineFrame, useEngine } from '../..';
 
 export default function () {
-    const [params, setParams] = React.useState({
-        scale: 40,
-    });
+    const controls = {
+        scale: {
+            type: 'slider',
+            value: 40,
+            min: 1,
+            max: 200,
+        },
+        rotation: {
+            type: 'slider',
+            value: 0,
+            min: 0,
+            max: 2 * Math.PI,
+            step: Math.PI / 180,
+        },
+    };
+    const [params, setParams] = React.useState(
+        Object.fromEntries(Object.entries(controls).map(([k, v]) => [k, v.value]))
+    );
+
     const engine = useEngine(() => {
         const noiseView = new NoiseView({ scale: params.scale });
         const actors = [noiseView];
@@ -19,6 +35,7 @@ export default function () {
 
         engine.actors.selectByID('noiseView').modify({
             scale: params.scale,
+            rotation: params.rotation,
         });
     };
 
@@ -38,7 +55,7 @@ export default function () {
             </ReactEx.Flex>
 
             <EngineFrame engine={engine} />
-            <ControlsBlock params={params} onChange={handleChange} />
+            <ControlsBlock params={params} controls={controls} onChange={handleChange} />
 
             <h1>Notes</h1>
             <ul>
@@ -51,8 +68,8 @@ export default function () {
     );
 }
 
-function ControlsBlock({ params, onChange }) {
-    const handleChange = (evt) => {
+function ControlsBlock({ params, controls, onChange }) {
+    const handleChange = (evt, name, ctl) => {
         let value = evt.target.value;
         try {
             value = parseFloat(value);
@@ -60,14 +77,13 @@ function ControlsBlock({ params, onChange }) {
             return;
         }
 
-        if (value < 1) {
-            return;
-        }
-        if (value > 100) {
-            return;
-        }
+        value = Math.max(value, ctl.min ?? 0);
+        value = Math.min(value, ctl.max ?? 100);
 
-        onChange({ ...params, scale: value });
+        if (params[name] === value) {
+            return;
+        }
+        onChange({ ...params, [name]: value });
     };
 
     return (
@@ -86,43 +102,56 @@ function ControlsBlock({ params, onChange }) {
                     columnGap: '1rem',
                 }}
             >
-                <div>Scale</div>
-                <div>
-                    <input
-                        style={{
-                            width: '100%',
-                        }}
-                        type="range"
-                        min={1}
-                        max={100}
-                        value={params.scale}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <input
-                        type="number"
-                        min={1}
-                        max={100}
-                        value={params.scale}
-                        onChange={handleChange}
-                    />
-                </div>
+                {Object.entries(controls).map(([name, ctl]) => (
+                    <React.Fragment key={name}>
+                        <div>
+                            <div>{name}</div>
+                            <div>
+                                <small>
+                                    {ctl.min} - {ctl.max}
+                                </small>
+                            </div>
+                        </div>
+                        <div>
+                            <input
+                                style={{
+                                    width: '100%',
+                                }}
+                                type="range"
+                                min={ctl.min ?? 0}
+                                max={ctl.max ?? 1000}
+                                step={ctl.step ?? 1}
+                                value={params[name]}
+                                onChange={(evt) => handleChange(evt, name, ctl)}
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="number"
+                                min={ctl.min ?? 0}
+                                max={ctl.max ?? 1000}
+                                value={params[name]}
+                                onChange={(evt) => handleChange(evt, name, ctl)}
+                            />
+                        </div>
+                    </React.Fragment>
+                ))}
             </div>
         </div>
     );
 }
 
 class NoiseView {
-    constructor({ scale = 1 } = {}) {
+    constructor({ scale = 1, rotation = 0 } = {}) {
         const rng = core.makeRNG();
         this._data = {
             rng,
             simplex: core.makeSimplexNoise(rng.uint31()),
-            offset: 0,
+            offset: 6000,
         };
         this._imageData = null;
         this._scale = scale;
+        this._rotation = rotation;
         this._uuid = rng.uuid();
 
         console.log(`new Actor: ${this._uuid}`);
@@ -132,12 +161,17 @@ class NoiseView {
         return 'noiseView';
     }
 
-    modify(values) {
-        this._scale = values.scale;
+    modify({ scale, rotation }) {
+        if (scale !== undefined) {
+            this._scale = scale;
+        }
+        if (rotation !== undefined) {
+            this._rotation = rotation;
+        }
     }
 
     update() {
-        this._data.offset += 0.025;
+        this._data.offset += 1;
     }
 
     init2D({ ctx, width, height }) {
@@ -148,11 +182,18 @@ class NoiseView {
         const { rng, simplex, offset } = this._data;
 
         const scale = 1 / this._scale;
+        const angle = this._rotation;
         const imageData = this._imageData;
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
-                const nx = (x - width / 2) * scale + offset;
-                const ny = (y - height / 2) * scale;
+                const cx = x - width / 2;
+                const cy = y - height / 2;
+
+                const rx = cx * Math.cos(angle) - cy * Math.sin(angle);
+                const ry = cy * Math.cos(angle) + cx * Math.sin(angle);
+
+                const nx = rx * scale + 0.1 * offset * Math.cos(angle);
+                const ny = ry * scale + 0.1 * offset * Math.sin(angle);
                 const v = (simplex.noise2D(nx, ny) + 1) / 2.0;
 
                 const v1 = Math.floor(255 * v);

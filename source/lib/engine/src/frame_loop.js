@@ -9,10 +9,8 @@ export class FrameLoop {
         {
             maxFPS = 200,
             slowFrameMs = 200, //
-            onSlowFrame = function (ctx) {
-                console.log(
-                    `Slow frame: ${frameDurationMS} milliseconds (frame=${ctx.frameNumber})`
-                );
+            onSlowFrame = function ({ frameDurationMS, frameNumber }) {
+                console.log(`Slow frame: ${frameDurationMS} milliseconds (frame=${frameNumber})`);
             },
         } = {}
     ) {
