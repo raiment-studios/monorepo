@@ -55,6 +55,7 @@ export default function () {
             </ReactEx.Flex>
 
             <EngineFrame engine={engine} />
+            <EngineRecorder engine={engine} />
             <ControlsBlock params={params} controls={controls} onChange={handleChange} />
 
             <h1>Notes</h1>
@@ -66,6 +67,15 @@ export default function () {
             </ul>
         </ReactEx.ReadingFrame>
     );
+}
+
+function EngineRecorder({ engine }) {
+
+    return (
+        <ReactEx.Flex>
+            <button>record</button>
+        </ReactEx.Flex>
+    )
 }
 
 function ControlsBlock({ params, controls, onChange }) {
