@@ -106,10 +106,8 @@ function ControlsBlock({ params, controls, onChange }) {
                     <React.Fragment key={name}>
                         <div>
                             <div>{name}</div>
-                            <div>
-                                <small>
-                                    {ctl.min} - {ctl.max}
-                                </small>
+                            <div style={{ fontSize: '75%' }}>
+                                {core.formatNumber(ctl.min)} - {core.formatNumber(ctl.max)}
                             </div>
                         </div>
                         <div>

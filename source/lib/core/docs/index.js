@@ -5,6 +5,31 @@ import * as core from '..';
 export default function () {
     return (
         <ReactEx.ReadingFrame>
+            <h3>Format</h3>
+            <h4>formatNumber</h4>
+            <CodeExample
+                example={`
+formatNumber = core.formatNumber;
+formatNumber(3)
+formatNumber(3000)
+formatNumber(3000000)
+formatNumber(3000000000)
+formatNumber(300000000000)
+formatNumber(3.3e23)
+formatNumber(3.311e23)
+formatNumber(3.39923e42)
+formatNumber(3.1)
+formatNumber(3.003)
+formatNumber(0.003)
+formatNumber(3.00003)
+formatNumber(0.000003)
+formatNumber(0.000000003)
+
+// Whole multiples of π are special-cased
+formatNumber(2 * Math.PI)
+    `}
+            />
+
             <h3>RNG</h3>
             <h4>sign</h4>
             <CodeExample
@@ -106,7 +131,7 @@ function CodeExample({ example }) {
             style={{
                 padding: 8,
                 border: 'solid 1px #CCC',
-                borderRadius: 2,
+                borderRadius: 4,
                 backgroundColor: 'rgba(0,0,0,.02)',
             }}
         >
@@ -121,7 +146,7 @@ function CodeExample({ example }) {
                             padding: node.type === 'expression' ? '4px 0' : 0,
                             borderRadius: node.type === 'expression' ? 4 : 0,
                             backgroundColor:
-                                node.type === 'expression' ? 'rgba(0,0,255,.05)' : 'transparent',
+                                node.type === 'expression' ? 'rgba(80,160,255,.10)' : 'transparent',
                         }}
                     >
                         <div
@@ -133,17 +158,17 @@ function CodeExample({ example }) {
                             <code>{`${index + 1}`.padStart(3, '0')}</code>
                         </div>
                         <div style={{ flex: '0 0 1rem' }} />
-                        <div style={{ flex: '2 0 0' }}>
+                        <div style={{ flex: '1 0 8rem' }}>
                             {node.type === 'blank' ? null : node.type === 'comment' ? (
                                 <code style={{ color: '#151' }}>{node.input}</code>
                             ) : (
                                 <div>
-                                    <code>{`${node.input}`}</code>
+                                    <code style={{ whiteSpace: 'nowrap' }}>{`${node.input}`}</code>
                                 </div>
                             )}
                         </div>
                         <div style={{ flex: '0 0 1rem' }} />
-                        <div style={{ flex: '1 0 0' }}>
+                        <div style={{ flex: `${node.type === 'expression' ? 8 : 0} 0 0` }}>
                             {node.type === 'expression' && <Result result={node.result} />}
                         </div>
                     </div>

@@ -161,7 +161,7 @@ export async function build(ctx, { filename, sourcemap }) {
                 }
             };
 
-            build.onResolve({ filter: /^\.\.?\/.*/ }, resolveRelative);
+            build.onResolve({ filter: /^\.\.?\/?.*/ }, resolveRelative);
 
             const resolvePackage = async (args) => {
                 // Only use this custom resolution if the import comes from the user files
@@ -255,7 +255,7 @@ export async function build(ctx, { filename, sourcemap }) {
                     );
                 }
 
-                ctx.printV1(`Path {{obj ${result.path}}}`);
+                ctx.printV2(`Path {{obj ${result.path}}}`);
                 return { path: result.path, namespace: result.namespace, external: false };
             };
 

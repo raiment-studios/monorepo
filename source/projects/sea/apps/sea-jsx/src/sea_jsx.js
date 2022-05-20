@@ -3,6 +3,7 @@ import path from 'path';
 import { watchLoop } from './workers/watch.js';
 import { startServer } from './workers/server.js';
 import { build } from './workers/build.js';
+import { clean } from './workers/clean.js';
 import { ensureTempDirectory } from './init/ensure_temp_directory.js';
 import { generateRandomID, print, error } from './util/index.js';
 
@@ -44,6 +45,12 @@ export class SeaJSX {
     }
 
     // -- Commands --------------------------------------------------------- //
+
+    async clean(options) {
+        await this._ready;
+
+        await clean(this);
+    }
 
     async dev(options) {
         await this._ready;
@@ -97,6 +104,12 @@ export class SeaJSX {
 
     printV1(...args) {
         if (this.verbosity < 1) {
+            return;
+        }
+        print(...args);
+    }
+    printV2(...args) {
+        if (this.verbosity < 2) {
             return;
         }
         print(...args);

@@ -102,7 +102,15 @@ export async function parseCommandLine(pkg) {
                 console.log('publish TODO');
             }
         )
-        .command('clean', 'remove any temporary cached files')
+        .command(
+            'clean',
+            'remove any temporary cached files',
+            (yargs) => yargs,
+            () => {
+                config.command.name = 'clean';
+                config.command.options = {};
+            }
+        )
         .option('verbosity', {
             alias: 'v',
             type: 'number',

@@ -33,10 +33,6 @@ async function main() {
 
     const ctx = await initialize();
 
-    if (ctx.config.clean) {
-        await clean(ctx);
-    }
-
     ctx.print(`Building {{obj ${ctx.config.filename}}}`);
     await build(ctx);
 
