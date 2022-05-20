@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 
 export class RendererThree {
+    //-----------------------------------------------------------------------//
+    // Construction
+    //-----------------------------------------------------------------------//
+
     constructor(elem) {
         const rect = elem.getBoundingClientRect();
         const { width, height } = rect;
@@ -23,15 +27,29 @@ export class RendererThree {
         this._hostElement.removeChild(this._renderer.domElement);
     }
 
+    //-----------------------------------------------------------------------//
+    // Properties
+    //-----------------------------------------------------------------------//
+
+    get canvas() {
+        return this._renderer.domElement;
+    }
+
     get camera() {
         return this._camera;
     }
+
     get scene() {
         return this._scene;
     }
+
     get renderer() {
         return this._renderer;
     }
+
+    //-----------------------------------------------------------------------//
+    // Methods
+    //-----------------------------------------------------------------------//
 
     addActor(ctx, actor) {
         if (!actor.mesh) {

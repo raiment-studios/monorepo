@@ -54,7 +54,7 @@ export default function () {
                 </div>
             </ReactEx.Flex>
 
-            <EngineFrame engine={engine} recorder={true} />
+            <EngineFrame engine={engine} recorder={'two'} />
             <ControlsBlock params={params} controls={controls} onChange={handleChange} />
 
             <h1>Notes</h1>

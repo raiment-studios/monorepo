@@ -8,7 +8,7 @@ import { EngineRecorder } from './engine_recorder';
 export function EngineFrame({
     engine = new Engine(), //
     actors = [],
-    recorder = false,
+    recorder = null,
 }) {
     const refElem = React.useRef(null);
 
@@ -36,13 +36,13 @@ export function EngineFrame({
                     ref={refElem}
                     style={{
                         width: '100%',
-                        height: 600,
+                        aspectRatio: '16 / 9',
                         padding: 0,
                         margin: 0,
                     }}
                 />
             </div>
-            {recorder && <EngineRecorder engine={engine} />}
+            {recorder && <EngineRecorder engine={engine} rendererName={recorder} />}
         </>
     );
 }

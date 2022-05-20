@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flex } from '@raiment/react-ex';
 
-export function EngineRecorder({ engine }) {
+export function EngineRecorder({ engine, rendererName = 'three' }) {
     const [recording, setRecording] = React.useState({
         active: false,
         ready: false,
@@ -13,7 +13,8 @@ export function EngineRecorder({ engine }) {
         return new Promise((resolve) => {
             const stream = canvas.captureStream(60);
             const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'video/webm; codecs=vp9',
+                videoBitsPerSecond: 5 * 8 * 1000 * 1000,
+                mimeType: 'video/webm;codecs=vp9',
             });
 
             let recordedChunks = [];
@@ -26,7 +27,7 @@ export function EngineRecorder({ engine }) {
                 var blob = new Blob(recordedChunks, {
                     type: 'video/webm;codecs=vp9',
                 });
-                var url = URL.createObjectURL(blob);
+                let url = URL.createObjectURL(blob);
                 resolve(url);
             };
             mediaRecorder.start(0);
@@ -35,7 +36,7 @@ export function EngineRecorder({ engine }) {
     }
 
     const handleRecord = async () => {
-        const duration = 12000;
+        const duration = 16000;
         const start = Date.now();
 
         setRecording({ active: true, ready: false, dataURI: null, countdown: duration });
@@ -46,7 +47,7 @@ export function EngineRecorder({ engine }) {
             setRecording((r) => ({ ...r, countdown: remaining }));
         }, 500);
 
-        const canvas = engine.renderers.two.canvas;
+        const canvas = engine.renderers[rendererName].canvas;
         const dataURI = await recordCanvasToBlob(canvas, duration);
         clearInterval(timer);
         setRecording({

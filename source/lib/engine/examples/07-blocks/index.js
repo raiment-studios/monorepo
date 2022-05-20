@@ -3,43 +3,23 @@ import * as THREE from 'three';
 import chroma from 'chroma-js';
 import * as ReactEx from '../../../react-ex';
 import * as core from '../../../core/src';
-import { TextureAtlas, EngineFrame, OrbitCamera, StateMachine, BasicLighting } from '../..';
+import { TextureAtlas, EngineFrame, OrbitCamera, GroundPlane, BasicLighting } from '../..';
 import { Grid } from '../../src/actors/grid';
 
 export default function () {
     const actors = [
         new Grid(),
-        new OrbitCamera(), //
+        new OrbitCamera({ radius: 64 }), //
         new BasicLighting(),
         new GroundPlane(),
+        new HeightMap({ scale: 30, size: 128 }),
     ];
-
-    for (let i = 0; i < 120; i++) {
-        actors.push(new Sphere());
-    }
-
-    const h = new HeightMap();
 
     return (
         <ReactEx.ReadingFrame>
-            <EngineFrame actors={[...actors, h]} />
+            <EngineFrame actors={actors} recorder={'three'} />
         </ReactEx.ReadingFrame>
     );
-}
-
-class GroundPlane {
-    mesh() {
-        const planeGeometry = new THREE.PlaneGeometry(256, 256, 32, 32);
-        const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xfcfcdc });
-        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.position.set(0, 0, -0.05);
-        plane.receiveShadow = true;
-        return plane;
-    }
-}
-
-class Sphere {
-    constructor() {}
 }
 
 function terrain1(size, seed) {
@@ -278,6 +258,9 @@ export class HeightMap {
             //
             // Done
             //
+            color[0] = 1;
+            color[1] = 0;
+            color[2] = 0.5;
             return color;
         };
     }
@@ -455,13 +438,13 @@ export class HeightMap {
     }
 
     update() {}
-    mesh() {
+    mesh({ engine }) {
         const size = this._size;
         const arrays = {
             position: new Float32Array(5 * 4 * 3 * size * size),
             normal: new Float32Array(5 * 4 * 3 * size * size),
             color: new Float32Array(5 * 4 * 3 * size * size),
-            uvs: new Float32Array(5 * 4 * 2 * size * size),
+            //uvs: new Float32Array(5 * 4 * 2 * size * size),
             index: new Uint32Array(5 * 6 * size * size),
         };
 
@@ -469,7 +452,7 @@ export class HeightMap {
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(arrays.position, 3));
         geometry.setAttribute('normal', new THREE.Float32BufferAttribute(arrays.normal, 3));
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(arrays.color, 3));
-        geometry.setAttribute('uv', new THREE.Float32BufferAttribute(arrays.uvs, 2));
+        //geometry.setAttribute('uv', new THREE.Float32BufferAttribute(arrays.uvs, 2));
         geometry.setIndex(new THREE.BufferAttribute(arrays.index, 1));
 
         geometry.computeBoundingBox();
@@ -479,7 +462,7 @@ export class HeightMap {
             color: 0xffffff,
             shininess: 10,
             //side: THREE.DoubleSide,
-            map: this._textureAtlas.texture(),
+            //map: this._textureAtlas.texture(),
         });
 
         this._mesh = new THREE.Mesh(geometry, material);
@@ -586,8 +569,8 @@ export class HeightMap {
         const normalArr = normalAttr.array;
         const colorAttr = this._mesh.geometry.attributes.color;
         const colorArr = colorAttr.array;
-        const uvAttr = this._mesh.geometry.attributes.uv;
-        const uvArr = uvAttr.array;
+        //const uvAttr = this._mesh.geometry.attributes.uv;
+        //const uvArr = uvAttr.array;
 
         core.assert(indexArr.length === 5 * 6 * size * size);
         core.assert(positionArr.length === 5 * 4 * 3 * size * size);
@@ -641,11 +624,11 @@ export class HeightMap {
                     'road4',
                 ]);
             }
-            const [u0, v0, u1, v1] = atlas.uv(textureName);
+            /*const [u0, v0, u1, v1] = atlas.uv(textureName);
             copy2(uvArr, Math.floor((vi * 2) / 3) + 0, [u0, v0]);
             copy2(uvArr, Math.floor((vi * 2) / 3) + 2, [u1, v0]);
             copy2(uvArr, Math.floor((vi * 2) / 3) + 4, [u1, v1]);
-            copy2(uvArr, Math.floor((vi * 2) / 3) + 6, [u0, v1]);
+            copy2(uvArr, Math.floor((vi * 2) / 3) + 6, [u0, v1]);*/
 
             // This should be a noop for the update case
             if (init) {
@@ -738,7 +721,7 @@ export class HeightMap {
         positionAttr.needsUpdate = true;
         normalArr.needsUpdate = true;
         colorAttr.needsUpdate = true;
-        uvAttr.needsUpdate = true;
+        //uvAttr.needsUpdate = true;
         if (init) {
             indexAttr.needsUpdate = true;
         }

@@ -63,9 +63,6 @@ export class RendererTwo {
 
         var ctx = this._canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = 'rgba(255, 00, 0, .75)';
-
-        ctx.fillRect(0, 0, 100, 100);
 
         for (let actor of actors.filter((a) => !!a.render2D)) {
             ctx.save();
