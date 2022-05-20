@@ -87,14 +87,7 @@ export class HeightMap {
         this._offset = [-size / 2, -size / 2];
 
         this._heights = new Float32Array(size * size);
-        this._snow = new Array(size * size);
-        this._moisture = new Array(size * size);
-        this._type = new Uint8Array(size * size);
         this._heights.fill(20);
-        this._snow.fill(0.0);
-        this._moisture.fill(0.6);
-        this._type.fill(0);
-
         this._rng = core.makeRNG(seed);
         this._generateColor = this._makeGenerateColor();
 
@@ -116,11 +109,9 @@ export class HeightMap {
                 const u = (2 * (x + 0.5)) / (size - 1);
                 const v = (2 * (y + 0.5)) / (size - 1);
                 const result = func(x, y, u, v);
-                const moisture = result.moisture ?? 0.75;
 
                 const i = y * size + x;
                 this._heights[i] = scale * result.height;
-                this._moisture[i] = moisture;
             }
         }
 
@@ -132,262 +123,16 @@ export class HeightMap {
     }
 
     _makeGenerateColor() {
-        const rng = this._rng;
-        const simplex1 = core.makeSimplexNoise(rng.uint31());
-
-        //
-        // Deterministic pseudo-randomness :)  Ensure it's random
-        // but consistently the same value for each x,y.
-        //
-        const rngRange = (x, y, min, max) => {
-            const a = 0.5 + 0.5 * simplex1.noise2D(5.2 * x, 4.9 * y);
-            return min + a * (max - min);
+        return () => {
+            return [1, 0, 0.5];
         };
-        const rngSelect = (x, y, arr) => {
-            const i = Math.floor(rngRange(x, y, 0, arr.length));
-            return arr[i];
-        };
-
-        function mulclamp(c, s) {
-            return [
-                Math.min(1, Math.max(0, c[0] * s)),
-                Math.min(1, Math.max(0, c[1] * s)),
-                Math.min(1, Math.max(0, c[2] * s)),
-            ];
-        }
-
-        function toRGB(arr) {
-            return arr.map((c) => chroma(c).gl().slice(0, 3));
-        }
-
-        const colorSet = {
-            fertileSoil: toRGB([
-                '#7d551e', //
-                '#703e0c', //
-            ]),
-            yellowGrass: toRGB([
-                '#ab9e49', //
-                '#dbe06c', //
-                '#9ba646',
-            ]),
-            dryDirt: toRGB([
-                '#c4b79b', //
-                '#bfaa95',
-                '#d1bf97',
-                '#a1957c',
-            ]),
-
-            stone: toRGB([
-                '#ccc',
-                '#aaa', //
-                '#999',
-            ]),
-        };
-        const selectFromColorSet = (x, y, set, shadeMin, shadeMax) => {
-            const shade = rngRange(x, y, shadeMin, shadeMax);
-            return mulclamp(rngSelect(x, y, set), shade);
-        };
-
-        return (x, y) => {
-            const i = y * this._size + x;
-            const type = this._type[i];
-            //
-            // Step 1: Use moisture value to determine base color
-            //
-            let color = [1, 0, 0];
-            if (type > 0) {
-                color = selectFromColorSet(x, y, colorSet.stone, 1.5, 1.6);
-            } else {
-                const colorForValue = (value) => {
-                    if (value > 0.8) {
-                        // Lush
-                        return [
-                            rngRange(x, y, 0.4, 0.6),
-                            rngRange(x, y, 0.55, 0.8),
-                            rngRange(x, y, 0.1, 0.2),
-                        ];
-                    } else if (value > 0.6) {
-                        // Green grass
-                        return [
-                            rngRange(x, y, 0.4, 0.6),
-                            rngRange(x, y, 0.55, 0.8),
-                            rngRange(x, y, 0.1, 0.2),
-                        ];
-                    } else if (value > 0.4) {
-                        // Yellow grass
-                        return selectFromColorSet(x, y, colorSet.yellowGrass, 0.5, 0.9);
-                    } else if (value > 0.2) {
-                        // Fertile soil
-                        return selectFromColorSet(x, y, colorSet.fertileSoil, 0.9, 1.1);
-                    } else {
-                        // Dry dirt
-                        return selectFromColorSet(x, y, colorSet.dryDirt, 0.6, 0.7);
-                    }
-                };
-                const value = Math.max(0, Math.min(1, this._moisture[i]));
-                let mw = value * 5;
-                let mf = mw - Math.floor(mw);
-
-                const color1 = colorForValue(value);
-                const color2 = colorForValue(value + 0.2);
-                for (let i = 0; i < 3; i++) {
-                    color[i] = (1 - mf) * color1[i] + mf * color2[i];
-                }
-            }
-
-            //
-            // Step 2: account for snow
-            //
-            {
-                let snow = this._snow[i];
-                let snowColor = [1, 1, 1];
-                if (type > 0) {
-                    snowColor = [2, 2, 2];
-                }
-                const shade = rngSelect(x, y, [0.96, 0.98, 1.0]);
-                snowColor[0] *= shade;
-                snowColor[1] *= shade;
-                snowColor[2] *= shade;
-
-                const alpha = 1 - Math.max(0, Math.min(1, snow));
-                color[0] = color[0] * alpha + (1 - alpha) * snowColor[0];
-                color[1] = color[1] * alpha + (1 - alpha) * snowColor[1];
-                color[2] = color[2] * alpha + (1 - alpha) * snowColor[2];
-            }
-
-            //
-            // Done
-            //
-            color[0] = 1;
-            color[1] = 0;
-            color[2] = 0.5;
-            return color;
-        };
-    }
-
-    // ------------------------------------------------------------------------
-    // @group Mutators
-    //
-
-    heightAt(x, y) {
-        const size = this._size;
-        x = Math.floor(x - this._offset[0]);
-        y = Math.floor(y - this._offset[1]);
-
-        if (x >= 0 && x < size && y >= 0 && y < size) {
-            return this._heights[y * size + x];
-        }
-        return -Infinity;
-    }
-
-    setMoistureLevel(x, y, value) {
-        const size = this._size;
-        x = Math.floor(x - this._offset[0]);
-        y = Math.floor(y - this._offset[1]);
-        if (x < 0 || y < 0 || x >= size || y >= size) {
-            return;
-        }
-        const i = y * size + x;
-
-        this._moisture[i] = value;
-        this._recomputeVertexAttrs(x, y);
-    }
-
-    getValue(x, y, field) {
-        const size = this._size;
-        x = Math.floor(x - this._offset[0]);
-        y = Math.floor(y - this._offset[1]);
-        if (x < 0 || y < 0 || x >= size || y >= size) {
-            return;
-        }
-        const i = y * size + x;
-
-        switch (field) {
-            case 'null':
-                break;
-            case 'height':
-                return this._heights[i];
-            case 'moisture':
-                return this._moisture[i];
-            case 'snow':
-                return this._snow[i];
-            case 'type':
-                return this._type[i];
-        }
-    }
-
-    setValue(x, y, field, cb) {
-        const size = this._size;
-        x = Math.floor(x - this._offset[0]);
-        y = Math.floor(y - this._offset[1]);
-        if (x < 0 || y < 0 || x >= size || y >= size) {
-            return;
-        }
-        const i = y * size + x;
-
-        switch (field) {
-            case 'null':
-                break;
-            case 'height':
-                this._heights[i] = cb(this._heights[i]);
-                break;
-            case 'moisture':
-                this._moisture[i] = cb(this._moisture[i]);
-                break;
-            case 'snow':
-                this._snow[i] = cb(this._snow[i]);
-                break;
-            case 'type':
-                this._type[i] = cb(this._type[i]);
-                break;
-        }
-        this._recomputeVertexAttrs(x, y);
     }
 
     // ------------------------------------------------------------------------
     // @group Life Cycle
     //
 
-    _initTextureAtlas({ engine }) {
-        this._textureAtlas = new TextureAtlas({
-            atlasSize: 256,
-            tileSize: 16,
-        });
-
-        const prefix = '/assets/modules/raiment-assets/base/tiles';
-        const tiles = {
-            white: 'white.png',
-            transparent: 'transparent.png',
-            debug: 'debug.png',
-            grass0: 'grass.png',
-            grass1: 'grass_b.png',
-            stone: 'stone.png',
-            road: 'road.png',
-            road2: 'road2.png',
-            road3: 'road3.png',
-            road4: 'road4.png',
-        };
-        for (let [name, filename] of Object.entries(tiles)) {
-            this._textureAtlas.addImage(name, `${prefix}/${filename}`);
-        }
-    }
-
     init({ engine }) {
-        this._initTextureAtlas({ engine });
-
-        //engine.world.terrain = this;
-        //engine.world.groundHeight = (x, y) => {
-        //    return this.heightAt(x, y);
-        //};
-
-        // Soft dependency on snow
-        engine.events.on('snow.accumulate', (sx, sy) => {
-            this._accumulate(sx, sy, 3, (i, dx, dy) => {
-                const amount = 0.025 / Math.sqrt(dx * dx + dy * dy + 1);
-                this._snow[i] += amount * 6;
-            });
-        });
-
         // Rain accumulation. Adds moisture to the tiles, which should
         // go from dirt to grass.
         //
@@ -396,55 +141,14 @@ export class HeightMap {
             const a = 0.5 + 0.5 * simplex1.noise2D(x / 32, y / 32);
             return min + a * (max - min);
         };
-        engine.events.on('rain.accumulate', (x, y) => {
-            const size = this._size;
-            x = Math.floor(x - this._offset[0]);
-            y = Math.floor(y - this._offset[1]);
-            if (x < 0 || y < 0 || x >= size || y >= size) {
-                return;
-            }
-            const i = y * size + x;
-
-            const amount = 1.0;
-            const scale = 5.1;
-            const perm = 0.1 * genRange(x, y, 0.5, 1);
-            const value = this._moisture[i];
-            let extra = (1.0 - perm) * scale * amount;
-            this._moisture[i] += perm * scale * amount;
-            this._recomputeVertexAttrs(x, y);
-
-            const EXTENT = 3;
-            for (let dy = -EXTENT; dy <= EXTENT; dy++) {
-                for (let dx = -EXTENT; extra > 1e-3 && dx <= EXTENT; dx++) {
-                    if (dx === 0 && dy === 0) {
-                        continue;
-                    }
-                    const cx = x + dx;
-                    const cy = y + dy;
-                    if (cx < 0 || cy < 0 || cx >= size || cy >= size) {
-                        continue;
-                    }
-                    const i = cy * size + cx;
-                    const m = this._moisture[i];
-                    if (m < value) {
-                        const a = (0.25 * this._rng.range(0.25, 0.5)) / (EXTENT * EXTENT);
-                        this._moisture[i] += extra * a;
-                        extra *= 1 - a;
-                        this._recomputeVertexAttrs(cx, cy);
-                    }
-                }
-            }
-        });
     }
 
-    update() {}
     mesh({ engine }) {
         const size = this._size;
         const arrays = {
             position: new Float32Array(5 * 4 * 3 * size * size),
             normal: new Float32Array(5 * 4 * 3 * size * size),
             color: new Float32Array(5 * 4 * 3 * size * size),
-            //uvs: new Float32Array(5 * 4 * 2 * size * size),
             index: new Uint32Array(5 * 6 * size * size),
         };
 
@@ -452,7 +156,6 @@ export class HeightMap {
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(arrays.position, 3));
         geometry.setAttribute('normal', new THREE.Float32BufferAttribute(arrays.normal, 3));
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(arrays.color, 3));
-        //geometry.setAttribute('uv', new THREE.Float32BufferAttribute(arrays.uvs, 2));
         geometry.setIndex(new THREE.BufferAttribute(arrays.index, 1));
 
         geometry.computeBoundingBox();
@@ -461,12 +164,12 @@ export class HeightMap {
         let material = new THREE.MeshPhongMaterial({
             color: 0xffffff,
             shininess: 10,
-            //side: THREE.DoubleSide,
-            //map: this._textureAtlas.texture(),
         });
 
         this._mesh = new THREE.Mesh(geometry, material);
         this._mesh.position.set(this._offset[0], this._offset[1], 0);
+        this._mesh.castShadow = false;
+        this._mesh.receiveShadow = true;
 
         for (let y = 0; y < size; y++) {
             for (let x = 0; x < size; x++) {
@@ -477,49 +180,12 @@ export class HeightMap {
         material.vertexColors = true;
         material.needsUpdate = true;
 
-        this._mesh.castShadow = false;
-        this._mesh.receiveShadow = true;
-
-        console.log(this._mesh);
         return this._mesh;
     }
 
     // ------------------------------------------------------------------------
     // @group Private methods
     //
-
-    _accumulate(sx, sy, extent, cb) {
-        const size = this._size;
-        sx = Math.floor(sx - this._offset[0]);
-        sy = Math.floor(sy - this._offset[1]);
-        if (sx < 0 || sy < 0 || sx >= size || sy >= size) {
-            return;
-        }
-
-        for (let dy = -extent; dy <= extent; dy++) {
-            for (let dx = -extent; dx <= extent; dx++) {
-                const x = Math.floor(sx + dx);
-                const y = Math.floor(sy + dy);
-                if (x < 0 || x >= size || y < 0 || y >= size) {
-                    continue;
-                }
-
-                const i = y * size + x;
-                cb(i, dx, dy, x, y);
-            }
-        }
-        extent += 1;
-        for (let dy = -extent; dy <= extent; dy++) {
-            for (let dx = -extent; dx <= extent; dx++) {
-                const x = Math.floor(sx + dx);
-                const y = Math.floor(sy + dy);
-                if (x < 0 || x >= size || y < 0 || y >= size) {
-                    continue;
-                }
-                this._recomputeVertexAttrs(x, y);
-            }
-        }
-    }
 
     _simplex1 = core.makeSimplexNoise(2346623);
 
@@ -559,8 +225,6 @@ export class HeightMap {
         console.assert(i >= 0 && i < size * size, 'Index out of range');
 
         const height = this._heights[i];
-        const type = this._type[i];
-
         const indexAttr = this._mesh.geometry.index;
         const indexArr = indexAttr.array;
         const positionAttr = this._mesh.geometry.attributes.position;
@@ -569,8 +233,6 @@ export class HeightMap {
         const normalArr = normalAttr.array;
         const colorAttr = this._mesh.geometry.attributes.color;
         const colorArr = colorAttr.array;
-        //const uvAttr = this._mesh.geometry.attributes.uv;
-        //const uvArr = uvAttr.array;
 
         core.assert(indexArr.length === 5 * 6 * size * size);
         core.assert(positionArr.length === 5 * 4 * 3 * size * size);
@@ -589,7 +251,6 @@ export class HeightMap {
             dst[index + 2] = src[2];
         }
 
-        const atlas = this._textureAtlas;
         const self = this;
         function quad(vi, fi, p0, p1, p2, p3, normal, color, shade) {
             copy3(positionArr, vi + 0, p0);
@@ -611,24 +272,6 @@ export class HeightMap {
             copy3(colorArr, vi + 3, c);
             copy3(colorArr, vi + 6, c);
             copy3(colorArr, vi + 9, c);
-
-            // if type == stone, 5, 0
-            // else t = 0,0
-            let textureName = 'white';
-            if (type > 0) {
-                textureName = self.rngSelect(fi, 7 * fi, [
-                    'road',
-                    'road',
-                    'road2',
-                    'road3',
-                    'road4',
-                ]);
-            }
-            /*const [u0, v0, u1, v1] = atlas.uv(textureName);
-            copy2(uvArr, Math.floor((vi * 2) / 3) + 0, [u0, v0]);
-            copy2(uvArr, Math.floor((vi * 2) / 3) + 2, [u1, v0]);
-            copy2(uvArr, Math.floor((vi * 2) / 3) + 4, [u1, v1]);
-            copy2(uvArr, Math.floor((vi * 2) / 3) + 6, [u0, v1]);*/
 
             // This should be a noop for the update case
             if (init) {
@@ -721,7 +364,6 @@ export class HeightMap {
         positionAttr.needsUpdate = true;
         normalArr.needsUpdate = true;
         colorAttr.needsUpdate = true;
-        //uvAttr.needsUpdate = true;
         if (init) {
             indexAttr.needsUpdate = true;
         }
