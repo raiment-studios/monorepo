@@ -27,7 +27,7 @@ export default function () {
 Step 3: Run sea-jsx see the output. Any updates to `hello-world.js` will hot-reload.
 
 ```bash
-sea-jsx dev hello-world.js
+sea-jsx hello-world.js
 ```
 
 ## Vision
