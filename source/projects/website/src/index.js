@@ -20,6 +20,10 @@ export default function () {
                 <h1>Raiment Studios</h1>
                 <h3>🚧 Under construction</h3>
                 <hr />
+                <h3>Library docs</h3>
+                <div>
+                    <a href={`core/docs`}>@raiment/core</a>
+                </div>
                 <h3>Engine examples</h3>
                 {[
                     '01-frame-loop',

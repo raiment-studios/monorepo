@@ -12,8 +12,19 @@ async function main() {
 
     for (let folder of results) {
         const cmd = `sea-jsx build ${base}/${folder}/index.js --target=dist/engine/examples/${folder}.html`;
-        console.log(cmd);
-        sh.exec(cmd);
+        exec(cmd);
     }
+
+    sh.mkdir('-p', 'dist/core');
+    exec(`sea-jsx build ${repo('source/lib/core/docs/index.js')} --target=dist/core/docs.html`);
 }
 main();
+
+function repo(...args) {
+    return path.join(process.env.MONOREPO_ROOT, ...args);
+}
+
+function exec(cmd) {
+    console.log(cmd);
+    sh.exec(cmd);
+}
