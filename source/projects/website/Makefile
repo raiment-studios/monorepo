@@ -1,4 +1,4 @@
-dev:
+dev: build
 	npx http-server dist -c-1 -d -i -e html --cors 
 
 build:

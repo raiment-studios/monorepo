@@ -3,9 +3,19 @@ import { Flex, useCommonStyles } from '../../../lib/react-ex';
 import data from 'yaml:./data.yaml';
 
 export default function () {
+    const [opacity, setOpacity] = React.useState(0);
+
     useCommonStyles();
+
+    React.useEffect(() => {
+        document.title = '🚧 Raiment Studios website';
+
+        // Hack to avoid font loading re-layout flicker
+        setTimeout(() => setOpacity(1.0), 100);
+    }, []);
+
     return (
-        <div>
+        <div style={{ opacity }}>
             <Flex style={{ padding: '0.5rem 2rem' }}>
                 <div>logo</div>
                 <div style={{ width: '1rem' }} />
