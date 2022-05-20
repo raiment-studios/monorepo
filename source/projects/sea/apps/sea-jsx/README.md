@@ -24,7 +24,7 @@ export default function () {
 }
 ```
 
-Step 3: Run sea-jsx see the output. Any updates to `hello-world.js` will hot-reload.
+Step 3: Run sea-jsx and see the output. Imports are automatically installed. Any updates to `hello-world.js` will hot-reload.
 
 ```bash
 sea-jsx hello-world.js
