@@ -1,4 +1,3 @@
-export * from './engine_frame';
 export * from './engine/engine';
 export * from './frame_loop';
 export * from './state_machine';
@@ -9,3 +8,5 @@ export * from './actors/grid';
 export * from './actors/orbit_camera';
 
 export * from './react/use_engine';
+export * from './react/engine_frame';
+export * from './react/engine_recorder';
