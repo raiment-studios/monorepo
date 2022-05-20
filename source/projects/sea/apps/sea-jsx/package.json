@@ -1,12 +1,13 @@
 {
     "name": "@raiment/sea-jsx",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "type": "module",
     "main": "src/main.js",
     "bin": {
         "sea-jsx": "src/cli.js"
     },
     "dependencies": {
+        "@raiment/core": "^0.1.2",
         "chalk": "^5.0.1",
         "esbuild": "^0.14.36",
         "express": "^4.17.3",

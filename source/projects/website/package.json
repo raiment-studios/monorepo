@@ -4,7 +4,9 @@
         "http-server": "^14.1.0"
     },
     "dependencies": {
+        "@raiment/core": "^0.1.2",
         "glob": "^8.0.3",
+        "lodash": "^4.17.21",
         "shelljs": "^0.8.5"
     }
 }

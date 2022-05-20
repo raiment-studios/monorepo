@@ -1,7 +1,9 @@
 import React from 'react';
 import { Flex, useCommonStyles } from '../../../lib/react-ex';
+import data from 'yaml:./data.yaml';
 
 export default function () {
+    console.log(data);
     useCommonStyles();
     return (
         <div>
@@ -25,16 +27,7 @@ export default function () {
                     <a href={`core/docs`}>@raiment/core</a>
                 </div>
                 <h3>Engine examples</h3>
-                {[
-                    '01-frame-loop',
-                    '02-bounce',
-                    '03-state-machine',
-                    '04-engine-frame',
-                    '05-engine-three',
-                    '06-engine-lighting',
-                    '07-blocks',
-                    '08-noise',
-                ].map((folder) => (
+                {data.engine.examples.map((folder) => (
                     <div key={folder}>
                         <a href={`engine/examples/${folder}`}>{folder}</a>
                     </div>
