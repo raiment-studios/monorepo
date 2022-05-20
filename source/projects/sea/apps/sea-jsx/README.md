@@ -8,13 +8,13 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 ## Getting started
 
-Step 1: install sea-jsx
+**Step 1**: install sea-jsx
 
 ```bash
 npm install --global @raiment/sea-jsx
 ```
 
-Step 2: Create a simple JSX file (`hello-world.js`)
+**Step 2**: Create a simple JSX file (`hello-world.js`)
 
 ```javascript
 import React from 'react';
@@ -24,7 +24,7 @@ export default function () {
 }
 ```
 
-Step 3: Run sea-jsx and see the output. Imports are automatically installed. Any updates to `hello-world.js` will hot-reload.
+**Step 3**: Run sea-jsx and see the output. Imports are automatically installed. Any updates to `hello-world.js` will hot-reload.
 
 ```bash
 sea-jsx hello-world.js
