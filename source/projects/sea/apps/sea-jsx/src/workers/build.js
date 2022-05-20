@@ -12,7 +12,14 @@ import { parseFrontMatter } from './parse_front_matter.js';
  *
  * @param {*} ctx
  */
-export async function build(ctx, { filename, sourcemap }) {
+export async function build(
+    ctx,
+    {
+        filename, //
+        sourcemap,
+        production = false,
+    }
+) {
     if (typeof filename !== 'string') {
         console.error({ filename });
         throw new Error(`Runtime eror: filename is not a string`);
@@ -20,7 +27,9 @@ export async function build(ctx, { filename, sourcemap }) {
 
     const builtinFiles = {
         './__app.js': await fs.readFile(filename),
-        './__bootstrap.js': await ctx.asset('__bootstrap.js'),
+        './__bootstrap.js': await ctx.asset(
+            production ? 'production/__bootstrap.js' : '__bootstrap.js'
+        ),
     };
 
     ctx.stats.buildCount++;

@@ -81,7 +81,7 @@ export class SeaJSX {
         await this._ready;
 
         this.print(`Building {{obj ${options.filename}}}`);
-        const { output } = await build(this, { filename: options.filename });
+        const { output } = await build(this, { filename: options.filename, production: true });
 
         const text = (await this.asset('production/index.html'))
             .toString()
