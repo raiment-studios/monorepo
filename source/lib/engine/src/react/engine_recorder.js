@@ -36,7 +36,7 @@ export function EngineRecorder({ engine, rendererName = 'three' }) {
     }
 
     const handleRecord = async () => {
-        const duration = 16000;
+        const duration = 12200;
         const start = Date.now();
 
         setRecording({ active: true, ready: false, dataURI: null, countdown: duration });

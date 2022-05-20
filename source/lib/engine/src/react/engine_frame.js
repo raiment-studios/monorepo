@@ -28,20 +28,14 @@ export function EngineFrame({
     return (
         <>
             <div
+                ref={refElem}
                 style={{
-                    border: 'solid 1px #333',
+                    width: '100%',
+                    aspectRatio: '3 / 2',
+                    padding: 0,
+                    margin: 0,
                 }}
-            >
-                <div
-                    ref={refElem}
-                    style={{
-                        width: '100%',
-                        aspectRatio: '16 / 9',
-                        padding: 0,
-                        margin: 0,
-                    }}
-                />
-            </div>
+            />
             {recorder && <EngineRecorder engine={engine} rendererName={recorder} />}
         </>
     );

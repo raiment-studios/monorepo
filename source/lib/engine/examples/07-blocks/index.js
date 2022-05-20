@@ -7,17 +7,36 @@ import { TextureAtlas, EngineFrame, OrbitCamera, GroundPlane, BasicLighting } fr
 import { Grid } from '../../src/actors/grid';
 
 export default function () {
+    const simplex = core.makeSimplexNoise(4378);
+    const noise = (...args) => (1 + simplex.noise2D(...args)) / 2;
+    const colorFunc = (x, y) => {
+        const nx = x / 30;
+        const ny = y / 30;
+        return [
+            0.5 * noise(nx, ny), //
+            0.25 + 0.75 * noise(nx + 300 + ny, ny + 217 - nx),
+            0.5 * 0.5 * Math.pow(noise(2 * nx, 2 * ny), 0.25),
+        ];
+    };
+
     const actors = [
         new Grid(),
         new OrbitCamera({ radius: 64 }), //
         new BasicLighting(),
         new GroundPlane(),
-        new HeightMap({ scale: 30, size: 128 }),
+        new HeightMap({
+            scale: 30,
+            size: 128,
+            heightFunc: terrain1(128, 78234),
+            colorFunc,
+        }),
     ];
 
     return (
         <ReactEx.ReadingFrame>
-            <EngineFrame actors={actors} recorder={'three'} />
+            <div style={{ width: 1200 }}>
+                <EngineFrame actors={actors} recorder={'three'} />
+            </div>
         </ReactEx.ReadingFrame>
     );
 }
@@ -25,7 +44,7 @@ export default function () {
 function terrain1(size, seed) {
     const rng = core.makeRNG(seed);
     const simplex = core.makeSimplexNoise(rng.uint31());
-    return function (x, y) {
+    return function (x, y, u, v) {
         const h0 = 0.5 + 0.5 * Math.sin((x / size) * 2 * Math.PI);
         const h1 = 0.5 + 0.5 * Math.sin((y / size) * 2 * Math.PI);
         const h = (h0 + h1) / 2;
@@ -38,37 +57,7 @@ function terrain1(size, seed) {
             0.25 *
             Math.pow(0.5 + 0.5 * simplex.noise2D((2 * x) / size + 32, (2 * y) / size + 84), 8);
 
-        return {
-            height: h + h2 + n3,
-            moisture: 0.75,
-        };
-    };
-}
-
-function terrain2(size, seed) {
-    const rng = core.makeRNG(seed);
-    const simplex = core.makeSimplexNoise(rng.uint31());
-
-    const ox = rng.range(-500, 500);
-    const oy = rng.range(-500, 500);
-
-    return function (x, y) {
-        const h0 = 0.5 + 0.5 * Math.sin((x / size) * 2 * Math.PI + ox);
-        const h1 = 0.5 + 0.5 * Math.sin((y / size) * 2 * Math.PI + oy);
-        const h = (h0 + h1) / 2;
-
-        const n0 = 0.025 * simplex.noise2D((8 * x) / size + ox, (8 * y) / size + oy);
-        const n1 = 0.5 * (0.5 + 0.5 * simplex.noise2D((2 * x) / size, (2 * y) / size));
-        const h2 = n0 + n1;
-
-        const n3 =
-            0.25 *
-            Math.pow(0.5 + 0.5 * simplex.noise2D((2 * x) / size + 11, (2 * y) / size + 84), 3);
-
-        return {
-            height: h + h2 + n3,
-            moisture: 0.0,
-        };
+        return h + h2 + n3;
     };
 }
 
@@ -81,7 +70,8 @@ export class HeightMap {
         terrainSeed = 324,
         size = 256, //
         scale = 1.0,
-        terrain = null,
+        heightFunc = null,
+        colorFunc = (x, y, u, v) => [1, 0, 0.5],
     } = {}) {
         this._size = size;
         this._offset = [-size / 2, -size / 2];
@@ -89,29 +79,18 @@ export class HeightMap {
         this._heights = new Float32Array(size * size);
         this._heights.fill(20);
         this._rng = core.makeRNG(seed);
-        this._generateColor = this._makeGenerateColor();
-
+        this._colorFunc = colorFunc;
+        this._heightFunc = heightFunc;
         this._mesh = null;
 
-        let func;
-        if (typeof terrain === 'function') {
-            func = terrain;
-        } else {
-            const generate =
-                {
-                    terrain1,
-                    terrain2,
-                }[terrain] || terrain1;
-            func = generate(size, terrainSeed);
-        }
         for (let y = 0; y < size; y++) {
             for (let x = 0; x < size; x++) {
                 const u = (2 * (x + 0.5)) / (size - 1);
                 const v = (2 * (y + 0.5)) / (size - 1);
-                const result = func(x, y, u, v);
+                const result = this._heightFunc(x, y, u, v);
 
                 const i = y * size + x;
-                this._heights[i] = scale * result.height;
+                this._heights[i] = scale * result;
             }
         }
 
@@ -120,12 +99,6 @@ export class HeightMap {
 
     get size() {
         return this._size;
-    }
-
-    _makeGenerateColor() {
-        return () => {
-            return [1, 0, 0.5];
-        };
     }
 
     // ------------------------------------------------------------------------
@@ -186,22 +159,6 @@ export class HeightMap {
     // ------------------------------------------------------------------------
     // @group Private methods
     //
-
-    _simplex1 = core.makeSimplexNoise(2346623);
-
-    //
-    // Deterministic pseudo-randomness :)  Ensure it's random
-    // but consistently the same value for each x,y.
-    //
-    rngRange(x, y, min, max) {
-        const a = 0.5 + 0.5 * this._simplex1.noise2D(5.2 * x, 4.9 * y);
-        return min + a * (max - min);
-    }
-
-    rngSelect(x, y, arr) {
-        const i = Math.floor(this.rngRange(x, y, 0, arr.length));
-        return arr[i];
-    }
 
     /**
      *
@@ -286,7 +243,7 @@ export class HeightMap {
         }
 
         // TODO: Temp
-        const color = this._generateColor(x, y);
+        const color = this._colorFunc(x, y, height);
 
         //
         // 5 Faces with 4 vertices of 3 components for each height tile
@@ -319,7 +276,7 @@ export class HeightMap {
             [x + 0, y + 1, z0], //
             [-1, 0, 0],
             color,
-            0.9
+            0.8
         );
 
         [z0, z1] = sort2(x + 1 < size ? this._heights[i + 1] : 0, height);
@@ -332,7 +289,7 @@ export class HeightMap {
             [x + 1, y + 0, z1], //
             [1, 0, 0],
             color,
-            0.9
+            0.8
         );
 
         [z0, z1] = sort2(y > 0 ? this._heights[i - size] : 0, height);
@@ -345,7 +302,7 @@ export class HeightMap {
             [x + 0, y + 0, z1], //
             [-1, 0, 0],
             color,
-            0.8
+            0.6
         );
 
         [z0, z1] = sort2(y + 1 < size ? this._heights[i + size] : 0, height);
@@ -358,7 +315,7 @@ export class HeightMap {
             [x + 1, y + 1, z0], //
             [0, 1, 0],
             color,
-            0.8
+            0.6
         );
 
         positionAttr.needsUpdate = true;
