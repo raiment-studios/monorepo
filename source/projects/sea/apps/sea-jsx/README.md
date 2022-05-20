@@ -170,11 +170,15 @@ A future direction is to create a target types of Markdown and extended Markdown
 
 #### What are some of the reasons to use `sea-jsx`?
 
-It's simple, fast, and doesn't lock you into any non-standard structures or configurations while you're working small, quick prototypes.
+It's easy to run `sea-jsx` and iterate on small, quick React prototypes.
+
+`sea-jsx` is simple, fast, and doesn't lock you into any non-standard structures or configurations. If the prototype works, the JSX code is fully "standard" so it's easy to move or incorporate the code into tooling designed for larger projects.  It's a great way to get started on fledgling ideas.
 
 #### How does `sea-jsx` compare to, say, [Next.js](https://nextjs.org/)?
 
-sea-jsx does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration. The primary use case is prototyping and rapid experimentation.
+`sea-jsx` is not designed for building websites.
+
+It does not intend to be a full-fledged site generator. It is intended instead to be quick, easy way to run on individual JSX files (or a small set of them) with minimal configuration. The primary use case is prototyping and rapid experimentation.
 
 #### How do I change the header, page title, add CSS, etc.?
 
