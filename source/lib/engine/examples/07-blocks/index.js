@@ -25,8 +25,8 @@ export default function () {
         new BasicLighting(),
         new GroundPlane(),
         new HeightMap({
-            scale: 30,
-            size: 128,
+            scale: 128,
+            segments: 16,
             heightFunc: terrain1(128, 78234),
             colorFunc,
         }),
@@ -59,63 +59,51 @@ function terrain1(size, seed) {
     };
 }
 
+/**
+ * Generates a unit terrain where, by default, it has size = 1 that covers the
+ * area from 0,0 to 1,1 with `segments` number of quads covering that area.
+ *
+ * Changing `size` will internally scale the object to cover 0,0 to size, size.
+ * The heightFunc will also be scaled by size.
+ */
 export class HeightMap {
     // ------------------------------------------------------------------------
     // @group Construction
     //
     constructor({
-        seed = 23484,
-        terrainSeed = 324,
-        size = 256, //
         scale = 1.0,
+        segments = 16,
         heightFunc = null,
         colorFunc = (x, y, u, v) => [1, 0, 0.5],
     } = {}) {
-        this._size = size;
-        this._offset = [-size / 2, -size / 2];
+        this._scale = scale;
+        this._segments = segments;
 
-        this._heights = new Float32Array(size * size);
-        this._heights.fill(20);
-        this._rng = core.makeRNG(seed);
+        this._heights = new Float32Array(segments * segments);
+        this._heights.fill(0);
         this._colorFunc = colorFunc;
         this._heightFunc = heightFunc;
         this._mesh = null;
 
-        for (let y = 0; y < size; y++) {
-            for (let x = 0; x < size; x++) {
-                const u = (2 * (x + 0.5)) / (size - 1);
-                const v = (2 * (y + 0.5)) / (size - 1);
-                const result = this._heightFunc(x, y, u, v);
+        for (let y = 0; y < segments; y++) {
+            for (let x = 0; x < segments; x++) {
+                const u = (x + 0.5) / (segments - 1);
+                const v = (y + 0.5) / (segments - 1);
 
-                const i = y * size + x;
-                this._heights[i] = scale * result;
+                const i = y * segments + x;
+                this._heights[i] = this._heightFunc(scale * u, scale * v, u, v);
             }
         }
 
-        core.assert(this._heights.length === this._size * this._size);
-    }
-
-    get size() {
-        return this._size;
+        core.assert(this._heights.length === this._segments * this._segments);
     }
 
     // ------------------------------------------------------------------------
     // @group Life Cycle
     //
 
-    init({ engine }) {
-        // Rain accumulation. Adds moisture to the tiles, which should
-        // go from dirt to grass.
-        //
-        const simplex1 = core.makeSimplexNoise(this._rng.uint31());
-        const genRange = (x, y, min, max) => {
-            const a = 0.5 + 0.5 * simplex1.noise2D(x / 32, y / 32);
-            return min + a * (max - min);
-        };
-    }
-
     mesh({ engine }) {
-        const size = this._size;
+        const size = this._segments;
         const arrays = {
             position: new Float32Array(5 * 4 * 3 * size * size),
             normal: new Float32Array(5 * 4 * 3 * size * size),
@@ -138,13 +126,12 @@ export class HeightMap {
         });
 
         this._mesh = new THREE.Mesh(geometry, material);
-        this._mesh.position.set(this._offset[0], this._offset[1], 0);
         this._mesh.castShadow = false;
         this._mesh.receiveShadow = true;
 
-        for (let y = 0; y < size; y++) {
-            for (let x = 0; x < size; x++) {
-                this._recomputeVertexAttrs(x, y, true);
+        for (let sy = 0; sy < size; sy++) {
+            for (let sx = 0; sx < size; sx++) {
+                this._recomputeVertexAttrs(sx, sy, true);
             }
         }
         geometry.computeBoundingBox();
@@ -164,19 +151,19 @@ export class HeightMap {
      * array layout (i.e. avoid either hard-coded indexing in lots of different places or
      * low-level abstracted functions that complicate the code).
      */
-    _recomputeVertexAttrs(x, y, init = false) {
-        const size = this._size;
-        x = Math.floor(x);
-        y = Math.floor(y);
+    _recomputeVertexAttrs(segX, segY, init = false) {
+        const size = this._segments;
+        segX = Math.floor(segX);
+        segY = Math.floor(segY);
 
-        if (x < 0 || x >= size || y < 0 || y >= size) {
+        if (segX < 0 || segX >= size || segY < 0 || segY >= size) {
             return;
         }
         if (!this._mesh) {
             return;
         }
 
-        const i = y * size + x;
+        const i = segY * size + segX;
         console.assert(i >= 0 && i < size * size, 'Index out of range');
 
         const height = this._heights[i];
@@ -240,8 +227,13 @@ export class HeightMap {
             }
         }
 
-        // TODO: Temp
-        const color = this._colorFunc(x, y, height);
+        const color = this._colorFunc(segX, segY, height);
+        const scale0 = this._scale / this._segments;
+
+        const x0 = segX * scale0;
+        const x1 = (segX + 1) * scale0;
+        const y0 = segY * scale0;
+        const y1 = (segY + 1) * scale0;
 
         //
         // 5 Faces with 4 vertices of 3 components for each height tile
@@ -251,66 +243,66 @@ export class HeightMap {
         let vi = 5 * 4 * 3 * i;
         let fi = 5 * 6 * i;
 
-        let [z0, z1] = [0, height];
+        let [z0, z1] = [0, height * this._scale];
         quad(
             vi,
             fi,
-            [x + 0, y + 0, z1], //
-            [x + 1, y + 0, z1], //
-            [x + 1, y + 1, z1], //
-            [x + 0, y + 1, z1], //
+            [x0, y0, z1], //
+            [x1, y0, z1], //
+            [x1, y1, z1], //
+            [x0, y1, z1], //
             [0, 0, 1],
             color,
             1.0
         );
 
-        [z0, z1] = sort2(x > 0 ? this._heights[i - 1] : 0, height);
+        [z0, z1] = sort2(segX > 0 ? this._heights[i - 1] : 0, height);
         quad(
             vi + 12,
             fi + 6,
-            [x + 0, y + 0, z0], //
-            [x + 0, y + 0, z1], //
-            [x + 0, y + 1, z1], //
-            [x + 0, y + 1, z0], //
+            [x0, y0, z0], //
+            [x0, y0, z1], //
+            [x0, y1, z1], //
+            [x0, y1, z0], //
             [-1, 0, 0],
             color,
             0.8
         );
 
-        [z0, z1] = sort2(x + 1 < size ? this._heights[i + 1] : 0, height);
+        [z0, z1] = sort2(segX + 1 < size ? this._heights[i + 1] : 0, height);
         quad(
             vi + 24,
             fi + 12,
-            [x + 1, y + 0, z0], //
-            [x + 1, y + 1, z0], //
-            [x + 1, y + 1, z1], //
-            [x + 1, y + 0, z1], //
+            [x1, y0, z0], //
+            [x1, y1, z0], //
+            [x1, y1, z1], //
+            [x1, y0, z1], //
             [1, 0, 0],
             color,
             0.8
         );
 
-        [z0, z1] = sort2(y > 0 ? this._heights[i - size] : 0, height);
+        [z0, z1] = sort2(segY > 0 ? this._heights[i - size] : 0, height);
         quad(
             vi + 3 * 12,
             fi + 3 * 6,
-            [x + 0, y + 0, z0], //
-            [x + 1, y + 0, z0], //
-            [x + 1, y + 0, z1], //
-            [x + 0, y + 0, z1], //
+            [x0, y0, z0], //
+            [x1, y0, z0], //
+            [x1, y0, z1], //
+            [x0, y0, z1], //
             [-1, 0, 0],
             color,
             0.6
         );
 
-        [z0, z1] = sort2(y + 1 < size ? this._heights[i + size] : 0, height);
+        [z0, z1] = sort2(segY + 1 < size ? this._heights[i + size] : 0, height);
         quad(
             vi + 4 * 12,
             fi + 4 * 6,
-            [x + 0, y + 1, z0], //
-            [x + 0, y + 1, z1], //
-            [x + 1, y + 1, z1], //
-            [x + 1, y + 1, z0], //
+            [x0, y1, z0], //
+            [x0, y1, z1], //
+            [x1, y1, z1], //
+            [x1, y1, z0], //
             [0, 1, 0],
             color,
             0.6
