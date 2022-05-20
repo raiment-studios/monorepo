@@ -3,7 +3,6 @@ import { Flex, useCommonStyles } from '../../../lib/react-ex';
 import data from 'yaml:./data.yaml';
 
 export default function () {
-    console.log(data);
     useCommonStyles();
     return (
         <div>
