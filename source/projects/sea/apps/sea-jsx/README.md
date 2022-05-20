@@ -73,8 +73,8 @@ A quick, simple command-line tool to run single JavaScript React Components with
     -   [ ] Changelog
     -   [ ] Proper release process
 -   [ ] **User experience enhancements**
-    -   [ ] ➕ Reload the main Component on changes without session reset
-    -   [ ] ➕ Automatically update front-matter to locked versions
+    -   [ ] Reload the main Component on changes without session reset
+    -   [ ] Automatically update front-matter to locked versions
 
 ### 🎄 Backlog
 
