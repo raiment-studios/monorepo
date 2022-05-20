@@ -9,6 +9,7 @@ export function EngineFrame({
     engine = new Engine(), //
     actors = [],
     recorder = null,
+    style = {},
 }) {
     const refElem = React.useRef(null);
 
@@ -31,9 +32,10 @@ export function EngineFrame({
                 ref={refElem}
                 style={{
                     width: '100%',
-                    aspectRatio: '3 / 2',
+                    aspectRatio: '16 / 9',
                     padding: 0,
                     margin: 0,
+                    ...style,
                 }}
             />
             {recorder && <EngineRecorder engine={engine} rendererName={recorder} />}

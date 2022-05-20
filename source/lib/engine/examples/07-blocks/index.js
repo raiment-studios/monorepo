@@ -34,9 +34,7 @@ export default function () {
 
     return (
         <ReactEx.ReadingFrame>
-            <div style={{ width: 1200 }}>
-                <EngineFrame actors={actors} recorder={'three'} />
-            </div>
+            <EngineFrame style={{ width: 960 }} actors={actors} recorder={'three'} />
         </ReactEx.ReadingFrame>
     );
 }
