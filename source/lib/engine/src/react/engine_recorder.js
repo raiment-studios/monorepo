@@ -1,7 +1,12 @@
 import React from 'react';
 import { Flex } from '@raiment/react-ex';
 
-export function EngineRecorder({ engine, rendererName = 'three' }) {
+export function EngineRecorder({
+    engine,
+    rendererName = 'three',
+    duration = 16600,
+    autoStart = false,
+}) {
     const [recording, setRecording] = React.useState({
         active: false,
         ready: false,
@@ -36,7 +41,6 @@ export function EngineRecorder({ engine, rendererName = 'three' }) {
     }
 
     const handleRecord = async () => {
-        const duration = 16600;
         const start = Date.now();
 
         setRecording({ active: true, ready: false, dataURI: null, countdown: duration });
@@ -56,6 +60,12 @@ export function EngineRecorder({ engine, rendererName = 'three' }) {
             dataURI,
         });
     };
+
+    React.useEffect(() => {
+        if (autoStart) {
+            setTimeout(() => handleRecord(), 100);
+        }
+    }, []);
 
     return (
         <div>

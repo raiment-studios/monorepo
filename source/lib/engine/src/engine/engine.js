@@ -2,6 +2,7 @@ import { EventEmitter } from '../../../core';
 import { ActorList } from './actor_list';
 import { FrameLoop } from '../frame_loop';
 import { World } from './world';
+import { StateMachine } from '../state_machine';
 
 export class Engine {
     //-----------------------------------------------------------------------//
@@ -77,6 +78,10 @@ export class Engine {
                     actor.init(ctx);
                 }
 
+                if (actor.stateMachine) {
+                    actor.__stateMachine = new StateMachine(actor.stateMachine(ctx));
+                }
+
                 // Let each renderer know about the new actor
                 for (let renderer of Object.values(this._renderers)) {
                     if (!renderer.addActor) {
@@ -88,7 +93,15 @@ export class Engine {
         }
         this._actors._added = [];
 
+        //
         // Run the logic update
+        //
+        for (let actor of this._actors) {
+            if (actor.__stateMachine) {
+                actor.__stateMachine.update(ctx);
+            }
+        }
+
         for (let actor of this._actors) {
             if (actor.update) {
                 actor.update(ctx);

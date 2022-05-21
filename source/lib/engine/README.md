@@ -4,7 +4,7 @@
 ![](https://img.shields.io/badge/license-MIT-039)
 [![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
 
-⚠️ TODO
+A JavaScript + WASM simulation and game engine built on top of THREE.js.
 
 ## Getting started
 
@@ -19,6 +19,16 @@
 ⚠️ TODO
 
 ## User documentation
+
+### Renderer
+
+⚠️ TODO
+
+### Actor
+
+⚠️ TODO
+
+#### StateMachine
 
 ⚠️ TODO
 
