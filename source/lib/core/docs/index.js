@@ -5,6 +5,8 @@ import * as core from '..';
 export default function () {
     return (
         <ReactEx.ReadingFrame>
+            <SimplexDemo />
+
             <h3>Format</h3>
             <h4>formatNumber</h4>
             <CodeExample
@@ -67,7 +69,91 @@ rng.shuffle(arr)
 rng.shuffle(arr)
     `}
             />
+
+            <h3>Noise</h3>
+            <h4>simplex.noise2D</h4>
         </ReactEx.ReadingFrame>
+    );
+}
+
+function SimplexDemo() {
+    const [min, setMin] = React.useState(0);
+    const [max, setMax] = React.useState(0);
+    const [bucketMax, setBucketMax] = React.useState(0);
+    const [buckets, setBuckets] = React.useState([]);
+
+    const simplex = core.makeSimplexNoise(Math.random());
+    const f = () => {
+        const x = (-1 + 2 * Math.random()) * 1e3;
+        const y = (-1 + 2 * Math.random()) * 1e3;
+        return simplex.noise2D(x, y);
+    };
+    const range = [-1, 1];
+
+    React.useEffect(() => {
+        const buckets = new Array(100);
+        buckets.fill(0);
+        let bucketMax = 0;
+
+        let min = Infinity;
+        let max = -Infinity;
+
+        (async () => {
+            for (let j = 0; j < 1000; j++) {
+                for (let i = 0; i < 100; i++) {
+                    const v = f();
+                    const bi = Math.floor(((v - range[0]) / (range[1] - range[0])) * 100);
+                    buckets[bi]++;
+                    bucketMax = Math.max(bucketMax, buckets[bi]);
+
+                    min = Math.min(min, v);
+                    max = Math.max(max, v);
+                }
+
+                setMin(min);
+                setMax(max);
+                setBucketMax(bucketMax);
+                setBuckets(buckets);
+                await new Promise((resolve) => setTimeout(resolve, 1000 / 30));
+            }
+        })();
+    }, []);
+
+    return (
+        <div>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                }}
+            >
+                {buckets.map((bucket, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            position: 'relative',
+                            width: 4,
+                            height: 100,
+                            backgroundColor: 'white',
+                            borderBottom: 'solid 2px #AAA',
+                        }}
+                    >
+                        <div
+                            key={index}
+                            style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                width: 4,
+                                height: `${Math.floor((100 * bucket) / bucketMax)}px`,
+                                backgroundColor: index % 2 ? '#CCE' : '#BCE',
+                            }}
+                        />
+                    </div>
+                ))}
+            </div>
+            <div>Min: {min}</div>
+            <div>Max: {max}</div>
+        </div>
     );
 }
 

@@ -10,12 +10,12 @@ export default function () {
     const simplex = core.makeSimplexNoise(4378);
     const noise = (...args) => (1 + simplex.noise2D(...args)) / 2;
     const colorFunc = (x, y) => {
-        const nx = x / 30;
-        const ny = y / 30;
+        const nx = x / 100;
+        const ny = y / 100;
         return [
-            0.5 * noise(nx, ny), //
-            0.25 + 0.75 * noise(nx + 300 + ny, ny + 217 - nx),
-            0.5 * 0.5 * Math.pow(noise(2 * nx, 2 * ny), 0.25),
+            0.15 * 0.85 * noise(101 + nx * 80, ny * 80), //
+            0.35 + 0.35 * noise(nx + 300 + ny, ny + 217 - nx),
+            0.1 * 0.25 * Math.pow(noise(2 * nx, 2 * ny), 0.25),
         ];
     };
 
@@ -25,9 +25,10 @@ export default function () {
         new BasicLighting(),
         new GroundPlane(),
         new HeightMap({
-            scale: 128,
-            segments: 16,
-            heightFunc: terrain1(128, 78234),
+            offset: [-256 / 2, -256 / 2, 0],
+            scale: 256,
+            segments: 256,
+            heightFunc: terrain1(256, 0.65, 595),
             colorFunc,
         }),
     ];
@@ -39,7 +40,7 @@ export default function () {
     );
 }
 
-function terrain1(size, seed) {
+function terrain1(size, heightScale, seed) {
     const rng = core.makeRNG(seed);
     const simplex = core.makeSimplexNoise(rng.uint31());
     return function (x, y, u, v) {
@@ -55,7 +56,7 @@ function terrain1(size, seed) {
             0.25 *
             Math.pow(0.5 + 0.5 * simplex.noise2D((2 * x) / size + 32, (2 * y) / size + 84), 8);
 
-        return h + h2 + n3;
+        return (heightScale * (h + h2 + n3)) / 8;
     };
 }
 
@@ -71,11 +72,13 @@ export class HeightMap {
     // @group Construction
     //
     constructor({
+        offset = [0, 0, 0],
         scale = 1.0,
         segments = 16,
         heightFunc = null,
         colorFunc = (x, y, u, v) => [1, 0, 0.5],
     } = {}) {
+        this._offset = offset;
         this._scale = scale;
         this._segments = segments;
 
@@ -91,7 +94,9 @@ export class HeightMap {
                 const v = (y + 0.5) / (segments - 1);
 
                 const i = y * segments + x;
-                this._heights[i] = this._heightFunc(scale * u, scale * v, u, v);
+
+                // Heights are "pre-scaled"
+                this._heights[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
             }
         }
 
@@ -103,12 +108,12 @@ export class HeightMap {
     //
 
     mesh({ engine }) {
-        const size = this._segments;
+        const segs = this._segments;
         const arrays = {
-            position: new Float32Array(5 * 4 * 3 * size * size),
-            normal: new Float32Array(5 * 4 * 3 * size * size),
-            color: new Float32Array(5 * 4 * 3 * size * size),
-            index: new Uint32Array(5 * 6 * size * size),
+            position: new Float32Array(5 * 4 * 3 * segs * segs),
+            normal: new Float32Array(5 * 4 * 3 * segs * segs),
+            color: new Float32Array(5 * 4 * 3 * segs * segs),
+            index: new Uint32Array(5 * 6 * segs * segs),
         };
 
         let geometry = new THREE.BufferGeometry();
@@ -123,14 +128,16 @@ export class HeightMap {
         let material = new THREE.MeshPhongMaterial({
             color: 0xffffff,
             shininess: 10,
+            //side: THREE.DoubleSide,
         });
 
         this._mesh = new THREE.Mesh(geometry, material);
+        this._mesh.position.set(...this._offset);
         this._mesh.castShadow = false;
         this._mesh.receiveShadow = true;
 
-        for (let sy = 0; sy < size; sy++) {
-            for (let sx = 0; sx < size; sx++) {
+        for (let sy = 0; sy < segs; sy++) {
+            for (let sx = 0; sx < segs; sx++) {
                 this._recomputeVertexAttrs(sx, sy, true);
             }
         }
@@ -151,20 +158,20 @@ export class HeightMap {
      * array layout (i.e. avoid either hard-coded indexing in lots of different places or
      * low-level abstracted functions that complicate the code).
      */
-    _recomputeVertexAttrs(segX, segY, init = false) {
-        const size = this._segments;
-        segX = Math.floor(segX);
-        segY = Math.floor(segY);
+    _recomputeVertexAttrs(sx, sy, init = false) {
+        const segments = this._segments;
+        sx = Math.floor(sx);
+        sy = Math.floor(sy);
 
-        if (segX < 0 || segX >= size || segY < 0 || segY >= size) {
+        if (sx < 0 || sx >= segments || sy < 0 || sy >= segments) {
             return;
         }
         if (!this._mesh) {
             return;
         }
 
-        const i = segY * size + segX;
-        console.assert(i >= 0 && i < size * size, 'Index out of range');
+        const i = sy * segments + sx;
+        console.assert(i >= 0 && i < segments * segments, 'Index out of range');
 
         const height = this._heights[i];
         const indexAttr = this._mesh.geometry.index;
@@ -176,16 +183,12 @@ export class HeightMap {
         const colorAttr = this._mesh.geometry.attributes.color;
         const colorArr = colorAttr.array;
 
-        core.assert(indexArr.length === 5 * 6 * size * size);
-        core.assert(positionArr.length === 5 * 4 * 3 * size * size);
-        core.assert(colorArr.length === 5 * 4 * 3 * size * size);
+        core.assert(indexArr.length === 5 * 6 * segments * segments);
+        core.assert(positionArr.length === 5 * 4 * 3 * segments * segments);
+        core.assert(colorArr.length === 5 * 4 * 3 * segments * segments);
 
         function sort2(a, b) {
             return a < b ? [a, b] : [b, a];
-        }
-        function copy2(dst, index, src) {
-            dst[index + 0] = src[0];
-            dst[index + 1] = src[1];
         }
         function copy3(dst, index, src) {
             dst[index + 0] = src[0];
@@ -193,7 +196,6 @@ export class HeightMap {
             dst[index + 2] = src[2];
         }
 
-        const self = this;
         function quad(vi, fi, p0, p1, p2, p3, normal, color, shade) {
             copy3(positionArr, vi + 0, p0);
             copy3(positionArr, vi + 3, p1);
@@ -227,13 +229,14 @@ export class HeightMap {
             }
         }
 
-        const color = this._colorFunc(segX, segY, height);
+        const color = this._colorFunc(sx, sy, height);
         const scale0 = this._scale / this._segments;
 
-        const x0 = segX * scale0;
-        const x1 = (segX + 1) * scale0;
-        const y0 = segY * scale0;
-        const y1 = (segY + 1) * scale0;
+        const x0 = sx * scale0;
+        const x1 = (sx + 1) * scale0;
+        const y0 = sy * scale0;
+        const y1 = (sy + 1) * scale0;
+        let [z0, z1] = [0, height];
 
         //
         // 5 Faces with 4 vertices of 3 components for each height tile
@@ -243,7 +246,6 @@ export class HeightMap {
         let vi = 5 * 4 * 3 * i;
         let fi = 5 * 6 * i;
 
-        let [z0, z1] = [0, height * this._scale];
         quad(
             vi,
             fi,
@@ -256,7 +258,7 @@ export class HeightMap {
             1.0
         );
 
-        [z0, z1] = sort2(segX > 0 ? this._heights[i - 1] : 0, height);
+        [z0, z1] = sort2(sx > 0 ? this._heights[i - 1] : 0, height);
         quad(
             vi + 12,
             fi + 6,
@@ -266,10 +268,10 @@ export class HeightMap {
             [x0, y1, z0], //
             [-1, 0, 0],
             color,
-            0.8
+            0.9
         );
 
-        [z0, z1] = sort2(segX + 1 < size ? this._heights[i + 1] : 0, height);
+        [z0, z1] = sort2(sx + 1 < segments ? this._heights[i + 1] : 0, height);
         quad(
             vi + 24,
             fi + 12,
@@ -279,10 +281,10 @@ export class HeightMap {
             [x1, y0, z1], //
             [1, 0, 0],
             color,
-            0.8
+            0.9
         );
 
-        [z0, z1] = sort2(segY > 0 ? this._heights[i - size] : 0, height);
+        [z0, z1] = sort2(sy > 0 ? this._heights[i - segments] : 0, height);
         quad(
             vi + 3 * 12,
             fi + 3 * 6,
@@ -292,10 +294,10 @@ export class HeightMap {
             [x0, y0, z1], //
             [-1, 0, 0],
             color,
-            0.6
+            0.8
         );
 
-        [z0, z1] = sort2(segY + 1 < size ? this._heights[i + size] : 0, height);
+        [z0, z1] = sort2(sy + 1 < segments ? this._heights[i + segments] : 0, height);
         quad(
             vi + 4 * 12,
             fi + 4 * 6,
@@ -305,7 +307,7 @@ export class HeightMap {
             [x1, y1, z0], //
             [0, 1, 0],
             color,
-            0.6
+            0.8
         );
 
         positionAttr.needsUpdate = true;
