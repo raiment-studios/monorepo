@@ -122,7 +122,10 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 20
-    -   [x] 🛠️ Fix watch for `..` imports in sea-jsx
+    - [x] 🗃️ Clean up HeightMap actor for general reuse
+    - [x] 🧬 Add dynamic terrain updating example
+    - [x] ➕ Incorporate StateMachine into engine Actor handling
+    -   [x] 🛠️ Fix watch cfor `..` imports in sea-jsx
     -   [x] 🛠️ Fix `clean` command in sea-jsx
     -   [x] ➕ Add formatNumber to core
     -   [x] ➕ Add EngineRecorder (webm capture) component to engine
