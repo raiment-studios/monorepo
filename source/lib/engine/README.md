@@ -24,9 +24,13 @@ A JavaScript + WASM simulation and game engine built on top of THREE.js.
 
 ⚠️ TODO
 
-### Actor
+### Actor core methods
 
-⚠️ TODO
+#### `init()`
+#### `stateMachine()`
+#### `update()`
+#### `mesh()`
+
 
 #### StateMachine
 

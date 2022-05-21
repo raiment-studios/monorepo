@@ -7,23 +7,6 @@ import { Grid } from '../../src/actors/grid';
 
 export default function () {
     const engine = useEngine(({ engine }) => {
-        const simplex = core.makeSimplexNoise(4378);
-        const noise = (...args) => (1 + simplex.noise2D(...args)) / 2;
-        const colorFunc = (x, y) => {
-            const nx = x / 100;
-            const ny = y / 100;
-            return [
-                0.15 * 0.85 * noise(101 + nx * 80, ny * 80), //
-                0.35 + 0.35 * noise(nx + 300 + ny, ny + 217 - nx),
-                0.1 * 0.25 * Math.pow(noise(2 * nx, 2 * ny), 0.25),
-            ];
-        };
-
-        const builder = {
-            heightFunc: terrain1(256, 0.65, 595),
-        };
-
-        const rng = core.makeRNG();
         const simplex2 = core.makeSimplexNoise();
         const simplex3 = core.makeSimplexNoise();
         const heightMap = new HeightMap({
@@ -35,118 +18,11 @@ export default function () {
                 const rgb = [146 / 255, 201 / 255, 117 / 255];
                 const a = (1 + simplex3.noise2D(x, y)) / 2;
                 const b = (1 + simplex2.noise2D(x / 100, y / 100)) / 2;
-                const t = 0.3 * b + 0.7;
+                const t = 0.5 * b + 0.5;
                 const s = t + a * (1 - t);
                 return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
             },
         });
-
-        class Updater {
-            constructor() {
-                this._centerX = 0;
-                this._centerY = 0;
-            }
-
-            update() {
-                this._centerX += this._velocityX;
-                this._centerY += this._velocityY;
-
-                if (this._centerX < 0) {
-                    this._centerX = 0;
-                    this._velocityX = Math.abs(this._velocityX);
-                }
-                if (this._centerX > 256) {
-                    this._centerX = 256;
-                    this._velocityX = -Math.abs(this._velocityX);
-                }
-
-                if (this._centerY < 0) {
-                    this._centerY = 0;
-                    this._velocityY = Math.abs(this._velocityY);
-                }
-                if (this._centerX > 256) {
-                    this._centerX = 256;
-                    this._velocityY = -Math.abs(this._velocityY);
-                }
-
-                const K = 0.25;
-                const MV = 2;
-                this._velocityX += K * rng.range(-1, 1);
-                this._velocityY += K * rng.range(-1, 1);
-                this._velocityX = Math.max(-MV, Math.min(MV, this._velocityX));
-                this._velocityY = Math.max(-MV, Math.min(MV, this._velocityY));
-            }
-
-            stateMachine() {
-                const rng = core.makeRNG();
-                return {
-                    _bind: this,
-                    _start: function* () {
-                        this._centerX = rng.range(0, 256);
-                        this._centerY = rng.range(0, 256);
-                        this._velocityX = rng.sign() * rng.range(0.2, 2);
-                        this._velocityY = rng.sign() * rng.range(0.2, 2);
-
-                        return 'update';
-                    },
-                    changeTerrain: function* () {
-                        const seed = rng.uint31();
-                        builder.heightFunc = terrain1(256, 0.65, seed);
-                        return 'update';
-                    },
-                    update: function* () {
-                        const D = 32;
-                        const MAX_DIST = Math.sqrt(2 * D * D);
-
-                        const frames = rng.rangei(10, 100);
-                        for (let i = 0; i < frames; i++) {
-                            const centerSX = Math.floor(this._centerX);
-                            const centerSY = Math.floor(this._centerY);
-                            for (let sy = centerSY - D, lsy = -D; sy <= centerSY + D; lsy++, sy++) {
-                                for (
-                                    let sx = centerSX - D, lsx = -D;
-                                    sx <= centerSX + D;
-                                    lsx++, sx++
-                                ) {
-                                    if (!heightMap.validSegment(sx, sy)) {
-                                        continue;
-                                    }
-                                    const [wx, wy] = heightMap.segToWorld(sx, sy);
-                                    const wz = heightMap.heightAtSegment(sx, sy);
-
-                                    const tz = 512 * builder.heightFunc(wx, wy);
-                                    let dz = tz - wz;
-                                    if (Math.abs(dz) < 1e-3) {
-                                        continue;
-                                    }
-                                    dz /= 20;
-
-                                    const normalizedDist =
-                                        Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
-                                    const k = 0.01;
-                                    dz *= k + (1 - k) * (1.0 - normalizedDist);
-                                    const nz = wz + dz;
-                                    heightMap.setHeightAt(wx, wy, nz, false);
-                                }
-                            }
-
-                            const K = D + 1;
-                            for (let sy = centerSY - K; sy <= centerSY + K; sy++) {
-                                for (let sx = centerSX - K; sx <= centerSX + K; sx++) {
-                                    if (!heightMap.validSegment(sx, sy)) {
-                                        continue;
-                                    }
-                                    heightMap.updateSegment(sx, sy);
-                                }
-                            }
-                            yield;
-                        }
-
-                        return 'changeTerrain';
-                    },
-                };
-            }
-        }
 
         engine.actors.push(
             new Grid(),
@@ -154,21 +30,151 @@ export default function () {
             new BasicLighting(),
             new GroundPlane(),
             heightMap,
-            new Updater(),
-            new Updater()
+            new Updater(heightMap),
+            new Updater(heightMap)
         );
     }, []);
 
     return (
         <ReactEx.ReadingFrame>
+            <h1>Dynamic Terrain</h1>
             <EngineFrame
                 style={{ width: 960 }}
                 engine={engine}
                 recorder={'three'}
-                autoRecord={true}
+                autoRecord={false}
             />
         </ReactEx.ReadingFrame>
     );
+}
+
+function updatePosition(actor, dt) {
+    actor.velocity.addScaledVector(actor.acceleration, dt);
+    actor.position.addScaledVector(actor.velocity, dt);
+}
+
+function updateBoxCollision(actor, box) {
+    const dimensions = ['x', 'y', 'z'];
+    const epsilon = 1e-6;
+
+    for (let dim of dimensions) {
+        if (actor.position[dim] <= box.min[dim]) {
+            actor.position[dim] = box.min[dim] + epsilon;
+            actor.velocity[dim] = Math.abs(actor.velocity[dim]);
+        }
+        if (actor.position[dim] >= box.max[dim]) {
+            actor.position[dim] = box.max[dim] - epsilon;
+            actor.velocity[dim] = -Math.abs(actor.velocity[dim]);
+        }
+    }
+}
+
+class Updater {
+    constructor(heightMap) {
+        this._heightMap = heightMap;
+        this._rng = core.makeRNG();
+        this._heightFunc = null;
+
+        // Note: this actor acts in "heightmap segment space", not "world space". For example,
+        // the collider is set to the segment bounds, not the world heightmap bounds.
+        this._position = new THREE.Vector3(0, 0, 0);
+        this._velocity = new THREE.Vector3(0, 0, 0);
+        this._acceleration = new THREE.Vector3(0, 0, 0);
+
+        const S = this._heightMap.segments;
+        this._collider = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S));
+    }
+
+    get position() {
+        return this._position;
+    }
+    get velocity() {
+        return this._velocity;
+    }
+
+    get acceleration() {
+        return this._acceleration;
+    }
+
+    update() {
+        const rng = this._rng;
+
+        updatePosition(this, 1);
+        updateBoxCollision(this, this._collider);
+
+        const K = 0.25;
+        const MV = 2;
+        this._velocity.x += K * rng.range(-1, 1);
+        this._velocity.y += K * rng.range(-1, 1);
+        this._velocity.clampScalar(-MV, MV);
+    }
+
+    stateMachine() {
+        const rng = this._rng;
+
+        return {
+            _bind: this,
+            _start: function* () {
+                this._position.x = rng.range(0, this._heightMap.segments);
+                this._position.y = rng.range(0, this._heightMap.segments);
+                this._velocity.x = rng.sign() * rng.range(0.2, 2);
+                this._velocity.y = rng.sign() * rng.range(0.2, 2);
+
+                return 'changeTerrain';
+            },
+            changeTerrain: function* () {
+                const seed = rng.uint31();
+                this._heightFunc = terrain1(this._heightMap.segments, 0.65, seed);
+                return 'update';
+            },
+            update: function* () {
+                const D = 32;
+                const MAX_DIST = Math.sqrt(2 * D * D);
+                const heightMap = this._heightMap;
+
+                const frames = rng.rangei(10, 100);
+                for (let i = 0; i < frames; i++) {
+                    const centerSX = Math.floor(this._position.x);
+                    const centerSY = Math.floor(this._position.y);
+                    for (let sy = centerSY - D, lsy = -D; sy <= centerSY + D; lsy++, sy++) {
+                        for (let sx = centerSX - D, lsx = -D; sx <= centerSX + D; lsx++, sx++) {
+                            if (!heightMap.coordValidS(sx, sy)) {
+                                continue;
+                            }
+                            const [wx, wy] = heightMap.coordS2W(sx, sy);
+                            const wz = heightMap.getLayerSC('height', sx, sy);
+
+                            const tz = 512 * this._heightFunc(wx, wy);
+                            let dz = tz - wz;
+                            if (Math.abs(dz) < 1e-3) {
+                                continue;
+                            }
+                            dz /= 20;
+
+                            const normalizedDist = Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
+                            const k = 0.01;
+                            dz *= k + (1 - k) * (1.0 - normalizedDist);
+                            const nz = wz + dz;
+                            heightMap.setLayerWC('height', wx, wy, nz, false);
+                        }
+                    }
+
+                    const K = D + 1;
+                    for (let sy = centerSY - K; sy <= centerSY + K; sy++) {
+                        for (let sx = centerSX - K; sx <= centerSX + K; sx++) {
+                            if (!heightMap.coordValidS(sx, sy)) {
+                                continue;
+                            }
+                            heightMap.updateSegment(sx, sy);
+                        }
+                    }
+                    yield;
+                }
+
+                return 'changeTerrain';
+            },
+        };
+    }
 }
 
 function terrain1(size, heightScale, seed) {
@@ -191,19 +197,20 @@ function terrain1(size, heightScale, seed) {
     };
 }
 
-class Layer {}
-
 /**
  * Generates a unit terrain where, by default, it has size = 1 that covers the
  * area from 0,0 to 1,1 with `segments` number of quads covering that area.
  *
  * Changing `size` will internally scale the object to cover 0,0 to size, size.
  * The heightFunc will also be scaled by size.
+ *
+ * The "blocks" of the heightmap are referred to as segments.
  */
 export class HeightMap {
     // ------------------------------------------------------------------------
     // @group Construction
-    //
+    // ------------------------------------------------------------------------
+
     constructor({
         offset = [0, 0, 0],
         scale = 1.0,
@@ -215,8 +222,10 @@ export class HeightMap {
         this._scale = scale;
         this._segments = segments;
 
-        this._heights = new Float32Array(segments * segments);
-        this._heights.fill(0);
+        this._layers = {
+            height: new Float32Array(segments * segments),
+        };
+        this._layers.height.fill(0);
         this._colorFunc = colorFunc;
         this._heightFunc = heightFunc;
         this._mesh = null;
@@ -229,56 +238,82 @@ export class HeightMap {
                 const i = y * segments + x;
 
                 // Heights are "pre-scaled"
-                this._heights[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
+                this._layers.height[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
             }
         }
 
-        core.assert(this._heights.length === this._segments * this._segments);
+        core.assert(this._layers.height.length === this._segments * this._segments);
     }
 
     // ------------------------------------------------------------------------
-    // @group
-    //
+    // @Properites
+    // ------------------------------------------------------------------------
 
-    worldToSegmentPosition(wx, wy, p = {}) {
-        const s = this._segments / this._scale;
-        p.sx = Math.floor((wx - this._offset[0]) * s);
-        p.sy = Math.floor((wy - this._offset[1]) * s);
-        p.valid = p.sx >= 0 && p.sx < this._segments && p.sy >= 0 && p.sy < this._segments;
-        p.index = p.sy * this._segments + p.sx;
-        return p;
+    get offset() {
+        return this._offset;
+    }
+    get scale() {
+        return this._scale;
     }
 
-    segToWorld(sx, sy) {
+    get segments() {
+        return this._segments;
+    }
+
+    // ------------------------------------------------------------------------
+    // @group Coordinate systems
+    // ------------------------------------------------------------------------
+
+    // World -> Segment
+    coordW2S(wx, wy) {
+        const s = this._segments / this._scale;
+        const sx = Math.floor((wx - this._offset[0]) * s);
+        const sy = Math.floor((wy - this._offset[1]) * s);
+        if (sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments) {
+            return [sx, sy, sy * this._segments + sx];
+        }
+        return [-1, -1, -1];
+    }
+
+    coordS2W(sx, sy) {
         const wx = ((sx + 0.5) * this._scale) / this._segments + this._offset[0];
         const wy = ((sy + 0.5) * this._scale) / this._segments + this._offset[1];
         return [wx, wy];
     }
-
-    heightAt(wx, wy) {
-        const { index, valid } = this.worldToSegmentPosition(wx, wy);
-        if (!valid) {
-            return -Infinity;
-        }
-        return this._heights[index];
-    }
-
-    validSegment(sx, sy) {
+    coordValidS(sx, sy) {
         return sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments;
     }
 
-    heightAtSegment(sx, sy) {
-        const i = sy * this._segments + sx;
-        return this._heights[i];
+    // ------------------------------------------------------------------------
+    // @group Layer manipulation
+    // ------------------------------------------------------------------------
+
+    getLayerWC(layerName, wx, wy) {
+        const [sx, sy] = this.coordW2S(wx, wy);
+        return this.getLayerSC(layerName, sx, sy);
     }
 
-    setHeightAt(wx, wy, wz, updateMesh = true) {
-        const { sx, sy, index, valid } = this.worldToSegmentPosition(wx, wy);
-        if (!valid) {
-            return -Infinity;
-        }
-        this._heights[index] = wz;
+    setLayerWC(layerName, wx, wy, value, updateMesh = true) {
+        const [sx, sy] = this.coordW2S(wx, wy);
+        this.setLayerSC(layerName, sx, sy, value, updateMesh);
+    }
 
+    getLayerSC(layerName, sx, sy) {
+        const i = sy * this._segments + sx;
+        return this._layers[layerName][i];
+    }
+
+    setLayerSC(layerName, sx, sy, value, updateMesh = true) {
+        const index = sy * this._segments + sx;
+        if (index === -1) {
+            return;
+        }
+        this._layers[layerName][index] = value;
+
+        // The quads to the side of each segment depend on the height of the neighbor,
+        // so the neighbors need to be updated as well. Thus, is a large region is being
+        // updated, it likely is more efficient to make all changes then update the
+        // region rather than updating segment by segment.
         if (updateMesh) {
             for (let y = sy - 1; y <= sy + 1; y++) {
                 for (let x = sx - 1; x <= sx + 1; x++) {
@@ -289,6 +324,10 @@ export class HeightMap {
             }
         }
     }
+
+    // ------------------------------------------------------------------------
+    // @group Mesh
+    //
 
     updateSegment(sx, sy) {
         this._recomputeVertexAttrs(sx, sy, false);
@@ -302,10 +341,6 @@ export class HeightMap {
             }
         }
     }
-
-    // ------------------------------------------------------------------------
-    // @group Life Cycle
-    //
 
     mesh({ engine }) {
         const segs = this._segments;
@@ -373,7 +408,7 @@ export class HeightMap {
         const i = sy * segments + sx;
         console.assert(i >= 0 && i < segments * segments, 'Index out of range');
 
-        const height = this._heights[i];
+        const heights = this._layers.height;
         const indexAttr = this._mesh.geometry.index;
         const indexArr = indexAttr.array;
         const positionAttr = this._mesh.geometry.attributes.position;
@@ -429,14 +464,14 @@ export class HeightMap {
             }
         }
 
-        const color = this._colorFunc(sx, sy, height);
+        const color = this._colorFunc(sx, sy, heights[i]);
         const scale0 = this._scale / this._segments;
 
         const x0 = sx * scale0;
         const x1 = (sx + 1) * scale0;
         const y0 = sy * scale0;
         const y1 = (sy + 1) * scale0;
-        let [z0, z1] = [0, height];
+        let [z0, z1] = [0, heights[i]];
 
         //
         // 5 Faces with 4 vertices of 3 components for each height tile
@@ -458,7 +493,7 @@ export class HeightMap {
             1.0
         );
 
-        [z0, z1] = sort2(sx > 0 ? this._heights[i - 1] : 0, height);
+        [z0, z1] = sort2(sx > 0 ? heights[i - 1] : 0, heights[i]);
         quad(
             vi + 12,
             fi + 6,
@@ -471,7 +506,7 @@ export class HeightMap {
             0.9
         );
 
-        [z0, z1] = sort2(sx + 1 < segments ? this._heights[i + 1] : 0, height);
+        [z0, z1] = sort2(sx + 1 < segments ? heights[i + 1] : 0, heights[i]);
         quad(
             vi + 24,
             fi + 12,
@@ -484,7 +519,7 @@ export class HeightMap {
             0.9
         );
 
-        [z0, z1] = sort2(sy > 0 ? this._heights[i - segments] : 0, height);
+        [z0, z1] = sort2(sy > 0 ? heights[i - segments] : 0, heights[i]);
         quad(
             vi + 3 * 12,
             fi + 3 * 6,
@@ -497,7 +532,7 @@ export class HeightMap {
             0.8
         );
 
-        [z0, z1] = sort2(sy + 1 < segments ? this._heights[i + segments] : 0, height);
+        [z0, z1] = sort2(sy + 1 < segments ? heights[i + segments] : 0, heights[i]);
         quad(
             vi + 4 * 12,
             fi + 4 * 6,
