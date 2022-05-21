@@ -122,21 +122,21 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022.05
 
 -   Week 20
-    - [x] 🗃️ Clean up HeightMap actor for general reuse
-    - [x] 🧬 Add dynamic terrain updating example
-    - [x] ➕ Incorporate StateMachine into engine Actor handling
-    -   [x] 🛠️ Fix watch cfor `..` imports in sea-jsx
-    -   [x] 🛠️ Fix `clean` command in sea-jsx
-    -   [x] ➕ Add formatNumber to core
-    -   [x] ➕ Add EngineRecorder (webm capture) component to engine
-    -   [x] ➕ Add Flex component to react-ex
-    -   [x] ➕ Add source map to sea-jsx
-    -   [x] ➕ Improve sea-jsx error handling
-    -   [x] ➕ Add simplex noise to core
-    -   [x] 🧬 Start sea-jsx v0.3.0
+    -   [x] 🗃️ Clean up HeightMap actor for general reuse
+    -   [x] 🧬 Add dynamic terrain updating example
+    -   [x] ➕ Incorporate StateMachine into `@raiment/engine` Actor handling
+    -   [x] 🛠️ Fix watch for `..` imports in `sea-jsx`
+    -   [x] 🛠️ Fix `clean` command in `sea-jsx`
+    -   [x] ➕ Add formatNumber to `@raiment/core`
+    -   [x] ➕ Add EngineRecorder (webm capture) component to `@raiment/engine`
+    -   [x] ➕ Add Flex component to `@raiment/react-ex`
+    -   [x] ➕ Add source map to `sea-jsx`
+    -   [x] ➕ Improve `sea-jsx` error handling
+    -   [x] ➕ Add simplex noise to `@raiment/core`
+    -   [x] 🧬 Start `sea-jsx` v0.3.0
     -   [x] ➕ Update rcd to chdir to exact matches
     -   [x] ➕ Add seed, reset, shuffle to RNG
-    -   [x] 📚 initial stab at some @raiment/core docs
+    -   [x] 📚 initial stab at some `@raiment/core` docs
     -   [x] 🧬 Experiment kicking off [website project](source/projects/website)
     -   [x] 📚 Update [tools page](source/projects/organization/tools.md)
 -   Week 19
