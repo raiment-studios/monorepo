@@ -115,8 +115,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### TODO (next)
 
 -   [ ] 📚 Improve game design doc for adventure project
--   [ ] ➕ sea-jsx: `--target` for local files for build
--   [ ] ➕ Terrain example for engine
+-   [ ] ➕ Add rivers to terrain
 -   [x] ➕🗃️🛠️📣🧬📚
 
 #### 2022.05
