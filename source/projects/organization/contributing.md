@@ -1,26 +1,22 @@
 # Contributing
 
-![](https://img.shields.io/badge/status-not%20ready-930) 
-![](https://img.shields.io/badge/version-v0.1.0-930)
 [![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
 
 **⚠️ Warning: this project is not yet ready for contributions as more groundwork needs to be done to make it easy to help.**
 
-## General
+## Supported Workflow
 
-This project attempts to make GitHub codespaces a trivial way to make contributsions to the project.
+The supported workflow is to use GitHub Codespaces so that there is a normalized, easy to replicate development environment. The development environment is in a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). 
 
-## Environment
-
-To reduce the amount of time spent on environment and tooling setup, the "officially" supported development environment is to work with the monorepo from a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). 
+The project uses the "monorepo" approach to development.
 
 ## Directory structure
 
-* `deploy` - publishing & deploying
+* `deploy` - files related to publishing & deploying
 * `source`
-    * `projects`
-    * `lib`
-    * `sandbox`
+    * `projects` - main, continually developed projects
+    * `lib` - reusable libraries of code
+    * `sandbox` - prototypes, experiments, and one-off code
 
 ## Type of contributions
 

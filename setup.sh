@@ -18,16 +18,16 @@ export MONOREPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &
 # Set this both for consistency and to avoid warnings
 git config pull.rebase false
 
-# Get rid of unreadable green background from ls
+# Remove the green background from ls that makes difficult to read
 # https://stackoverflow.com/questions/40574819/how-to-remove-dir-background-in-ls-color-output
 dircolors -p | sed 's/;42/;01/' > ~/.dircolors
 
 # Ensure rust is set up
 source $HOME/.cargo/env
 
-# This is probably *NOT* a best practice, but I always forget to pull the lfs
-# data when starting a new environment and this hasn't had any negative side-effects
-# on my workflow yet.
+# This is probably *NOT* a best practice, but to avoid forgetting to pull the lfs
+# data when starting a new environment, just always do this. This hasn't had any 
+# negative side-effects on the workflow yet.
 git lfs install
 git lfs fetch
 git lfs pull
@@ -85,8 +85,7 @@ make -C source/projects/sea/apps/sea-jsx publish-local
 # Aliases and short-cuts
 # -----------------------------------------------------------------------------
 
-
-# rc = Raiment Change Directory
+# rcd = Raiment Change Directory
 # an alias to make jumping between directories easier.
 function rcd {
     case "$1" in
@@ -100,10 +99,11 @@ function rcd {
 # ...since git status is used a lot!
 alias gs='git status'
 
-# gcap = git commit and pull from the root of the repo
+# gcap = git commit and push from the root of the repo
 #
 # This is a convenience for early, solo development (where reviews are not
-# yet taking place). This should be removed once the project is more stable.
+# yet taking place). This should be removed once the project is more stable
+# as it is very imprecise and encourages "message-less" commits.
 function gcap {
     local arg=$*
     local message="${arg:=update}"
@@ -120,7 +120,6 @@ function gcap {
 # -----------------------------------------------------------------------------
 
 __intro() {
-
     local RT_BLUE=$(echo -en '\x1b[38;2;60;130;192m')
     local RT_GRAY50=$(echo -en '\x1b[38;2;128;128;128m')
     local RT_PURPLE=$(echo -en '\x1b[38;2;98;95;241m')
