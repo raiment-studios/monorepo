@@ -37,12 +37,12 @@ Project work is categorized into the following:
     -   Novel series
     -   Short stories
 -   [**Adventure**](source/projects/adventure) - voxel-based, open-world adventure rpg
-    -   Release 0: [Storytelling](source/projects/adventure/00-storytelling) - computer-aided "pen & paper" storytelling procedural rpg
-    -   Release 1: [Graham's Quest](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
-    -   Release 2: [Snow Globe](source/projects/adventure/02-snow-globe/) - a single-region, "snow globe" voxel-based world
-    -   Release 3: [Rivia](source/projects/adventure/03-rivia/) - a 2.5D/3D voxel-based world
-    -   Release 4: [Jaskier's Tale](source/projects/adventure/04-jaskiers-tale/) - a fully dynamic 3D voxel-based world
-    -   Release 5: [Morgan Claire](source/projects/adventure/05-morgan-claire/) - distributed, multiplayer multiverse
+    -   Release 0: [**Storytelling**](source/projects/adventure/00-storytelling) - computer-aided "pen & paper" storytelling procedural rpg
+    -   Release 1: [**Graham's Quest**](source/projects/adventure/01-grahams-quest/) - a simple 2D implementation
+    -   Release 2: [**Snow Globe**](source/projects/adventure/02-snow-globe/) - a single-region, "snow globe" voxel-based world
+    -   Release 3: [**Rivia**](source/projects/adventure/03-rivia/) - a 2.5D/3D voxel-based world
+    -   Release 4: [**Jaskier's Tale**](source/projects/adventure/04-jaskiers-tale/) - a fully dynamic 3D voxel-based world
+    -   Release 5: [**Morgan Claire**](source/projects/adventure/05-morgan-claire/) - distributed, multiplayer multiverse
 -   **Libraries**
     -   [**Core**](source/lib/core) - general utilities used across projects
     -   [**Engine**](source/lib/engine) - the game engine tailored to Raiment's voxel world
@@ -52,7 +52,8 @@ Project work is categorized into the following:
     -   [**sea-jest**](source/projects/sea/apps/sea-jest) - wrapper on Jest to avoid config file clutter
     -   [**sea-todo**](source/projects/sea/apps/sea-todo) - example todo web app ([demo](https://todo.raiment.studio/))
     -   [**sea-raytracer**](source/projects/sea/apps/sea-raytracer) - example application
--   [**Website**](source/projects/website) - the [public website](https://raiment-studios.github.io/) and material designed to encourage participation
+-   [**Website**](source/projects/website)
+    - [**raiment-studios.github.io**](source/projects/website) - public website ([view](https://raiment-studios.github.io/))
 
 ## Technology / Architecture
 
@@ -107,6 +108,10 @@ SOFTWARE.
 ```
 
 Unless stated explicitly otherwise, any contribution intentionally submitted for inclusion in this repository or otherwise to the project shall be licensed as stated above without any additional terms or conditions.
+
+## ROADMAP
+
+![](https://us-central1-progress-markdown.cloudfunctions.net/progress/10)
 
 ## CHANGELOG
 

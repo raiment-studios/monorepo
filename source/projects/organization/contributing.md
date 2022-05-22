@@ -4,19 +4,16 @@
 
 [![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
 
-
-
 <!-- TOC -->
 
 - [Contributing](#contributing)
     - [Intellectual property, copyright, and legal matters](#intellectual-property-copyright-and-legal-matters)
-    - [Supported environment](#supported-environment)
+    - [Supported coding environment](#supported-coding-environment)
     - [Directory structure](#directory-structure)
     - [Development process](#development-process)
     - [Communication conventions](#communication-conventions)
         - [Emoji conventions](#emoji-conventions)
         - [Badge conventions](#badge-conventions)
-    - [Badges](#badges)
     - [Type of contributions](#type-of-contributions)
         - [Content](#content)
         - [Refinements](#refinements)
@@ -29,13 +26,13 @@
 
 ⚖️ TODO
 
-## Supported environment
+## Supported coding environment
 
 The supported workflow is to use GitHub Codespaces so that there is a normalized, easy to replicate development environment. The development environment is in a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). The devcontainer set up also ensures any common settings and plugins are unified across developers. Contributors are highly enouraged to use this approach to minimize setup discrepancies.
 
 ## Directory structure
 
-The project uses a ["monorepo"](https://en.wikipedia.org/wiki/Monorepo) approach to development.
+The project uses a ["monorepo"](https://en.wikipedia.org/wiki/Monorepo) approach to development.  [Git LFS](https://git-lfs.github.com/) is used as the storage mechanism for large and/or binary assets.
 
 * `deploy` - files related to publishing & deploying
 * `source`
@@ -68,8 +65,6 @@ Emojis are used as visual symbols in the project. As symbols, they can help conv
 * 🦕 Historical matter
 
 ### Badge conventions
-
-## Badges
 
 **_🚧 TODO: determine if these are used enough to require conventions_**
 
