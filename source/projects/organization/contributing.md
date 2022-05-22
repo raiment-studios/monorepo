@@ -9,8 +9,10 @@
 <!-- TOC -->
 
 - [Contributing](#contributing)
+    - [Intellectual property, copyright, and legal matters](#intellectual-property-copyright-and-legal-matters)
     - [Supported environment](#supported-environment)
     - [Directory structure](#directory-structure)
+    - [Development process](#development-process)
     - [Type of contributions](#type-of-contributions)
         - [Content](#content)
         - [Refinements](#refinements)
@@ -27,7 +29,6 @@
 
 The supported workflow is to use GitHub Codespaces so that there is a normalized, easy to replicate development environment. The development environment is in a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). The devcontainer set up also ensures any common settings and plugins are unified across developers. Contributors are highly enouraged to use this approach to minimize setup discrepancies.
 
-
 ## Directory structure
 
 The project uses a ["monorepo"](https://en.wikipedia.org/wiki/Monorepo) approach to development.
@@ -37,6 +38,10 @@ The project uses a ["monorepo"](https://en.wikipedia.org/wiki/Monorepo) approach
     * `projects` - main, continually developed projects
     * `lib` - reusable libraries of code
     * `sandbox` - prototypes, experiments, and one-off code
+
+## Development process
+
+🚧 TODO
 
 ## Type of contributions
 

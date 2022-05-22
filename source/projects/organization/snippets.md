@@ -21,9 +21,12 @@ Consistency helps with communication...
 * ⚠️ Warning
 * 🚫 Avoid
 * 🐉 Danger!
+* 🚧 TODO
 * 📣 Publication or release
 * 📚 Documentation, tutorials, or guides
 * ➕ New or improved functionality
 * 🧬 Experiments and sandboxes
 * 🛠️ Defect fix
 * 🗃️ Internal organization, code improvements, or architecture
+* ⚖️ Legal matter
+* 🦕 Historical matter

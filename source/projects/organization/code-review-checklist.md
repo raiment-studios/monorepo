@@ -1,4 +1,4 @@
-These should be automted linting processes, but are documented here
+Whenever possible these process should be automated, but nonetheless they are also documented here.
 
 #### Planning checklist
 
@@ -29,7 +29,5 @@ These should be automted linting processes, but are documented here
 #### Review checklist
 
 -   Filenames
-    -   [ ] Lowercase
-    -   [ ] Words separated by `_`
+    - Should be all lowercase for maximal system compatibility
 
-Rationale: greater compatibility for case-insensative systems. Consistency in naming conventions.

@@ -112,10 +112,6 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 ➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release, 🧬 for sandboxes or experiments, 📚 documentation, guides, or tutorials
 
-#### TODO (next)
-
--   [ ] 📚 Improve game design doc for adventure project
--   [ ] ➕ Add rivers to terrain
 -   [x] ➕🗃️🛠️📣🧬📚
 
 #### 2022.05
