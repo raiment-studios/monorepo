@@ -1,8 +1,10 @@
 # Contributing
 
+**⚠️ Warning: this project is not yet ready for contributions as more groundwork needs to be done to make it easy to participate.**
+
 [![](https://img.shields.io/badge/feedback-welcome!-1a1)](https://github.com/raiment-studios/monorepo/discussions)
 
-**⚠️ Warning: this project is not yet ready for contributions as more groundwork needs to be done to make it easy to help.**
+
 
 <!-- TOC -->
 
@@ -17,13 +19,18 @@
 
 <!-- /TOC -->
 
+## Intellectual property, copyright, and legal matters
+
+⚖️ TODO
+
 ## Supported environment
 
-The supported workflow is to use GitHub Codespaces so that there is a normalized, easy to replicate development environment. The development environment is in a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). 
+The supported workflow is to use GitHub Codespaces so that there is a normalized, easy to replicate development environment. The development environment is in a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). The devcontainer set up also ensures any common settings and plugins are unified across developers. Contributors are highly enouraged to use this approach to minimize setup discrepancies.
 
-The project uses the "monorepo" approach to development.
 
 ## Directory structure
+
+The project uses a ["monorepo"](https://en.wikipedia.org/wiki/Monorepo) approach to development.
 
 * `deploy` - files related to publishing & deploying
 * `source`
