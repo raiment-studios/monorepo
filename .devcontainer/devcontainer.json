@@ -31,9 +31,10 @@
         }
     },
     "extensions": [
-        "esbenp.prettier-vscode",
-        "ms-azuretools.vscode-docker",
-        "huntertran.auto-markdown-toc"
-    ],
+		"esbenp.prettier-vscode",
+		"ms-azuretools.vscode-docker",
+		"huntertran.auto-markdown-toc",
+		"bierner.emojisense"
+	],
     "remoteUser": "vscode"
 }
