@@ -161,6 +161,6 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
     -   [x] ➕ Add sea-jsx watch/refresh on all referenced user files
     -   [x] ➕ Add EventEmitter to @raiment/core
 
-#### Before that
+#### Before that...
 
-    -   [_Prehistory_](https://en.wikipedia.org/wiki/Prehistory)
+-   [x] 🦕 [_Prehistory_](https://en.wikipedia.org/wiki/Prehistory)
