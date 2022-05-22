@@ -1,7 +1,7 @@
 {
     "type": "module",
     "dependencies": {
-        "@raiment/core": "^0.1.1",
+        "@raiment/core": "*",
         "@raiment/react-ex": "*",
         "firebase": "^9.6.8",
         "glob": "^7.2.0",
