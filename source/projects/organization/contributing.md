@@ -4,7 +4,20 @@
 
 **⚠️ Warning: this project is not yet ready for contributions as more groundwork needs to be done to make it easy to help.**
 
-## Supported Workflow
+<!-- TOC -->
+
+- [Contributing](#contributing)
+    - [Supported environment](#supported-environment)
+    - [Directory structure](#directory-structure)
+    - [Type of contributions](#type-of-contributions)
+        - [Content](#content)
+        - [Refinements](#refinements)
+        - [Features](#features)
+        - [Gardening](#gardening)
+
+<!-- /TOC -->
+
+## Supported environment
 
 The supported workflow is to use GitHub Codespaces so that there is a normalized, easy to replicate development environment. The development environment is in a Ubuntu-based container as defined by the devcontainer [`Dockerfile`](../../../.devcontainer/Dockerfile). 
 
