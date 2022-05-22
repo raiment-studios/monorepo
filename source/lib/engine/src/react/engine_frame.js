@@ -10,6 +10,7 @@ export function EngineFrame({
     actors = [],
     recorder = null,
     autoRecord = false,
+    recorderDuration = undefined,
     style = {},
 }) {
     const refElem = React.useRef(null);
@@ -40,7 +41,12 @@ export function EngineFrame({
                 }}
             />
             {recorder && (
-                <EngineRecorder engine={engine} rendererName={recorder} autoStart={autoRecord} />
+                <EngineRecorder
+                    engine={engine}
+                    rendererName={recorder}
+                    autoStart={autoRecord}
+                    duration={recorderDuration}
+                />
             )}
         </>
     );

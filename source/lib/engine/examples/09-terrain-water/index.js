@@ -33,14 +33,36 @@ export default function () {
             },
         });
 
+        const heightMap2 = new HeightMap({
+            offset: [-256 / 2, -256 / 2, 0],
+            scale: 256,
+            segments: 256,
+            opacity: 0.65,
+            heightFunc: () => 0.0005,
+            colorFunc: (x, y) => {
+                const rgb = [46 / 255, 150 / 255, 227 / 255];
+                const a = (1 + simplex3.noise2D(x, y)) / 2;
+                const b = (1 + simplex2.noise2D(x / 100, y / 100)) / 2;
+                const t = 0.5 * b + 0.5;
+                const s = t + a * (1 - t);
+                return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
+            },
+        });
+
         engine.actors.push(
             new Grid(),
             new OrbitCamera({ radius: 96 }), //
             new BasicLighting(),
             new GroundPlane(),
             heightMap,
+            heightMap2,
             new Updater(heightMap),
-            new Updater(heightMap)
+            new Updater(heightMap),
+            new Updater(heightMap2, { heightScale: 128 }),
+            new Updater(heightMap2, { heightScale: 22 }),
+            new Updater(heightMap, {
+                makeHeightFunc: () => () => 0.0,
+            })
         );
     }, []);
 
@@ -58,10 +80,12 @@ export default function () {
 }
 
 class Updater {
-    constructor(heightMap) {
+    constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
         this._heightMap = heightMap;
         this._rng = core.makeRNG();
         this._heightFunc = null;
+        this._makeHeightFunc = makeHeightFunc;
+        this._heightScale = heightScale;
 
         // Note: this actor acts in "heightmap segment space", not "world space". For example,
         // the collider is set to the segment bounds, not the world heightmap bounds.
@@ -111,8 +135,12 @@ class Updater {
                 return 'changeTerrain';
             },
             changeTerrain: function* () {
-                const seed = rng.uint31();
-                this._heightFunc = terrain1(this._heightMap.segments, 0.65, seed);
+                if (this._makeHeightFunc) {
+                    this._heightFunc = this._makeHeightFunc({ heightMap: this._heightMap });
+                } else {
+                    const seed = rng.uint31();
+                    this._heightFunc = terrain1(this._heightMap.segments, 0.65, seed);
+                }
                 return 'update';
             },
             update: function* () {
@@ -132,7 +160,7 @@ class Updater {
                             const [wx, wy] = heightMap.coordS2W(sx, sy);
                             const wz = heightMap.getLayerSC('height', sx, sy);
 
-                            const tz = 512 * this._heightFunc(wx, wy);
+                            const tz = this._heightScale * this._heightFunc(wx, wy);
                             let dz = tz - wz;
                             if (Math.abs(dz) < 1e-3) {
                                 continue;

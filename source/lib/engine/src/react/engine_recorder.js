@@ -40,7 +40,7 @@ export function EngineRecorder({
         });
     }
 
-    const handleRecord = async () => {
+    const handleRecord = async (duration) => {
         const start = Date.now();
 
         setRecording({ active: true, ready: false, dataURI: null, countdown: duration });
@@ -79,11 +79,27 @@ export function EngineRecorder({
                         width: '8rem',
                     }}
                     disabled={recording.active}
-                    onClick={handleRecord}
+                    onClick={() => handleRecord(duration)}
                 >
                     {recording.active
                         ? `Recording (${Math.floor(recording.countdown / 1000)})...`
                         : 'Record'}
+                </button>
+                <div style={{ width: '.25rem' }} />
+                <button disabled={recording.active} onClick={() => handleRecord(8000)}>
+                    8
+                </button>
+                <div style={{ width: '.25rem' }} />
+                <button disabled={recording.active} onClick={() => handleRecord(12000)}>
+                    12
+                </button>
+                <div style={{ width: '.25rem' }} />
+                <button disabled={recording.active} onClick={() => handleRecord(30000)}>
+                    30
+                </button>
+                <div style={{ width: '.25rem' }} />
+                <button disabled={recording.active} onClick={() => handleRecord(60000)}>
+                    60
                 </button>
                 <div style={{ width: '1rem' }} />
                 <div>

@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import * as core from '@raiment/core';
 
 /**
@@ -20,10 +21,12 @@ export class HeightMap {
         segments = 16,
         heightFunc = null,
         colorFunc = (x, y, u, v) => [1, 0, 0.5],
+        opacity = 1.0,
     } = {}) {
         this._offset = offset;
         this._scale = scale;
         this._segments = segments;
+        this._opacity = opacity;
 
         this._layers = {
             height: new Float32Array(segments * segments),
@@ -163,11 +166,17 @@ export class HeightMap {
         geometry.computeBoundingBox();
 
         // Add normals so this can be a phong material and lights can be used
-        let material = new THREE.MeshPhongMaterial({
+        //
+        const materialOptions = {
             color: 0xffffff,
             shininess: 10,
             //side: THREE.DoubleSide,
-        });
+        };
+        if (this._opacity < 1.0) {
+            materialOptions.opacity = this._opacity;
+            materialOptions.transparent = true;
+        }
+        let material = new THREE.MeshPhongMaterial(materialOptions);
 
         this._mesh = new THREE.Mesh(geometry, material);
         this._mesh.position.set(...this._offset);
@@ -306,7 +315,7 @@ export class HeightMap {
             [x0, y1, z0], //
             [-1, 0, 0],
             color,
-            0.9
+            0.95
         );
 
         [z0, z1] = sort2(sx + 1 < segments ? heights[i + 1] : 0, heights[i]);
@@ -319,7 +328,7 @@ export class HeightMap {
             [x1, y0, z1], //
             [1, 0, 0],
             color,
-            0.9
+            0.95
         );
 
         [z0, z1] = sort2(sy > 0 ? heights[i - segments] : 0, heights[i]);
@@ -332,7 +341,7 @@ export class HeightMap {
             [x0, y0, z1], //
             [-1, 0, 0],
             color,
-            0.8
+            0.9
         );
 
         [z0, z1] = sort2(sy + 1 < segments ? heights[i + segments] : 0, heights[i]);
@@ -345,7 +354,7 @@ export class HeightMap {
             [x1, y1, z0], //
             [0, 1, 0],
             color,
-            0.8
+            0.9
         );
 
         positionAttr.needsUpdate = true;
