@@ -39,7 +39,6 @@ function Img({ src, scale = 6 }) {
             if (!token.active) {
                 return;
             }
-            console.log(img, img.width, img.height, img.src);
             setImage(img);
         };
         img.src = src;
