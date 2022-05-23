@@ -152,14 +152,14 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
     -   [x] 🗃️ Remove npm tgz packaging build and file:// references from projects
     -   [x] ➕ Add "remember last file" to sea-todo
     -   [x] ➕ `sea-jsx --build` now creates a single index.html with inlined JS
-    -   [x] 📣 sea-todo publishes to todo.raiment.studio
+    -   [x] 📣 `sea-todo` publishes to todo.raiment.studio
 -   Week 17
     -   [x] 🗃️ Simplify publishing npm packages (using Codespace secrets)
-    -   [x] 📚 Created CHANGELOG.md
+    -   [x] 📚 Created `CHANGELOG.md`
     -   [x] 🛠️ Fix automated builds to workaround package-lock.json not liking tgz changes
-    -   [x] 🗃️ Organize / improve sea-todo database code
-    -   [x] ➕ Add sea-jsx watch/refresh on all referenced user files
-    -   [x] ➕ Add EventEmitter to @raiment/core
+    -   [x] 🗃️ Organize / improve `sea-todo` database code
+    -   [x] ➕ Add `sea-jsx` watch/refresh on all referenced user files
+    -   [x] ➕ Add EventEmitter to `@raiment/core`
 
 #### Before that...
 
