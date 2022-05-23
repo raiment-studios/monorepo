@@ -118,7 +118,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022
 
 -   Week 21
-    -   [x] 🧬 Experiment with how to handle external assets in `sea-jsx`
+    -   [x] 🧬 Experiment with `glob:` imports for external assets in `sea-jsx`
 -   Week 20
     -   [x] 🗃️ Clean up HeightMap actor for general reuse
     -   [x] 🧬 Add dynamic terrain updating example
