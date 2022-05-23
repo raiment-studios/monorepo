@@ -115,7 +115,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 -   [x] ➕🗃️🛠️📣🧬📚
 
-#### 2022.05
+#### 2022
 
 -   Week 21
     -   [x] 🧬 Experiment with how to handle external assets in `sea-jsx`
@@ -153,9 +153,6 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
     -   [x] ➕ Add "remember last file" to sea-todo
     -   [x] ➕ `sea-jsx --build` now creates a single index.html with inlined JS
     -   [x] 📣 sea-todo publishes to todo.raiment.studio
-
-#### 2022.04
-
 -   Week 17
     -   [x] 🗃️ Simplify publishing npm packages (using Codespace secrets)
     -   [x] 📚 Created CHANGELOG.md
