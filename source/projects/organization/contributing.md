@@ -6,24 +6,32 @@
 
 <!-- TOC -->
 
--   [Contributing](#contributing)
-    -   [Intellectual property, copyright, and legal matters](#intellectual-property-copyright-and-legal-matters)
-    -   [Supported coding environment](#supported-coding-environment)
-    -   [Directory structure](#directory-structure)
-    -   [Development process](#development-process)
-        -   [Build conventions](#build-conventions)
-    -   [Communication conventions](#communication-conventions)
-        -   [Emoji conventions](#emoji-conventions)
-        -   [Badge conventions](#badge-conventions)
-    -   [Type of contributions](#type-of-contributions)
-        -   [Content](#content)
-        -   [Refinements](#refinements)
-        -   [Features](#features)
-        -   [Gardening](#gardening)
+- [Contributing](#contributing)
+    - [Overview](#overview)
+    - [Legal frontmatter](#legal-frontmatter)
+        - [Intellectual property, copyright, and legal matters](#intellectual-property-copyright-and-legal-matters)
+    - [Supported coding environment](#supported-coding-environment)
+    - [Directory structure](#directory-structure)
+    - [Development process](#development-process)
+        - [Build conventions](#build-conventions)
+    - [Communication conventions](#communication-conventions)
+        - [Emoji conventions](#emoji-conventions)
+        - [Badge conventions](#badge-conventions)
+    - [Type of contributions](#type-of-contributions)
+        - [Content](#content)
+        - [Refinements](#refinements)
+        - [Features](#features)
+        - [Gardening](#gardening)
 
 <!-- /TOC -->
 
-## Intellectual property, copyright, and legal matters
+## Overview
+
+🚧 TODO
+
+## Legal frontmatter
+
+### Intellectual property, copyright, and legal matters
 
 ⚖️ TODO
 
