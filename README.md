@@ -53,7 +53,7 @@ Project work is categorized into the following:
     -   [**sea-todo**](source/projects/sea/apps/sea-todo) - example todo web app ([demo](https://todo.raiment.studio/))
     -   [**sea-raytracer**](source/projects/sea/apps/sea-raytracer) - example application
 -   [**Website**](source/projects/website)
-    - [**raiment-studios.github.io**](source/projects/website) - public website ([view](https://raiment-studios.github.io/))
+    -   [**raiment-studios.github.io**](source/projects/website) - public website ([view](https://raiment-studios.github.io/))
 
 ## Technology / Architecture
 
@@ -109,10 +109,6 @@ SOFTWARE.
 
 Unless stated explicitly otherwise, any contribution intentionally submitted for inclusion in this repository or otherwise to the project shall be licensed as stated above without any additional terms or conditions.
 
-## ROADMAP
-
-![](https://us-central1-progress-markdown.cloudfunctions.net/progress/10)
-
 ## CHANGELOG
 
 ➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release, 🧬 for sandboxes or experiments, 📚 documentation, guides, or tutorials
@@ -121,6 +117,8 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### 2022.05
 
+-   Week 21
+    -   [x] 🧬 Experiment with how to handle external assets in `sea-jsx`
 -   Week 20
     -   [x] 🗃️ Clean up HeightMap actor for general reuse
     -   [x] 🧬 Add dynamic terrain updating example
