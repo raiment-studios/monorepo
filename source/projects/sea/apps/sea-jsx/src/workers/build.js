@@ -398,7 +398,7 @@ function registerGlobPlugin(build, workingDir, references) {
         const base = path.normalize(args.importer ? path.dirname(args.importer) : workingDir);
         const pattern = args.path.replace('glob:', '');
         const results = await new Promise((resolve, reject) => {
-            glob(pattern, (err, results) => {
+            glob(pattern, { cwd: base }, (err, results) => {
                 if (err) {
                     return reject(err);
                 }
