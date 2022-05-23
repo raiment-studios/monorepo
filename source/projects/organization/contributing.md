@@ -8,7 +8,7 @@
 
 - [Contributing](#contributing)
     - [Overview](#overview)
-    - [Legal frontmatter](#legal-frontmatter)
+    - [Legal front matter](#legal-front-matter)
         - [Intellectual property, copyright, and legal matters](#intellectual-property-copyright-and-legal-matters)
     - [Supported coding environment](#supported-coding-environment)
     - [Directory structure](#directory-structure)
@@ -29,7 +29,9 @@
 
 🚧 TODO
 
-## Legal frontmatter
+## Legal front matter
+
+This is the basic legal framework to ensure contributors' work is dealt with fairly and appropriately.
 
 ### Intellectual property, copyright, and legal matters
 
