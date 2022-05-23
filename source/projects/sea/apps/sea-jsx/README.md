@@ -168,11 +168,13 @@ A future direction is to create a target types of Markdown and extended Markdown
 
 ## FAQ
 
+### Product
+
 #### What are some of the reasons to use `sea-jsx`?
 
 It's easy to run `sea-jsx` and iterate on small, quick React prototypes.
 
-`sea-jsx` is simple, fast, and doesn't lock you into any non-standard structures or configurations. If the prototype works, the JSX code is fully "standard" so it's easy to move or incorporate the code into tooling designed for larger projects.  It's a great way to get started on fledgling ideas.
+`sea-jsx` is simple, fast, and doesn't lock you into any non-standard structures or configurations. If the prototype works, the JSX code is fully "standard" so it's easy to move or incorporate the code into tooling designed for larger projects. It's a great way to get started on fledgling ideas.
 
 #### How does `sea-jsx` compare to, say, [Next.js](https://nextjs.org/)?
 
@@ -191,3 +193,7 @@ React.useEffect(() => {
     document.title = 'My personal homepage (under construction!)';
 });
 ```
+
+#### Does sea-jsx prioritize convenience over robustness and security?
+
+Yes. `sea-jsx` is designed to be development tool which is presumed to be used in a secure development environment. Production deployment is outside the intended scope of `sea-jsx`'s design

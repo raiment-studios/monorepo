@@ -66,7 +66,7 @@ export class SeaJSX {
             output,
             buildID: 0,
         };
-        await startServer(this, { port: options.port, content });
+        await startServer(this, { port: options.port, filename, content });
         await watchLoop(this, {
             filename,
             watchList: watches,
