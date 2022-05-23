@@ -10,17 +10,19 @@ A single region voxel game where the adventure plays out in a limited space that
 
 ## Vision
 
-🚧 TODO
+A short, but fully finished game set in the world of Kestrel. Confined to a 256x256 voxel location, as the game progresses, that [location modifies itself](https://twitter.com/RidleyWinters/status/1528219337659600896). The sequence of events is fairly linear.
 
 ## Roadmap
 
 ### 🏁 v1.0 Checkpoints
 
 -   [ ] Basic functionality
-    -   [ ] "Press release" in advance
+    -   [ ] ["Press release" in advance](https://www.productplan.com/glossary/working-backward-amazon-method/)
     -   [ ] Basic storyline
     -   [ ] Character sprite
     -   [ ] NPCs
+    -   [ ] Castle sprite
+    -   [ ] Basic UI dialogs
     -   [ ] Music
     -   [ ] Ambient sound
     -   [ ] Menu screen

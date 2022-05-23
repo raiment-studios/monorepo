@@ -25,7 +25,7 @@
         },
         "[markdown]": {
             "editor.quickSuggestions": false,
-            "editor.formatOnSave": false,
+            "editor.formatOnSave": true,
             "editor.wordWrap": "wordWrapColumn",
             "editor.wordWrapColumn": 80
         }
