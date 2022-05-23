@@ -9,3 +9,4 @@ engine:
     - 07-blocks
     - 08-noise
     - 09-terrain-water
+    - 10-sprite
