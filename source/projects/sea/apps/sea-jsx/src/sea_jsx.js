@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
+import sh from 'shelljs';
 import { watchLoop } from './workers/watch.js';
 import { startServer } from './workers/server.js';
 import { build } from './workers/build.js';
@@ -81,16 +82,31 @@ export class SeaJSX {
         await this._ready;
 
         this.print(`Building {{obj ${options.filename}}}`);
-        const { output } = await build(this, { filename: options.filename, production: true });
+        const { output, references } = await build(this, {
+            filename: options.filename,
+            production: true,
+        });
 
         const text = (await this.asset('production/index.html'))
             .toString()
             .replace('{{client-source}}', output);
 
         // TODO: if target is a GitHub pages site, deploy there
+        const workingDir = path.dirname(options.filename);
+        const distDir = path.dirname(options.target);
+
         const size = Math.floor(text.length / 1024);
         this.print(`Writing {{loc ${size}k}} characters to {{obj ${options.target}}}`);
+        sh.mkdir('-p', distDir);
         await fs.writeFile(options.target, text);
+
+        // Referenced files / assets?
+        for (let ref of references) {
+            const referenceFile = path.join(distDir, ref);
+            this.print(`Copying {{obj ${ref}}}`);
+            sh.mkdir('-p', path.dirname(referenceFile));
+            sh.cp(path.join(workingDir, ref), referenceFile);
+        }
     }
 
     async publish(options) {

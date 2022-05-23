@@ -1,5 +1,6 @@
 import React from 'react';
 import { ReadingFrame, useAsyncEffect } from '@raiment/react-ex';
+import assets from 'glob:**/*{.png,*.asset.yaml}';
 
 export default function () {
     const [data, setData] = React.useState('');
@@ -22,6 +23,9 @@ export default function () {
                 <div style={{ flex: '1 0 0' }} />
                 <Img src="kestrel.png" />
                 <div style={{ flex: '1 0 0' }} />
+            </div>
+            <div>
+                <pre>{JSON.stringify(assets, null, 4)}</pre>
             </div>
             <div>
                 <pre>{data}</pre>

@@ -7,6 +7,7 @@ import yaml from 'yaml';
 import { generateRandomID } from '../util/util.js';
 import { parseFrontMatter } from './parse_front_matter.js';
 import { parseYAML } from '@raiment/core';
+import glob from 'glob';
 
 /**
  * Compiles the user-specified input file along with necessary bootstraping.
@@ -74,12 +75,14 @@ export async function build(
     const watches = {
         [path.relative(process.cwd(), filename)]: (await fs.stat(filename)).mtime,
     };
+    const references = {};
 
     const plugin = createPlugin(app, {
         frontmatter,
         builtinFiles,
         workingDir,
         watches,
+        references,
     });
 
     const options = {
@@ -128,10 +131,13 @@ export async function build(
         output = text;
     }
 
+    app.print(`Captured {{loc ${Object.keys(references).length}}} file references.`);
+
     return {
         output,
         buildID,
         watches,
+        references: Object.keys(references),
     };
 }
 
@@ -144,7 +150,7 @@ async function canRead(s) {
     }
 }
 
-function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches }) {
+function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, references }) {
     return {
         name: 'sea-jsx',
         setup: function (build) {
@@ -327,27 +333,8 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches }) {
                 return { path: result.path, namespace: result.namespace, external: false };
             };
 
-            build.onResolve({ filter: /^yaml:.*/ }, async (args) => {
-                return {
-                    namespace: 'yaml',
-                    path: args.path,
-                };
-            });
-
-            build.onLoad({ filter: /^yaml:.*/, namespace: 'yaml' }, async (args) => {
-                const fpath = path.normalize(
-                    path.join(
-                        args.importer ? path.dirname(args.importer) : workingDir,
-                        args.path.replace('yaml:', '')
-                    )
-                );
-                const buffer = await fs.readFile(fpath, 'utf8');
-                const obj = parseYAML(buffer);
-                return {
-                    contents: JSON.stringify(obj),
-                    loader: 'json',
-                };
-            });
+            registerYAMLPlugin(build, workingDir);
+            registerGlobPlugin(build, workingDir, references);
 
             build.onResolve({ filter: /^\.\.?\/?.*/ }, resolveRelative);
             build.onResolve({ filter: /^[^\.]/ }, resolvePackage);
@@ -373,4 +360,60 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches }) {
             });
         },
     };
+}
+
+function registerYAMLPlugin(build, workingDir) {
+    build.onResolve({ filter: /^yaml:.*/ }, async (args) => {
+        return {
+            namespace: 'yaml',
+            path: args.path,
+        };
+    });
+
+    build.onLoad({ filter: /^yaml:.*/, namespace: 'yaml' }, async (args) => {
+        const fpath = path.normalize(
+            path.join(
+                args.importer ? path.dirname(args.importer) : workingDir,
+                args.path.replace('yaml:', '')
+            )
+        );
+        const buffer = await fs.readFile(fpath, 'utf8');
+        const obj = parseYAML(buffer);
+        return {
+            contents: JSON.stringify(obj),
+            loader: 'json',
+        };
+    });
+}
+
+function registerGlobPlugin(build, workingDir, references) {
+    build.onResolve({ filter: /^glob:.*/ }, async (args) => {
+        return {
+            namespace: 'glob',
+            path: args.path,
+        };
+    });
+
+    build.onLoad({ filter: /^glob:.*/, namespace: 'glob' }, async (args) => {
+        const base = path.normalize(args.importer ? path.dirname(args.importer) : workingDir);
+        const pattern = args.path.replace('glob:', '');
+        const results = await new Promise((resolve, reject) => {
+            glob(pattern, (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(results);
+            });
+        });
+
+        // Record and dedup
+        for (let r of results) {
+            references[r] = true;
+        }
+
+        return {
+            contents: JSON.stringify({ matches: results.map((s) => ({ url: s })) }),
+            loader: 'json',
+        };
+    });
 }

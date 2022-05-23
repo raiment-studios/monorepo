@@ -99,6 +99,35 @@ Options:
       --help       Show help                                           [boolean]
 ```
 
+### Special-case imports
+
+As a general design principle, `sea-jsx` is not "plug-in based" and avoids non-standard behavior, but a few special import patterns are allowed due to the convenience they provide in rapid prototyping:
+
+#### `yaml:<filepath>`
+
+Parses the file at the given path as YAML and imports it as a JavaScript object.
+
+The intended use case is for content and configuration that is more easily expressed as YAML than raw JavaScript.
+
+#### `glob:<pattern>`
+
+Returns an array of objects, with one object per matching local file. The object format is:
+
+```json
+{
+    "url" : "<url path relative to the running sea-jsx server>"
+}
+```
+
+Notes: 
+* Only files matching a glob pattern can and will be served by sea-jsx
+* sea-jsx does not currently automatically detect added or removed files, nor does it reload on changes to matched files
+
+Publish:
+
+🚧 TODO - glob files should get deployed automatically along with the built index.html 
+
+
 ### Front matter
 
 While `sea-jsx` is designed to minimize configuration, when it is required (such as to specify a particular package version), a comment-based front matter syntax **can optionally be used** to provide YAML configuration:
