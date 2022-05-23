@@ -6,13 +6,49 @@
 
 A computer-aided, "pen & paper" procedural, solo storytelling RPG.  
 
-A more direct interpretation of the core rulebook.
+## Getting started
+
+Demo: [https://storytelling.raiment.studio/](https://storytelling.raiment.studio/)
+
+## Vision
+
+A more direct interpretation of the core Kestrel rulebook.
 
 This should run off the same content base as other games. It's a way to test and validate the procedural _story_ is possible and enjoyable, without becoming distracted by "just building an engine" where the story is lost.
 
-## Demo
+## Roadmap
 
-[https://storytelling.raiment.studio/](https://storytelling.raiment.studio/)
+### 🏁 v1.0 Checkpoints
+
+-   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+-   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+
+### 🎄 Backlog
+
+-   [ ] TODO
+-   [ ] TODO
+-   [ ] TODO
+
+
+## User documentation
+
+🚧 TODO
+
+## Design
+
+🚧 TODO
+
+## FAQ
+
+🚧 TODO
 
 ## Acknowledgements
 

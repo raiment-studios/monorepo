@@ -1,16 +1,39 @@
 # Graham's Quest
 
+## Vision
 
-## Objective
+You play Kestrel, the a human-like Aneide, who has awoken with confused memories of her past. She must seek out Tristan, her creator to understand the story of her creation. Along the way, she uncovers the history of the Maelstrom and world of Galthea.
 
-You play Kestrel, the a human-like Aneide, who has awoken with confused memories of her past. She must seek out Tristan, her creator to understand the story of her creation.  Along the way, she uncovers the history of the Maelstrom and world of Galthea.
-
-## Story
-
-_Note: this contains some spoilers!_
 
 
 ## Roadmap
+
+### 🏁 v1.0 Checkpoints
+
+-   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+-   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+    -   [ ] TODO
+
+### 🎄 Backlog
+
+-   [ ] TODO
+-   [ ] TODO
+-   [ ] TODO
+-   [ ] TODO
+-   [ ] TODO
+
+## User documentation
+
+🚧 TODO
+
+## Design
 
 Simplifications
 
@@ -21,11 +44,8 @@ Design Choices
 
 -   No "fog of war" (this is an exploration game emphasizing clear visuals)
 
-* [ ] Start screen
-* [ ] Random start generation
-* [ ] Score
-* [ ] Ending
 
+_Note: this contains some spoilers!_
 
 ### Plot
 
@@ -50,7 +70,10 @@ The game itself is defined as a particular "game" asset: this defines the deck t
 
 A major motivation for Raiment is ease of contribution: the default mode is "game mode" and that should be immersive, but it is possible to edit and replay cards during the actual game, thus making playing and improving the game a somewhat fluid, single experience.
 
-
-## Notes
+### Notes
 
 A generation card take a seed value and the current context and generates a specific instance card. TODO: make the forest card generate a tilemap. Standardize the tilemap representatioin. Add path-finding so that the forest always has exit points on each side of the map.
+
+## FAQ
+
+🚧 TODO
