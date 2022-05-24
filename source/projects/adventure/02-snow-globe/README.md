@@ -14,7 +14,9 @@ A short, but fully finished game set in the world of Kestrel. Confined to a 256x
 
 _Pseudo Press Release_
 
-> Snow Globe is a small, fun game released by Raiment Studios.  You play the part of Kestrel, a android in the mysterious world of Galthea.  The game mixes the classic feel of old school adventure games in a cleverly designed, voxel-based art style.  As Kestrel, you explore the world interacting with characters on your quest to find Tristan, your creator.  The world itself changes dynamically around you as you discover new information, use artifacts from left as part of ancient Galthea, and work with other characters to fulfil your quest.
+> Snow Globe is a new, fun to play adventure game released by [Raiment Studios](https://raiment-studios.github.io/). You play the part of Kestrel, an android awoken in the mysterious world of Galthea where she seeks to find Tristan, her creator.  As Kestrel, you explore the ever-changing world and interact with characters, discover artifacts from the world's veiled history, and...
+>
+> The game mixes the classic feel of old school adventure games in a cleverly designed, voxel-based art style.  As Kestrel, you explore the world interacting with characters on your quest to find Tristan, your creator.  The world itself changes dynamically around you as you discover new information, use artifacts from left as part of ancient Galthea, and work with other characters to fulfil your quest.
 >
 > Galthea is a peaceful, low-stress game with pleasant, voxel-based graphics.
 > 
