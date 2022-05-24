@@ -14,13 +14,13 @@ A short, but fully finished game set in the world of Kestrel. Confined to a 256x
 
 _Pseudo Press Release_
 
-Snow Globe is a small, fun game released by Raiment Studios.  You play the part of Kestrel, a android in the mysterious world of Galthea.  The game mixes the classic feel of old school adventure games in a cleverly designed, voxel-based art style.  As Kestrel, you explore the world interacting with characters on your quest to find Tristan, your creator.  The world itself changes dynamically around you as you discover new information, use artifacts from left as part of ancient Galthea, and work with other characters to fulfil your quest.
-
-Galthea is a peaceful, low-stress game with pleasant, voxel-based graphics.
-
-Kestrel: Snow Globe is completely free and takes about 30 minutes to play end-to-end. Elements of procedural design give the game replay value to uncover different endings and different paths to explore the world of Galthea.
-
-This is Raiment Studios' first game release centered around their worldbuild of Kestrel.  The game is open source, including the content and worldbuilding material.  Raiment Studios is encouraging reuse and contributions to their projects.## Roadmap
+> Snow Globe is a small, fun game released by Raiment Studios.  You play the part of Kestrel, a android in the mysterious world of Galthea.  The game mixes the classic feel of old school adventure games in a cleverly designed, voxel-based art style.  As Kestrel, you explore the world interacting with characters on your quest to find Tristan, your creator.  The world itself changes dynamically around you as you discover new information, use artifacts from left as part of ancient Galthea, and work with other characters to fulfil your quest.
+>
+> Galthea is a peaceful, low-stress game with pleasant, voxel-based graphics.
+> 
+> Kestrel: Snow Globe is completely free and takes about 30 minutes to play end-to-end. Elements of procedural design give the game replay value to uncover different endings and different paths to explore the world of Galthea.
+>
+> This is Raiment Studios' first game release centered around their worldbuild of Kestrel.  The game is open source, including the content and worldbuilding material.  Raiment Studios is encouraging reuse and contributions to their projects.## Roadmap
 
 ### 🏁 v1.0 Checkpoints
 
