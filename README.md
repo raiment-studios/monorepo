@@ -118,6 +118,10 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022
 
 -   Week 21
+    -   [x] ➕ Allow `async mesh()` Actor methods
+    -   [x] ➕ Added `VoxelSprite`, `ImageGeometryCache` to `engine`
+    -   [x] ➕ Add `loadImage`, `getImagePixelData` to `engine
+    -   [x] 🧬 Added the [VoxelSprite demo](https://raiment-studios.github.io/engine/examples/10-sprite)
     -   [x] 🧬 Experiment with `glob:` imports for external assets in `sea-jsx`
 -   Week 20
     -   [x] 🗃️ Clean up HeightMap actor for general reuse
