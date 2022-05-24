@@ -12,7 +12,7 @@ A single region voxel game where the adventure plays out in a limited space that
 
 A short, but fully finished game set in the world of Kestrel. Confined to a 256x256 voxel location, as the game progresses, that [location modifies itself](https://twitter.com/RidleyWinters/status/1528219337659600896). The sequence of events is fairly linear.
 
-_Target Future Announcement_
+_Target Launch Announcement_
 
 > Snow Globe is a new, fun to play adventure game released by [Raiment Studios](https://raiment-studios.github.io/). You play the part of Kestrel, an android awoken in the mysterious world of Galthea where she seeks to find Tristan, her creator.  As Kestrel, you explore the ever-changing world and interact with characters, discover artifacts from the world's veiled history, and complete the adventure in a beautiful, interactive world.
 >
@@ -22,12 +22,16 @@ _Target Future Announcement_
 >
 > This is Raiment Studios' first game release centered around the world of Kestrel. The game is open source, including the content and worldbuilding material.  Raiment Studios is encouraging reuse and contributions to their projects.
 
+## User documentation
+
+🚧 TODO
+
 ## Roadmap
 
 ### 🏁 v1.0 Checkpoints
 
 -   [ ] Basic functionality
-    -   [ ] ["Press release" in advance](https://www.productplan.com/glossary/working-backward-amazon-method/)
+    -   [x] ["Launch Annoucement" in advance](https://www.productplan.com/glossary/working-backward-amazon-method/)
     -   [ ] Basic storyline
     -   [ ] Character sprite
     -   [ ] NPCs
@@ -48,13 +52,19 @@ _Target Future Announcement_
 -   [ ] TODO
 -   [ ] TODO
 
-## User documentation
-
-🚧 TODO
-
 ## Design
 
-🚧 TODO
+### Basic game flow & core mechanics
+
+Core mechanics: different starting character traits for Kestrel. Different character traits derived from allegiances and histories in NPCs.  Character interactions use a "lock & key" mechnaism to give Kestrel next steps in getting closer to Tristan.  Each major "unlock" generally transforms the 256x256 area into a new area with new conditions (trees, water, rain, hills & mountains, objects, sky).
+
+The gameplay internally creates a graph of nodes where each transition has possibilities determined by the character traits, relationships, and histories. Procedurally generated circumstances, scenarios, and challenges dynamically create the nodes along the story evolution - not in advance - but "on-demand" so the story-line is not known until actions are taken ("reverse twenty questions" style).  The end node is always the discovery of Tristan: but this can play out in several different ways.
+
+The enjoyment of the game is in seeing a different story with different characters, scenery, and conclusions play out.
+
+1.  Kestrel starts in an open field with a path leading north (L&K = move north)
+
+
 
 ## FAQ
 
