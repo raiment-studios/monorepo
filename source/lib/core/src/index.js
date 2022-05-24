@@ -9,7 +9,8 @@ export * from './format/format_number.js';
 export * from './math/rng.js';
 export * from './math/simplex_noise.js';
 
-export * from './strings/short_id.js';
-export * from './strings/parse_yaml.js';
-export * from './strings/stringify_yaml.js';
 export * from './strings/nearest_overlap.js';
+export * from './strings/parse_yaml.js';
+export * from './strings/short_id.js';
+export * from './strings/stringify_yaml.js';
+export * from './string/uuid.js';

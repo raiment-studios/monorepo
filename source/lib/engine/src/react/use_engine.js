@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Engine } from '../engine/engine';
 
-export function useEngine(initCb) {
+export function useEngine(initCb = noop) {
     const [engine] = useState(new Engine());
 
     useEffect(() => {
@@ -15,3 +15,5 @@ export function useEngine(initCb) {
 
     return engine;
 }
+
+function noop() {}

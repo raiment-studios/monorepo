@@ -1,11 +1,14 @@
 import React from 'react';
 import { ReadingFrame, useAsyncEffect } from '@raiment/react-ex';
-import assets from 'glob:**/*{.png,*.asset.yaml}';
+import { useEngine, EngineFrame, Grid, OrbitCamera, BasicLighting } from '../../';
+import assets from 'glob:**/*{.png,.asset.yaml}';
+
+const assetsURL = Object.fromEntries(assets.matches.map(({ url }) => [url, url]));
 
 export default function () {
     const [data, setData] = React.useState('');
     useAsyncEffect(async (token) => {
-        const resp = await fetch('kestrel.png.asset.yaml');
+        const resp = await fetch(assetsURL['kestrel.png.asset.yaml']);
         const text = await resp.text();
         token.check();
         setData(text);
@@ -21,17 +24,34 @@ export default function () {
                 }}
             >
                 <div style={{ flex: '1 0 0' }} />
-                <Img src="kestrel.png" />
+                <Img src={assetsURL['kestrel.png']} />
                 <div style={{ flex: '1 0 0' }} />
             </div>
+            <div style={{ margin: '6px 0' }}>
+                <EngineView />
+            </div>
             <div>
-                <pre>{JSON.stringify(assets, null, 4)}</pre>
+                <pre>{JSON.stringify(assetsURL, null, 4)}</pre>
             </div>
             <div>
                 <pre>{data}</pre>
             </div>
         </ReadingFrame>
     );
+}
+
+function EngineView() {
+    const engine = useEngine(() => {
+        engine.actors.push(
+            new Grid(),
+            new OrbitCamera({ radius: 96 }), //
+            new BasicLighting()
+        );
+    });
+
+    console.log(engine.uuid);
+
+    return <EngineFrame engine={engine} />;
 }
 
 function Img({ src, scale = 6 }) {

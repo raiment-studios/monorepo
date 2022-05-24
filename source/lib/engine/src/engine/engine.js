@@ -1,4 +1,4 @@
-import { EventEmitter } from '../../../core';
+import { EventEmitter, uuid as generateUUID } from '../../../core';
 import { ActorList } from './actor_list';
 import { FrameLoop } from '../frame_loop';
 import { World } from './world';
@@ -12,6 +12,7 @@ export class Engine {
     constructor() {
         EventEmitter.composeInto(this);
 
+        this._uuid = generateUUID();
         this._frameLoop = new FrameLoop(this.runFrame.bind(this));
         this._context = {
             engine: this,
@@ -34,8 +35,12 @@ export class Engine {
     }
 
     //-----------------------------------------------------------------------//
-    // Core objects
+    // Core properties
     //-----------------------------------------------------------------------//
+
+    get uuid() {
+        return this._uuid;
+    }
 
     get renderers() {
         return this._renderers;
