@@ -22,6 +22,8 @@ _Pseudo Press Release_
 >
 > This is Raiment Studios' first game release centered around their worldbuild of Kestrel.  The game is open source, including the content and worldbuilding material.  Raiment Studios is encouraging reuse and contributions to their projects.## Roadmap
 
+## Roadmap
+
 ### 🏁 v1.0 Checkpoints
 
 -   [ ] Basic functionality
