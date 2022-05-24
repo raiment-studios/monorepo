@@ -5,7 +5,7 @@ import { RendererThree } from '../renderer_three/renderer_three';
 import { RendererTwo } from '../renderer_two/renderer_two';
 import { EngineRecorder } from './engine_recorder';
 
-export function EngineFrame({
+export const EngineFrame = React.memo(function ({
     engine = new Engine(), //
     actors = [],
     recorder = null,
@@ -50,4 +50,4 @@ export function EngineFrame({
             )}
         </>
     );
-}
+});

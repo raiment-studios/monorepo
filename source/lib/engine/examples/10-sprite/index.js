@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReadingFrame, useAsyncEffect } from '@raiment/react-ex';
-import { useEngine, EngineFrame, Grid, OrbitCamera, BasicLighting } from '../../';
+import { useEngine, EngineFrame, Grid, OrbitCamera, BasicLighting } from '../..';
 import assets from 'glob:**/*{.png,.asset.yaml}';
 
 const assetsURL = Object.fromEntries(assets.matches.map(({ url }) => [url, url]));
@@ -48,8 +48,6 @@ function EngineView() {
             new BasicLighting()
         );
     });
-
-    console.log(engine.uuid);
 
     return <EngineFrame engine={engine} />;
 }
