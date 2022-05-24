@@ -65,10 +65,11 @@ class Token {
         return !this._cancel;
     }
 
-    check() {
+    check(passThrough) {
         if (this._cancel) {
             throw INTERRUPTED;
         }
+        return passThrough;
     }
 
     unwind(fn) {

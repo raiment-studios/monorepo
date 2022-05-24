@@ -1,4 +1,5 @@
 import React from 'react';
+import { ImageGeometryCache } from '../caches/image_geometry_cache';
 import { Engine } from '../engine/engine';
 import { RendererHUD } from '../renderer_hud/renderer_hud';
 import { RendererThree } from '../renderer_three/renderer_three';
@@ -19,6 +20,8 @@ export const EngineFrame = React.memo(function ({
         engine._renderers['three'] = new RendererThree(refElem.current);
         engine._renderers['two'] = new RendererTwo(refElem.current);
         engine._renderers['hud'] = new RendererHUD(refElem.current);
+        engine._cache.imageGeometry = new ImageGeometryCache();
+
         engine._actors.push(...actors);
 
         engine.start();
@@ -26,7 +29,7 @@ export const EngineFrame = React.memo(function ({
             engine.stop();
             engine.dispose();
         };
-    }, [refElem?.current]);
+    }, [refElem.current]);
 
     return (
         <>

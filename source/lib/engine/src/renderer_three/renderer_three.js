@@ -55,7 +55,17 @@ export class RendererThree {
         if (!actor.mesh) {
             return;
         }
-        this._scene.add(actor.mesh(ctx));
+
+        // Allow mesh to be sync or async
+        const { scene } = this;
+        const ret = actor.mesh(ctx);
+        if (typeof ret.then === 'function') {
+            ret.then((mesh) => {
+                scene.add(mesh);
+            });
+        } else {
+            scene.add(ret);
+        }
     }
 
     renderFrame() {

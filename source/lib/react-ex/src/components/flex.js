@@ -5,12 +5,16 @@ export function Flex({
     style,
     children,
     align = 'center',
+    direction = 'row',
+    dir,
 }) {
+    direction = direction || dir;
+
     return (
         <div
             style={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: direction,
                 alignItems: align,
                 ...style,
             }}

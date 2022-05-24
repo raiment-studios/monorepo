@@ -22,6 +22,7 @@ export class Engine {
         };
 
         this._renderers = {};
+        this._cache = {};
         this._actors = new ActorList();
         this._world = new World();
     }
@@ -44,6 +45,10 @@ export class Engine {
 
     get renderers() {
         return this._renderers;
+    }
+
+    get cache() {
+        return this._cache;
     }
 
     get actors() {

@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
 export class OrbitCamera {
-    constructor({ radius = 192 } = {}) {
+    constructor({ radius = 192, periodMS = 10000 } = {}) {
         this._radius = radius;
+        this._periodMS = periodMS;
     }
 
     update({ engine, timeMS }) {
@@ -11,8 +12,8 @@ export class OrbitCamera {
 
         const camera = engine.renderers.three.camera;
 
-        const ang = (timeMS * Math.PI) / 10000;
-        const ang2 = (timeMS * Math.PI) / 18020;
+        const ang = (timeMS * Math.PI) / this._periodMS;
+        const ang2 = (timeMS * Math.PI) / (this._periodMS * 1.802);
 
         const cx = radius * Math.cos(ang);
         const cy = radius * Math.sin(ang);
