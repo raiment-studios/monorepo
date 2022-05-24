@@ -13,4 +13,4 @@ export * from './strings/nearest_overlap.js';
 export * from './strings/parse_yaml.js';
 export * from './strings/short_id.js';
 export * from './strings/stringify_yaml.js';
-export * from './string/uuid.js';
+export * from './strings/uuid.js';
