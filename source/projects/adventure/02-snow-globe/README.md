@@ -63,7 +63,9 @@ The gameplay internally creates a graph of nodes where each transition has possi
 The enjoyment of the game is in seeing a different story with different characters, scenery, and conclusions play out.
 
 1.  Kestrel starts in an open field with a path leading north (L&K = move north)
-
+2. When she moves to the end of the path, the world transforms & rotates (introducing the notion of the dynamic world )
+3. She gets to a cabin in the forest 
+4. When she interacts with this, a pop-up storyline appears. It is Logan's cabin. She must make a choice.
 
 
 ## FAQ
