@@ -35,7 +35,9 @@ If defined, this is expected to be a `THREE.Vector3` that defines the actor posi
 
 #### `flags()`
 
-`pinToWorldGround` - if set, the engine will force the actor's z position to be set to the world ground height at the actor's x, y.
+`pinToGroundHeight` - if set, the engine will force the actor's z position to be set to the world ground height at the actor's x, y.
+
+`castShadow` - if true, will _recursively_ apply the castShadow flag to all meshes and submeshes.  This is largely a convenience for complex or composite meshes.
 
 #### `init()`
 

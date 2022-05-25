@@ -14,6 +14,7 @@ import {
     updatePosition,
     updateBoxCollision,
 } from '../..';
+import { Forest } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}';
 
 const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
@@ -50,11 +51,22 @@ function EngineView() {
 
             const sprite = new VoxelSprite({
                 url: assetURL[
-                    i == 0 ? 'kestrel.png' : rng.select(['wizard.png', 'ranger.png', 'ranger2.png'])
+                    i == 0
+                        ? 'kestrel.png'
+                        : rng.select([
+                              'wizard.png',
+                              'ranger.png',
+                              'ranger.png',
+                              'ranger.png',
+                              'ranger2.png',
+                              'ranger2.png',
+                              'ranger2.png',
+                              'king.png',
+                          ])
                 ],
                 flags: {
                     billboard: true,
-                    pinToWorldGround: true,
+                    pinToGroundHeight: true,
                 },
                 worldX,
                 worldY,
@@ -129,12 +141,13 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 48, periodMS: 9000, offsetZ: 16 }), //
+            new OrbitCamera({ radius: 72, periodMS: 64000, offsetZ: 8 }), //
             new BasicLighting(),
             new GroundPlane(),
             ...sprites,
             heightMap,
-            new Updater(heightMap)
+            new Updater(heightMap),
+            new Forest()
         );
     });
 
@@ -185,8 +198,6 @@ class Updater {
 
     stateMachine() {
         const rng = this._rng;
-        let offsetX = 0.0;
-        let offsetZ = 0;
 
         return {
             _bind: this,
@@ -203,13 +214,13 @@ class Updater {
                     this._heightFunc = this._makeHeightFunc({ heightMap: this._heightMap });
                 } else {
                     const simplex = core.makeSimplexNoise(4342);
-                    const amplitude = 0.01 * rng.range(0.4, 3);
-                    const s = 1 / this._heightMap.segments;
-                    offsetX += 1;
-                    offsetZ = 0.5 + 0.5 * Math.sin(offsetX / 10);
+                    const amplitude = 0.04 * rng.range(0.4, 5);
+                    const ox = rng.range(-1000, 1000);
+                    const oy = rng.range(-1000, 1000);
+                    const s = 1 / (rng.range(0.5, 2) * this._heightMap.segments);
+                    const base = rng.range(0, 0.02);
                     this._heightFunc = (x, y) =>
-                        amplitude *
-                        (offsetZ + (0.5 + 0.5 * simplex.noise2D(offsetX + x * s, y * s)));
+                        base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
                 }
                 return 'update';
             },
@@ -275,14 +286,15 @@ function ImageInfo({ url }) {
 
     return (
         <Flex dir="row">
-            <div style={{ flex: '1 0 0' }} />
+            <div style={{ flex: '0 0 32px' }} />
             <PixelatedImage src={url} />
-            <div style={{ flex: '1 0 0' }} />
+            <div style={{ flex: '0 0 32px' }} />
             <div>
                 <h3>{url}</h3>
                 <h3>License</h3>
                 <pre>{textToReact(data?.license)}</pre>
             </div>
+            <div style={{ flex: '1 0 0' }} />
         </Flex>
     );
 }

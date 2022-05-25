@@ -1,17 +1,17 @@
-export function registerPinToWorldGround(engine) {
+export function registerPinToGroundHeight(engine) {
     engine.events.on('actor.postinit', ({ actor }) => {
-        if (!actor.flags?.pinToWorldGround) {
+        if (!actor.flags?.pinToGroundHeight) {
             return;
         }
         if (!actor.position) {
-            const err = `Actor must define the position property to use the pinToWorldGround flag`;
+            const err = `Actor must define the position property to use the pinToGroundHeight flag`;
             console.error(err, { actor });
             throw new Error(err);
         }
     });
 
     engine.events.on('actor.postupdate', ({ engine, actor }) => {
-        if (!actor.flags?.pinToWorldGround) {
+        if (!actor.flags?.pinToGroundHeight) {
             return;
         }
 

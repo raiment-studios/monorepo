@@ -1,4 +1,5 @@
 export * from './collections/generate.js';
+export * from './collections/map_3d.js';
 
 export * from './controllers/event_emitter.js';
 

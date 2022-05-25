@@ -56,17 +56,23 @@ export class RendererThree {
             return;
         }
 
+        function addToScene(mesh) {
+            actor.__mesh = mesh;
+
+            if (actor.flags?.castShadow) {
+                setCastShadowRecurvise(mesh, true);
+            }
+
+            scene.add(mesh);
+        }
+
         // Allow mesh to be sync or async
         const { scene } = this;
         const ret = actor.mesh(ctx);
         if (typeof ret.then === 'function') {
-            ret.then((mesh) => {
-                actor.__mesh = mesh;
-                scene.add(mesh);
-            });
+            ret.then((mesh) => addToScene(mesh));
         } else {
-            actor.__mesh = ret;
-            scene.add(ret);
+            addToScene(ret);
         }
     }
 
@@ -79,5 +85,14 @@ export class RendererThree {
         }
 
         this._renderer.render(this._scene, this._camera);
+    }
+}
+
+function setCastShadowRecurvise(meshLike, value) {
+    meshLike.castShadow = value;
+    if (meshLike.children) {
+        for (let child of meshLike.children) {
+            setCastShadowRecurvise(child, value);
+        }
     }
 }

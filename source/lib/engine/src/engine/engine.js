@@ -3,7 +3,7 @@ import { ActorList } from './actor_list';
 import { FrameLoop } from '../frame_loop';
 import { World } from './world';
 import { StateMachine } from '../state_machine';
-import { registerPinToWorldGround } from './behaviors/register_pin_to_world_ground';
+import { registerPinToGroundHeight } from './behaviors/register_pin_to_world_ground';
 import { registerBillboard } from './behaviors/register_billboard';
 
 export class Engine {
@@ -31,7 +31,7 @@ export class Engine {
         this._actors = new ActorList();
         this._world = new World(this);
 
-        registerPinToWorldGround(this);
+        registerPinToGroundHeight(this);
         registerBillboard(this);
     }
 
