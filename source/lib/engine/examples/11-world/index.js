@@ -11,9 +11,9 @@ import {
     loadImage,
     VoxelSprite,
 } from '../..';
-import assets from 'glob:**/*{.png,.asset.yaml}';
+import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}';
 
-const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url, url]));
+const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
 
 export default function () {
     const [data, setData] = React.useState('');
@@ -23,6 +23,8 @@ export default function () {
         token.check();
         setData(parseYAML(text));
     }, []);
+
+    console.log(assetURL);
 
     return (
         <ReadingFrame>

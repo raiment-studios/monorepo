@@ -4,6 +4,7 @@ import glob from 'glob';
 import sh from 'shelljs';
 import _ from 'lodash';
 import * as core from '@raiment/core';
+import { spawn } from 'child_process';
 
 async function main() {
     const data = {};
@@ -20,12 +21,19 @@ async function main() {
     await fs.writeFile('src/data.yaml', core.stringifyYAML(data));
 
     for (let folder of results) {
-        const cmd = `sea-jsx build ${base}/${folder}/index.js --target=dist/engine/examples/${folder}.html`;
-        exec(cmd);
+        await exec('sea-jsx', [
+            'build',
+            `${base}/${folder}/index.js`,
+            `--target=dist/engine/examples/${folder}.html`,
+        ]);
     }
 
     sh.mkdir('-p', 'dist/core');
-    exec(`sea-jsx build ${repo('source/lib/core/docs/index.js')} --target=dist/core/docs.html`);
+    await exec('sea-jsx', [
+        'build',
+        repo('source/lib/core/docs/index.js'),
+        '--target=dist/core/docs.html',
+    ]);
 }
 main();
 
@@ -33,7 +41,16 @@ function repo(...args) {
     return path.join(process.env.MONOREPO_ROOT, ...args);
 }
 
-function exec(cmd) {
-    console.log(cmd);
-    sh.exec(cmd);
+function exec(cmd, args = [], options = {}) {
+    return new Promise((resolve, reject) => {
+        // Ignore stdin so CTRL-C goes to the parent process, not the children
+        options = Object.assign({ stdio: ['ignore', 'inherit', 'inherit'] }, options);
+        const handle = spawn(cmd, args, options);
+
+        handle.on('exit', (errorCode) => {
+            if (errorCode) {
+                reject(errorCode);
+            } else resolve();
+        });
+    });
 }

@@ -111,6 +111,8 @@ The intended use case is for content and configuration that is more easily expre
 
 #### `glob:<pattern>`
 
+🧬 EXPERIMENTAL FEATURE: this is designed to make it easier to work with file assets without having to run a separate server, however the goal is to minimize the introduction of "non-standard" configuration.
+
 Returns an array of objects, with one object per matching local file. The object format is:
 
 ```json

@@ -1,3 +1,7 @@
+clean:
+	rm -rf dest
+	rm -rf dist
+
 dev: build
 	npx http-server dist -c-1 -d -i -e html --cors 
 

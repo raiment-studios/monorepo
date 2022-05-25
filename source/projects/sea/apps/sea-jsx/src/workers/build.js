@@ -137,7 +137,7 @@ export async function build(
         output,
         buildID,
         watches,
-        references: Object.keys(references),
+        references,
     };
 }
 
@@ -387,6 +387,12 @@ function registerYAMLPlugin(build, workingDir) {
 }
 
 function registerGlobPlugin(build, workingDir, references) {
+    function swapEnvironmentVariables(s) {
+        return s.replace(/\$\((.+)\)/g, function (m, name) {
+            return process.env[name];
+        });
+    }
+
     build.onResolve({ filter: /^glob:.*/ }, async (args) => {
         return {
             namespace: 'glob',
@@ -395,8 +401,19 @@ function registerGlobPlugin(build, workingDir, references) {
     });
 
     build.onLoad({ filter: /^glob:.*/, namespace: 'glob' }, async (args) => {
-        const base = path.normalize(args.importer ? path.dirname(args.importer) : workingDir);
-        const pattern = args.path.replace('glob:', '');
+        const text = args.path.replace('glob:', '');
+        const textParts = text.split(';');
+
+        let base;
+        let pattern;
+        if (textParts.length === 1) {
+            base = path.normalize(args.importer ? path.dirname(args.importer) : workingDir);
+            pattern = swapEnvironmentVariables(textParts[0]);
+        } else {
+            base = swapEnvironmentVariables(textParts[0]);
+            pattern = swapEnvironmentVariables(textParts[1]);
+        }
+
         const results = await new Promise((resolve, reject) => {
             glob(pattern, { cwd: base }, (err, results) => {
                 if (err) {
@@ -408,11 +425,18 @@ function registerGlobPlugin(build, workingDir, references) {
 
         // Record and dedup
         for (let r of results) {
-            references[r] = true;
+            const filepath = path.join(base, r);
+            references[r] = {
+                base: base,
+                filepath,
+                url: path.relative(base, filepath),
+            };
         }
 
         return {
-            contents: JSON.stringify({ matches: results.map((s) => ({ url: s })) }),
+            contents: JSON.stringify({
+                matches: Object.values(references).map((ref) => ({ url: ref.url })),
+            }),
             loader: 'json',
         };
     });

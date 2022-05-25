@@ -59,21 +59,23 @@ export class SeaJSX {
         const { filename } = options;
 
         this.print(`Building {{obj ${filename}}}`);
-        const { output, watches } = await build(this, { filename, sourcemap: true });
+        const { output, watches, references } = await build(this, { filename, sourcemap: true });
 
         this.print(`Running on port {{loc ${options.port}}}`, `Press {{loc CTRL-C}} to exit`, '');
 
         const content = {
             output,
             buildID: 0,
+            references,
         };
         await startServer(this, { port: options.port, filename, content });
         await watchLoop(this, {
             filename,
             watchList: watches,
-            onBuild: ({ output, buildID }) => {
+            onBuild: ({ output, buildID, references }) => {
                 content.output = output;
-                content.buildID++;
+                content.buildID = buildID;
+                content.references = references;
             },
         });
     }
@@ -101,11 +103,11 @@ export class SeaJSX {
         await fs.writeFile(options.target, text);
 
         // Referenced files / assets?
-        for (let ref of references) {
-            const referenceFile = path.join(distDir, ref);
-            this.print(`Copying {{obj ${ref}}}`);
-            sh.mkdir('-p', path.dirname(referenceFile));
-            sh.cp(path.join(workingDir, ref), referenceFile);
+        for (let [url, ref] of Object.entries(references)) {
+            const destFile = path.join(distDir, url);
+            this.print(`Copying {{obj ${url}}}`);
+            sh.mkdir('-p', path.dirname(destFile));
+            sh.cp(ref.filepath, destFile);
         }
     }
 

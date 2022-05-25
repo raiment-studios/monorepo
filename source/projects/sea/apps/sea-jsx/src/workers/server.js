@@ -20,9 +20,18 @@ export async function startServer(app, { port, filename, content }) {
         res.contentType('text/javascript');
         res.send(content.output);
     });
+
     server.get('*', async (req, res) => {
-        // First try the local file system
-        const localPath = path.resolve(path.join(workingDir, req.path.replace(/^\//, '')));
+        // Try file references
+        let localPath;
+        const reference = content.references[req.path.replace(/^\//, '')];
+        if (reference) {
+            localPath = reference.filepath;
+        }
+        // First the local file system
+        if (!localPath) {
+            localPath = path.resolve(path.join(workingDir, req.path.replace(/^\//, '')));
+        }
         try {
             const stats = await fs.stat(localPath);
             if (stats.isFile()) {

@@ -10,3 +10,4 @@ engine:
     - 08-noise
     - 09-terrain-water
     - 10-sprite
+    - 11-world
