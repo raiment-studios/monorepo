@@ -61,14 +61,23 @@ export class RendererThree {
         const ret = actor.mesh(ctx);
         if (typeof ret.then === 'function') {
             ret.then((mesh) => {
+                actor.__mesh = mesh;
                 scene.add(mesh);
             });
         } else {
+            actor.__mesh = ret;
             scene.add(ret);
         }
     }
 
-    renderFrame() {
+    renderFrame({ engine }) {
+        for (let actor of engine.actors) {
+            // Automatically update the mesh position
+            if (actor.position && actor.__mesh) {
+                actor.__mesh.position.copy(actor.position);
+            }
+        }
+
         this._renderer.render(this._scene, this._camera);
     }
 }

@@ -35,7 +35,7 @@ export async function startServer(app, { port, filename, content }) {
         try {
             const stats = await fs.stat(localPath);
             if (stats.isFile()) {
-                app.print(`Serving {{obj ${path.relative(process.cwd(), localPath)}}}.`);
+                app.print(`Serving local file for {{obj ${req.path}}}.`);
                 res.set('etag', false);
                 res.set('Cache-Control', 'no-store');
                 res.sendFile(localPath);

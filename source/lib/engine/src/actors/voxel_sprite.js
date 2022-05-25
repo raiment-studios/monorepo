@@ -1,15 +1,25 @@
 import * as THREE from 'three';
 
 export class VoxelSprite {
-    constructor({ url = null, scale = 1.0, depth = 1.0 } = {}) {
+    constructor({ url = null, scale = 1.0, depth = 1.0, flags = {}, worldX = 0, worldY = 0 } = {}) {
         if (!url) {
             throw new Error(`url must be defined`);
         }
         this._url = url;
-        this._position = new THREE.Vector3(0, 0, 0);
+        this._position = new THREE.Vector3(worldX, worldY, 0);
         this._offset = new THREE.Vector3(0, 0, 0);
         this._scale = scale;
         this._depth = 1.0;
+        this._flags = Object.assign({}, flags);
+        this._mesh = null;
+    }
+
+    get flags() {
+        return this._flags;
+    }
+
+    get position() {
+        return this._position;
     }
 
     async mesh({ engine }) {
@@ -31,6 +41,7 @@ export class VoxelSprite {
         const group = new THREE.Group();
         group.position.copy(this._position);
         group.add(mesh);
-        return group;
+        this._mesh = group;
+        return this._mesh;
     }
 }

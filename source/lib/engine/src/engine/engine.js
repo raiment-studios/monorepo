@@ -3,6 +3,7 @@ import { ActorList } from './actor_list';
 import { FrameLoop } from '../frame_loop';
 import { World } from './world';
 import { StateMachine } from '../state_machine';
+import { registerPinToWorldGround } from './behaviors/register_pin_to_world_ground';
 
 export class Engine {
     //-----------------------------------------------------------------------//
@@ -19,12 +20,17 @@ export class Engine {
             timeMS: 0,
             frameNumber: 0,
             frameFPS: 0,
+
+            actors: null,
+            actor: null,
         };
 
         this._renderers = {};
         this._cache = {};
         this._actors = new ActorList();
-        this._world = new World();
+        this._world = new World(this);
+
+        registerPinToWorldGround(this);
     }
 
     dispose() {
@@ -83,10 +89,16 @@ export class Engine {
         //
         if (this._actors._added.length > 0) {
             for (let actor of this._actors._added) {
+                ctx.actor = actor;
+
                 // Let the actor initialize itself on the first frame
                 if (actor.init) {
                     actor.init(ctx);
                 }
+
+                // Give the actor a chance to init *before* validating in case there's logic
+                // that needs to be run first to put the actor in a valid state.
+                this.events.fire('actor.add.validate', ctx);
 
                 if (actor.stateMachine) {
                     actor.__stateMachine = new StateMachine(actor.stateMachine(ctx));
@@ -107,18 +119,27 @@ export class Engine {
         // Run the logic update
         //
         for (let actor of this._actors) {
+            ctx.actor = actor;
+
+            this.events.fire('actor.preupdate', ctx);
+
             if (actor.__stateMachine) {
                 actor.__stateMachine.update(ctx);
             }
         }
 
         for (let actor of this._actors) {
+            ctx.actor = actor;
+
             if (actor.update) {
                 actor.update(ctx);
             }
+
+            this.events.fire('actor.postupdate', ctx);
         }
 
         // Render frames
+        ctx.actor = null;
         for (let renderer of Object.values(this._renderers)) {
             renderer.renderFrame(ctx);
         }

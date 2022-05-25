@@ -24,13 +24,30 @@ A JavaScript + WASM simulation and game engine built on top of THREE.js.
 
 ⚠️ TODO
 
-### Actor core methods
+### Actor engine methods
+
+#### `position`
+
+If defined, this is expected to be a `THREE.Vector3` that defines the actor position.
+
+-   Rendered meshes will automatically sync their position to this value
+-   Physics and collision detecting will use this in calculations
+
+#### `flags()`
+
+`pinToWorldGround` - if set, the engine will force the actor's z position to be set to the world ground height at the actor's x, y.
 
 #### `init()`
+
 #### `stateMachine()`
+
 #### `update()`
+
 #### `mesh()`
 
+### `worldGroundHeight()`
+
+If define, when the "ground height" for a given point in the world is determined, this function will be called.
 
 #### StateMachine
 
