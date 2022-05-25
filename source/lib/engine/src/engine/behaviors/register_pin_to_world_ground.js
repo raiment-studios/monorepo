@@ -1,5 +1,5 @@
 export function registerPinToWorldGround(engine) {
-    engine.events.on('actor.add.validate', ({ actor }) => {
+    engine.events.on('actor.postinit', ({ actor }) => {
         if (!actor.flags?.pinToWorldGround) {
             return;
         }

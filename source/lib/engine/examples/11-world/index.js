@@ -32,15 +32,20 @@ export default function () {
             <div style={{ margin: '6px 0' }}>
                 <EngineView />
             </div>
-            <Flex dir="row">
-                <div style={{ flex: '1 0 0' }} />
-                <PixelatedImage src={assetURL['kestrel.png']} />
-                <div style={{ flex: '1 0 0' }} />
-                <div>
-                    <h3>Image license</h3>
-                    <pre>{textToReact(data.license)}</pre>
-                </div>
-            </Flex>
+            {Object.entries(assetURL)
+                .filter(([key]) => key.endsWith('.png'))
+                .map(([key, value]) => (
+                    <Flex key={key} dir="row">
+                        <div style={{ flex: '1 0 0' }} />
+                        <PixelatedImage src={value} />
+                        <div style={{ flex: '1 0 0' }} />
+                        <div>
+                            <h3>{value}</h3>
+                            <h3>Image license</h3>
+                            <pre>{textToReact(data.license)}</pre>
+                        </div>
+                    </Flex>
+                ))}
         </ReadingFrame>
     );
 }
@@ -56,20 +61,69 @@ function EngineView() {
             const worldX = radius * Math.cos(ang);
             const worldY = radius * Math.sin(ang);
 
+            const RANGE = 96;
+
             const sprite = new VoxelSprite({
-                url: assetURL['kestrel.png'],
+                url: assetURL[i == 0 ? 'kestrel.png' : rng.select(['wizard.png', 'ranger.png'])],
                 flags: {
+                    billboard: true,
                     pinToWorldGround: true,
                 },
                 worldX,
                 worldY,
+                stateMachine: function () {
+                    return {
+                        _start: function* () {
+                            this.position.x = rng.rangei(-RANGE, RANGE);
+                            this.position.y = rng.rangei(-RANGE, RANGE);
+                            return 'target';
+                        },
+                        target: function* () {
+                            const thinking = 60 * rng.range(0.5, 4);
+                            yield thinking;
+
+                            const dest = [rng.rangei(-RANGE, RANGE), rng.rangei(-RANGE, RANGE)];
+                            return ['move', dest];
+                        },
+                        move: function* (dest) {
+                            const step = 0.1;
+
+                            do {
+                                const dx = dest[0] - this.position.x;
+                                const dy = dest[1] - this.position.y;
+                                let count = 0;
+                                if (dx < -step) {
+                                    this.position.x -= step;
+                                } else if (dx > step) {
+                                    this.position.x += step;
+                                } else {
+                                    this.position.x = dest[0];
+                                    count++;
+                                }
+                                if (dy < -step) {
+                                    this.position.y -= step;
+                                } else if (dy > step) {
+                                    this.position.y += step;
+                                } else {
+                                    this.position.y = dest[1];
+                                    count++;
+                                }
+                                if (count > 1) {
+                                    return 'target';
+                                }
+
+                                yield;
+                            } while (true);
+                        },
+                    };
+                },
             });
             sprites.push(sprite);
         }
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 32, periodMS: 9000 }), //
+            new OrbitCamera({ radius: 48, periodMS: 9000, offsetZ: 16 }), //
             new BasicLighting(),
             new GroundPlane(),
             ...sprites,
@@ -81,8 +135,8 @@ function EngineView() {
                     scale: 256,
                     segments: 256,
                     heightFunc: (sx, sy) => {
-                        const a = (1 + simplex3.noise2D(sx / 64, sy / 64)) / 2;
-                        return 0.035 * a;
+                        const a = (1 + simplex3.noise2D(sx / 96, sy / 96)) / 2;
+                        return 0.1 * a;
                     },
                     colorFunc: (sx, sy) => {
                         const rgb = [146 / 255, 201 / 255, 117 / 255];
