@@ -1,6 +1,6 @@
 {
     "name": "@raiment/core",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "type": "module",
     "main": "src/index.js",
     "repository": "https://github.com/raiment-studios/monorepo",
