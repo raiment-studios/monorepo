@@ -22,6 +22,7 @@ export class HeightMap {
         heightFunc = null,
         colorFunc = (x, y, u, v) => [1, 0, 0.5],
         opacity = 1.0,
+        layers = [],
     } = {}) {
         this._offset = offset;
         this._scale = scale;
@@ -31,6 +32,13 @@ export class HeightMap {
         this._layers = {
             height: new Float32Array(segments * segments),
         };
+        for (let layerName of layers) {
+            if (layerName === 'height') {
+                continue;
+            }
+            this.addLayer(layerName);
+        }
+
         this._layers.height.fill(0);
         this._colorFunc = colorFunc;
         this._heightFunc = heightFunc;
@@ -74,6 +82,10 @@ export class HeightMap {
         return this.getLayerWC('height', wx, wy);
     }
 
+    mesh(ctx) {
+        return this._createMesh(ctx);
+    }
+
     // ------------------------------------------------------------------------
     // @group Coordinate systems
     // ------------------------------------------------------------------------
@@ -89,6 +101,17 @@ export class HeightMap {
         return [-1, -1, -1];
     }
 
+    coordW2I(wx, wy) {
+        const N = this._segments;
+        const s = N / this._scale;
+        const sx = Math.floor((wx - this._offset[0]) * s);
+        const sy = Math.floor((wy - this._offset[1]) * s);
+        if (sx >= 0 && sx < N && sy >= 0 && sy < N) {
+            return sy * N + sx;
+        }
+        return -1;
+    }
+
     coordS2W(sx, sy) {
         const wx = ((sx + 0.5) * this._scale) / this._segments + this._offset[0];
         const wy = ((sy + 0.5) * this._scale) / this._segments + this._offset[1];
@@ -101,6 +124,17 @@ export class HeightMap {
     // ------------------------------------------------------------------------
     // @group Layer manipulation
     // ------------------------------------------------------------------------
+
+    addLayer(layerName) {
+        const n = this.segments;
+        const layer = new Float32Array(n * n);
+        layer.fill(0);
+        this._layers[layerName] = layer;
+    }
+
+    getLayerArray(layerName) {
+        return this._layers[layerName];
+    }
 
     getLayerWC(layerName, wx, wy) {
         const [sx, sy] = this.coordW2S(wx, wy);
@@ -141,7 +175,7 @@ export class HeightMap {
 
     // ------------------------------------------------------------------------
     // @group Mesh
-    //
+    // ------------------------------------------------------------------------
 
     updateSegment(sx, sy) {
         this._recomputeVertexAttrs(sx, sy, false);
@@ -156,7 +190,11 @@ export class HeightMap {
         }
     }
 
-    mesh({ engine }) {
+    // ------------------------------------------------------------------------
+    // @group Private methods
+    // ------------------------------------------------------------------------
+
+    _createMesh({ engine }) {
         const segs = this._segments;
         const arrays = {
             position: new Float32Array(5 * 4 * 3 * segs * segs),
@@ -202,10 +240,6 @@ export class HeightMap {
 
         return this._mesh;
     }
-
-    // ------------------------------------------------------------------------
-    // @group Private methods
-    //
 
     /**
      *

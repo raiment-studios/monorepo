@@ -40,10 +40,6 @@ export class Map3D {
     entries() {
         const e = [];
         for (let [k, v] of this._map.entries()) {
-            /*const x = (k % SPAN) - HALF;
-            const y = (Math.floor(k / SPAN) % SPAN) - HALF;
-            const z = (Math.floor(k / (SPAN * SPAN)) % SPAN) - HALF;*/
-
             const x = ((k >> 0) & 0xff) - HALF;
             const y = ((k >> 8) & 0xff) - HALF;
             const z = ((k >> 16) & 0xff) - HALF;
@@ -62,5 +58,4 @@ function _key(x, y, z) {
     const py = y + HALF;
     const pz = z + HALF;
     return (pz << 16) | (py << 8) | px;
-    //return (pz * SPAN + py) * SPAN + px;
 }
