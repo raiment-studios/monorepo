@@ -17,6 +17,10 @@ export class StateMachine {
         this._waitCycles = 0;
     }
 
+    bind(obj) {
+        this._self = obj;
+    }
+
     update() {
         if (!this._activeState) {
             return;

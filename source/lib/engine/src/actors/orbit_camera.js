@@ -1,9 +1,14 @@
 import * as THREE from 'three';
 
 export class OrbitCamera {
-    constructor({ radius = 192, periodMS = 10000 } = {}) {
+    constructor({
+        radius = 192, //
+        periodMS = 10000,
+        offsetZ = 0,
+    } = {}) {
         this._radius = radius;
         this._periodMS = periodMS;
+        this._offsetZ = offsetZ;
     }
 
     update({ engine, timeMS }) {
@@ -17,7 +22,7 @@ export class OrbitCamera {
 
         const cx = radius * Math.cos(ang);
         const cy = radius * Math.sin(ang);
-        const cz = radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
+        const cz = this._offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
 
         camera.position.set(cx, cy, cz);
         camera.up = worldUp;

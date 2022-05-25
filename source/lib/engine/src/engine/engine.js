@@ -4,6 +4,7 @@ import { FrameLoop } from '../frame_loop';
 import { World } from './world';
 import { StateMachine } from '../state_machine';
 import { registerPinToWorldGround } from './behaviors/register_pin_to_world_ground';
+import { registerBillboard } from './behaviors/register_billboard';
 
 export class Engine {
     //-----------------------------------------------------------------------//
@@ -31,6 +32,7 @@ export class Engine {
         this._world = new World(this);
 
         registerPinToWorldGround(this);
+        registerBillboard(this);
     }
 
     dispose() {
@@ -98,13 +100,16 @@ export class Engine {
 
                 // Give the actor a chance to init *before* validating in case there's logic
                 // that needs to be run first to put the actor in a valid state.
-                this.events.fire('actor.add.validate', ctx);
+                this.events.fire('actor.postinit', ctx);
 
                 if (actor.stateMachine) {
-                    actor.__stateMachine = new StateMachine(actor.stateMachine(ctx));
+                    const desc = actor.stateMachine(ctx);
+                    if (desc) {
+                        actor.__stateMachine = new StateMachine(desc);
+                    }
                 }
 
-                // Let each renderer know about the new actor
+                // Let each renderer know about the new actora
                 for (let renderer of Object.values(this._renderers)) {
                     if (!renderer.addActor) {
                         break;
@@ -118,6 +123,7 @@ export class Engine {
         //
         // Run the logic update
         //
+        this.events.fire('engine.preupdate', ctx);
         for (let actor of this._actors) {
             ctx.actor = actor;
 
@@ -137,6 +143,7 @@ export class Engine {
 
             this.events.fire('actor.postupdate', ctx);
         }
+        this.events.fire('engine.preupdate', ctx);
 
         // Render frames
         ctx.actor = null;

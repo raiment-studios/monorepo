@@ -1,7 +1,15 @@
 import * as THREE from 'three';
 
 export class VoxelSprite {
-    constructor({ url = null, scale = 1.0, depth = 1.0, flags = {}, worldX = 0, worldY = 0 } = {}) {
+    constructor({
+        url = null,
+        scale = 1.0,
+        depth = 1.0,
+        flags = {},
+        worldX = 0,
+        worldY = 0,
+        stateMachine = null,
+    } = {}) {
         if (!url) {
             throw new Error(`url must be defined`);
         }
@@ -12,6 +20,7 @@ export class VoxelSprite {
         this._depth = 1.0;
         this._flags = Object.assign({}, flags);
         this._mesh = null;
+        this._stateMachine = stateMachine;
     }
 
     get flags() {
@@ -20,6 +29,15 @@ export class VoxelSprite {
 
     get position() {
         return this._position;
+    }
+
+    stateMachine(ctx) {
+        if (!this._stateMachine) {
+            return;
+        }
+        const stateMachine = this._stateMachine(ctx);
+        stateMachine._bind = this;
+        return stateMachine;
     }
 
     async mesh({ engine }) {
