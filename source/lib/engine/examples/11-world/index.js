@@ -49,13 +49,14 @@ function EngineView() {
     const engine = useEngine(() => {
         const rng = core.makeRNG();
 
-        let sprites = core.generate(8, (i) => {
-            const radius = (i + 1) * 3;
+        let sprites = [];
+        for (let i = 0; i < 8; i++) {
+            const radius = rng.range(0, 32);
             const ang = rng.range(0, 2 * Math.PI);
             const worldX = radius * Math.cos(ang);
             const worldY = radius * Math.sin(ang);
 
-            return new VoxelSprite({
+            const sprite = new VoxelSprite({
                 url: assetURL['kestrel.png'],
                 flags: {
                     pinToWorldGround: true,
@@ -63,11 +64,12 @@ function EngineView() {
                 worldX,
                 worldY,
             });
-        });
+            sprites.push(sprite);
+        }
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 24, periodMS: 9000 }), //
+            new OrbitCamera({ radius: 32, periodMS: 9000 }), //
             new BasicLighting(),
             new GroundPlane(),
             ...sprites,
