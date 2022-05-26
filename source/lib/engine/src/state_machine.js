@@ -1,13 +1,30 @@
 /**
+ * StateMachine is an object designed to make state machine control flow easier.
+ *
+ * StateMachine utilizes JavaScript generator functions to create iterative,
+ * interruptible state functions. State transitions can pass arguments upon
+ * entering new states
+ *
  * StateMachine takes a map of named generators, with a special "_start" generator.
- * Each update calls the current generator.  The generator can yield with no value
- * to pause execution until the next update. Or the generator can yield a numeric
- * value which will skip that many updates until it resumes execution.  Generators
- * can return either:
- * - no value: end execution
- * - string value: name of the state to transition to
- * - array value: first element is the state to transition to and all others are
- *      passed as arguments to the state generator
+ * Each call to update() calls the current generator for one iteration.
+ *
+ * Each generator can yield:
+ *
+ *  - No value: pause execution until the next call to update
+ *  - A number: ignore the next N update calls (i.e. "pause" for that many calls)
+ *  - A Promise: ignore any update calls until the promise is resolved
+ *
+ * The generator return value is used to transition states:
+ *
+ *  - A string: this is the name of the next state to transition to
+ *  - An array: the first element must the string name of the next state, subsequent
+ *          elements are passed as arguments to the next state
+ *
+ * Special state names:
+ *
+ *  - _start: the starting state
+ *  - _bind: A special, non-state object that if specified will be the object bound
+ *          as the "this" object passed to the generator functions
  */
 export class StateMachine {
     constructor(states) {

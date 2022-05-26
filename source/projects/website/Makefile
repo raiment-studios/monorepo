@@ -8,6 +8,7 @@ dev: build
 build:
 	node src/build.js
 	sea-jsx build src/index.js --target=dist/index.html
+	sea-jsx build src/assets.js --target=dist/assets.html
 
 publish: build
 	mkdir -p dist

@@ -41,6 +41,10 @@ export default function () {
                         <a href={`engine/examples/${folder}`}>{folder}</a>
                     </div>
                 ))}
+                <h3>Assets</h3>
+                <p>
+                    <a href="assets">Asset library</a>
+                </p>
                 <h3>Press kit</h3>
                 <p>🚧 TODO</p>
                 <h3>Support and contact</h3>

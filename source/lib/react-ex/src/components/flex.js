@@ -5,10 +5,14 @@ export function Flex({
     style,
     children,
     align = 'center',
-    direction = 'row',
+    direction,
     dir,
+    onClick,
 }) {
-    direction = direction || dir;
+    direction = direction || dir || 'row';
+    if (direction === 'col') {
+        direction = 'column';
+    }
 
     return (
         <div
@@ -18,6 +22,7 @@ export function Flex({
                 alignItems: align,
                 ...style,
             }}
+            onClick={onClick}
         >
             {children}
         </div>
