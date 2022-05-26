@@ -7,6 +7,7 @@ export * from './flow/assert.js';
 
 export * from './format/format_number.js';
 
+export * from './math/clamp.js';
 export * from './math/rng.js';
 export * from './math/simplex_noise.js';
 
