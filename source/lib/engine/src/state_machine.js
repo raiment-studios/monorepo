@@ -15,6 +15,7 @@ export class StateMachine {
         this._states = states; // descriptors
         this._activeState = states._start.call(this._self);
         this._waitCycles = 0;
+        this._busyWait = true;
     }
 
     bind(obj) {
@@ -29,6 +30,9 @@ export class StateMachine {
             this._waitCycles--;
             return;
         }
+        if (this._busyWait) {
+            return;
+        }
 
         const result = this._activeState.next();
         if (result.done) {
@@ -40,6 +44,11 @@ export class StateMachine {
             this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
         } else if (typeof result.value === 'number') {
             this._waitCycles = result.value;
+        } else if (result.value.then) {
+            this._busyWait = true;
+            result.value.then(() => {
+                this._busyWait = false;
+            });
         }
     }
 }
