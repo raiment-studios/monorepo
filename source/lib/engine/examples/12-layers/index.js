@@ -98,8 +98,13 @@ function pathFindBehavior(heightmap) {
                 }
             );
 
-            const ret = adapter.pathfind(sx, sy, ex, ey);
-            const path = ret.map((g) => ({ x: g[0], y: g[1] }));
+            let path = null;
+            adapter.pathfind(sx, sy, ex, ey).then((ret) => {
+                path = ret.map((g) => ({ x: g[0], y: g[1] }));
+            });
+            while (path === null) {
+                yield;
+            }
 
             return ['move', path];
         },

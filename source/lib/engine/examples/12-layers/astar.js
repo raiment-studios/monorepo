@@ -11,7 +11,7 @@
  * http://eloquentjavascript.net/appendix2.html
  */
 
-function astarSearch(graph, startXY, endXY, options = {}) {
+async function astarSearch(graph, startXY, endXY, options = {}) {
     // The graph caches data about the current search so it must be reset (and
     // also should not be used for multiple concurrent searches).
     graph.clean();
@@ -122,9 +122,9 @@ export class Graph2 {
         }
     }
 
-    pathfind(x0, y0, x1, y1) {
+    async pathfind(x0, y0, x1, y1) {
         this.clean();
-        const path = astarSearch(this, [x0, y0], [x1, y1], { closest: true });
+        const path = await astarSearch(this, [x0, y0], [x1, y1], { closest: true });
 
         let list = [];
         if (path.length > 0) {
