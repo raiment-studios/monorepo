@@ -22,7 +22,7 @@ export class HeightMap {
         heightFunc = null,
         colorFunc = (x, y, u, v) => [1, 0, 0.5],
         opacity = 1.0,
-        layers = [],
+        layers = {},
     } = {}) {
         this._offset = offset;
         this._scale = scale;
@@ -32,11 +32,12 @@ export class HeightMap {
         this._layers = {
             height: new Float32Array(segments * segments),
         };
-        for (let layerName of layers) {
+        for (let [layerName, Type] of Object.entries(layers)) {
             if (layerName === 'height') {
+                console.warn(`height layer is implicitly defined`);
                 continue;
             }
-            this.addLayer(layerName);
+            this.addLayer(layerName, Type);
         }
 
         this._layers.height.fill(0);
@@ -117,6 +118,15 @@ export class HeightMap {
         const wy = ((sy + 0.5) * this._scale) / this._segments + this._offset[1];
         return [wx, wy];
     }
+
+    coordS2I(sx, sy) {
+        const N = this._segments;
+        if (sx >= 0 && sx < N && sy >= 0 && sy < N) {
+            return sy * N + sx;
+        }
+        return -1;
+    }
+
     coordValidS(sx, sy) {
         return sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments;
     }
@@ -125,9 +135,9 @@ export class HeightMap {
     // @group Layer manipulation
     // ------------------------------------------------------------------------
 
-    addLayer(layerName) {
+    addLayer(layerName, Type) {
         const n = this.segments;
-        const layer = new Float32Array(n * n);
+        const layer = new Type(n * n);
         layer.fill(0);
         this._layers[layerName] = layer;
     }

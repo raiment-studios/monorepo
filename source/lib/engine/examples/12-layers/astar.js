@@ -1,7 +1,7 @@
 /**
  * A* algorithm optimized for a 2D weighted array.
  *
- * -- Derived from --
+ * ### This ia heavily modified version of code derived from:
  *
  * javascript-astar 0.4.1
  * http://github.com/bgrins/javascript-astar
@@ -11,16 +11,77 @@
  * http://eloquentjavascript.net/appendix2.html
  */
 
+/**
+ * Note that cost are in "distance": so if there's a cost +5 to a particular edge,
+ * that means the algorithm choose any alternate route of < 5 units of distance
+ * to avoid that edge (assuming all other edges are cost 0).
+ */
+export class PathfinderGraph {
+    constructor(width, height, baseWeightFunc, edgeCostFunc) {
+        this._baseWeightFunc = baseWeightFunc;
+        this._edgeCostFunc = edgeCostFunc;
+        this.nodes = new Array(width * height);
+        this.width = width;
+        this.height = height;
+
+        let i = 0;
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                this.nodes[i] = new Node(x, y);
+                i++;
+            }
+        }
+    }
+
+    async pathfind(x0, y0, x1, y1) {
+        this.reset();
+
+        let path = await astarSearch(this, [x0, y0], [x1, y1], { closest: true });
+
+        let list = [];
+        if (path.length > 0) {
+            list.push([x0, y0]);
+            path.forEach((node) => {
+                list.push([node.x, node.y]);
+            });
+        }
+        return list;
+    }
+
+    nodeAt(x, y) {
+        return this.nodes[y * this.width + x];
+    }
+
+    transitionCost(node0, node1) {
+        // dist = the cost if not additional weighting
+        // base = the cost of moving to that node, not matter what
+        // edge = the cost of this particular transition
+        const dist = nodeDistance(node0, node1);
+        const base = this._baseWeightFunc(node1);
+        const edge = this._edgeCostFunc(node0, node1);
+
+        // Avoid negative numbers since the algorithm will want to always visit those
+        // to reduce the overall score, even though that's not the shortest path!
+        return dist + Math.max(0, base + edge);
+    }
+
+    reset() {
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].reset();
+        }
+    }
+}
+
 async function astarSearch(graph, startXY, endXY, options = {}) {
     // The graph caches data about the current search so it must be reset (and
     // also should not be used for multiple concurrent searches).
-    graph.clean();
+    graph.reset();
 
     const heuristic = nodeDistance;
     const startNode = graph.nodeAt(startXY[0], startXY[1]);
     const endNode = graph.nodeAt(endXY[0], endXY[1]);
 
-    let openHeap = new BinaryHeap2((node) => {
+    let openHeap = new BinaryHeap((node) => {
         return node.estimate;
     });
 
@@ -48,9 +109,6 @@ async function astarSearch(graph, startXY, endXY, options = {}) {
             if (neighbor.closed) {
                 continue;
             }
-            if (!(neighbor.weight < Number.POSITIVE_INFINITY)) {
-                continue;
-            }
 
             // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
             let cost = currentNode.cost + graph.transitionCost(currentNode, neighbor);
@@ -76,101 +134,14 @@ async function astarSearch(graph, startXY, endXY, options = {}) {
     return null;
 }
 
-function pathTo(node) {
-    let curr = node;
-    let path = [];
-    while (curr.parent) {
-        path.unshift(curr);
-        curr = curr.parent;
-    }
-    return path;
-}
-
-/**
- * Note that cost are in "distance": so if there's a cost +5 to a particular edge,
- * that means the algorithm choose any alternate route of < 5 units of distance
- * to avoid that edge (assuming all other edges are cost 0).
- */
-export class Graph2 {
-    constructor(width, height, baseWeightFunc, edgeCostFunc) {
-        this._baseWeightFunc = baseWeightFunc;
-        this._edgeCostFunc = edgeCostFunc;
-        this.nodes = new Array(width * height);
-        this.width = width;
-        this.height = height;
-
-        let i = 0;
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                this.nodes[i] = new GraphNode(x, y, baseWeightFunc(x, y));
-                i++;
-            }
-        }
-    }
-
-    async pathfind(x0, y0, x1, y1) {
-        this.clean();
-
-        let path = await astarSearch(this, [x0, y0], [x1, y1], { closest: true });
-
-        let list = [];
-        if (path.length > 0) {
-            list.push([x0, y0]);
-            path.forEach((node) => {
-                list.push([node.x, node.y]);
-            });
-        }
-        return list;
-    }
-
-    nodeAt(x, y) {
-        return this.nodes[y * this.width + x];
-    }
-
-    transitionCost(node0, node1) {
-        // dist = the cost if not additional weighting
-        // base = the cost of moving to that node, not matter what
-        // edge = the cost of this particular transition
-        const dist = nodeDistance(node0, node1);
-        const base = this._baseWeightFunc(node1.weight);
-        const edge = this._edgeCostFunc(node0, node1);
-
-        // Avoid negative numbers since the algorithm will want to always visit those
-        // to reduce the overall score, even though that's not the shortest path!
-        return Math.max(0, dist + base + edge);
-    }
-
-    clean() {
-        for (let i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].clean();
-        }
-
-        // Reset the weights in case they changed
-        let i = 0;
-        for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x++) {
-                this.nodes[i].weight = this._baseWeightFunc(x, y);
-                i++;
-            }
-        }
-    }
-}
-
-function nodeDistance(node0, node1) {
-    const dx = node1.x - node0.x;
-    const dy = node1.y - node0.y;
-    return Math.sqrt(dx * dx + dy * dy);
-}
-
-class GraphNode {
-    constructor(x, y, weight) {
+class Node {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.weight = weight;
-        this.clean();
+        this.reset();
     }
 
-    clean() {
+    reset() {
         this.estimate = 0;
         this.cost = 0;
         this.remainder = 0;
@@ -197,8 +168,28 @@ class GraphNode {
     }
 }
 
-// Not actually a binary heap!
-class BinaryHeap2 {
+function nodeDistance(node0, node1) {
+    const dx = node1.x - node0.x;
+    const dy = node1.y - node0.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+function pathTo(node) {
+    let curr = node;
+    let path = [];
+    while (curr.parent) {
+        path.unshift(curr);
+        curr = curr.parent;
+    }
+    return path;
+}
+
+// WARNING: not necessarily an optimally efficient binary heap as it just calls sort()
+// after every change!
+//
+// This is a placeholder to get the functionality in place.
+//
+class BinaryHeap {
     constructor(scoreFunction) {
         this._list = [];
         this._func = scoreFunction;

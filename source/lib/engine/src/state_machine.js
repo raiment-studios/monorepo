@@ -28,11 +28,12 @@
  */
 export class StateMachine {
     constructor(states) {
-        this._self = states._bind;
-        this._states = states; // descriptors
-        this._activeState = states._start.call(this._self);
-        this._waitCycles = 0;
-        this._busyWait = true;
+        this._self = states._bind; // Convenience to set the "this" for a state machine
+        this._states = states; // State descriptors
+        this._activeState = states._start.call(this._self); // Starting state is always "_start"
+        this._waitCycles = 0; // Skip this many cycles
+        this._waitOnPromise = false; // Skip until a promise resolves to set this to true
+        this._nextValue = undefined; // Value returned by yield in next iteration
     }
 
     bind(obj) {
@@ -47,11 +48,13 @@ export class StateMachine {
             this._waitCycles--;
             return;
         }
-        if (this._busyWait) {
+        if (this._waitOnPromise) {
             return;
         }
 
-        const result = this._activeState.next();
+        const result = this._activeState.next(this._nextValue);
+        this._nextValue = undefined;
+
         if (result.done) {
             let [nextState, nextStateArgs] = Array.isArray(result.value)
                 ? [result.value[0], result.value.slice(1)]
@@ -61,10 +64,11 @@ export class StateMachine {
             this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
         } else if (typeof result.value === 'number') {
             this._waitCycles = result.value;
-        } else if (result.value.then) {
-            this._busyWait = true;
-            result.value.then(() => {
-                this._busyWait = false;
+        } else if (result.value?.then) {
+            this._waitOnPromise = true;
+            result.value.then((arg) => {
+                this._nextValue = arg;
+                this._waitOnPromise = false;
             });
         }
     }
