@@ -11,12 +11,12 @@
  * http://eloquentjavascript.net/appendix2.html
  */
 
-async function astarSearch(graph, startXY, endXY, options = {}) {
+function* astarSearch(graph, startXY, endXY, options = {}) {
     // The graph caches data about the current search so it must be reset (and
     // also should not be used for multiple concurrent searches).
     graph.clean();
 
-    const heuristic = options.heuristic || heuristics.manhattan;
+    const heuristic = nodeDistance;
     const startNode = graph.nodeAt(startXY[0], startXY[1]);
     const endNode = graph.nodeAt(endXY[0], endXY[1]);
 
@@ -53,7 +53,7 @@ async function astarSearch(graph, startXY, endXY, options = {}) {
             }
 
             // We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
-            let cost = currentNode.cost + graph.edgeCost(currentNode, neighbor);
+            let cost = currentNode.cost + graph.transitionCost(currentNode, neighbor);
             let beenVisited = neighbor.visited;
 
             // If this is not on the "open" list yet, or this is a better path, update
@@ -76,22 +76,6 @@ async function astarSearch(graph, startXY, endXY, options = {}) {
     return null;
 }
 
-// See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-const heuristics = {
-    manhattan(node0, node1) {
-        let d1 = Math.abs(node1.x - node0.x);
-        let d2 = Math.abs(node1.y - node0.y);
-        return d1 + d2;
-    },
-    diagonal(node0, node1) {
-        let D = 1;
-        let D2 = Math.sqrt(2);
-        let d1 = Math.abs(node1.x - node0.x);
-        let d2 = Math.abs(node1.y - node0.y);
-        return D * (d1 + d2) + (D2 - 2 * D) * Math.min(d1, d2);
-    },
-};
-
 function pathTo(node) {
     let curr = node;
     let path = [];
@@ -103,7 +87,9 @@ function pathTo(node) {
 }
 
 /**
- * A graph memory structure
+ * Note that cost are in "distance": so if there's a cost +5 to a particular edge,
+ * that means the algorithm choose any alternate route of < 5 units of distance
+ * to avoid that edge (assuming all other edges are cost 0).
  */
 export class Graph2 {
     constructor(width, height, baseWeightFunc, edgeCostFunc) {
@@ -124,7 +110,8 @@ export class Graph2 {
 
     async pathfind(x0, y0, x1, y1) {
         this.clean();
-        const path = await astarSearch(this, [x0, y0], [x1, y1], { closest: true });
+
+        let path = finalValue(astarSearch(this, [x0, y0], [x1, y1], { closest: true }));
 
         let list = [];
         if (path.length > 0) {
@@ -140,8 +127,17 @@ export class Graph2 {
         return this.nodes[y * this.width + x];
     }
 
-    edgeCost(node0, node1) {
-        return this._edgeCostFunc(node0, node1) + this._baseWeightFunc(node1.weight);
+    transitionCost(node0, node1) {
+        // dist = the cost if not additional weighting
+        // base = the cost of moving to that node, not matter what
+        // edge = the cost of this particular transition
+        const dist = nodeDistance(node0, node1);
+        const base = this._baseWeightFunc(node1.weight);
+        const edge = this._edgeCostFunc(node0, node1);
+
+        // Avoid negative numbers since the algorithm will want to always visit those
+        // to reduce the overall score, even though that's not the shortest path!
+        return Math.max(0, dist + base + edge);
     }
 
     clean() {
@@ -160,6 +156,21 @@ export class Graph2 {
     }
 }
 
+function finalValue(it) {
+    do {
+        const step = it.next();
+        if (step.done) {
+            return step.value;
+        }
+    } while (!value.done);
+}
+
+function nodeDistance(node0, node1) {
+    const dx = node1.x - node0.x;
+    const dy = node1.y - node0.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
 class GraphNode {
     constructor(x, y, weight) {
         this.x = x;
@@ -175,14 +186,6 @@ class GraphNode {
         this.visited = false;
         this.closed = false;
         this.parent = null;
-    }
-
-    getEdgeCost(toNeighbor) {
-        // Take diagonal weight into consideration.
-        // if (fromNeighbor && fromNeighbor.x !== this.x && fromNeighbor.y !== this.y) {
-        //return this.weight * 1.41421;
-        //}
-        return this.weight;
     }
 
     neighbors(graph) {

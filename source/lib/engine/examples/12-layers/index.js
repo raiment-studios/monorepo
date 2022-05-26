@@ -90,7 +90,7 @@ function pathFindBehavior(heightmap) {
             const adapter = new Graph2(
                 heightmap.segments,
                 heightmap.segments,
-                () => 1,
+                () => 0,
                 (a, b) => {
                     const hb = heightmap.getLayerSC('height', a.x, a.y);
                     const ha = heightmap.getLayerSC('height', b.x, b.y);
@@ -119,34 +119,6 @@ function pathFindBehavior(heightmap) {
                 }
                 yield;
             }
-            return 'target';
-
-            /*const cur = new THREE.Vector3();
-            cur.copy(posA);
-
-            const STEP = 0.1;
-            let done = false;
-            let count = 0;
-            do {
-                const dp = posB.clone().sub(cur).clampScalar(-STEP, STEP);
-
-                if (dp.lengthSq() < (STEP / 3) * (STEP / 3)) {
-                    cur.set(posB);
-                    done = true;
-                } else {
-                    cur.add(dp);
-                }
-
-                const [sx, sy, si] = heightmap.coordW2S(cur.x, cur.y);
-                if (si !== -1) {
-                    typeArray[si] = 2.0;
-                    heightmap.updateSegment(sx, sy);
-                }
-                if (++count % 10 == 0) {
-                    yield;
-                }
-            } while (!done);*/
-
             return 'target';
         },
     };
