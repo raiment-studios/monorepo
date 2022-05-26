@@ -118,6 +118,16 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022
 
 -   Week 21
+    -   [x] ➕ Allow `StateMachine` states to return `Promise`s
+    -   [x] 🧬 Add pathfinding to examples
+    -   [x] 🧬 Add Forest to examples
+    -   [x] ➕ Add `Map3D`, `clamp` to `core`
+    -   [x] ➕ Add additional 32x32 sprites to the assets directory
+    -   [x] ➕ Add `castShadow` flag
+    -   [x] ➕ Add `billboard` flag
+    -   [x] ➕ Add `pinToGroundHeight` flag
+    -   [x] ➕ Allow env variables in `glob:` syntax
+    -   [x] 🗃️ Create shared `assets/` directory
     -   [x] ➕ Allow `async mesh()` Actor methods
     -   [x] ➕ Added `VoxelSprite`, `ImageGeometryCache` to `engine`
     -   [x] ➕ Add `loadImage`, `getImagePixelData` to `engine
