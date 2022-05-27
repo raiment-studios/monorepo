@@ -5,6 +5,8 @@ export * from './collections/map_3di.js';
 export * from './controllers/event_emitter.js';
 
 export * from './flow/assert.js';
+export * from './flow/iterate_border2d.js';
+export * from './flow/iterate_count.js';
 
 export * from './format/format_number.js';
 

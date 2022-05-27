@@ -20,7 +20,7 @@ export class HeightMap {
         scale = 1.0,
         segments = 16,
         heightFunc = null,
-        colorFunc = (x, y, u, v) => [1, 0, 0.5],
+        colorFunc = (sx, sy, si, worldHeight) => [1, 0, 0.5],
         opacity = 1.0,
         layers = {},
     } = {}) {
@@ -73,6 +73,14 @@ export class HeightMap {
 
     get segments() {
         return this._segments;
+    }
+
+    get colorFunc() {
+        return this._colorFunc;
+    }
+
+    set colorFunc(value) {
+        this._colorFunc = value;
     }
 
     // ------------------------------------------------------------------------
@@ -328,7 +336,7 @@ export class HeightMap {
             }
         }
 
-        const color = this._colorFunc(sx, sy, heights[i]);
+        const color = this._colorFunc(sx, sy, heights[i], i);
         const scale0 = this._scale / this._segments;
 
         const x0 = sx * scale0;

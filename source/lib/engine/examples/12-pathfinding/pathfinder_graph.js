@@ -1,6 +1,3 @@
-import { Map2DI } from '../../../core';
-import Heap from 'heap';
-
 /**
  * A* algorithm optimized for a 2D weighted array.
  *
@@ -14,15 +11,27 @@ import Heap from 'heap';
  * http://eloquentjavascript.net/appendix2.html
  */
 
+import { Map2DI } from '../../../core';
+import Heap from 'heap';
+
 /**
+ * PathfinderGraph is an object that can find paths in a grid-based map.
+ * As an object it is designed to be called multiple times and caches objects
+ * and configuration for reuse.
+ *
  * Note that cost are in "distance": so if there's a cost +5 to a particular edge,
  * that means the algorithm choose any alternate route of < 5 units of distance
  * to avoid that edge (assuming all other edges are cost 0).
  */
 export class PathfinderGraph {
-    constructor(width, height, baseWeightFunc, edgeCostFunc) {
-        this._baseWeightFunc = baseWeightFunc;
-        this._edgeCostFunc = edgeCostFunc;
+    constructor({
+        width = 0,
+        height = 0,
+        baseCost = (node) => 0, //
+        edgeCost = (nodeFrom, nodeTo) => 0,
+    } = {}) {
+        this._baseWeightFunc = baseCost;
+        this._edgeCostFunc = edgeCost;
         this._pool = [];
         this._nodeMap = new Map2DI(() => {
             if (this._pool.length > 0) {
@@ -41,19 +50,6 @@ export class PathfinderGraph {
         // the target
         let node = await astarSearch(this, [x0, y0], [x1, y1]);
         return pathTo(node);
-    }
-
-    async pathfindSegmented(x0, y0, x1, y1, maxDist) {
-        const dx = x1 - x0;
-        const dy = y1 - y0;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const m = dist / maxDist;
-        if (m > 1) {
-            const xi = Math.ceil(x0 + dx / m);
-            const yi = Math.ceil(y0 + dy / m);
-            return this.pathfind(x0, y0, xi, yi);
-        }
-        return this.pathfind(x0, y0, x1, y1);
     }
 
     nodeAt(x, y) {

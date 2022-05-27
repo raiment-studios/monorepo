@@ -41,52 +41,111 @@ function makeGrassColorFunc(segments) {
     };
 }
 
+class ObjectTable {
+    constructor({ transform = (obj) => obj } = {}) {
+        this._list = [];
+        this._transform = transform;
+    }
+    add(obj) {
+        const i = this._list.length;
+        this._list.push(this._transform(obj));
+        return i;
+    }
+    get(index) {
+        return this._list[index];
+    }
+}
+
+const db = {
+    colors: new ObjectTable(),
+    tiles: new ObjectTable({
+        transform: (obj) => {
+            obj.weight = (1.0 - obj.walkability) * 1e20;
+            return obj;
+        },
+    }),
+};
+
+const COLOR_DEFAULT = db.colors.add({});
+const COLOR_YELLOW = db.colors.add({});
+
+const TILE_GRASS = db.tiles.add({
+    walkability: 1.0,
+    colorFunc: makeGrassColorFunc(256),
+});
+const TILE_BLACK = db.tiles.add({
+    walkability: 0.0,
+    colorFunc: () => [0.3, 0.3, 0.3],
+});
+const TILE_BLUE = db.tiles.add({
+    walkability: 0.1,
+    colorFunc: () => [0.1, 0.5, 0.9],
+});
+
+function makeHeightMap(rng) {
+    const S = 96;
+    const simplex3 = core.makeSimplexNoise();
+
+    const heightMap = new HeightMap({
+        offset: [-256 / 2, -256 / 2, 0],
+        scale: 256,
+        segments: 256,
+        layers: {
+            type: Int8Array,
+            color: Int8Array,
+        },
+        heightFunc: (sx, sy) => {
+            const a = (1 + simplex3.noise2D(sx / S, sy / S)) / 2;
+            return 0.1 * a;
+        },
+    });
+
+    const typeArray = heightMap.getLayerArray('type');
+    const colorArray = heightMap.getLayerArray('color');
+
+    typeArray.fill(TILE_GRASS);
+    colorArray.fill(COLOR_DEFAULT);
+
+    heightMap.colorFunc = function (sx, sy, wz, si) {
+        const type = typeArray[si];
+        const color = colorArray[si];
+
+        switch (color) {
+            case COLOR_DEFAULT:
+            default:
+                return db.tiles.get(type).colorFunc(sx, sy);
+            case COLOR_YELLOW:
+                return [1, 1, 0.2];
+        }
+    };
+
+    //
+    // Create some unwalkable regions
+    //
+    core.iterateCount(400, (i) => {
+        const cx = rng.rangei(0, heightMap.segments);
+        const cy = rng.rangei(0, heightMap.segments);
+
+        const type = i < 40 ? TILE_BLACK : TILE_BLUE;
+        const count = i < 40 ? 8 : 4;
+        core.iterateBorder2D(cx, cy, count, (sx, sy) => {
+            const si = heightMap.coordS2I(sx, sy);
+            if (si !== -1) {
+                colorArray[si] = COLOR_DEFAULT;
+                typeArray[si] = type;
+            }
+        });
+    });
+    heightMap.updateMesh();
+
+    return heightMap;
+}
+
 function EngineView() {
     const engine = useEngine(() => {
         const rng = core.makeRNG();
 
-        const S = 96;
-        const simplex3 = core.makeSimplexNoise();
-        const grassColor = makeGrassColorFunc(256);
-        const heightMap = new HeightMap({
-            offset: [-256 / 2, -256 / 2, 0],
-            scale: 256,
-            segments: 256,
-            layers: { type: Int32Array },
-            heightFunc: (sx, sy) => {
-                const a = (1 + simplex3.noise2D(sx / S, sy / S)) / 2;
-                return 0.1 * a;
-            },
-            colorFunc: function (sx, sy) {
-                const type = this.getLayerSC('type', sx, sy);
-                const a = (1 + simplex3.noise2D(sx / S, sy / S)) / 2;
-                return type === 0
-                    ? grassColor(sx, sy)
-                    : type === 1
-                    ? [1, 1, 0.2]
-                    : type === 2
-                    ? [0, 0, 1]
-                    : type === 3
-                    ? [0.1, 0, 0]
-                    : [0, 0, 1];
-            },
-        });
-
-        const typeArray = heightMap.getLayerArray('type');
-        iterateCount(400, (i) => {
-            const cx = rng.rangei(0, heightMap.segments);
-            const cy = rng.rangei(0, heightMap.segments);
-
-            const type = i < 40 ? 3 : 2;
-            const count = i < 40 ? 8 : 4;
-            iterateBorder2D(cx, cy, count, (sx, sy) => {
-                const si = heightMap.coordS2I(sx, sy);
-                if (si !== -1) {
-                    typeArray[si] = type;
-                }
-            });
-        });
-        heightMap.updateMesh();
+        const heightMap = makeHeightMap(rng);
 
         engine.actors.push(
             new Grid(),
@@ -101,44 +160,40 @@ function EngineView() {
     return <EngineFrame engine={engine} recorder="three" />;
 }
 
-function iterateCount(c, cb) {
-    for (let i = 0; i < c; i++) {
-        cb(i);
-    }
-}
-function iterateBorder2D(cx, cy, width, cb) {
-    for (let dy = -width; dy <= width; dy++) {
-        for (let dx = -width; dx <= width; dx++) {
-            cb(cx + dx, cy + dy);
-        }
-    }
-}
-
 function pathFindBehavior(heightmap) {
+    const MAX_SEARCH_DISTANCE = 60;
     const rng = core.makeRNG();
 
+    // A few shortcuts for the accessing the heightmap
+    //
+    const SEGMENTS = heightmap.segments;
     const typeArray = heightmap.getLayerArray('type');
+    const colorArray = heightmap.getLayerArray('color');
 
-    const pathfinder = new PathfinderGraph(
-        heightmap.segments,
-        heightmap.segments,
-        (a) => {
-            const type = heightmap.getLayerSC('type', a.x, a.y);
-            if (type == 2) {
-                return 500;
-            }
-            if (type == 3) {
-                return 1e20;
-            }
-            return 0;
+    const tileAt = (sx, sy) => {
+        if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
+            return null;
+        }
+        return db.tiles.get(typeArray[sy * SEGMENTS + sx]);
+    };
+
+    // Pathfinding object...
+    //
+    const pathfinder = new PathfinderGraph({
+        width: heightmap.segments,
+        height: heightmap.segments,
+        baseCost: (a) => {
+            return tileAt(a.x, a.y)?.weight ?? 0.0;
         },
-        (a, b) => {
+        edgeCost: (a, b) => {
             const hb = heightmap.getLayerSC('height', a.x, a.y);
             const ha = heightmap.getLayerSC('height', b.x, b.y);
             return Math.max(0, hb - ha);
-        }
-    );
+        },
+    });
 
+    // State machine
+    //
     return {
         _start: function* () {
             return 'target';
@@ -175,23 +230,15 @@ function pathFindBehavior(heightmap) {
 
             // If the destination is "far away", compute a path to an intermediate
             // point.  Otherwise, compute the path to the destination
-            const maxDist = 60;
+
             const dx = ex - sx;
             const dy = ey - sy;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            const m = dist / maxDist;
+            const m = dist / MAX_SEARCH_DISTANCE;
             let result;
             if (m <= 1) {
                 result = yield pathfinder.pathfind(sx, sy, ex, ey);
             } else {
-                const N = heightmap.segments;
-                const typeAt = (x, y) => {
-                    if (!(x >= 0 && x < N && y >= 0 && y < N)) {
-                        return -1;
-                    }
-                    return typeArray[y * N + x];
-                };
-
                 // Choose the naive "ideal" intermediate point (straight-line to the
                 // target)
                 const xi = Math.ceil(sx + dx / m);
@@ -202,13 +249,13 @@ function pathFindBehavior(heightmap) {
                 let yg = yi;
 
                 let jitter = 1.0;
-                while (typeAt(xg, yg) < 0 || typeAt(xg, yg) > 1) {
+                let tile = tileAt(xg, yg);
+                while (!tile || tile.weight > 10) {
                     xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
                     yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
+                    tile = tileAt(xg, yg);
                     jitter += 0.2;
                 }
-
-                core.assert(typeAt(sx, sy) <= 1 && typeAt(xg, yg) <= 1, `Runtime error`);
 
                 result = yield pathfinder.pathfind(sx, sy, xg, yg);
             }
@@ -219,18 +266,15 @@ function pathFindBehavior(heightmap) {
         },
 
         move: function* (path, ex, ey) {
+            let x, y;
             while (path.length) {
-                const { x, y } = path.shift();
+                ({ x, y } = path.shift());
                 const si = y * heightmap.segments + x;
-                if (si !== -1) {
-                    typeArray[si] = 1;
-                    heightmap.updateSegment(x, y);
-                }
-                if (path.length === 0) {
-                    return ['moveLoop', x, y, ex, ey];
-                }
+                colorArray[si] = COLOR_YELLOW;
+                heightmap.updateSegment(x, y);
                 yield;
             }
+            return ['moveLoop', x, y, ex, ey];
         },
     };
 }
