@@ -10,6 +10,8 @@ export * from './actors/height_map';
 export * from './actors/orbit_camera';
 export * from './actors/voxel_sprite';
 
+export * from './ai/pathfinder_graph';
+
 export * from './image/get_image_pixel_data';
 export * from './image/load_image';
 

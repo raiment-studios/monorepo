@@ -10,9 +10,8 @@ import {
     BasicLighting,
     GroundPlane,
     HeightMap,
+    PathfinderGraph,
 } from '../..';
-
-import { PathfinderGraph } from './pathfinder_graph';
 
 export default function () {
     return (
@@ -34,7 +33,7 @@ function makeGrassColorFunc(segments) {
     return function (sx, sy) {
         const rgb = [146 / 255, 201 / 255, 117 / 255];
         const a = (1 + simplex3.noise2D(sx, sy)) / 2;
-        const b = (1 + simplex2.noise2D(sx * scale, sy * 100)) / 2;
+        const b = (1 + simplex2.noise2D(sx * scale, sy * scale)) / 2;
         const t = 0.5 * b + 0.5;
         const s = t + a * (1 - t);
         return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
@@ -60,25 +59,29 @@ const db = {
     colors: new ObjectTable(),
     tiles: new ObjectTable({
         transform: (obj) => {
-            obj.weight = (1.0 - obj.walkability) * 1e20;
             return obj;
         },
     }),
 };
 
 const COLOR_DEFAULT = db.colors.add({});
-const COLOR_YELLOW = db.colors.add({});
+const COLOR_YELLOW = db.colors.add({
+    rgb: [1, 1, 0.2],
+});
+const COLOR_ORANGE = db.colors.add({
+    rgb: [235 / 255, 143 / 255, 52 / 255],
+});
 
 const TILE_GRASS = db.tiles.add({
-    walkability: 1.0,
+    walkable: true,
     colorFunc: makeGrassColorFunc(256),
 });
 const TILE_BLACK = db.tiles.add({
-    walkability: 0.0,
+    walkable: false,
     colorFunc: () => [0.3, 0.3, 0.3],
 });
 const TILE_BLUE = db.tiles.add({
-    walkability: 0.1,
+    walkable: false,
     colorFunc: () => [0.1, 0.5, 0.9],
 });
 
@@ -91,7 +94,7 @@ function makeHeightMap(rng) {
         scale: 256,
         segments: 256,
         layers: {
-            type: Int8Array,
+            tile: Int8Array,
             color: Int8Array,
         },
         heightFunc: (sx, sy) => {
@@ -100,22 +103,23 @@ function makeHeightMap(rng) {
         },
     });
 
-    const typeArray = heightMap.getLayerArray('type');
+    const tileArray = heightMap.getLayerArray('tile');
     const colorArray = heightMap.getLayerArray('color');
 
-    typeArray.fill(TILE_GRASS);
+    tileArray.fill(TILE_GRASS);
     colorArray.fill(COLOR_DEFAULT);
 
     heightMap.colorFunc = function (sx, sy, wz, si) {
-        const type = typeArray[si];
+        const tile = tileArray[si];
         const color = colorArray[si];
 
         switch (color) {
             case COLOR_DEFAULT:
-            default:
-                return db.tiles.get(type).colorFunc(sx, sy);
-            case COLOR_YELLOW:
-                return [1, 1, 0.2];
+                return db.tiles.get(tile).colorFunc(sx, sy);
+            default: {
+                const obj = db.colors.get(color);
+                return obj.rgb;
+            }
         }
     };
 
@@ -126,13 +130,13 @@ function makeHeightMap(rng) {
         const cx = rng.rangei(0, heightMap.segments);
         const cy = rng.rangei(0, heightMap.segments);
 
-        const type = i < 40 ? TILE_BLACK : TILE_BLUE;
+        const tile = i < 40 ? TILE_BLACK : TILE_BLUE;
         const count = i < 40 ? 8 : 4;
         core.iterateBorder2D(cx, cy, count, (sx, sy) => {
             const si = heightMap.coordS2I(sx, sy);
             if (si !== -1) {
                 colorArray[si] = COLOR_DEFAULT;
-                typeArray[si] = type;
+                tileArray[si] = tile;
             }
         });
     });
@@ -149,7 +153,7 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 64, periodMS: 64000, offsetZ: 128 }), //
+            new OrbitCamera({ radius: 64, periodMS: 64000, offsetZ: 96 }), //
             new BasicLighting(),
             new GroundPlane(),
             heightMap,
@@ -167,14 +171,14 @@ function pathFindBehavior(heightmap) {
     // A few shortcuts for the accessing the heightmap
     //
     const SEGMENTS = heightmap.segments;
-    const typeArray = heightmap.getLayerArray('type');
+    const tileArray = heightmap.getLayerArray('tile');
     const colorArray = heightmap.getLayerArray('color');
 
     const tileAt = (sx, sy) => {
         if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
             return null;
         }
-        return db.tiles.get(typeArray[sy * SEGMENTS + sx]);
+        return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
     };
 
     // Pathfinding object...
@@ -182,9 +186,7 @@ function pathFindBehavior(heightmap) {
     const pathfinder = new PathfinderGraph({
         width: heightmap.segments,
         height: heightmap.segments,
-        baseCost: (a) => {
-            return tileAt(a.x, a.y)?.weight ?? 0.0;
-        },
+        baseCost: (a) => (tileAt(a.x, a.y)?.walkable ? 0 : 1e10),
         edgeCost: (a, b) => {
             const hb = heightmap.getLayerSC('height', a.x, a.y);
             const ha = heightmap.getLayerSC('height', b.x, b.y);
@@ -203,10 +205,12 @@ function pathFindBehavior(heightmap) {
             yield rng.rangei(5, 10);
 
             // Choose a random set of points
-            const posA = new THREE.Vector2(rng.rangei(-192, 192), rng.rangei(-192, 192));
-            const posB = new THREE.Vector2(rng.rangei(-192, 192), rng.rangei(-192, 192));
-            const [sx, sy, si] = heightmap.coordW2S(posA.x, posA.y);
-            const [ex, ey, ei] = heightmap.coordW2S(posB.x, posB.y);
+            const sx = rng.rangei(0, heightmap.segments);
+            const sy = rng.rangei(0, heightmap.segments);
+            const si = sy * heightmap.segments + sx;
+            const ex = rng.rangei(0, heightmap.segments);
+            const ey = rng.rangei(0, heightmap.segments);
+            const ei = ey * heightmap.segments + ex;
 
             // Try again if the point is not valid...
             if (si === -1 || ei === -1) {
@@ -214,9 +218,7 @@ function pathFindBehavior(heightmap) {
             }
 
             // ...or it starts or ends on a non walkable tile
-            const stype = typeArray[si];
-            const etype = typeArray[ei];
-            if (stype > 1 || etype > 1) {
+            if (!tileAt(sx, sy).walkable || !tileAt(ex, ey).walkable) {
                 return 'target';
             }
 
@@ -250,7 +252,7 @@ function pathFindBehavior(heightmap) {
 
                 let jitter = 1.0;
                 let tile = tileAt(xg, yg);
-                while (!tile || tile.weight > 10) {
+                while (!tile?.walkable) {
                     xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
                     yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
                     tile = tileAt(xg, yg);
@@ -262,15 +264,16 @@ function pathFindBehavior(heightmap) {
 
             // Move!
             const path = result.map((g) => ({ x: g[0], y: g[1] }));
-            return ['move', path, ex, ey];
+            const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
+            return ['move', path, ex, ey, colorIndex];
         },
 
-        move: function* (path, ex, ey) {
+        move: function* (path, ex, ey, colorIndex) {
             let x, y;
             while (path.length) {
                 ({ x, y } = path.shift());
                 const si = y * heightmap.segments + x;
-                colorArray[si] = COLOR_YELLOW;
+                colorArray[si] = colorIndex;
                 heightmap.updateSegment(x, y);
                 yield;
             }
