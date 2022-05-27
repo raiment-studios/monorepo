@@ -5,7 +5,7 @@ const HALF = SPAN >> 1;
 
 /**
  */
-export class Map3D {
+export class Map3DI {
     constructor(options = {}) {
         this._map = new Map();
         this._defaultCallback = options.defaultCallback;

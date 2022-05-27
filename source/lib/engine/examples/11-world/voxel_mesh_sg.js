@@ -25,7 +25,7 @@ function grid3d(x, y, z, size, out = {}) {
  */
 export class VoxelModelSG {
     constructor({ billboard = false } = {}) {
-        this._chunks = new core.Map3D({ defaultCallback: () => new Chunk() });
+        this._chunks = new core.Map3DI({ defaultCallback: () => new Chunk() });
         this._group = new THREE.Group();
         this._billboard = billboard;
     }

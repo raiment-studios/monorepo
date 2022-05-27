@@ -1,3 +1,4 @@
+import { Map2DI } from '../../../core';
 import Heap from 'heap';
 
 /**
@@ -22,17 +23,15 @@ export class PathfinderGraph {
     constructor(width, height, baseWeightFunc, edgeCostFunc) {
         this._baseWeightFunc = baseWeightFunc;
         this._edgeCostFunc = edgeCostFunc;
-        this.nodes = new Array(width * height);
+        this._pool = [];
+        this._nodeMap = new Map2DI(() => {
+            if (this._pool.length > 0) {
+                return this._pool.pop();
+            }
+            return new Node();
+        });
         this.width = width;
         this.height = height;
-
-        let i = 0;
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                this.nodes[i] = new Node(x, y);
-                i++;
-            }
-        }
     }
 
     async pathfind(x0, y0, x1, y1) {
@@ -44,8 +43,26 @@ export class PathfinderGraph {
         return pathTo(node);
     }
 
+    async pathfindSegmented(x0, y0, x1, y1, maxDist) {
+        const dx = x1 - x0;
+        const dy = y1 - y0;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const m = dist / maxDist;
+        if (m > 1) {
+            const xi = Math.ceil(x0 + dx / m);
+            const yi = Math.ceil(y0 + dy / m);
+            return this.pathfind(x0, y0, xi, yi);
+        }
+        return this.pathfind(x0, y0, x1, y1);
+    }
+
     nodeAt(x, y) {
-        return this.nodes[y * this.width + x];
+        let node = this._nodeMap.ensure(x, y);
+        if (node.x !== x || node.y !== y) {
+            node.x = x;
+            node.y = y;
+        }
+        return node;
     }
 
     transitionCost(node0, node1) {
@@ -62,9 +79,12 @@ export class PathfinderGraph {
     }
 
     reset() {
-        for (let i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].reset();
+        const nodes = this._nodeMap.values();
+        this._nodeMap.clear();
+        for (let node of nodes) {
+            node.reset();
         }
+        this._pool.push(...nodes);
     }
 }
 
@@ -83,6 +103,8 @@ async function astarSearch(graph, startXY, endXY) {
     startNode.remainder = heuristic(startNode, endNode);
     openHeap.push(startNode);
 
+    const neighborBuffer = new Array(8);
+
     // Main algorithm:
     //
     // 1. Grab the lowest estimate to process next.  Heap keeps this sorted for us.
@@ -99,7 +121,7 @@ async function astarSearch(graph, startXY, endXY) {
         // About to visit all the neighbors, so move this to the closed "list"
         currentNode.closed = true;
 
-        for (let neighbor of currentNode.neighbors(graph)) {
+        for (let neighbor of currentNode.neighbors(graph, neighborBuffer)) {
             // Not a valid node to process, skip to next neighbor.
             if (neighbor.closed) {
                 continue;
@@ -156,20 +178,21 @@ class Node {
         this.parent = null;
     }
 
-    neighbors(graph) {
-        const n = [];
+    neighbors(graph, n) {
+        let i = 0;
         if (this.x > 0) {
-            n.push(graph.nodeAt(this.x - 1, this.y));
+            n[i++] = graph.nodeAt(this.x - 1, this.y);
         }
         if (this.x + 1 < graph.width) {
-            n.push(graph.nodeAt(this.x + 1, this.y));
+            n[i++] = graph.nodeAt(this.x + 1, this.y);
         }
         if (this.y > 0) {
-            n.push(graph.nodeAt(this.x, this.y - 1));
+            n[i++] = graph.nodeAt(this.x, this.y - 1);
         }
         if (this.y + 1 < graph.width) {
-            n.push(graph.nodeAt(this.x, this.y + 1));
+            n[i++] = graph.nodeAt(this.x, this.y + 1);
         }
+        n.length = i;
         return n;
     }
 }
@@ -187,5 +210,5 @@ function pathTo(node) {
         path.unshift([curr.x, curr.y]);
         curr = curr.parent;
     }
-    return path.reverse();
+    return path;
 }

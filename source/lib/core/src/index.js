@@ -1,5 +1,6 @@
 export * from './collections/generate.js';
-export * from './collections/map_3d.js';
+export * from './collections/map_2di.js';
+export * from './collections/map_3di.js';
 
 export * from './controllers/event_emitter.js';
 
