@@ -93,6 +93,8 @@ export class Engine {
             for (let actor of this._actors._added) {
                 ctx.actor = actor;
 
+                this.events.fire('actor.preinit', ctx);
+
                 // Let the actor initialize itself on the first frame
                 if (actor.init) {
                     actor.init(ctx);
