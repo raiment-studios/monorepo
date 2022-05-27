@@ -1,3 +1,5 @@
+import Heap from 'heap';
+
 /**
  * A* algorithm optimized for a 2D weighted array.
  *
@@ -36,16 +38,10 @@ export class PathfinderGraph {
     async pathfind(x0, y0, x1, y1) {
         this.reset();
 
-        let path = await astarSearch(this, [x0, y0], [x1, y1], { closest: true });
-
-        let list = [];
-        if (path.length > 0) {
-            list.push([x0, y0]);
-            path.forEach((node) => {
-                list.push([node.x, node.y]);
-            });
-        }
-        return list;
+        // Note: this will be the *closest* node to the target, not necessarily
+        // the target
+        let node = await astarSearch(this, [x0, y0], [x1, y1]);
+        return pathTo(node);
     }
 
     nodeAt(x, y) {
@@ -72,7 +68,7 @@ export class PathfinderGraph {
     }
 }
 
-async function astarSearch(graph, startXY, endXY, options = {}) {
+async function astarSearch(graph, startXY, endXY) {
     // The graph caches data about the current search so it must be reset (and
     // also should not be used for multiple concurrent searches).
     graph.reset();
@@ -81,9 +77,8 @@ async function astarSearch(graph, startXY, endXY, options = {}) {
     const startNode = graph.nodeAt(startXY[0], startXY[1]);
     const endNode = graph.nodeAt(endXY[0], endXY[1]);
 
-    let openHeap = new BinaryHeap((node) => {
-        return node.estimate;
-    });
+    let openHeap = new Heap((a, b) => a.estimate() - b.estimate());
+    let closestNode = startNode;
 
     startNode.remainder = heuristic(startNode, endNode);
     openHeap.push(startNode);
@@ -98,7 +93,7 @@ async function astarSearch(graph, startXY, endXY, options = {}) {
     while (openHeap.size() > 0) {
         let currentNode = openHeap.pop();
         if (currentNode === endNode) {
-            return pathTo(currentNode);
+            return currentNode;
         }
 
         // About to visit all the neighbors, so move this to the closed "list"
@@ -120,29 +115,40 @@ async function astarSearch(graph, startXY, endXY, options = {}) {
                 neighbor.parent = currentNode;
                 neighbor.remainder = heuristic(neighbor, endNode);
                 neighbor.cost = cost;
-                neighbor.estimate = neighbor.cost + neighbor.remainder;
+
+                const delta = neighbor.estimate() - closestNode.estimate();
+                if (delta < 0 || (delta === 0 && neighbor.cost < closestNode.cost)) {
+                    closestNode = neighbor;
+                }
 
                 if (!beenVisited) {
                     openHeap.push(neighbor);
                 } else {
-                    openHeap.rescoreElement(neighbor);
+                    openHeap.updateItem(neighbor);
                 }
             }
         }
     }
 
-    return null;
+    return closestNode;
 }
 
 class Node {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.reset();
+        this.cost = 0; // Minimal known computed  cost to reach this node
+        this.remainder = 0; // Guess as to the remaining cost from this node to the destination
+        this.visited = false;
+        this.closed = false;
+        this.parent = null;
+    }
+
+    estimate() {
+        return this.cost + this.remainder;
     }
 
     reset() {
-        this.estimate = 0;
         this.cost = 0;
         this.remainder = 0;
         this.visited = false;
@@ -178,44 +184,8 @@ function pathTo(node) {
     let curr = node;
     let path = [];
     while (curr.parent) {
-        path.unshift(curr);
+        path.unshift([curr.x, curr.y]);
         curr = curr.parent;
     }
-    return path;
-}
-
-// WARNING: not necessarily an optimally efficient binary heap as it just calls sort()
-// after every change!
-//
-// This is a placeholder to get the functionality in place.
-//
-class BinaryHeap {
-    constructor(scoreFunction) {
-        this._list = [];
-        this._func = scoreFunction;
-    }
-
-    size() {
-        return this._list.length;
-    }
-
-    push(elem) {
-        this._list.push(elem);
-        this._resort();
-    }
-    pop() {
-        return this._list.shift();
-    }
-    remove(elem) {
-        this._list = this._list.filter((e) => e !== elem);
-    }
-
-    rescoreElement(node) {
-        this._resort();
-    }
-
-    _resort() {
-        const f = this._func;
-        this._list.sort((a, b) => f(a) - f(b));
-    }
+    return path.reverse();
 }
