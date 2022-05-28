@@ -56,15 +56,30 @@ function makeGrassColorFunc(segments) {
 class ObjectTable {
     constructor({ transform = (obj) => obj } = {}) {
         this._list = [];
+        this._free = [];
         this._transform = transform;
     }
     add(obj) {
-        const i = this._list.length;
+        let i;
+        if (this._free.length) {
+            i = this._free.shift();
+        } else {
+            i = this._list.length;
+        }
         this._list.push(this._transform(obj));
         return i;
     }
     get(index) {
         return this._list[index];
+    }
+    remove(obj) {
+        for (let i = 0; i < this._list.length; i++) {
+            if (this._list[i] === obj) {
+                this._list[i] = null;
+                this._free.push(i);
+                break;
+            }
+        }
     }
 }
 
@@ -80,6 +95,9 @@ const db = {
         },
     }),
 };
+
+const objectList = new ObjectTable();
+objectList.add({});
 
 const COLOR_DEFAULT = db.colors.add({
     rgb: [1, 1, 1],
@@ -116,9 +134,10 @@ const TILE_DIRT_WALKABLE = db.tiles.add({
     walkCost: 10,
     colorFunc: (sx, sy) => {
         const base = grassColorFunc(sx, sy);
-        base[0] *= 1.25;
-        base[1] *= 0.5;
-        base[2] *= 0.5;
+        const a = sy % 2 ? 0.75 : 1.0;
+        base[0] *= 1.25 * a;
+        base[1] *= 0.5 * a;
+        base[2] *= 0.5 * a;
         return base;
     },
 });
@@ -136,6 +155,7 @@ function makeHeightMap(rng) {
         layers: {
             tile: Int8Array,
             color: Int8Array,
+            object: Int16Array,
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -147,9 +167,11 @@ function makeHeightMap(rng) {
 
     const tileArray = heightMap.getLayerArray('tile');
     const colorArray = heightMap.getLayerArray('color');
+    const objectArray = heightMap.getLayerArray('object');
 
     tileArray.fill(TILE_GRASS);
     colorArray.fill(COLOR_DEFAULT);
+    objectArray.fill(0);
 
     heightMap.colorFunc = function (sx, sy, wz, si) {
         const tile = db.tiles.get(tileArray[si]);
@@ -196,7 +218,7 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 32 }), //
+            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 8 }), //
             new BasicLighting(),
             new GroundPlane(),
             heightMap
@@ -235,6 +257,11 @@ function EngineView() {
             return [worldX, worldY];
         };
 
+        engine.opt.generateRandomWalkablePosition2 = function () {
+            const [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+            return new THREE.Vector3(worldX, worldY, 0.0);
+        };
+
         engine.opt.generatePathfindingBehavior = function (actor) {
             return makePathfindBehaviorForHeightmap(heightMap, actor);
         };
@@ -246,6 +273,64 @@ function EngineView() {
             engine.actors.push(new Forest({ count: 40 }));
 
             yield;
+
+            engine.actors.push({
+                stateMachine: function () {
+                    const tileArray = heightMap.getLayerArray('tile');
+                    const objectArray = heightMap.getLayerArray('object');
+
+                    return {
+                        _start: function* () {
+                            return 'grow';
+                        },
+                        grow: function* () {
+                            for (let i = 0; i < 4; i++) {
+                                const sx = 4 * Math.floor(rng.rangei(0, heightMap.segments) / 2);
+                                const sy = 6 * Math.floor(rng.rangei(0, heightMap.segments) / 4);
+                                const si = sy * heightMap.segments + sx;
+
+                                const tileIndex = tileArray[si];
+                                //if (tileIndex !== TILE_GRASS) {
+                                if (tileIndex !== TILE_DIRT_WALKABLE) {
+                                    continue;
+                                }
+                                const objectIndex = objectArray[si];
+                                if (objectIndex !== 0) {
+                                    const obj = objectList.get(objectIndex);
+                                    if (obj._spriteScale < 1.0) {
+                                        obj._spriteScale += 0.1;
+                                        obj.innerMesh.scale.set(
+                                            obj._spriteScale,
+                                            obj._spriteScale,
+                                            obj._spriteScale
+                                        );
+                                    }
+                                    continue;
+                                }
+
+                                const [wx, wy] = heightMap.coordS2W(sx, sy);
+
+                                const sprite = new VoxelSprite({
+                                    url: assetURL['corn-stalk.png'],
+                                    flags: {
+                                        billboard: true,
+                                        pinToGroundHeight: true,
+                                    },
+                                    position: new THREE.Vector3(wx, wy, 0.0),
+                                    spriteScale: 0.1,
+                                });
+
+                                const index = objectList.add(sprite);
+                                objectArray[si] = index;
+                                engine.actors.push(sprite);
+                            }
+
+                            yield 1;
+                            return 'grow';
+                        },
+                    };
+                },
+            });
 
             // Stage 2
             // After the forest is initialized, add the sprites as they depend on

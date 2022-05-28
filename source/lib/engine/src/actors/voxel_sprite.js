@@ -8,15 +8,18 @@ export class VoxelSprite {
         flags = {},
         worldX = 0,
         worldY = 0,
+        position = null,
         stateMachine = null,
+        spriteScale = 1.0,
     } = {}) {
         if (!url) {
             throw new Error(`url must be defined`);
         }
         this._url = url;
-        this._position = new THREE.Vector3(worldX, worldY, 0);
+        this._position = position || new THREE.Vector3(worldX, worldY, 0);
         this._offset = new THREE.Vector3(0, 0, 0);
         this._scale = scale;
+        this._spriteScale = spriteScale;
         this._depth = 1.0;
         this._flags = Object.assign({}, flags);
         this._mesh = null;
@@ -29,6 +32,10 @@ export class VoxelSprite {
 
     get position() {
         return this._position;
+    }
+
+    get innerMesh() {
+        return this._mesh.children[0];
     }
 
     stateMachine(ctx) {
@@ -55,6 +62,7 @@ export class VoxelSprite {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.castShadow = true;
         mesh.position.set(0.5, 0.5, 0);
+        mesh.scale.set(this._spriteScale, this._spriteScale, this._spriteScale);
 
         const group = new THREE.Group();
         group.position.copy(this._position);
