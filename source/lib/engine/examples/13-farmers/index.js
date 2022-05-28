@@ -248,6 +248,7 @@ function EngineView() {
                     return new VoxelSprite({
                         url: assetURL[
                             rng.select([
+                                'kestrel.png',
                                 'wizard.png',
                                 'ranger.png',
                                 'ranger.png',
@@ -291,10 +292,11 @@ class Farmer {
     }
 
     init({ engine }) {
+        const rng = core.makeRNG();
         let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
 
         this._sprite = new VoxelSprite({
-            url: assetURL['kestrel.png'],
+            url: assetURL[rng.select(['farmer.png', 'farmer2.png'])],
             flags: {
                 billboard: true,
                 pinToGroundHeight: true,
@@ -388,7 +390,7 @@ class Farmer {
                     return ['moveToPlot', region];
                 }
                 this._plotFailures++;
-                return rest;
+                return 'rest';
             },
 
             moveToPlot: function* (plot) {
