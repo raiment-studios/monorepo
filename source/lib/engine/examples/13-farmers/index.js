@@ -70,7 +70,10 @@ const db = {
     colors: new ObjectTable(),
     tiles: new ObjectTable({
         transform: (obj) => {
-            return obj;
+            return {
+                walkCost: obj.walkable ? 0 : 1e10,
+                ...obj,
+            };
         },
     }),
 };
@@ -100,6 +103,7 @@ const TILE_GRASS_UNWALKABLE = db.tiles.add({
 
 const TILE_DIRT_WALKABLE = db.tiles.add({
     walkable: true,
+    walkCost: 10,
     colorFunc: (sx, sy) => {
         const base = grassColorFunc(sx, sy);
         base[0] *= 1.25;
@@ -282,6 +286,8 @@ function EngineView() {
 class Farmer {
     constructor() {
         this._sprite = null;
+        this._plotFailures = 0;
+        this._plotSuccesses = 0;
     }
 
     init({ engine }) {
@@ -304,11 +310,12 @@ class Farmer {
     // - flatten the plot to an average height
     // - "reserve" the plot +2 surrounding tiles to there aren't overlapping plots
     // - Add Farmer sprite
+    // - Add Wizard type who casts terrain-modifying spells
+    // - Add malleability property to tiles that is lower for farmed land
     stateMachine({ engine }) {
         const rng = core.makeRNG();
 
         const pathfindingBehavior = engine.opt.generatePathfindingBehavior(this._sprite);
-        console.log(this._sprite);
 
         return {
             _bind: this,
@@ -338,6 +345,7 @@ class Farmer {
             // Possibly find several plots and choose one with the least height variation
             findPlot: function* () {
                 const heightMap = engine.opt.heightMap;
+                const heightArray = heightMap.getLayerArray('height');
 
                 let attempts = 0;
                 let region = null;
@@ -348,19 +356,39 @@ class Farmer {
                     const ry0 = rng.rangei(0, heightMap.segments - height);
 
                     let valid = true;
+                    let heightSum = 0.0;
+                    let heightMin = Infinity;
+                    let heightMax = -Infinity;
                     for (let sy = ry0; valid && sy < ry0 + height; sy++) {
                         for (let sx = rx0; valid && sx < rx0 + width; sx++) {
+                            const si = sy * heightMap.segments + sx;
+                            const h = heightArray[si];
+                            heightSum += h;
+                            if (h < heightMin) heightMin = h;
+                            if (h > heightMax) heightMax = h;
                             valid &= engine.opt.walkableS(sx, sy);
                         }
                     }
+
+                    // Avoid plots on highly sloped terrain
+                    valid &= heightMax - heightMin <= 15;
+
                     if (valid) {
-                        region = [rx0, ry0, rx0 + width, ry0 + height];
+                        const avgHeight = heightSum / (width * height);
+                        region = [rx0, ry0, rx0 + width, ry0 + height, avgHeight];
+                    } else {
+                        yield 5;
                     }
 
                     attempts++;
                 }
 
-                return region ? ['moveToPlot', region] : 'rest';
+                if (region) {
+                    this._plotSuccesses++;
+                    return ['moveToPlot', region];
+                }
+                this._plotFailures++;
+                return rest;
             },
 
             moveToPlot: function* (plot) {
@@ -369,9 +397,10 @@ class Farmer {
 
             // Given a plot definition, gradually "till" the land, changing the tile
             // type
-            tillPlot: function* ([rx0, ry0, rx1, ry1]) {
+            tillPlot: function* ([rx0, ry0, rx1, ry1, height]) {
                 const heightMap = engine.opt.heightMap;
                 const tileArray = heightMap.getLayerArray('tile');
+                const heightArray = heightMap.getLayerArray('height');
 
                 const till = (sx, sy) => {
                     const [wx, wy] = heightMap.coordS2W(sx, sy);
@@ -381,20 +410,27 @@ class Farmer {
                     const si = sy * heightMap.segments + sx;
 
                     tileArray[si] = TILE_DIRT_WALKABLE;
-                    heightMap.updateSegment(sx, sy);
+                    heightArray[si] = 0.75 * heightArray[si] + 0.25 * height;
+
+                    core.iterateBorder2D(sx, sy, 1, (x, y) => {
+                        if (x >= 0 && x < heightMap.segments && y >= 0 && y < heightMap.segments) {
+                            heightMap.updateSegment(x, y);
+                        }
+                    });
                 };
 
                 let parity = 0;
+                const WAIT = 0;
                 for (let sy = ry0; sy < ry1; sy++) {
                     if (parity === 0) {
                         for (let sx = rx0; sx < rx1; sx++) {
                             till(sx, sy);
-                            yield 5;
+                            yield WAIT;
                         }
                     } else {
                         for (let sx = rx1 - 1; sx >= rx0; sx--) {
                             till(sx, sy);
-                            yield 5;
+                            yield WAIT;
                         }
                     }
                     yield 10;
@@ -534,7 +570,7 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
         width: SEGMENTS,
         height: SEGMENTS,
         walkable,
-        baseCost: (a) => (tileAt(a.x, a.y)?.walkable ? 0 : 1e10),
+        baseCost: (a) => tileAt(a.x, a.y)?.walkCost,
         edgeCost: (a, b) => {
             const hb = heightArray[b.y * SEGMENTS + b.x];
             const ha = heightArray[a.y * SEGMENTS + a.x];
