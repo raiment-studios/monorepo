@@ -165,6 +165,10 @@ export class Engine {
 
             this.events.fire('actor.preupdate', ctx);
 
+            // Note: we could peer into the stateMachine and remove actors that we know are
+            // busy waiting on a promise or for a long number of cycles and only readd them
+            // when they are active again. This may be a potential optimization for later,
+            // especially if there are many "infrequent" actors in the engine.
             if (actor.__stateMachine) {
                 actor.__stateMachine.update(ctx);
             }

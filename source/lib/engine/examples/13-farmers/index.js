@@ -12,6 +12,8 @@ import {
     HeightMap,
     PathfinderGraph,
     VoxelSprite,
+    updatePosition,
+    updateBoxCollision,
 } from '../..';
 import { Forest } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}';
@@ -72,6 +74,7 @@ const db = {
         transform: (obj) => {
             return {
                 walkCost: obj.walkable ? 0 : 1e10,
+                tillable: true,
                 ...obj,
             };
         },
@@ -98,6 +101,13 @@ const TILE_GRASS = db.tiles.add({
 });
 const TILE_GRASS_UNWALKABLE = db.tiles.add({
     walkable: false,
+    colorFunc: grassColorFunc,
+});
+
+const TILE_GRASS_UNTILLABLE = db.tiles.add({
+    walkable: true,
+    walkCost: 20,
+    tillable: false,
     colorFunc: grassColorFunc,
 });
 
@@ -186,7 +196,7 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 48 }), //
+            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 32 }), //
             new BasicLighting(),
             new GroundPlane(),
             heightMap
@@ -211,8 +221,7 @@ function EngineView() {
                     return false;
                 }
                 const tileIndex = tileArray[si];
-                const tile = db.tiles.get(tileIndex);
-                return tile.walkable;
+                return tileIndex === TILE_GRASS;
             };
 
             let worldX, worldY;
@@ -248,6 +257,7 @@ function EngineView() {
                     return new VoxelSprite({
                         url: assetURL[
                             rng.select([
+                                'kestrel.png',
                                 'wizard.png',
                                 'ranger.png',
                                 'ranger.png',
@@ -276,6 +286,10 @@ function EngineView() {
                 }),
                 ...core.generate(6, () => new Farmer())
             );
+
+            yield;
+
+            engine.actors.push(new Updater(heightMap));
             return;
         });
     });
@@ -291,10 +305,11 @@ class Farmer {
     }
 
     init({ engine }) {
+        const rng = core.makeRNG();
         let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
 
         this._sprite = new VoxelSprite({
-            url: assetURL['kestrel.png'],
+            url: assetURL[rng.select(['farmer.png', 'farmer2.png'])],
             flags: {
                 billboard: true,
                 pinToGroundHeight: true,
@@ -307,9 +322,6 @@ class Farmer {
     }
 
     // 🚧 TODO:
-    // - flatten the plot to an average height
-    // - "reserve" the plot +2 surrounding tiles to there aren't overlapping plots
-    // - Add Farmer sprite
     // - Add Wizard type who casts terrain-modifying spells
     // - Add malleability property to tiles that is lower for farmed land
     stateMachine({ engine }) {
@@ -346,6 +358,7 @@ class Farmer {
             findPlot: function* () {
                 const heightMap = engine.opt.heightMap;
                 const heightArray = heightMap.getLayerArray('height');
+                const tileArray = heightMap.getLayerArray('tile');
 
                 let attempts = 0;
                 let region = null;
@@ -366,7 +379,9 @@ class Farmer {
                             heightSum += h;
                             if (h < heightMin) heightMin = h;
                             if (h > heightMax) heightMax = h;
-                            valid &= engine.opt.walkableS(sx, sy);
+
+                            const tile = db.tiles.get(tileArray[si]);
+                            valid &= tile.walkable && tile.tillable;
                         }
                     }
 
@@ -374,8 +389,28 @@ class Farmer {
                     valid &= heightMax - heightMin <= 15;
 
                     if (valid) {
+                        // "Reserve" the to be tilled land to avoid overlapping claims
+                        const R = 0;
+                        for (let sy = ry0; sy < ry0 + height; sy++) {
+                            for (let sx = rx0; sx < rx0 + width; sx++) {
+                                if (
+                                    !(
+                                        sx >= 0 &&
+                                        sx < heightMap.segments &&
+                                        sy >= 0 &&
+                                        sy < heightMap.segments
+                                    )
+                                ) {
+                                    continue;
+                                }
+                                const si = sy * heightMap.segments + sx;
+                                tileArray[si] = TILE_GRASS_UNTILLABLE;
+                                heightMap.updateSegment(sx, sy);
+                            }
+                        }
+
                         const avgHeight = heightSum / (width * height);
-                        region = [rx0, ry0, rx0 + width, ry0 + height, avgHeight];
+                        region = [rx0 + 2, ry0 + 2, rx0 + width - 2, ry0 + height - 2, avgHeight];
                     } else {
                         yield 5;
                     }
@@ -388,7 +423,7 @@ class Farmer {
                     return ['moveToPlot', region];
                 }
                 this._plotFailures++;
-                return rest;
+                return 'rest';
             },
 
             moveToPlot: function* (plot) {
@@ -420,7 +455,7 @@ class Farmer {
                 };
 
                 let parity = 0;
-                const WAIT = 0;
+                const WAIT = 5;
                 for (let sy = ry0; sy < ry1; sy++) {
                     if (parity === 0) {
                         for (let sx = rx0; sx < rx1; sx++) {
@@ -590,4 +625,128 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
             actor.position.y = wy;
         },
     });
+}
+
+class Updater {
+    constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
+        this._heightMap = heightMap;
+        this._rng = core.makeRNG();
+        this._heightFunc = null;
+        this._makeHeightFunc = makeHeightFunc;
+        this._heightScale = heightScale;
+
+        // Note: this actor acts in "heightmap segment space", not "world space". For example,
+        // the collider is set to the segment bounds, not the world heightmap bounds.
+        this._position = new THREE.Vector3(0, 0, 0);
+        this._velocity = new THREE.Vector3(0, 0, 0);
+        this._acceleration = new THREE.Vector3(0, 0, 0);
+
+        const S = this._heightMap.segments;
+        this._collider = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S));
+    }
+
+    get position() {
+        return this._position;
+    }
+    get velocity() {
+        return this._velocity;
+    }
+
+    get acceleration() {
+        return this._acceleration;
+    }
+
+    update() {
+        const rng = this._rng;
+
+        updatePosition(this, 1);
+        updateBoxCollision(this, this._collider);
+
+        const K = 0.25;
+        const MV = 2;
+        this._velocity.x += K * rng.range(-1, 1);
+        this._velocity.y += K * rng.range(-1, 1);
+        this._velocity.clampScalar(-MV, MV);
+    }
+
+    stateMachine() {
+        const rng = this._rng;
+
+        return {
+            _bind: this,
+            _start: function* () {
+                this._position.x = rng.range(0, this._heightMap.segments);
+                this._position.y = rng.range(0, this._heightMap.segments);
+                this._velocity.x = rng.sign() * rng.range(0.2, 2);
+                this._velocity.y = rng.sign() * rng.range(0.2, 2);
+
+                return 'changeTerrain';
+            },
+            changeTerrain: function* () {
+                if (this._makeHeightFunc) {
+                    this._heightFunc = this._makeHeightFunc({ heightMap: this._heightMap });
+                } else {
+                    const simplex = core.makeSimplexNoise(4342);
+                    const amplitude = 0.04 * rng.range(0.4, 5);
+                    const ox = rng.range(-1000, 1000);
+                    const oy = rng.range(-1000, 1000);
+                    const s = 1 / (rng.range(0.5, 2) * this._heightMap.segments);
+                    const base = rng.range(0, 0.02);
+                    this._heightFunc = (x, y) =>
+                        base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
+                }
+                return 'update';
+            },
+            update: function* () {
+                const D = 32;
+                const MAX_DIST = Math.sqrt(2 * D * D);
+                const heightMap = this._heightMap;
+
+                const tileArray = heightMap.getLayerArray('tile');
+
+                const frames = rng.rangei(10, 100);
+                for (let i = 0; i < frames; i++) {
+                    const centerSX = Math.floor(this._position.x);
+                    const centerSY = Math.floor(this._position.y);
+                    for (let sy = centerSY - D, lsy = -D; sy <= centerSY + D; lsy++, sy++) {
+                        for (let sx = centerSX - D, lsx = -D; sx <= centerSX + D; lsx++, sx++) {
+                            if (!heightMap.coordValidS(sx, sy)) {
+                                continue;
+                            }
+                            const [wx, wy] = heightMap.coordS2W(sx, sy);
+                            const wz = heightMap.getLayerSC('height', sx, sy);
+
+                            const tz = this._heightScale * this._heightFunc(wx, wy);
+                            let dz = tz - wz;
+                            if (Math.abs(dz) < 1e-3) {
+                                continue;
+                            }
+                            dz /= 20;
+
+                            const normalizedDist = Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
+                            const k = 0.01;
+                            dz *= k + (1 - k) * (1.0 - normalizedDist);
+                            dz *= 0.15;
+
+                            const nz = wz + dz;
+                            heightMap.setLayerWC('height', wx, wy, nz, false);
+                        }
+                    }
+
+                    const K = D + 1;
+                    for (let sy = centerSY - K; sy <= centerSY + K; sy++) {
+                        for (let sx = centerSX - K; sx <= centerSX + K; sx++) {
+                            if (!heightMap.coordValidS(sx, sy)) {
+                                continue;
+                            }
+                            heightMap.updateSegment(sx, sy);
+                        }
+                    }
+                    yield 10;
+                }
+
+                return 'changeTerrain';
+            },
+        };
+    }
 }
