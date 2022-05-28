@@ -27,11 +27,13 @@ export class PathfinderGraph {
     constructor({
         width = 0,
         height = 0,
+        walkable = (x, y) => true,
         baseCost = (node) => 0, //
         edgeCost = (nodeFrom, nodeTo) => 0,
     } = {}) {
         this._baseWeightFunc = baseCost;
         this._edgeCostFunc = edgeCost;
+        this._walkableFunc = walkable;
         this._pool = [];
         this._nodeMap = new Map2DI(() => {
             if (this._pool.length > 0) {
@@ -39,8 +41,15 @@ export class PathfinderGraph {
             }
             return new Node();
         });
-        this.width = width;
-        this.height = height;
+        this._width = width;
+        this._height = height;
+    }
+
+    get width() {
+        return this._width;
+    }
+    get height() {
+        return this._height;
     }
 
     async pathfind(x0, y0, x1, y1) {
@@ -59,6 +68,10 @@ export class PathfinderGraph {
             node.y = y;
         }
         return node;
+    }
+
+    walkable(x, y) {
+        return this._walkableFunc(x, y);
     }
 
     transitionCost(node0, node1) {

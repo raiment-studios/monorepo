@@ -11,8 +11,12 @@ import {
     GroundPlane,
     HeightMap,
     PathfinderGraph,
+    VoxelSprite,
 } from '../..';
 import { Forest } from './forest.js';
+import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}';
+
+const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
 
 export default function () {
     return (
@@ -179,84 +183,142 @@ function EngineView() {
             });
         });
 
+        // Use a state machine to sequence the initialization.  For example, the Forest
+        // needs to be added prior to the sprites so the sprites can be placed on positions
+        // that are not blocked by the trees.
+        class Init {
+            stateMachine({ engine }) {
+                return {
+                    _start: function* () {
+                        // Stage 1
+                        engine.actors.push(new Forest({ count: 128 }));
+
+                        yield;
+
+                        // Stage 2
+                        engine.actors.push(
+                            ...core.generate(10, (i) => {
+                                const walkable = (wx, wy) => {
+                                    const si = heightMap.coordW2I(wx, wy);
+                                    if (si === -1) {
+                                        return false;
+                                    }
+                                    const tileIndex = tileArray[si];
+                                    const tile = db.tiles.get(tileIndex);
+                                    return tile.walkable;
+                                };
+
+                                let worldX, worldY;
+                                do {
+                                    const radius = rng.range(10, 96);
+                                    const ang = rng.range(0, 2 * Math.PI);
+                                    worldX = Math.floor(radius * Math.cos(ang));
+                                    worldY = Math.floor(radius * Math.sin(ang));
+                                } while (!walkable(worldX, worldY));
+
+                                return new VoxelSprite({
+                                    url: assetURL[
+                                        i == 0
+                                            ? 'kestrel.png'
+                                            : rng.select([
+                                                  'wizard.png',
+                                                  'ranger.png',
+                                                  'ranger.png',
+                                                  'ranger.png',
+                                                  'ranger2.png',
+                                                  'ranger2.png',
+                                                  'ranger2.png',
+                                                  'king.png',
+                                              ])
+                                    ],
+                                    flags: {
+                                        billboard: true,
+                                        pinToGroundHeight: true,
+                                    },
+                                    worldX,
+                                    worldY,
+                                    stateMachine: function ({ actor }) {
+                                        return {
+                                            _start: function* () {
+                                                return 'pathfind.start';
+                                            },
+                                            ...makePathfindBehaviorForHeightmap(heightMap, actor),
+                                        };
+                                    },
+                                });
+                            })
+                        );
+                        return;
+                    },
+                };
+            }
+        }
+
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 64, periodMS: 64000, offsetZ: 32 }), //
+            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 24 }), //
             new BasicLighting(),
             new GroundPlane(),
             heightMap,
-            new Forest({ count: 128 }),
-            ...core.generate(60, () => new Updater(heightMap))
+            new Init()
         );
     });
 
     return <EngineFrame engine={engine} recorder="three" />;
 }
 
-function pathFindBehavior(heightmap) {
-    const MAX_SEARCH_DISTANCE = 100;
-    const rng = core.makeRNG();
+/**
+ * A reusable set of state machine states for pathfinding.
+ *
+ */
+function makePathfindBehavior({
+    // Required
+    pathfinder,
+    positionFunc,
 
-    // A few shortcuts for the accessing the heightmap
-    //
-    const SEGMENTS = heightmap.segments;
-    const tileArray = heightmap.getLayerArray('tile');
-    const colorArray = heightmap.getLayerArray('color');
+    // Optional
+    prefix = 'pathfind.', //
+    MAX_SEARCH_DISTANCE = 100,
+    rng = core.makeRNG(),
 
-    const tileAt = (sx, sy) => {
-        if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
-            return null;
-        }
-        return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
-    };
+    onMove,
+    moveDelay = 0,
+}) {
+    const prefixName = (s) => `${prefix}${s}`;
+    const STATE_START = prefixName('start');
+    const STATE_TARGET = prefixName('target');
+    const STATE_MOVE = prefixName('move');
+    const STATE_MOVELOOP = prefixName('moveLoop');
 
-    // Pathfinding object...
-    //
-    const pathfinder = new PathfinderGraph({
-        width: heightmap.segments,
-        height: heightmap.segments,
-        baseCost: (a) => (tileAt(a.x, a.y)?.walkable ? 0 : 1e10),
-        edgeCost: (a, b) => {
-            const hb = heightmap.getLayerSC('height', a.x, a.y);
-            const ha = heightmap.getLayerSC('height', b.x, b.y);
-            return Math.max(0, 10 * (hb - ha));
-        },
-    });
-
-    // State machine
-    //
     return {
-        _start: function* () {
-            return 'target';
+        [STATE_START]: function* () {
+            return STATE_TARGET;
         },
-        target: function* () {
+        [STATE_TARGET]: function* () {
             // "Think" for a few frames
             yield rng.rangei(5, 10);
 
-            // Choose a random set of points
-            const sx = rng.rangei(0, heightmap.segments);
-            const sy = rng.rangei(0, heightmap.segments);
-            const si = sy * heightmap.segments + sx;
-            const ex = rng.rangei(0, heightmap.segments);
-            const ey = rng.rangei(0, heightmap.segments);
-            const ei = ey * heightmap.segments + ex;
-
-            // Try again if the point is not valid...
-            if (si === -1 || ei === -1) {
-                return 'target';
+            // Use the current position as the starting point
+            const [sx, sy] = positionFunc();
+            if (!pathfinder.walkable(sx, sy)) {
+                console.error('starting on an unwalkable tile');
+                debugger;
             }
 
-            // ...or it starts or ends on a non walkable tile
-            if (!tileAt(sx, sy).walkable || !tileAt(ex, ey).walkable) {
-                return 'target';
+            // Choose a random point to target and retry until it
+            // is a valid destination
+            const ex = rng.rangei(0, pathfinder.width);
+            const ey = rng.rangei(0, pathfinder.height);
+            if (!pathfinder.walkable(ex, ey)) {
+                return STATE_TARGET;
             }
 
-            return ['moveLoop', sx, sy, ex, ey];
+            return [STATE_MOVELOOP, sx, sy, ex, ey];
         },
-        moveLoop: function* (sx, sy, ex, ey) {
+        [STATE_MOVELOOP]: function* (sx, sy, ex, ey) {
             // If we're at the destination, end the loop and choose a new target
             if (sx === ex && sy === ey) {
-                return 'target';
+                return STATE_TARGET;
             }
 
             // If the destination is "far away", compute a path to an intermediate
@@ -280,12 +342,10 @@ function pathFindBehavior(heightmap) {
                 let yg = yi;
 
                 let jitter = 1.0;
-                let tile = tileAt(xg, yg);
-                while (!tile?.walkable) {
+                while (!pathfinder.walkable(xg, yg)) {
                     xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
                     yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
-                    tile = tileAt(xg, yg);
-                    jitter += 0.2;
+                    jitter += 0.25;
                 }
 
                 result = yield pathfinder.pathfind(sx, sy, xg, yg);
@@ -293,29 +353,74 @@ function pathFindBehavior(heightmap) {
 
             // Move!
             const path = result.map((g) => ({ x: g[0], y: g[1] }));
-            const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
-            return ['move', path, ex, ey, colorIndex];
+            return [STATE_MOVE, path, ex, ey];
         },
 
-        move: function* (path, ex, ey, colorIndex) {
+        [STATE_MOVE]: function* (path, ex, ey) {
             let x, y;
             while (path.length) {
                 ({ x, y } = path.shift());
-                const si = y * heightmap.segments + x;
-                colorArray[si] = colorIndex;
-                heightmap.updateSegment(x, y);
-                yield;
+                onMove(x, y);
+                yield moveDelay;
             }
-            return ['moveLoop', x, y, ex, ey];
+            return [STATE_MOVELOOP, x, y, ex, ey];
         },
     };
 }
 
-class Updater {
-    constructor(heightMap) {
-        this._heightMap = heightMap;
-    }
-    stateMachine() {
-        return pathFindBehavior(this._heightMap);
-    }
+/**
+ * Add in the necessary glue to connect the generic pathfind behavior
+ * generator to the heightmap
+ */
+function makePathfindBehaviorForHeightmap(heightMap, actor) {
+    const rng = core.makeRNG();
+
+    const heightArray = heightMap.getLayerArray('height');
+    const tileArray = heightMap.getLayerArray('tile');
+    const colorArray = heightMap.getLayerArray('color');
+    const SEGMENTS = heightMap.segments;
+
+    const tileAt = (sx, sy) => {
+        if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
+            return null;
+        }
+        return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
+    };
+
+    const walkable = (sx, sy) => {
+        const tile = tileAt(sx, sy);
+        return tile ? tile.walkable : false;
+    };
+
+    const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
+
+    // Pathfinding object...
+    const pathfinder = new PathfinderGraph({
+        width: SEGMENTS,
+        height: SEGMENTS,
+        walkable,
+        baseCost: (a) => (tileAt(a.x, a.y)?.walkable ? 0 : 1e10),
+        edgeCost: (a, b) => {
+            const hb = heightArray[b.y * SEGMENTS + b.x];
+            const ha = heightArray[a.y * SEGMENTS + a.x];
+            return Math.max(0, 10 * (hb - ha));
+        },
+    });
+
+    return makePathfindBehavior({
+        pathfinder,
+        moveDelay: 4,
+        positionFunc: () => {
+            return heightMap.coordW2S(actor.position.x, actor.position.y);
+        },
+        onMove: (x, y) => {
+            const si = y * SEGMENTS + x;
+            colorArray[si] = colorIndex;
+            heightMap.updateSegment(x, y);
+
+            const [wx, wy] = heightMap.coordS2W(x, y);
+            actor.position.x = wx;
+            actor.position.y = wy;
+        },
+    });
 }
