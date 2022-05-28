@@ -97,13 +97,16 @@ const TILE_GRASS_UNWALKABLE = db.tiles.add({
     walkable: false,
     colorFunc: grassColorFunc,
 });
-const TILE_BLACK = db.tiles.add({
-    walkable: false,
-    colorFunc: () => [0.3, 0.3, 0.3],
-});
-const TILE_BLUE = db.tiles.add({
-    walkable: false,
-    colorFunc: () => [0.1, 0.5, 0.9],
+
+const TILE_DIRT_WALKABLE = db.tiles.add({
+    walkable: true,
+    colorFunc: (sx, sy) => {
+        const base = grassColorFunc(sx, sy);
+        base[0] *= 1.25;
+        base[1] *= 0.5;
+        base[2] *= 0.5;
+        return base;
+    },
 });
 
 function makeHeightMap(rng) {
@@ -142,11 +145,6 @@ function makeHeightMap(rng) {
         switch (colorIndex) {
             case COLOR_DEFAULT: {
                 const rgb = tile.colorFunc(sx, sy);
-                if (!tile.walkable) {
-                    rgb[0] = core.clamp(rgb[0] * 2, 0.0, 1.0);
-                    rgb[1] = core.clamp(rgb[1] * 0.5, 0.0, 1.0);
-                    rgb[2] = core.clamp(rgb[2] * 0.5, 0.0, 1.0);
-                }
                 return rgb;
             }
             default:
@@ -165,7 +163,6 @@ function EngineView() {
 
         const heightMap = makeHeightMap(rng);
         const tileArray = heightMap.getLayerArray('tile');
-        const colorArray = heightMap.getLayerArray('color');
 
         engine.events.on('actor.postinit', ({ actor }) => {
             const shape = actor.groundCollisionShape;
@@ -183,93 +180,237 @@ function EngineView() {
             });
         });
 
-        // Use a state machine to sequence the initialization.  For example, the Forest
-        // needs to be added prior to the sprites so the sprites can be placed on positions
-        // that are not blocked by the trees.
-        class Init {
-            stateMachine({ engine }) {
-                return {
-                    _start: function* () {
-                        // Stage 1
-                        engine.actors.push(new Forest({ count: 128 }));
-
-                        yield;
-
-                        // Stage 2
-                        engine.actors.push(
-                            ...core.generate(10, (i) => {
-                                const walkable = (wx, wy) => {
-                                    const si = heightMap.coordW2I(wx, wy);
-                                    if (si === -1) {
-                                        return false;
-                                    }
-                                    const tileIndex = tileArray[si];
-                                    const tile = db.tiles.get(tileIndex);
-                                    return tile.walkable;
-                                };
-
-                                let worldX, worldY;
-                                do {
-                                    const radius = rng.range(10, 96);
-                                    const ang = rng.range(0, 2 * Math.PI);
-                                    worldX = Math.floor(radius * Math.cos(ang));
-                                    worldY = Math.floor(radius * Math.sin(ang));
-                                } while (!walkable(worldX, worldY));
-
-                                return new VoxelSprite({
-                                    url: assetURL[
-                                        i == 0
-                                            ? 'kestrel.png'
-                                            : rng.select([
-                                                  'wizard.png',
-                                                  'ranger.png',
-                                                  'ranger.png',
-                                                  'ranger.png',
-                                                  'ranger2.png',
-                                                  'ranger2.png',
-                                                  'ranger2.png',
-                                                  'king.png',
-                                              ])
-                                    ],
-                                    flags: {
-                                        billboard: true,
-                                        pinToGroundHeight: true,
-                                    },
-                                    worldX,
-                                    worldY,
-                                    stateMachine: function ({ actor }) {
-                                        return {
-                                            _start: function* () {
-                                                return 'pathfind.start';
-                                            },
-                                            ...makePathfindBehaviorForHeightmap(heightMap, actor),
-                                        };
-                                    },
-                                });
-                            })
-                        );
-                        return;
-                    },
-                };
-            }
-        }
-
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 24 }), //
+            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 48 }), //
             new BasicLighting(),
             new GroundPlane(),
-            heightMap,
-            new Init()
+            heightMap
         );
+
+        engine.opt.heightMap = heightMap;
+
+        engine.opt.walkableS = function (sx, sy) {
+            const si = sy * heightMap.segments + sx;
+            if (si === -1) {
+                return false;
+            }
+            const tileIndex = tileArray[si];
+            const tile = db.tiles.get(tileIndex);
+            return tile.walkable;
+        };
+
+        engine.opt.generateRandomWalkablePosition = function () {
+            const walkable = (wx, wy) => {
+                const si = heightMap.coordW2I(wx, wy);
+                if (si === -1) {
+                    return false;
+                }
+                const tileIndex = tileArray[si];
+                const tile = db.tiles.get(tileIndex);
+                return tile.walkable;
+            };
+
+            let worldX, worldY;
+            do {
+                const radius = rng.range(10, 96);
+                const ang = rng.range(0, 2 * Math.PI);
+                worldX = Math.floor(radius * Math.cos(ang));
+                worldY = Math.floor(radius * Math.sin(ang));
+            } while (!walkable(worldX, worldY));
+
+            return [worldX, worldY];
+        };
+
+        engine.opt.generatePathfindingBehavior = function (actor) {
+            return makePathfindBehaviorForHeightmap(heightMap, actor);
+        };
+
+        // Use a sequence (i.e. a script run across multiple frames) to ensure the
+        // initialization order.
+        engine.addSequence(function* () {
+            // Stage 1
+            engine.actors.push(new Forest({ count: 40 }));
+
+            yield;
+
+            // Stage 2
+            // After the forest is initialized, add the sprites as they depend on
+            // the forest being placed and unwalkable areas being defined.
+            engine.actors.push(
+                ...core.generate(10, (i) => {
+                    let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+
+                    return new VoxelSprite({
+                        url: assetURL[
+                            rng.select([
+                                'wizard.png',
+                                'ranger.png',
+                                'ranger.png',
+                                'ranger.png',
+                                'ranger2.png',
+                                'ranger2.png',
+                                'ranger2.png',
+                                'king.png',
+                            ])
+                        ],
+                        flags: {
+                            billboard: true,
+                            pinToGroundHeight: true,
+                        },
+                        worldX,
+                        worldY,
+                        stateMachine: function ({ actor }) {
+                            return {
+                                _start: function* () {
+                                    return 'pathfind.target';
+                                },
+                                ...makePathfindBehaviorForHeightmap(heightMap, actor),
+                            };
+                        },
+                    });
+                }),
+                ...core.generate(6, () => new Farmer())
+            );
+            return;
+        });
     });
 
     return <EngineFrame engine={engine} recorder="three" />;
 }
 
+class Farmer {
+    constructor() {
+        this._sprite = null;
+    }
+
+    init({ engine }) {
+        let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+
+        this._sprite = new VoxelSprite({
+            url: assetURL['kestrel.png'],
+            flags: {
+                billboard: true,
+                pinToGroundHeight: true,
+            },
+            worldX,
+            worldY,
+        });
+
+        engine.actors.push(this._sprite);
+    }
+
+    // 🚧 TODO:
+    // - flatten the plot to an average height
+    // - "reserve" the plot +2 surrounding tiles to there aren't overlapping plots
+    // - Add Farmer sprite
+    stateMachine({ engine }) {
+        const rng = core.makeRNG();
+
+        const pathfindingBehavior = engine.opt.generatePathfindingBehavior(this._sprite);
+        console.log(this._sprite);
+
+        return {
+            _bind: this,
+            _start: function* () {
+                return 'wander';
+            },
+
+            // pathfind.* states
+            ...pathfindingBehavior,
+
+            // Choose a location ~20 blocks away and move there
+            wander: function* () {
+                let [wx, wy] = engine.opt.generateRandomWalkablePosition();
+                const [ex, ey] = engine.opt.heightMap.coordW2S(wx, wy);
+                return ['pathfind.moveLoop', ex, ey, 'rest'];
+            },
+
+            // Wait for a bit, then decide to wander or find a plot
+            //
+            rest: function* () {
+                yield rng.rangei(30, 5 * 60);
+                return rng.select(['wander', 'wander', 'findPlot']);
+            },
+            // Try to find an unoccuppied rectangle that will be a farming plot
+            // If found, "reserve" it so it can't be changed
+            // If not found, try again a couple of times
+            // Possibly find several plots and choose one with the least height variation
+            findPlot: function* () {
+                const heightMap = engine.opt.heightMap;
+
+                let attempts = 0;
+                let region = null;
+                while (!region && attempts < 20) {
+                    const width = rng.rangei(30, 50);
+                    const height = rng.rangei(30, 50);
+                    const rx0 = rng.rangei(0, heightMap.segments - width);
+                    const ry0 = rng.rangei(0, heightMap.segments - height);
+
+                    let valid = true;
+                    for (let sy = ry0; valid && sy < ry0 + height; sy++) {
+                        for (let sx = rx0; valid && sx < rx0 + width; sx++) {
+                            valid &= engine.opt.walkableS(sx, sy);
+                        }
+                    }
+                    if (valid) {
+                        region = [rx0, ry0, rx0 + width, ry0 + height];
+                    }
+
+                    attempts++;
+                }
+
+                return region ? ['moveToPlot', region] : 'rest';
+            },
+
+            moveToPlot: function* (plot) {
+                return ['pathfind.moveLoop', plot[0], plot[1], ['tillPlot', plot]];
+            },
+
+            // Given a plot definition, gradually "till" the land, changing the tile
+            // type
+            tillPlot: function* ([rx0, ry0, rx1, ry1]) {
+                const heightMap = engine.opt.heightMap;
+                const tileArray = heightMap.getLayerArray('tile');
+
+                const till = (sx, sy) => {
+                    const [wx, wy] = heightMap.coordS2W(sx, sy);
+                    this._sprite.position.x = wx;
+                    this._sprite.position.y = wy;
+
+                    const si = sy * heightMap.segments + sx;
+
+                    tileArray[si] = TILE_DIRT_WALKABLE;
+                    heightMap.updateSegment(sx, sy);
+                };
+
+                let parity = 0;
+                for (let sy = ry0; sy < ry1; sy++) {
+                    if (parity === 0) {
+                        for (let sx = rx0; sx < rx1; sx++) {
+                            till(sx, sy);
+                            yield 5;
+                        }
+                    } else {
+                        for (let sx = rx1 - 1; sx >= rx0; sx--) {
+                            till(sx, sy);
+                            yield 5;
+                        }
+                    }
+                    yield 10;
+                    parity = (parity + 1) % 2;
+                }
+                return 'findPlot';
+            },
+        };
+    }
+}
+
 /**
  * A reusable set of state machine states for pathfinding.
  *
+ * Avoids binding to the Actor or Heightmap classes and instead depends on
+ * only the PathfinderGraph object and a current position callback.
  */
 function makePathfindBehavior({
     // Required
@@ -285,25 +426,14 @@ function makePathfindBehavior({
     moveDelay = 0,
 }) {
     const prefixName = (s) => `${prefix}${s}`;
-    const STATE_START = prefixName('start');
     const STATE_TARGET = prefixName('target');
     const STATE_MOVE = prefixName('move');
     const STATE_MOVELOOP = prefixName('moveLoop');
 
     return {
-        [STATE_START]: function* () {
-            return STATE_TARGET;
-        },
         [STATE_TARGET]: function* () {
             // "Think" for a few frames
             yield rng.rangei(5, 10);
-
-            // Use the current position as the starting point
-            const [sx, sy] = positionFunc();
-            if (!pathfinder.walkable(sx, sy)) {
-                console.error('starting on an unwalkable tile');
-                debugger;
-            }
 
             // Choose a random point to target and retry until it
             // is a valid destination
@@ -313,12 +443,19 @@ function makePathfindBehavior({
                 return STATE_TARGET;
             }
 
-            return [STATE_MOVELOOP, sx, sy, ex, ey];
+            return [STATE_MOVELOOP, ex, ey];
         },
-        [STATE_MOVELOOP]: function* (sx, sy, ex, ey) {
+        [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET) {
+            // Use the current position as the starting point
+            const [sx, sy] = positionFunc();
+            if (!pathfinder.walkable(sx, sy)) {
+                console.error('starting on an unwalkable tile');
+                debugger;
+            }
+
             // If we're at the destination, end the loop and choose a new target
             if (sx === ex && sy === ey) {
-                return STATE_TARGET;
+                return doneState;
             }
 
             // If the destination is "far away", compute a path to an intermediate
@@ -353,17 +490,17 @@ function makePathfindBehavior({
 
             // Move!
             const path = result.map((g) => ({ x: g[0], y: g[1] }));
-            return [STATE_MOVE, path, ex, ey];
+            return [STATE_MOVE, path, ex, ey, doneState];
         },
 
-        [STATE_MOVE]: function* (path, ex, ey) {
+        [STATE_MOVE]: function* (path, ex, ey, doneState) {
             let x, y;
             while (path.length) {
                 ({ x, y } = path.shift());
                 onMove(x, y);
                 yield moveDelay;
             }
-            return [STATE_MOVELOOP, x, y, ex, ey];
+            return [STATE_MOVELOOP, ex, ey, doneState];
         },
     };
 }
@@ -392,8 +529,6 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
         return tile ? tile.walkable : false;
     };
 
-    const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
-
     // Pathfinding object...
     const pathfinder = new PathfinderGraph({
         width: SEGMENTS,
@@ -414,10 +549,6 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
             return heightMap.coordW2S(actor.position.x, actor.position.y);
         },
         onMove: (x, y) => {
-            const si = y * SEGMENTS + x;
-            colorArray[si] = colorIndex;
-            heightMap.updateSegment(x, y);
-
             const [wx, wy] = heightMap.coordS2W(x, y);
             actor.position.x = wx;
             actor.position.y = wy;

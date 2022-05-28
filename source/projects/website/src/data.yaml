@@ -12,3 +12,4 @@ engine:
     - 10-sprite
     - 11-world
     - 12-pathfinding
+    - 13-farmers

@@ -30,6 +30,7 @@ export class Engine {
         this._cache = {};
         this._actors = new ActorList();
         this._world = new World(this);
+        this._opt = {};
 
         registerPinToGroundHeight(this);
         registerBillboard(this);
@@ -67,6 +68,37 @@ export class Engine {
         return this._world;
     }
 
+    /**
+     * A place to put "custom" data and functions for a given instance.
+     *
+     * Grouping such objects under the opt field is _slightly_ cleaner than
+     * using global variables. In theory, this has the advantage that a code
+     * search for "engine.opt" should reveal such dependencies across
+     * components so they are more discoverable.
+     *
+     * Note: using this mechanism usually leads to dependency coupling which
+     * can make code hard to reuse and/or modify.
+     */
+    get opt() {
+        return this._opt;
+    }
+
+    /**
+     * A sequence is a function run across multiple frames.  This can be used to
+     * created timed scripts, spread work across multiple frames, or to sequence
+     * operations with dependencies that take multiple frames to resolve.
+     */
+    addSequence(generatorFunc) {
+        // A sequence can be represented as a special case of a state machine
+        this.actors.push({
+            stateMachine() {
+                return {
+                    _start: generatorFunc,
+                };
+            },
+        });
+    }
+
     //-----------------------------------------------------------------------//
     // Event loop
     //-----------------------------------------------------------------------//
@@ -96,6 +128,8 @@ export class Engine {
                 this.events.fire('actor.preinit', ctx);
 
                 // Let the actor initialize itself on the first frame
+                //
+                // BY DESIGN: this is called before the state machine is initialized
                 if (actor.init) {
                     actor.init(ctx);
                 }

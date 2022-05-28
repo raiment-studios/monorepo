@@ -15,6 +15,11 @@ export class ActorList {
 
     push(...actors) {
         for (let actor of actors) {
+            if (!actor) {
+                console.error('Null or undefined actor added to actor list');
+                debugger;
+            }
+
             this._added.push(actor);
             this._list.push(actor);
         }

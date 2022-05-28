@@ -7,6 +7,7 @@ Whenever possible these process should be automated, but nonetheless they are al
 1. [Review](#review) 1. [Planning checklist](#planning-checklist) 1. [Review checklist](#review-checklist)
 1. [Patterns](#patterns)
     1. [Separation of concerns](#separation-of-concerns)
+        1. [Benefits](#benefits)
         1. [Trade-offs](#trade-offs)
     1. [Glue code](#glue-code)
     1. [Scaffolding code](#scaffolding-code)
@@ -49,6 +50,10 @@ Whenever possible these process should be automated, but nonetheless they are al
 ## Patterns
 
 ### Separation of concerns
+
+#### Benefits
+
+-   Loose coupling of dependencies
 
 #### Trade-offs
 
