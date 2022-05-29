@@ -35,7 +35,7 @@ export class VoxelSprite {
     }
 
     get innerMesh() {
-        return this._mesh.children[0];
+        return this._mesh?.children[0];
     }
 
     stateMachine(ctx) {

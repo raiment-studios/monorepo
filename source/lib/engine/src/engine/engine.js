@@ -160,7 +160,12 @@ export class Engine {
         // Run the logic update
         //
         this.events.fire('engine.preupdate', ctx);
+        const frame10Parity = ctx.frameNumber % 10;
         for (let actor of this._actors) {
+            if (actor.frame10Parity && actor.frame10Parity === frame10Parity) {
+                continue;
+            }
+
             ctx.actor = actor;
 
             this.events.fire('actor.preupdate', ctx);

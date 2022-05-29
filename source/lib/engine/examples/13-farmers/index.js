@@ -284,7 +284,7 @@ function EngineView() {
                             return 'grow';
                         },
                         grow: function* () {
-                            for (let i = 0; i < 4; i++) {
+                            for (let i = 0; i < 10; i++) {
                                 const sx = 4 * Math.floor(rng.rangei(0, heightMap.segments) / 2);
                                 const sy = 6 * Math.floor(rng.rangei(0, heightMap.segments) / 4);
                                 const si = sy * heightMap.segments + sx;
@@ -299,7 +299,7 @@ function EngineView() {
                                     const obj = objectList.get(objectIndex);
                                     if (obj._spriteScale < 1.0) {
                                         obj._spriteScale += 0.1;
-                                        obj.innerMesh.scale.set(
+                                        obj.innerMesh?.scale.set(
                                             obj._spriteScale,
                                             obj._spriteScale,
                                             obj._spriteScale
@@ -322,6 +322,7 @@ function EngineView() {
 
                                 const index = objectList.add(sprite);
                                 objectArray[si] = index;
+                                sprite.frame10Parity = rng.rangei(1, 10);
                                 engine.actors.push(sprite);
                             }
 
@@ -341,17 +342,18 @@ function EngineView() {
 
                     return new VoxelSprite({
                         url: assetURL[
-                            rng.select([
-                                'kestrel.png',
-                                'wizard.png',
-                                'ranger.png',
-                                'ranger.png',
-                                'ranger.png',
-                                'ranger2.png',
-                                'ranger2.png',
-                                'ranger2.png',
-                                'king.png',
-                            ])
+                            i === 0
+                                ? 'kestrel.png'
+                                : rng.select([
+                                      'wizard.png',
+                                      'ranger.png',
+                                      'ranger.png',
+                                      'ranger.png',
+                                      'ranger2.png',
+                                      'ranger2.png',
+                                      'ranger2.png',
+                                      'king.png',
+                                  ])
                         ],
                         flags: {
                             billboard: true,
