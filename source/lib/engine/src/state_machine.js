@@ -30,10 +30,15 @@ export class StateMachine {
     constructor(states) {
         this._self = states._bind; // Convenience to set the "this" for a state machine
         this._states = states; // State descriptors
-        this._activeState = states._start.call(this._self); // Starting state is always "_start"
+        this._activeState = null;
         this._waitCycles = 0; // Skip this many cycles
         this._waitOnPromise = false; // Skip until a promise resolves to set this to true
         this._nextValue = undefined; // Value returned by yield in next iteration
+        this._activeStateName = '_start';
+        this._priorStateName = null;
+
+        // Starting state is always "_start"
+        this._activeState = states._start.call(this._self);
     }
 
     bind(obj) {
@@ -61,6 +66,8 @@ export class StateMachine {
                 : [result.value, []];
 
             const generator = this._states[nextState];
+            this._priorStateName = this._activeStateName;
+            this._activeStateName = nextState;
             this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
         } else if (typeof result.value === 'number') {
             this._waitCycles = result.value;

@@ -34,6 +34,9 @@ export class ActorList {
                 debugger;
             }
 
+            if (actor.id) {
+                delete this._idCache[actor.id];
+            }
             this._added = added;
             this._list = list;
             this._removed.push(actor);

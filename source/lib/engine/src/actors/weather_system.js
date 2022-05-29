@@ -3,6 +3,12 @@ import { Rain } from './rain';
 import { Snow } from './snow';
 
 export class WeatherSystem {
+    constructor() {
+        this.id = 'weather_system';
+
+        this.condition = null;
+    }
+
     stateMachine({ engine }) {
         const rng = core.makeRNG();
 
@@ -10,15 +16,22 @@ export class WeatherSystem {
         const RAIN_NORMAL = 100000;
         const RAIN_HEAVY = 500000;
 
-        function makeStates(table) {
-            const desc = {};
+        const makeStates = (table) => {
+            const desc = {
+                _bind: this,
+            };
 
             const TIME_SCALE = 60;
             let local = {
                 priorState: null,
             };
-            for (let [key, { effect, duration, transitions, messages }] of Object.entries(table)) {
+            for (let [
+                key,
+                { condition = 'clear', effect, duration, transitions, messages },
+            ] of Object.entries(table)) {
                 desc[key] = function* () {
+                    this.condition = condition;
+
                     let actor;
                     if (effect) {
                         const [Type, ...args] = effect;
@@ -64,7 +77,7 @@ export class WeatherSystem {
                 };
             }
             return desc;
-        }
+        };
 
         return makeStates({
             _start: {
@@ -74,7 +87,7 @@ export class WeatherSystem {
                     [15, 'rainLight'],
                     [10, 'rainNormal'],
                     [10, 'rainHeavy'],
-                    [10, 'snow'],
+                    [30, 'snow'],
                 ],
             },
             clear: {
@@ -101,8 +114,21 @@ export class WeatherSystem {
                 },
             },
             snow: {
-                effect: [Snow, { count: RAIN_HEAVY }],
-                duration: [10, 200],
+                condition: 'snow',
+                effect: [Snow, { count: 500000 }],
+                duration: [20, 200],
+                transitions: [[100, 'snowLight']],
+                messages: {
+                    '*': [
+                        [100, `It's beginning to snow.`],
+                        [20, 'The snow does not seem to accumulate.'],
+                    ],
+                },
+            },
+            snowLight: {
+                condition: 'snow',
+                effect: [Snow, { count: 100000 }],
+                duration: [3, 12],
                 transitions: [[100, 'clear']],
                 messages: {
                     '*': [

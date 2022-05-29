@@ -44,10 +44,6 @@ const TILE = db.tiles.keys();
 const objectList = new LookupTable();
 objectList.add({});
 
-const COLOR_DEFAULT = db.colors.add({
-    rgb: [1, 1, 1],
-});
-
 function makeHeightMap(rng) {
     const S = 192;
     const simplex1 = core.makeSimplexNoise();
@@ -60,8 +56,10 @@ function makeHeightMap(rng) {
         segments: 256,
         layers: {
             tile: Int8Array,
-            color: Int8Array,
             object: Int16Array,
+
+            // TODO: split this into temperature + moisture
+            snow: Float32Array,
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -72,26 +70,23 @@ function makeHeightMap(rng) {
     });
 
     const tileArray = heightMap.getLayerArray('tile');
-    const colorArray = heightMap.getLayerArray('color');
     const objectArray = heightMap.getLayerArray('object');
+    const snowArray = heightMap.getLayerArray('snow');
 
     tileArray.fill(TILE.GRASS);
-    colorArray.fill(COLOR_DEFAULT);
     objectArray.fill(0);
+    snowArray.fill(0);
 
     heightMap.colorFunc = function (sx, sy, wz, si) {
         const tile = db.tiles.get(tileArray[si]);
-        const colorIndex = colorArray[si];
-        const color = db.colors.get(colorIndex);
+        const rgb = tile.colorFunc(sx, sy);
 
-        switch (colorIndex) {
-            case COLOR_DEFAULT: {
-                const rgb = tile.colorFunc(sx, sy);
-                return rgb;
-            }
-            default:
-                return color.rgb;
-        }
+        const s = core.clamp(snowArray[si], 0.0, 1.0);
+        rgb[0] = rgb[0] * (1 - s) + s * 1.0;
+        rgb[1] = rgb[1] * (1 - s) + s * 1.0;
+        rgb[2] = rgb[2] * (1 - s) + s * 1.0;
+
+        return rgb;
     };
 
     heightMap.updateMesh();
@@ -105,6 +100,7 @@ function EngineView() {
 
         const heightMap = makeHeightMap(rng);
         const tileArray = heightMap.getLayerArray('tile');
+        const snowArray = heightMap.getLayerArray('snow');
 
         engine.events.on('actor.postinit', ({ actor }) => {
             const shape = actor.groundCollisionShape;
@@ -124,7 +120,7 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 8 }), //
+            new OrbitCamera({ radius: 92, periodMS: 72000, offsetZ: 16 }), //
             new DayNightLighting(),
             new GroundPlane(),
             heightMap
@@ -154,10 +150,8 @@ function EngineView() {
 
             let worldX, worldY;
             do {
-                const radius = rng.range(10, 96);
-                const ang = rng.range(0, 2 * Math.PI);
-                worldX = Math.floor(radius * Math.cos(ang));
-                worldY = Math.floor(radius * Math.sin(ang));
+                worldX = rng.rangei(0, heightMap.segments);
+                worldY = rng.rangei(0, heightMap.segments);
             } while (!walkable(worldX, worldY));
 
             return [worldX, worldY];
@@ -231,6 +225,31 @@ function EngineView() {
 
             yield;
 
+            const weatherSystem = engine.actors.selectByID('weather_system');
+            engine.actors.push({
+                update: ({ frameNumber }) => {
+                    if (frameNumber % 4 == 0)
+                        for (let i = 0; i < 2500; i++) {
+                            const sx = rng.rangei(0, 256);
+                            const sy = rng.rangei(0, 256);
+                            const si = sy * heightMap.segments + sx;
+                            const v0 = snowArray[si];
+                            let v1;
+                            if (weatherSystem.condition === 'snow') {
+                                v1 = Math.min(v0 + 0.2, 2.0);
+                            } else {
+                                v1 = Math.max(v0 - 0.2, 0.0);
+                            }
+                            if (v0 !== v1) {
+                                snowArray[si] = v1;
+                                heightMap.updateSegment(sx, sy);
+                            }
+                        }
+                },
+            });
+
+            yield;
+
             engine.actors.push(new Updater(heightMap));
             return;
         });
@@ -275,7 +294,6 @@ function makePathfindBehavior({
             if (!pathfinder.walkable(ex, ey)) {
                 return STATE_TARGET;
             }
-
             return [STATE_MOVELOOP, ex, ey];
         },
         [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET) {
@@ -347,7 +365,7 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
 
     const heightArray = heightMap.getLayerArray('height');
     const tileArray = heightMap.getLayerArray('tile');
-    const colorArray = heightMap.getLayerArray('color');
+    const snowArray = heightMap.getLayerArray('snow');
     const SEGMENTS = heightMap.segments;
 
     const tileAt = (sx, sy) => {
@@ -367,7 +385,7 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
         width: SEGMENTS,
         height: SEGMENTS,
         walkable,
-        baseCost: (a) => tileAt(a.x, a.y)?.walkCost,
+        baseCost: (a) => tileAt(a.x, a.y)?.walkCost ?? 0.0,
         edgeCost: (a, b) => {
             const hb = heightArray[b.y * SEGMENTS + b.x];
             const ha = heightArray[a.y * SEGMENTS + a.x];
@@ -381,10 +399,17 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
         positionFunc: () => {
             return heightMap.coordW2S(actor.position.x, actor.position.y);
         },
-        onMove: (x, y) => {
-            const [wx, wy] = heightMap.coordS2W(x, y);
+        onMove: (sx, sy) => {
+            const [wx, wy] = heightMap.coordS2W(sx, sy);
             actor.position.x = wx;
             actor.position.y = wy;
+
+            const si = sy * heightMap.segments + sx;
+            const snow0 = snowArray[si];
+            if (snow0 > 0.0) {
+                snowArray[si] = core.clamp(snow0 - 0.5, 0, 0.5);
+                heightMap.updateSegment(sx, sy);
+            }
         },
     });
 }

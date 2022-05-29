@@ -53,7 +53,7 @@ class SnowEffect {
                 v[i + 1] = rng.range(-250, 250);
                 z = rng.range(490, 510);
             } else {
-                z -= rng.range(0.5, 1.5);
+                z -= rng.range(0.5, 1.05);
             }
             v[i + 2] = z;
         }
