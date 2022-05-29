@@ -7,7 +7,6 @@ import {
     EngineFrame,
     Grid,
     OrbitCamera,
-    BasicLighting,
     GroundPlane,
     HeightMap,
     PathfinderGraph,
@@ -15,132 +14,38 @@ import {
     updatePosition,
     updateBoxCollision,
     WeatherSystem,
+    DayNightLighting,
 } from '../..';
 import { Forest } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}';
+import { LookupTable } from './lookup_table';
+import { initTileLookupTable } from './tiles';
 
 const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
 
 export default function () {
     return (
         <ReadingFrame>
-            <h1>Farmers</h1>
+            <h1>Weather</h1>
             <div>
                 <EngineView />
             </div>
-            <p>🚧 Work in progress</p>
-            <p>
-                The goal of this experiment is to have farmer sprites that (1) find a rectangular
-                plot of land, (2) "reserve" it for farming, (3) iteratively go over each tile with a
-                hoe to prepare the soil, (4) rest, (5) repeat.
-            </p>
         </ReadingFrame>
     );
 }
 
-function makeGrassColorFunc(segments) {
-    const scale = 1 / ((segments * 100) / 256);
-
-    const simplex2 = core.makeSimplexNoise();
-    const simplex3 = core.makeSimplexNoise();
-
-    return function (sx, sy) {
-        const rgb = [146 / 255, 201 / 255, 117 / 255];
-        const a = (1 + simplex3.noise2D(sx, sy)) / 2;
-        const b = (1 + simplex2.noise2D(sx * scale, sy * scale)) / 2;
-        const t = 0.5 * b + 0.5;
-        const s = t + a * (1 - t);
-        return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
-    };
-}
-
-class ObjectTable {
-    constructor({ transform = (obj) => obj } = {}) {
-        this._list = [];
-        this._free = [];
-        this._transform = transform;
-    }
-    add(obj) {
-        let i;
-        if (this._free.length) {
-            i = this._free.shift();
-        } else {
-            i = this._list.length;
-        }
-        this._list.push(this._transform(obj));
-        return i;
-    }
-    get(index) {
-        return this._list[index];
-    }
-    remove(obj) {
-        for (let i = 0; i < this._list.length; i++) {
-            if (this._list[i] === obj) {
-                this._list[i] = null;
-                this._free.push(i);
-                break;
-            }
-        }
-    }
-}
-
 const db = {
-    colors: new ObjectTable(),
-    tiles: new ObjectTable({
-        transform: (obj) => {
-            return {
-                walkCost: obj.walkable ? 0 : 1e10,
-                tillable: true,
-                ...obj,
-            };
-        },
-    }),
+    colors: new LookupTable(),
+    tiles: initTileLookupTable(),
 };
 
-const objectList = new ObjectTable();
+const TILE = db.tiles.keys();
+
+const objectList = new LookupTable();
 objectList.add({});
 
 const COLOR_DEFAULT = db.colors.add({
     rgb: [1, 1, 1],
-});
-const COLOR_YELLOW = db.colors.add({
-    rgb: [1, 1, 0.2],
-});
-const COLOR_ORANGE = db.colors.add({
-    rgb: [235 / 255, 143 / 255, 52 / 255],
-});
-const COLOR_RED = db.colors.add({
-    rgb: [235 / 255, 43 / 255, 12 / 255],
-});
-
-const grassColorFunc = makeGrassColorFunc(256);
-const TILE_GRASS = db.tiles.add({
-    walkable: true,
-    colorFunc: grassColorFunc,
-});
-const TILE_GRASS_UNWALKABLE = db.tiles.add({
-    walkable: false,
-    colorFunc: grassColorFunc,
-});
-
-const TILE_GRASS_UNTILLABLE = db.tiles.add({
-    walkable: true,
-    walkCost: 20,
-    tillable: false,
-    colorFunc: grassColorFunc,
-});
-
-const TILE_DIRT_WALKABLE = db.tiles.add({
-    walkable: true,
-    walkCost: 10,
-    colorFunc: (sx, sy) => {
-        const base = grassColorFunc(sx, sy);
-        const a = sy % 2 ? 0.75 : 1.0;
-        base[0] *= 1.25 * a;
-        base[1] *= 0.5 * a;
-        base[2] *= 0.5 * a;
-        return base;
-    },
 });
 
 function makeHeightMap(rng) {
@@ -170,7 +75,7 @@ function makeHeightMap(rng) {
     const colorArray = heightMap.getLayerArray('color');
     const objectArray = heightMap.getLayerArray('object');
 
-    tileArray.fill(TILE_GRASS);
+    tileArray.fill(TILE.GRASS);
     colorArray.fill(COLOR_DEFAULT);
     objectArray.fill(0);
 
@@ -211,7 +116,7 @@ function EngineView() {
             core.iterateCircle2D(sx, sy, 2 * shape.width, (sx, sy) => {
                 const si = heightMap.coordS2I(sx, sy);
                 if (si !== -1) {
-                    tileArray[si] = TILE_GRASS_UNWALKABLE;
+                    tileArray[si] = TILE.GRASS_UNWALKABLE;
                     heightMap.updateSegment(sx, sy);
                 }
             });
@@ -220,7 +125,7 @@ function EngineView() {
         engine.actors.push(
             new Grid(),
             new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 8 }), //
-            new BasicLighting(),
+            new DayNightLighting(),
             new GroundPlane(),
             heightMap
         );
@@ -244,7 +149,7 @@ function EngineView() {
                     return false;
                 }
                 const tileIndex = tileArray[si];
-                return tileIndex === TILE_GRASS;
+                return tileIndex === TILE.GRASS;
             };
 
             let worldX, worldY;
@@ -266,6 +171,13 @@ function EngineView() {
         engine.opt.generatePathfindingBehavior = function (actor) {
             return makePathfindBehaviorForHeightmap(heightMap, actor);
         };
+
+        engine.addSequence(function* () {
+            yield 10;
+            engine.journal.message('Welcome to Galthea, the world of Kestrel');
+            yield 2 * 60;
+            engine.journal.message('Your quest is to seek out Tristan.');
+        });
 
         // Use a sequence (i.e. a script run across multiple frames) to ensure the
         // initialization order.

@@ -4,11 +4,13 @@ export * from './state_machine';
 export * from './texture_atlas';
 
 export * from './actors/basic_lighting';
+export * from './actors/day_night_lighting';
 export * from './actors/grid';
 export * from './actors/ground_plane';
 export * from './actors/height_map';
 export * from './actors/orbit_camera';
 export * from './actors/rain';
+export * from './actors/snow';
 export * from './actors/voxel_sprite';
 export * from './actors/weather_system';
 

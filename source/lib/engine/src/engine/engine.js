@@ -5,6 +5,7 @@ import { World } from './world';
 import { StateMachine } from '../state_machine';
 import { registerPinToGroundHeight } from './behaviors/register_pin_to_world_ground';
 import { registerBillboard } from './behaviors/register_billboard';
+import { Journal } from './journal';
 
 export class Engine {
     //-----------------------------------------------------------------------//
@@ -27,10 +28,12 @@ export class Engine {
             mesh: null,
         };
 
+        this._hostElement = null;
         this._renderers = {};
         this._cache = {};
         this._actors = new ActorList();
         this._world = new World(this);
+        this._journal = new Journal(this);
         this._opt = {};
 
         registerPinToGroundHeight(this);
@@ -69,6 +72,14 @@ export class Engine {
         return this._world;
     }
 
+    get journal() {
+        return this._journal;
+    }
+
+    context() {
+        return this._context;
+    }
+
     /**
      * A place to put "custom" data and functions for a given instance.
      *
@@ -89,11 +100,12 @@ export class Engine {
      * created timed scripts, spread work across multiple frames, or to sequence
      * operations with dependencies that take multiple frames to resolve.
      */
-    addSequence(generatorFunc) {
+    addSequence(generatorFunc, self) {
         // A sequence can be represented as a special case of a state machine
         this.actors.push({
             stateMachine() {
                 return {
+                    _bind: self,
                     _start: generatorFunc,
                 };
             },
@@ -131,9 +143,7 @@ export class Engine {
                 // Let the actor initialize itself on the first frame
                 //
                 // BY DESIGN: this is called before the state machine is initialized
-                if (actor.init) {
-                    actor.init(ctx);
-                }
+                actor.init?.(ctx);
 
                 // Give the actor a chance to init *before* validating in case there's logic
                 // that needs to be run first to put the actor in a valid state.
@@ -148,23 +158,19 @@ export class Engine {
 
                 // Let each renderer know about the new actora
                 for (let renderer of Object.values(this._renderers)) {
-                    if (!renderer.addActor) {
-                        break;
-                    }
-                    renderer.addActor(ctx, actor);
+                    renderer.addActor?.(ctx, actor);
                 }
                 this._actors._list.push(actor);
             }
+            this._actors._added = [];
         }
-        this._actors._added = [];
 
         for (let actor of this._actors._removed) {
             for (let renderer of Object.values(this._renderers)) {
-                if (!renderer.removeActor) {
-                    break;
-                }
-                renderer.removeActor(ctx, actor);
+                renderer.removeActor?.(ctx, actor);
             }
+
+            actor.dispose?.(ctx);
         }
         this._actors._removed = [];
 
@@ -186,18 +192,14 @@ export class Engine {
             // busy waiting on a promise or for a long number of cycles and only readd them
             // when they are active again. This may be a potential optimization for later,
             // especially if there are many "infrequent" actors in the engine.
-            if (actor.__stateMachine) {
-                actor.__stateMachine.update(ctx);
-            }
+            actor.__stateMachine?.update(ctx);
         }
 
         for (let actor of this._actors) {
             ctx.actor = actor;
             ctx.mesh = actor.__mesh;
 
-            if (actor.update) {
-                actor.update(ctx);
-            }
+            actor.update?.(ctx);
 
             this.events.fire('actor.postupdate', ctx);
         }
@@ -206,7 +208,7 @@ export class Engine {
         // Render frames
         ctx.actor = null;
         for (let renderer of Object.values(this._renderers)) {
-            renderer.renderFrame(ctx);
+            renderer.renderFrame?.(ctx);
         }
     }
 }

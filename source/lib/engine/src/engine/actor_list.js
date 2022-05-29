@@ -23,10 +23,21 @@ export class ActorList {
             this._added.push(actor);
         }
     }
-    remove(actor) {
-        this._added = this._added.filter((a) => a !== actor);
-        this._list = this._list.filter((a) => a !== actor);
-        this._removed.push(actor);
+    remove(...actors) {
+        for (let actor of actors) {
+            const added = this._added.filter((a) => a !== actor);
+            const list = this._list.filter((a) => a !== actor);
+
+            let count = this._list.length - list.length + (this._added.length - added.length);
+            if (count !== 1) {
+                console.error('Did not remove exactly one actor from the actor lists');
+                debugger;
+            }
+
+            this._added = added;
+            this._list = list;
+            this._removed.push(actor);
+        }
     }
 
     filter(cb) {
