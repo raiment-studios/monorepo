@@ -21,9 +21,14 @@ export class ActorList {
             }
 
             this._added.push(actor);
-            this._list.push(actor);
         }
     }
+    remove(actor) {
+        this._added = this._added.filter((a) => a !== actor);
+        this._list = this._list.filter((a) => a !== actor);
+        this._removed.push(actor);
+    }
+
     filter(cb) {
         return this._list.filter(cb);
     }

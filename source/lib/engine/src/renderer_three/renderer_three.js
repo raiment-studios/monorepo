@@ -56,6 +56,8 @@ export class RendererThree {
             return;
         }
 
+        const { scene } = this;
+
         function addToScene(mesh) {
             actor.__mesh = mesh;
 
@@ -67,13 +69,19 @@ export class RendererThree {
         }
 
         // Allow mesh to be sync or async
-        const { scene } = this;
         const ret = actor.mesh(ctx);
         if (typeof ret.then === 'function') {
             ret.then((mesh) => addToScene(mesh));
         } else {
             addToScene(ret);
         }
+    }
+
+    removeActor(ctx, actor) {
+        if (!actor.__mesh) {
+            return;
+        }
+        this.scene.remove(actor.__mesh);
     }
 
     renderFrame({ engine }) {

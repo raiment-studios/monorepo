@@ -8,7 +8,9 @@ export * from './actors/grid';
 export * from './actors/ground_plane';
 export * from './actors/height_map';
 export * from './actors/orbit_camera';
+export * from './actors/rain';
 export * from './actors/voxel_sprite';
+export * from './actors/weather_system';
 
 export * from './ai/pathfinder_graph';
 

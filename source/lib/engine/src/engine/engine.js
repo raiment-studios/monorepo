@@ -24,6 +24,7 @@ export class Engine {
 
             actors: null,
             actor: null,
+            mesh: null,
         };
 
         this._renderers = {};
@@ -152,9 +153,20 @@ export class Engine {
                     }
                     renderer.addActor(ctx, actor);
                 }
+                this._actors._list.push(actor);
             }
         }
         this._actors._added = [];
+
+        for (let actor of this._actors._removed) {
+            for (let renderer of Object.values(this._renderers)) {
+                if (!renderer.removeActor) {
+                    break;
+                }
+                renderer.removeActor(ctx, actor);
+            }
+        }
+        this._actors._removed = [];
 
         //
         // Run the logic update
@@ -181,6 +193,7 @@ export class Engine {
 
         for (let actor of this._actors) {
             ctx.actor = actor;
+            ctx.mesh = actor.__mesh;
 
             if (actor.update) {
                 actor.update(ctx);
