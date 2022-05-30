@@ -106,10 +106,8 @@ function EngineView() {
 
         engine.events.on('intersection', (results) => {
             const { x, y } = results.first.point;
-            engine.journal.message(`Kestrel moves to ${x}, ${y}`);
             const actor = engine.actors.selectByID('kestrel');
-            actor.position.x = x;
-            actor.position.y = y;
+            actor._goal = ['move', x, y];
         });
 
         engine.actors.push(
@@ -192,9 +190,56 @@ function EngineView() {
                         },
                         worldX,
                         worldY,
-                        stateMachine: function ({ actor }) {
+                        stateMachine: function ({ engine, actor }) {
+                            // The goal is the "overall" motivation for the actor.  So the FSM
+                            // should continually look to that to decide it's own execution and
+                            // transitions.
+                            actor._goal = null;
+
+                            let pathfind = makePathfindBehaviorForHeightmap(heightMap, actor);
+
                             return {
-                                _start: function* () {},
+                                _start: function* () {
+                                    return 'idle';
+                                },
+                                ...pathfind,
+
+                                idle: function* () {
+                                    yield 30;
+                                    if (actor._goal?.[0] === 'move') {
+                                        let [cmd, x, y] = actor._goal;
+                                        actor._goal = null;
+                                        x = Math.floor(x);
+                                        y = Math.floor(y);
+                                        engine.journal.message(
+                                            `Kestrel decides to move to ${x},${y}`
+                                        );
+                                        return ['move', x, y];
+                                    }
+                                    return 'idle';
+                                },
+                                move: function* (wx, wy) {
+                                    const [sx, sy] = heightMap.coordW2S(wx, wy);
+                                    return [
+                                        'pathfind.moveLoop',
+                                        sx,
+                                        sy,
+                                        'idle',
+                                        {
+                                            interruptCb: () => {
+                                                if (
+                                                    actor._goal &&
+                                                    (actor._goal[0] !== 'move' ||
+                                                        actor._goal[1] !== wx ||
+                                                        actor._goal[2] !== wy)
+                                                ) {
+                                                    return 'idle';
+                                                }
+                                                return null;
+                                            },
+                                        },
+                                    ];
+                                },
                             };
                         },
                     });
@@ -249,7 +294,7 @@ function makePathfindBehavior({
             }
             return [STATE_MOVELOOP, ex, ey];
         },
-        [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET) {
+        [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET, options) {
             // Use the current position as the starting point
             const [sx, sy] = positionFunc();
             if (!pathfinder.walkable(sx, sy)) {
@@ -294,17 +339,24 @@ function makePathfindBehavior({
 
             // Move!
             const path = result.map((g) => ({ x: g[0], y: g[1] }));
-            return [STATE_MOVE, path, ex, ey, doneState];
+            return [STATE_MOVE, path, ex, ey, doneState, options];
         },
 
-        [STATE_MOVE]: function* (path, ex, ey, doneState) {
+        [STATE_MOVE]: function* (path, ex, ey, doneState, options = {}) {
+            const { interruptCb } = options;
             let x, y;
             while (path.length) {
                 ({ x, y } = path.shift());
                 onMove(x, y);
+
+                const interruptState = interruptCb?.();
+                if (interruptState) {
+                    return interruptState;
+                }
+
                 yield moveDelay;
             }
-            return [STATE_MOVELOOP, ex, ey, doneState];
+            return [STATE_MOVELOOP, ex, ey, doneState, options];
         },
     };
 }
