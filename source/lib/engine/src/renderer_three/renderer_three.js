@@ -111,14 +111,11 @@ export class RendererThree {
         const intersections = raycaster.intersectObjects(scene.children, true);
         if (intersections.length > 0) {
             return {
-                intersection: intersections[0],
-                intersectionList: intersections,
+                first: intersections[0],
+                list: intersections,
             };
         }
-        return {
-            intersection: null,
-            intersectionList: [],
-        };
+        return null;
     }
 }
 
