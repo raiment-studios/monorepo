@@ -25,7 +25,7 @@ export class RendererReact {
         this._container = container;
 
         const root = ReactDOM.createRoot(container);
-        root.render(<Container engine={engine} />);
+        root.render(<Container engine={engine} width={width} height={height} />);
     }
 
     dispose() {}
@@ -43,7 +43,7 @@ let local = {
     uniqueID: 1,
 };
 
-function Container({ engine }) {
+function Container({ engine, width, height }) {
     const [messages, setMessages] = React.useState([]);
 
     const handleDispose = (id) => {
@@ -66,7 +66,17 @@ function Container({ engine }) {
     }, []);
 
     return (
-        <div style={{ color: 'white', padding: 8 }}>
+        <div
+            style={{
+                boxSizing: 'border-box',
+                width,
+                height,
+                color: 'white',
+                padding: 8,
+                overflow: 'hidden',
+                userSelect: 'none',
+            }}
+        >
             {messages.map((c) => (
                 <JournalMessage key={c.id} msg={c.content} onDispose={() => handleDispose(c.id)} />
             ))}

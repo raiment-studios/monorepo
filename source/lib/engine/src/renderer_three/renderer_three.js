@@ -48,7 +48,7 @@ export class RendererThree {
     }
 
     //-----------------------------------------------------------------------//
-    // Methods
+    // Life-cycle methods
     //-----------------------------------------------------------------------//
 
     addActor(ctx, actor) {
@@ -93,6 +93,32 @@ export class RendererThree {
         }
 
         this._renderer.render(this._scene, this._camera);
+    }
+
+    //-----------------------------------------------------------------------//
+    // THREE specific
+    //-----------------------------------------------------------------------//
+
+    raycast(nx, ny) {
+        // 🚧 TODO: should raycaster be a member variable?
+        const raycaster = new THREE.Raycaster();
+        const scene = this._scene;
+
+        // Scan the scene, then fire event of intersections
+        const ndc = new THREE.Vector2(nx, ny);
+        raycaster.setFromCamera(ndc, this.camera);
+
+        const intersections = raycaster.intersectObjects(scene.children, true);
+        if (intersections.length > 0) {
+            return {
+                intersection: intersections[0],
+                intersectionList: intersections,
+            };
+        }
+        return {
+            intersection: null,
+            intersectionList: [],
+        };
     }
 }
 
