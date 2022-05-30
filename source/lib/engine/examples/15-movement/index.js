@@ -104,6 +104,14 @@ function EngineView() {
             });
         });
 
+        engine.events.on('intersection', (results) => {
+            const { x, y } = results.first.point;
+            engine.journal.message(`Kestrel moves to ${x}, ${y}`);
+            const actor = engine.actors.selectByID('kestrel');
+            actor.position.x = x;
+            actor.position.y = y;
+        });
+
         engine.actors.push(
             new Grid(),
             new OrbitCamera({ radius: 92, periodMS: 72000, offsetZ: 96 }), //
@@ -176,6 +184,7 @@ function EngineView() {
                     let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
 
                     return new VoxelSprite({
+                        id: 'kestrel',
                         url: assetURL['kestrel.png'],
                         flags: {
                             billboard: true,

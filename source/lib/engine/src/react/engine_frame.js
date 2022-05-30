@@ -119,14 +119,10 @@ function makeHandleClickImp(engine, refElemRect) {
             clientRect: clientRect,
         };
 
-        // TODO
-        engine.journal.message(`CLICK ${x},${y}`);
-
         engine.events.fire('click', params);
 
         const result = engine.renderers.three.raycast(params.nx, params.ny, 2);
         if (result) {
-            console.log(result);
             engine.events.fire('intersection', result);
         }
     };
