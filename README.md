@@ -118,6 +118,13 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022
 
 -   Week 21
+    -   [x] 🧬 Add `engine.journal`
+    -   [x] 🧬 Add player movement example (click -> pathfind)
+    -   [x] 🧬 Add weather example (rain, snow)
+    -   [x] ➕ Add `engine.opt` field for customization
+    -   [x] 🧬 Add farming example
+    -   [x] 🗂️ Rewrite path finding code for reusability
+    -   [x] ➕ Add assets page to website
     -   [x] ➕ Allow `StateMachine` states to return `Promise`s
     -   [x] 🧬 Add pathfinding to examples
     -   [x] 🧬 Add Forest to examples
