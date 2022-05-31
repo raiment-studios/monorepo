@@ -118,7 +118,7 @@ function VOXTileDetails({ url }) {
     return (
         <div style={{ flex: '1 0 0', width: '100%', marginTop: '1rem' }}>
             {Object.entries(data || {}).map(([name, value]) => (
-                <Flex align="start" style={{ marginBottom: '0.5rem' }}>
+                <Flex key={name} align="start" style={{ marginBottom: '0.5rem' }}>
                     <div style={{ flex: '0 0 0.5rem' }} />
                     <div style={{ flex: '0 0 6rem' }}>{name}</div>
                     <div style={{ flex: '1 0 0', whiteSpace: 'pre-wrap' }}>
@@ -194,7 +194,9 @@ function ImageInfo({ url }) {
                         </a>
                     </div>
                     <h3>License</h3>
-                    <pre>{textToReact(data?.license)}</pre>
+                    <pre>
+                        <TextDown text={data?.license} />
+                    </pre>
                     <h3>Attributes</h3>
                     <pre>{data && data.attributes && core.stringifyYAML(data.attributes)}</pre>
                 </div>

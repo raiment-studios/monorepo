@@ -15,6 +15,7 @@ export function TextDown({ text }) {
 
     const parts = [];
     let t = text;
+    let id = 1;
     while (t.length > 0) {
         const m = re.exec(t);
         if (!m || !(m.index >= 0)) {
@@ -27,15 +28,15 @@ export function TextDown({ text }) {
         const url = match.match(/^[a-z]+:\/\//) ? match : `https://${match}`;
 
         parts.push(
-            <span>{pre}</span>, //
-            <a href={url} target="_blank">
+            <span key={id++}>{pre}</span>, //
+            <a key={id++} href={url} target="_blank">
                 {match}
             </a>
         );
         t = post;
     }
     if (t.length > 0) {
-        parts.push(<span>{t}</span>);
+        parts.push(<span key={id++}>{t}</span>);
     }
 
     return <>{parts}</>;
