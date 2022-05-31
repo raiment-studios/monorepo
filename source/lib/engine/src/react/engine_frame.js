@@ -7,69 +7,80 @@ import { RendererThree } from '../renderer_three/renderer_three';
 import { RendererTwo } from '../renderer_two/renderer_two';
 import { EngineRecorder } from './engine_recorder';
 
-export const EngineFrame = React.memo(function ({
-    engine = new Engine(), //
-    actors = [],
-    recorder = null,
-    autoRecord = false,
-    recorderDuration = undefined,
-    style = {},
-}) {
-    const refElem = React.useRef(null);
-    const refElemRect = React.useRef(null);
+export const EngineFrame = React.memo(
+    function ({
+        engine = new Engine(), //
+        actors = [],
+        recorder = null,
+        autoRecord = false,
+        recorderDuration = undefined,
+        style = {},
+    }) {
+        const refElem = React.useRef(null);
+        const refElemRect = React.useRef(null);
 
-    const handleKeyDown = makeHandleKeyDown(engine);
-    const handleClickImp = makeHandleClickImp(engine, refElemRect);
+        const handleKeyDown = makeHandleKeyDown(engine);
+        const handleClickImp = makeHandleClickImp(engine, refElemRect);
 
-    React.useEffect(() => {
-        const clientRect = refElem.current.getBoundingClientRect();
-        refElemRect.current = clientRect;
+        React.useEffect(() => {
+            const clientRect = refElem.current.getBoundingClientRect();
+            refElemRect.current = clientRect;
 
-        engine._hostElement = refElem.current;
-        engine._renderers['three'] = new RendererThree(refElem.current);
-        engine._renderers['two'] = new RendererTwo(refElem.current);
-        engine._renderers['react'] = new RendererReact(refElem.current, engine);
-        engine._renderers['hud'] = new RendererHUD(refElem.current);
-        engine._cache.imageGeometry = new ImageGeometryCache();
+            engine._hostElement = refElem.current;
+            engine._renderers['three'] = new RendererThree(refElem.current);
+            engine._renderers['two'] = new RendererTwo(refElem.current);
+            engine._renderers['react'] = new RendererReact(refElem.current, engine);
+            engine._renderers['hud'] = new RendererHUD(refElem.current);
+            engine._cache.imageGeometry = new ImageGeometryCache();
 
-        window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keydown', handleKeyDown);
 
-        engine._actors.push(...actors);
+            engine._actors.push(...actors);
 
-        engine.start();
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
+            engine.start();
+            return () => {
+                console.count('dispose');
+                window.removeEventListener('keydown', handleKeyDown);
+                engine.stop();
+                engine.dispose();
+            };
+        }, [refElem.current]);
 
-            engine.stop();
-            engine.dispose();
+        const baseStyle = {
+            width: '100%',
+            padding: 0,
+            margin: 0,
         };
-    }, [refElem.current]);
+        if (style.width !== undefined && style.height !== undefined) {
+            baseStyle.aspectRatio = '16 / 9';
+        }
 
-    return (
-        <>
-            <div
-                ref={refElem}
-                style={{
-                    width: '100%',
-                    aspectRatio: '16 / 9',
-                    padding: 0,
-                    margin: 0,
-                    ...style,
-                }}
-                onClick={handleClickImp}
-                onContextMenu={handleClickImp}
-            />
-            {recorder && (
-                <EngineRecorder
-                    engine={engine}
-                    rendererName={recorder}
-                    autoStart={autoRecord}
-                    duration={recorderDuration}
+        return (
+            <>
+                <div
+                    ref={refElem}
+                    style={{
+                        ...baseStyle,
+                        ...style,
+                    }}
+                    onClick={handleClickImp}
+                    onContextMenu={handleClickImp}
                 />
-            )}
-        </>
-    );
-});
+                {recorder && (
+                    <EngineRecorder
+                        engine={engine}
+                        rendererName={recorder}
+                        autoStart={autoRecord}
+                        duration={recorderDuration}
+                    />
+                )}
+            </>
+        );
+    },
+    (prevProps, nextProps) => {
+        return true;
+    }
+);
 
 function makeHandleKeyDown(engine) {
     return function (evt) {

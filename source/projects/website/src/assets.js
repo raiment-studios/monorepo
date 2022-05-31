@@ -1,7 +1,16 @@
 import React from 'react';
-import { Flex, useCommonStyles, useAsyncEffect, PixelatedImage } from '../../../lib/react-ex';
-import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.asset.yaml,.png,.vox}';
+import {
+    Flex,
+    useCommonStyles,
+    useAsyncEffect,
+    useLocalStorage,
+    PixelatedImage,
+    TextDown,
+} from '../../../lib/react-ex';
 import * as core from '../../../lib/core';
+
+import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.asset.yaml,.png,.vox}';
+import { VOXPreview } from './vox_preview';
 
 const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
 
@@ -69,8 +78,7 @@ export default function () {
 }
 
 function VOXTile({ name, url }) {
-    const [active, setActive] = React.useState(false);
-
+    const [active, setActive] = useLocalStorage(`voxtile-active-${url}`, false);
     return (
         <Flex
             dir="col"
@@ -104,15 +112,6 @@ function VOXTileDetails({ url }) {
             let data = core.parseYAML(text);
             token.check();
             setData(data);
-            console.log(data);
-
-            const resp2 = await fetch(url);
-            const blob = await resp2.blob();
-            data = { ...data };
-            data.filesize = blob.size;
-
-            console.log(url, blob);
-            setData(data);
         },
         [url]
     );
@@ -123,7 +122,7 @@ function VOXTileDetails({ url }) {
                     <div style={{ flex: '0 0 0.5rem' }} />
                     <div style={{ flex: '0 0 6rem' }}>{name}</div>
                     <div style={{ flex: '1 0 0', whiteSpace: 'pre-wrap' }}>
-                        <code>{typeof value === 'string' ? textToReact(value) : value}</code>
+                        <code>{typeof value === 'string' ? <TextDown text={value} /> : value}</code>
                     </div>
                 </Flex>
             ))}
@@ -131,14 +130,8 @@ function VOXTileDetails({ url }) {
                 <div style={{ flex: '0 0 0.5rem' }} />
                 <div style={{ flex: '0 0 6rem' }}>Preview</div>
                 <div>
-                    <div
-                        style={{
-                            padding: 96,
-                            border: 'solid 1px #CCC',
-                            borderRadius: 8,
-                        }}
-                    >
-                        3D Preview goes here
+                    <div style={{}}>
+                        <VOXPreview url={url} />
                     </div>
                     <div>capture screenshot</div>
                 </div>
@@ -159,7 +152,6 @@ function ImageInfo({ url }) {
         setData(data);
 
         const img = await loadImage(url);
-        console.log(img, img.width, img.height);
         data.attributes = data.attributes || {};
         const attr = data.attributes;
         if (attr.width !== img.width) {
@@ -221,42 +213,4 @@ function loadImage(src) {
         };
         img.src = src;
     });
-}
-
-function textToReact(s) {
-    if (!s) {
-        return null;
-    }
-
-    const expression =
-        /(https?:\/\/)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/i;
-
-    const re = new RegExp(expression);
-
-    const parts = [];
-    let t = s;
-    while (t.length > 0) {
-        const m = re.exec(t);
-        if (!m || !(m.index >= 0)) {
-            break;
-        }
-        const pre = t.substring(0, m.index);
-        const match = m[0];
-        const post = t.substring(m.index + match.length);
-
-        const url = match.match(/^[a-z]+:\/\//) ? match : `https://${match}`;
-
-        parts.push(
-            <span>{pre}</span>, //
-            <a href={url} target="_blank">
-                {match}
-            </a>
-        );
-        t = post;
-    }
-    if (t.length > 0) {
-        parts.push(<span>{t}</span>);
-    }
-
-    return <>{parts}</>;
 }

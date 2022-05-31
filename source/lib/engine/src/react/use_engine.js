@@ -7,9 +7,10 @@ export function useEngine(initCb = noop) {
     useEffect(() => {
         initCb({ engine });
 
+        //engine.start();
         return () => {
-            engine.stop();
-            engine.dispose();
+            //engine.stop();
+            //engine.dispose();
         };
     }, [engine]);
 
