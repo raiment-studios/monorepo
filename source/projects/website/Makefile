@@ -5,6 +5,9 @@ clean:
 dev: build
 	npx http-server dist -c-1 -d -i -e html --cors 
 
+dev-assets:
+	LOCAL_DEVELOPMENT=1 sea-jsx src/assets.js
+
 build:
 	node src/build.js
 	sea-jsx build src/index.js --target=dist/index.html
