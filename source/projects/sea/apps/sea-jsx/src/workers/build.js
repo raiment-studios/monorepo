@@ -333,7 +333,7 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, ref
                 return { path: result.path, namespace: result.namespace, external: false };
             };
 
-            registerYAMLPlugin(build, workingDir);
+            registerYAMLPlugin(build, workingDir, watches);
             registerGlobPlugin(build, workingDir, references);
 
             build.onResolve({ filter: /^\.\.?\/?.*/ }, resolveRelative);
@@ -362,7 +362,7 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, ref
     };
 }
 
-function registerYAMLPlugin(build, workingDir) {
+function registerYAMLPlugin(build, workingDir, watches) {
     build.onResolve({ filter: /^yaml:.*/ }, async (args) => {
         return {
             namespace: 'yaml',
@@ -377,6 +377,8 @@ function registerYAMLPlugin(build, workingDir) {
                 args.path.replace('yaml:', '')
             )
         );
+        watches[path.resolve(fpath)] = (await fs.stat(fpath)).mtime;
+
         const buffer = await fs.readFile(fpath, 'utf8');
         const obj = parseYAML(buffer);
         return {

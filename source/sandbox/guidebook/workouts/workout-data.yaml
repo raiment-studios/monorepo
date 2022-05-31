@@ -1,0 +1,22 @@
+# Levels:
+# B = beginner
+# I = intermediate
+# E = expert
+# 1,2,3 for relatitve level
+
+workouts:
+    speed_workouts:
+        - level: B1
+          parts:
+              - 1 mile warm-up jog
+              - 4x400 at 85%+ pace
+              - 1 mile warm-down job
+    upper_body:
+    core:
+    legs:
+    microworkout:
+        - parts:
+              - push-ups
+              - crunches
+              - curls
+              - calf raises

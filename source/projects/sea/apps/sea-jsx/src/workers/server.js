@@ -38,7 +38,7 @@ export async function startServer(app, { port, filename, content }) {
                 app.print(`Serving local file for {{obj ${req.path}}}`);
                 res.set('etag', false);
                 res.set('Cache-Control', 'no-store');
-                res.sendFile(localPath);
+                res.sendFile(path.resolve(localPath));
                 return;
             }
         } catch (ignored) {}

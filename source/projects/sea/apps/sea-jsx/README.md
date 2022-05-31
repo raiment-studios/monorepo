@@ -79,6 +79,7 @@ A quick, simple command-line tool to run single JavaScript React Components with
 ### 🎄 Backlog
 
 -   [ ] Add support for running node.js scripts
+-   [ ] Add file watches for all `glob:*` files
 
 ## User documentation
 
@@ -117,18 +118,18 @@ Returns an array of objects, with one object per matching local file. The object
 
 ```json
 {
-    "url" : "<url path relative to the running sea-jsx server>"
+    "url": "<url path relative to the running sea-jsx server>"
 }
 ```
 
-Notes: 
-* Only files matching a glob pattern can and will be served by sea-jsx
-* sea-jsx does not currently automatically detect added or removed files, nor does it reload on changes to matched files
+Notes:
+
+-   Only files matching a glob pattern can and will be served by sea-jsx
+-   sea-jsx does not currently automatically detect added or removed files but does reload on changes to existing matches
 
 Publish:
 
-🚧 TODO - glob files should get deployed automatically along with the built index.html 
-
+🚧 TODO - glob files should get deployed automatically along with the built index.html
 
 ### Front matter
 

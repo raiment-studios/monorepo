@@ -117,6 +117,8 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### 2022
 
+-   Week 22
+    -
 -   Week 21
     -   [x] 🧬 Add `engine.journal`
     -   [x] 🧬 Add player movement example (click -> pathfind)
