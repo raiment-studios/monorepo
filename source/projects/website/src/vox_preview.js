@@ -28,7 +28,6 @@ export function VOXPreview({ url }) {
             const mesh = actor.__mesh;
             const bbox = new THREE.Box3();
             bbox.setFromObject(mesh);
-            console.log(bbox);
 
             const dx = Math.max(Math.abs(bbox.min.x), Math.abs(bbox.max.x));
             const dy = Math.max(Math.abs(bbox.min.y), Math.abs(bbox.max.y));
@@ -60,7 +59,7 @@ export function VOXPreview({ url }) {
                     }}
                     onClick={() => {
                         const canvas = engine.renderers.three.canvas;
-                        const dataURI = canvas.toDataURL();
+                        const dataURI = canvas.toDataURL('image/png');
                         setScreenshotDataURI(dataURI);
                     }}
                 >

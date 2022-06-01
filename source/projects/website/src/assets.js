@@ -47,7 +47,7 @@ export default function () {
                 }}
             >
                 {Object.entries(assetURL)
-                    .filter(([key]) => key.endsWith('.png'))
+                    .filter(([key, url]) => url.match(/sprites/) && key.endsWith('.png'))
                     .sort(([keyA], [keyB]) => {
                         if (sortOrder === '-alphabetical') {
                             return -keyA.localeCompare(keyB);
@@ -59,6 +59,7 @@ export default function () {
                         <ImageInfo key={key} url={value} />
                     ))}
             </div>
+            <div style={{ height: 32 }} />
             <h3>VOX Models</h3>
             <div
                 style={{
@@ -84,7 +85,7 @@ function VOXTile({ name, url }) {
             dir="col"
             style={{
                 border: 'solid 1px #CCC',
-                padding: 4,
+                padding: '4px 4px 10px 4px',
                 borderRadius: 8,
                 gridColumnStart: active ? 1 : 'inherit',
                 gridColumnEnd: active ? 5 : 'inherit',
@@ -94,15 +95,36 @@ function VOXTile({ name, url }) {
             }}
         >
             <div
+                style={{ margin: '2px 0 8px' }}
                 onClick={() => {
                     setActive(!active);
                 }}
             >
-                {name}
+                {name} {active ? '🔼' : '🔽'}
+            </div>
+            <div>
+                <img
+                    style={{
+                        display: 'block',
+                        borderRadius: 8,
+                        width: '90%',
+                        maxWidth: 200,
+                        margin: '0 auto',
+                    }}
+                    src={`${url}.screenshot.png`}
+                />
             </div>
             {active && <VOXTileDetails url={url} />}
         </Flex>
     );
+}
+
+function parseYAMLWithErrorMessages(text, source) {
+    try {
+        return core.parseYAML(text);
+    } catch (err) {
+        console.error(`Could not parse YAML`, { source, text: text.split('\n') });
+    }
 }
 
 function VOXTileDetails({ url }) {
@@ -112,7 +134,7 @@ function VOXTileDetails({ url }) {
         async (token) => {
             const resp = await fetch(`${url}.asset.yaml`);
             const text = await resp.text();
-            let data = core.parseYAML(text);
+            const data = parseYAMLWithErrorMessages(text, url);
             token.check();
             setData(data);
         },
@@ -147,7 +169,7 @@ function ImageInfo({ url }) {
     useAsyncEffect(async (token) => {
         const resp = await fetch(`${url}.asset.yaml`);
         const text = await resp.text();
-        const data = core.parseYAML(text);
+        const data = parseYAMLWithErrorMessages(text, url);
         token.check();
         setData(data);
 

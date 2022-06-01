@@ -14,8 +14,12 @@ export class RendererThree {
         this._scene = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
-        // By design, turn off antialiasing for a more pixelated look
-        const renderer = new THREE.WebGLRenderer({ antialias: false });
+        const renderer = new THREE.WebGLRenderer({
+            // By design, turn off antialiasing for a more pixelated look
+            antialias: false,
+            // Needed for toDataURI('image/png') to work for grabbing screenshots
+            preserveDrawingBuffer: true,
+        });
         renderer.setClearColor('#3060C0');
         renderer.setSize(width, height);
 
