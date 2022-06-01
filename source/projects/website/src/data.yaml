@@ -14,3 +14,4 @@ engine:
     - 12-pathfinding
     - 13-farmers
     - 14-weather
+    - 15-movement
