@@ -52,7 +52,7 @@ export class RendererThree {
     //-----------------------------------------------------------------------//
 
     addActor(ctx, actor) {
-        if (!actor.mesh) {
+        if (!actor.mesh && !actor.initMesh) {
             return;
         }
 
@@ -64,12 +64,17 @@ export class RendererThree {
             if (actor.flags?.castShadow) {
                 setCastShadowRecurvise(mesh, true);
             }
-
             scene.add(mesh);
         }
 
         // Allow mesh to be sync or async
-        const ret = actor.mesh(ctx);
+        let ret;
+        if (actor.mesh && !actor.initMesh) {
+            console.warn('Actor.mesh deprecated. Rename to initMesh().', actor);
+            ret = actor.mesh(ctx);
+        } else {
+            ret = actor.initMesh(ctx);
+        }
         if (typeof ret.then === 'function') {
             ret.then((mesh) => addToScene(mesh));
         } else {

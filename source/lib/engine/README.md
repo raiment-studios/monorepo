@@ -20,36 +20,63 @@ A JavaScript + WASM simulation and game engine built on top of THREE.js.
 
 ## User documentation
 
+### Directory outline
+
+-   `actors/` - prefab actors
+-   `models/` - objects for different data formats and structures often for creating meshes and actors
+-   `image/` - utilitie for working with 2D images
+
 ### Renderer
 
 ⚠️ TODO
 
 ### Actor engine methods
 
-#### `position`
+```javascript
+class Actor {
+    // ----------------------------------------------------------------------//
+    // Properties
+    // ----------------------------------------------------------------------//
 
-If defined, this is expected to be a `THREE.Vector3` that defines the actor position.
+    get id() {}
 
--   Rendered meshes will automatically sync their position to this value
--   Physics and collision detecting will use this in calculations
+    // False by default
+    get flags() {
+        return {
+            pinToGroundHeight: false,
+            castShadow: false,
+        };
+    }
 
-#### `flags()`
+    get position(): THREE.Vector3 {}
+    get velocity(): THREE.Vector3 {}
+    get acceleration(): THREE.Vector3 {}
 
-`pinToGroundHeight` - if set, the engine will force the actor's z position to be set to the world ground height at the actor's x, y.
+    get shape() {
+        return {
+            type: '<string>',
+        };
+    }
 
-`castShadow` - if true, will _recursively_ apply the castShadow flag to all meshes and submeshes.  This is largely a convenience for complex or composite meshes.
+    // ----------------------------------------------------------------------//
+    // Lifecycle methods
+    // ----------------------------------------------------------------------//
 
-#### `init()`
+    init() {}
+    stateMachine(ctx) {}
+    mesh(ctx) {}
 
-#### `stateMachine()`
+    update(ctx) {}
 
-#### `update()`
+    // ----------------------------------------------------------------------//
+    // "Plug-in" methods
+    // ----------------------------------------------------------------------//
 
-#### `mesh()`
-
-### `worldGroundHeight()`
-
-If define, when the "ground height" for a given point in the world is determined, this function will be called.
+    // If defined, this value will be included in the world ground height
+    // calculation
+    worldGroundHeight(): number {}
+}
+```
 
 #### StateMachine
 

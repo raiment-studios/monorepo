@@ -4,6 +4,8 @@ export * from './collections/map_3di.js';
 
 export * from './controllers/event_emitter.js';
 
+export * from './data/data_reader.js';
+
 export * from './flow/assert.js';
 export * from './flow/iterate_border2d.js';
 export * from './flow/iterate_circle2d.js';

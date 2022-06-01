@@ -21,6 +21,8 @@ patterns:
     -   name: Callbacks
     -   name: Event Emitter
     -   name: Command
+    -   name: Cursor
+    -   name: Wrapper
 `);
 
 export default function () {

@@ -13,7 +13,7 @@ export class BasicLighting {
             params
         );
     }
-    mesh({ engine }) {
+    initMesh({ engine }) {
         const rendererThree = engine.renderers.three;
         const { scene, camera, renderer } = rendererThree;
         const { intensity, skyFade } = this._params;

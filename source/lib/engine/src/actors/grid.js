@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export class Grid {
-    mesh() {
+    initMesh() {
         const GRID_SIZE = 256;
         const size = GRID_SIZE;
         const divisions = GRID_SIZE / 4;

@@ -92,11 +92,14 @@ function VOXTile({ name, url }) {
                 userSelect: 'none',
                 cursor: 'pointer',
             }}
-            onClick={() => {
-                setActive(!active);
-            }}
         >
-            <div>{name}</div>
+            <div
+                onClick={() => {
+                    setActive(!active);
+                }}
+            >
+                {name}
+            </div>
             {active && <VOXTileDetails url={url} />}
         </Flex>
     );
@@ -130,10 +133,7 @@ function VOXTileDetails({ url }) {
                 <div style={{ flex: '0 0 0.5rem' }} />
                 <div style={{ flex: '0 0 6rem' }}>Preview</div>
                 <div>
-                    <div style={{}}>
-                        <VOXPreview url={url} />
-                    </div>
-                    <div>capture screenshot</div>
+                    <VOXPreview url={url} />
                 </div>
             </Flex>
         </div>

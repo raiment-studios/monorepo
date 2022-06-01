@@ -9,6 +9,25 @@ export class OrbitCamera {
         this._radius = radius;
         this._periodMS = periodMS;
         this._offsetZ = offsetZ;
+        this._lookAtZ = undefined;
+    }
+
+    get id() {
+        return 'camera';
+    }
+
+    get radius() {
+        return this._radius;
+    }
+    set radius(v) {
+        if (!(v >= 0)) {
+            throw new Error('Invalid parameter');
+        }
+        this._radius = v;
+    }
+
+    set lookAtZ(v) {
+        this._lookAtZ = v;
     }
 
     update({ engine, timeMS }) {
@@ -24,27 +43,10 @@ export class OrbitCamera {
         const cy = radius * Math.sin(ang);
         const cz = this._offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
 
+        const lz = this._lookAtZ ?? radius / 10.0;
+
         camera.position.set(cx, cy, cz);
         camera.up = worldUp;
-        camera.lookAt(0, 0, radius / 10.0);
-    }
-
-    // TODO: I suspect this is already defined more robustly somewhere in THREE.js
-    _computeBoundsRecursive(node) {
-        const mesh = node instanceof THREE.Mesh ? node : null;
-        if (mesh) {
-            mesh.geometry.computeBoundingBox();
-            const bbox = mesh.geometry.boundingBox.clone();
-            bbox.translate(mesh.position);
-            return bbox;
-        }
-        if (node instanceof THREE.Group || node instanceof THREE.Scene) {
-            const bounds = new THREE.Box3();
-            for (let child of node.children) {
-                bounds.union(this._computeBoundsRecursive(THREE, child));
-            }
-            return bounds;
-        }
-        return new THREE.Box3();
+        camera.lookAt(0, 0, lz);
     }
 }
