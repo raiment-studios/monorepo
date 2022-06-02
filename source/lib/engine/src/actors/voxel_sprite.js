@@ -53,7 +53,7 @@ export class VoxelSprite {
         return stateMachine;
     }
 
-    async mesh({ engine }) {
+    async initMesh({ engine }) {
         const geometry = await engine.cache.imageGeometry.get(
             this._url,
             this._scale,

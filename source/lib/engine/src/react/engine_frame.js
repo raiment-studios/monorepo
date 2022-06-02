@@ -39,7 +39,6 @@ export const EngineFrame = React.memo(
 
             engine.start();
             return () => {
-                console.count('dispose');
                 window.removeEventListener('keydown', handleKeyDown);
                 engine.stop();
                 engine.dispose();
@@ -51,7 +50,7 @@ export const EngineFrame = React.memo(
             padding: 0,
             margin: 0,
         };
-        if (style.width !== undefined && style.height !== undefined) {
+        if (!(style.width !== undefined && style.height !== undefined)) {
             baseStyle.aspectRatio = '16 / 9';
         }
 

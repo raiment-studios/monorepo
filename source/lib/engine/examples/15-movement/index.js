@@ -1,3 +1,15 @@
+/*
+
+🚧 TODO
+
+- Flatten terrain under the voxel model
+- "Lock" the terrain under the voxel model (and border around it)
+- Ensure model and trees don't overlap
+- Click to select building
+- Pop-up "story" dialog when building selected after moving close to it
+
+*/
+
 import React from 'react';
 import { ReadingFrame } from '../../../react-ex';
 import * as core from '../../../core';
@@ -14,9 +26,10 @@ import {
     updatePosition,
     updateBoxCollision,
     DayNightLighting,
+    VOXActor,
 } from '../..';
 import { Forest } from './forest.js';
-import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}';
+import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
 import { LookupTable } from './lookup_table';
 import { initTileLookupTable } from './tiles';
 
@@ -112,9 +125,17 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 92, periodMS: 72000, offsetZ: 96 }), //
+            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 48 }), //
             new DayNightLighting({ speed: 1, nightSpeed: 16 }),
             new GroundPlane(),
+            new VOXActor({
+                url: assetURL['obj_house5c.vox'],
+                scale: 2,
+                flags: {
+                    pinToGroundHeight: true,
+                    castShadow: true,
+                },
+            }),
             heightMap
         );
 

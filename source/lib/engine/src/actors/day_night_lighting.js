@@ -85,7 +85,7 @@ export class DayNightLighting {
         }
     }
 
-    mesh({ engine }) {
+    initMesh({ engine }) {
         const { scene, renderer, camera } = engine.renderers.three;
         const { intensity, skyFade } = this._params;
 

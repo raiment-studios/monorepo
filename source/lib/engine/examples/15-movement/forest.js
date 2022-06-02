@@ -1,7 +1,7 @@
 import * as core from '@raiment/core';
 import chroma from 'chroma-js';
 import * as THREE from 'three';
-import { VoxelModelSG } from './voxel_mesh_sg';
+import { VoxelModelSG } from '../..';
 
 export class Forest {
     constructor(params) {
@@ -68,7 +68,7 @@ class TreeActor {
         };
     }
 
-    async mesh({ engine }) {
+    async initMesh({ engine }) {
         const rng = core.makeRNG(2998474);
         const { position } = this._params;
         this._group = new THREE.Group();
@@ -94,7 +94,7 @@ class TreeActor {
         for (let it of func(ctx)) {
             // Step :)
         }
-        model.update({ engine });
+        model.updateMesh({ engine });
 
         return model.mesh({ engine });
     }

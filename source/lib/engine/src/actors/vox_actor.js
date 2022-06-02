@@ -6,8 +6,30 @@ import { DataReader } from '../../../core';
  * Engine interface for working with a MagicaVoxel VOX model.
  */
 export class VOXActor {
-    constructor({ url }) {
+    constructor({
+        id,
+        url, // required
+        position = null,
+        scale = 1.0,
+        flags = {},
+    }) {
+        this._id = id;
+        this._flags = Object.assign({}, flags);
         this._url = url;
+        this._scale = scale;
+        this._position = position || new THREE.Vector3(0, 0, 0);
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    get flags() {
+        return this._flags;
+    }
+
+    get position() {
+        return this._position;
     }
 
     async initMesh(ctx) {
@@ -42,7 +64,7 @@ export class VOXActor {
 
         // Create mesh from model data
         const group = new THREE.Group();
-        const scale = 20 / voxModel.models[0].size[0];
+        const scale = (this._scale * 20) / voxModel.models[0].size[0];
 
         group.scale.set(scale, scale, scale);
         group.position.set(
@@ -75,6 +97,10 @@ function readVOX(arrayBuffer) {
         id: reader.readCharString(4),
         version: reader.readUint32LE(),
     };
+
+    if (vox.header.id !== 'VOX ') {
+        throw new Error('arrayBuffer does not contain valid VOX header');
+    }
 
     const readChunk = () => {
         const id = reader.readCharString(4);

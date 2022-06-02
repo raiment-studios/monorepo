@@ -20,6 +20,8 @@ export * from './ai/pathfinder_graph';
 export * from './image/get_image_pixel_data';
 export * from './image/load_image';
 
+export * from './models/voxel_model_sg';
+
 export * from './physics/update_position';
 export * from './physics/update_box_collision';
 

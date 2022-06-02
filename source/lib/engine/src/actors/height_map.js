@@ -91,7 +91,7 @@ export class HeightMap {
         return this.getLayerWC('height', wx, wy);
     }
 
-    mesh(ctx) {
+    initMesh(ctx) {
         return this._createMesh(ctx);
     }
 
