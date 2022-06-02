@@ -118,7 +118,11 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022
 
 -   Week 22
-    -
+    -   [x] ➕ Add `DataReader` to `@raiment/core`
+    -   [x] 🗃️ Begin migration from `mesh()` to `initMesh()` method
+    -   [x] ➕ Add `VOXActor`
+    -   [x] ➕ Add `VoxelModelSG` for simple voxel mesh creation
+    -   [x] ➕ Add voxel models to website assets page
 -   Week 21
     -   [x] 🧬 Add `engine.journal`
     -   [x] 🧬 Add player movement example (click -> pathfind)
