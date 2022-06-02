@@ -20,7 +20,18 @@ Raiment-specific extensions for a React webapp, designed for both convenience an
 
 ## User documentation
 
-⚠️ TODO
+```
+components/
+    Flex - "flex" div wrapper
+    PixelatedImage - render scaled, pixeled images
+    ReadingFrame - top-level fixed width frame with common stylization
+    TextDown - text block with minimal automatic markup
+hooks/
+    useAsyncEffect - async effects with well-defined interrupt & clean-up
+    useGoogleFont - dynamically load a Google font
+    useCommonStyles - apply Raiment Studios specific CSS
+    useLocalStorage - useState that persists to local storage
+```
 
 ## Design
 

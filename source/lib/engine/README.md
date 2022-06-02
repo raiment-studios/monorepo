@@ -64,7 +64,7 @@ class Actor {
 
     init() {}
     stateMachine(ctx) {}
-    mesh(ctx) {}
+    initMesh(ctx): THREE.Object3D {}
 
     update(ctx) {}
 
