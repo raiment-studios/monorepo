@@ -100,6 +100,7 @@ function EngineView() {
 
         const heightMap = makeHeightMap(rng);
         const tileArray = heightMap.getLayerArray('tile');
+        const heightArray = heightMap.getLayerArray('height');
 
         engine.events.on('actor.postinit', ({ actor }) => {
             const shape = actor.groundCollisionShape;
@@ -117,6 +118,81 @@ function EngineView() {
             });
         });
 
+        engine.events.on('actor.postinit', ({ actor }) => {
+            if (actor.id !== 'house') {
+                return;
+            }
+            engine.addSequence(function* () {
+                yield 10;
+
+                const mesh = actor.__mesh;
+                const bbox = new THREE.Box3();
+                bbox.setFromObject(mesh);
+
+                const [sx0, sy0] = heightMap.coordW2S(bbox.min.x, bbox.min.y);
+                const [sx1, sy1] = heightMap.coordW2S(bbox.max.x, bbox.max.y);
+
+                let heightSMax = -Infinity;
+                let heightSum = 0.0;
+                let heightCount = 0;
+                core.iterateRect2D(sx0, sy0, sx1, sy1, (sx, sy) => {
+                    const si = heightMap.coordS2I(sx, sy);
+                    if (si !== -1) {
+                        heightSMax = Math.max(heightSMax, heightArray[si]);
+                        heightSum += heightArray[si];
+                        heightCount++;
+                    }
+                });
+
+                const heightP = ((heightSum / heightCount) * 2) / 3 + (heightSMax * 1) / 3;
+                core.iterateRect2D(sx0, sy0, sx1, sy1, (sx, sy) => {
+                    const si = heightMap.coordS2I(sx, sy);
+                    if (si !== -1) {
+                        tileArray[si] = TILE.GRASS_UNWALKABLE;
+                        heightArray[si] = heightP + 10;
+                    }
+                });
+
+                const R = 10;
+                core.iterateRect2D(sx0 - R, sy0 - R, sx1 + R, sy1 + R, (sx, sy) => {
+                    const si = heightMap.coordS2I(sx, sy);
+                    if (si === -1) {
+                        return;
+                    }
+
+                    // 🚧 TODO:
+                    // - Compute distance from the edge of the bounds
+                    // -
+                    let a = 0;
+                    let b = 0;
+                    if (sx < sx0) {
+                        a = 1.0 - Math.abs(sx - sx0) / R;
+                    }
+                    if (sx > sx1) {
+                        a = 1.0 - Math.abs(sx - sx1) / R;
+                    }
+                    if (sy < sy0) {
+                        b = 1.0 - Math.abs(sy - sy0) / R;
+                    }
+                    if (sy > sy1) {
+                        b = 1.0 - Math.abs(sy - sy1) / R;
+                    }
+                    let k = (a + b) / 2;
+                    if (k > 0) {
+                        const c = heightArray[si];
+                        heightArray[si] = (heightP + 10) * k + (1 - k) * c;
+                    }
+                });
+
+                core.iterateRect2D(sx0 - R, sy0 - R, sx1 + R, sy1 + R, (sx, sy) => {
+                    const si = heightMap.coordS2I(sx, sy);
+                    if (si !== -1) {
+                        heightMap.updateSegment(sx, sy);
+                    }
+                });
+            });
+        });
+
         engine.events.on('intersection', (results) => {
             const { x, y } = results.first.point;
             const actor = engine.actors.selectByID('kestrel');
@@ -129,6 +205,7 @@ function EngineView() {
             new DayNightLighting({ speed: 1, nightSpeed: 16 }),
             new GroundPlane(),
             new VOXActor({
+                id: 'house',
                 url: assetURL['obj_house5c.vox'],
                 scale: 2,
                 flags: {
@@ -485,7 +562,7 @@ class Updater {
                 this._velocity.x = rng.sign() * rng.range(0.2, 2);
                 this._velocity.y = rng.sign() * rng.range(0.2, 2);
 
-                return 'changeTerrain';
+                //return 'changeTerrain';
             },
             changeTerrain: function* () {
                 if (this._makeHeightFunc) {
