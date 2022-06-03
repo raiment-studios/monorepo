@@ -123,8 +123,9 @@ function EngineView() {
                 return;
             }
             engine.addSequence(function* () {
-                yield 10;
-
+                while (!actor.__mesh) {
+                    yield 5;
+                }
                 const mesh = actor.__mesh;
                 const bbox = new THREE.Box3();
                 bbox.setFromObject(mesh);
@@ -144,16 +145,21 @@ function EngineView() {
                     }
                 });
 
-                const heightP = ((heightSum / heightCount) * 2) / 3 + (heightSMax * 1) / 3;
+                const heightP = ((heightSum / heightCount) * 2) / 3 + (heightSMax * 1) / 3 + 3;
                 core.iterateRect2D(sx0, sy0, sx1, sy1, (sx, sy) => {
                     const si = heightMap.coordS2I(sx, sy);
                     if (si !== -1) {
                         tileArray[si] = TILE.GRASS_UNWALKABLE;
-                        heightArray[si] = heightP + 10;
+                        heightArray[si] = heightP;
                     }
                 });
 
+                const bboxSC = new THREE.Box3();
+                bboxSC.min.set(sx0, sy0, 0.0);
+                bboxSC.max.set(sx1, sy1, 0.0);
+
                 const R = 10;
+                const R2 = R * Math.sqrt(2);
                 core.iterateRect2D(sx0 - R, sy0 - R, sx1 + R, sy1 + R, (sx, sy) => {
                     const si = heightMap.coordS2I(sx, sy);
                     if (si === -1) {
@@ -163,28 +169,20 @@ function EngineView() {
                     // 🚧 TODO:
                     // - Compute distance from the edge of the bounds
                     // -
-                    let a = 0;
-                    let b = 0;
-                    if (sx < sx0) {
-                        a = 1.0 - Math.abs(sx - sx0) / R;
-                    }
-                    if (sx > sx1) {
-                        a = 1.0 - Math.abs(sx - sx1) / R;
-                    }
-                    if (sy < sy0) {
-                        b = 1.0 - Math.abs(sy - sy0) / R;
-                    }
-                    if (sy > sy1) {
-                        b = 1.0 - Math.abs(sy - sy1) / R;
-                    }
-                    let k = (a + b) / 2;
-                    if (k > 0) {
+                    const pt = new THREE.Vector3(sx, sy, 0.0);
+                    const dist = bboxSC.distanceToPoint(pt);
+
+                    if (dist > 0) {
+                        const a1 = Math.pow(dist / R2, 1.5);
+                        if (a1 < 0 || a1 > 1) debugger;
+
+                        const a0 = 1 - a1;
                         const c = heightArray[si];
-                        heightArray[si] = (heightP + 10) * k + (1 - k) * c;
+                        heightArray[si] = heightP * a0 + a1 * c;
                     }
                 });
-
-                core.iterateRect2D(sx0 - R, sy0 - R, sx1 + R, sy1 + R, (sx, sy) => {
+                const R1 = R + 1;
+                core.iterateRect2D(sx0 - R1, sy0 - R1, sx1 + R1, sy1 + R1, (sx, sy) => {
                     const si = heightMap.coordS2I(sx, sy);
                     if (si !== -1) {
                         heightMap.updateSegment(sx, sy);
