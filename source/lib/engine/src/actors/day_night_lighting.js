@@ -28,7 +28,7 @@ export class DayNightLighting {
         const { renderer } = engine.renderers.three;
 
         const angle = ((this._timeOfDay - 6) * Math.PI) / 12;
-        const dist = 128;
+        const dist = 512;
         const x = dist * Math.cos(angle);
         const z = dist * Math.sin(angle);
         const y = dist / 5 + Math.sin(angle * 2);
@@ -98,7 +98,7 @@ export class DayNightLighting {
         renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
         {
-            const sphereGeometry = new THREE.SphereGeometry(5, 32, 32);
+            const sphereGeometry = new THREE.SphereGeometry(16, 32, 32);
             const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xfff25e });
             const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
             sphere.position.set(0, 0, 28);

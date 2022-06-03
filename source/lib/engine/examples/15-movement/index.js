@@ -68,6 +68,7 @@ function makeHeightMap(rng) {
         layers: {
             tile: Int8Array,
             object: Int16Array,
+            malleability: Float32Array,
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -79,9 +80,11 @@ function makeHeightMap(rng) {
 
     const tileArray = heightMap.getLayerArray('tile');
     const objectArray = heightMap.getLayerArray('object');
+    const malleabilityArray = heightMap.getLayerArray('malleability');
 
     tileArray.fill(TILE.GRASS);
     objectArray.fill(0);
+    malleabilityArray.fill(1.0);
 
     heightMap.colorFunc = function (sx, sy, wz, si) {
         const tile = db.tiles.get(tileArray[si]);
@@ -101,6 +104,7 @@ function EngineView() {
         const heightMap = makeHeightMap(rng);
         const tileArray = heightMap.getLayerArray('tile');
         const heightArray = heightMap.getLayerArray('height');
+        const malleabilityArray = heightMap.getLayerArray('malleability');
 
         engine.events.on('actor.postinit', ({ actor }) => {
             const shape = actor.groundCollisionShape;
@@ -149,16 +153,17 @@ function EngineView() {
                 core.iterateRect2D(sx0, sy0, sx1, sy1, (sx, sy) => {
                     const si = heightMap.coordS2I(sx, sy);
                     if (si !== -1) {
-                        tileArray[si] = TILE.GRASS_UNWALKABLE;
+                        tileArray[si] = TILE.FOUNDATION;
                         heightArray[si] = heightP;
+                        malleabilityArray[si] = 0.0;
                     }
                 });
 
                 const bboxSC = new THREE.Box3();
                 bboxSC.min.set(sx0, sy0, 0.0);
-                bboxSC.max.set(sx1, sy1, 0.0);
+                bboxSC.max.set(sx1 - 1e-6, sy1 - 1e-6, 0.0);
 
-                const R = 10;
+                const R = 20;
                 const R2 = R * Math.sqrt(2);
                 core.iterateRect2D(sx0 - R, sy0 - R, sx1 + R, sy1 + R, (sx, sy) => {
                     const si = heightMap.coordS2I(sx, sy);
@@ -166,19 +171,19 @@ function EngineView() {
                         return;
                     }
 
-                    // 🚧 TODO:
-                    // - Compute distance from the edge of the bounds
-                    // -
                     const pt = new THREE.Vector3(sx, sy, 0.0);
                     const dist = bboxSC.distanceToPoint(pt);
 
                     if (dist > 0) {
-                        const a1 = Math.pow(dist / R2, 1.5);
+                        const a1 = Math.pow(core.clamp(dist / R, 0, 1), 0.75);
+
                         if (a1 < 0 || a1 > 1) debugger;
 
                         const a0 = 1 - a1;
                         const c = heightArray[si];
+                        tileArray[si] = TILE.BOUNDARY;
                         heightArray[si] = heightP * a0 + a1 * c;
+                        malleabilityArray[si] = Math.min(malleabilityArray[si], a1 * a1);
                     }
                 });
                 const R1 = R + 1;
@@ -199,18 +204,24 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 64, periodMS: 72000, offsetZ: 48 }), //
+            new OrbitCamera({ radius: 128, periodMS: 24000, offsetZ: 24 }), //
             new DayNightLighting({ speed: 1, nightSpeed: 16 }),
             new GroundPlane(),
-            new VOXActor({
-                id: 'house',
-                url: assetURL['obj_house5c.vox'],
-                scale: 2,
-                flags: {
-                    pinToGroundHeight: true,
-                    castShadow: true,
-                },
-            }),
+            ...core.generate(
+                2,
+                () =>
+                    new VOXActor({
+                        id: 'house',
+                        url: assetURL['obj_house5c.vox'],
+                        scale: 2,
+                        flags: {
+                            pinToGroundHeight: true,
+                            castShadow: true,
+                        },
+                        position: new THREE.Vector3(rng.rangei(-76, 76), rng.range(-76, 76), 0.0),
+                        rotation: (Math.PI / 2) * rng.rangei(0, 4),
+                    })
+            ),
             heightMap
         );
 
@@ -265,9 +276,10 @@ function EngineView() {
         // initialization order.
         engine.addSequence(function* () {
             // Stage 1
-            engine.actors.push(
-                new Forest({ count: 40 }) //
-            );
+            engine.actors
+                .push
+                //new Forest({ count: 40 }) //
+                ();
             yield;
 
             // Stage 2
@@ -344,7 +356,12 @@ function EngineView() {
 
             yield;
 
-            engine.actors.push(new Updater(heightMap));
+            engine.actors.push(
+                new Updater(heightMap),
+                new Updater(heightMap),
+                new Updater(heightMap),
+                new Updater(heightMap)
+            );
             return;
         });
     });
@@ -560,7 +577,7 @@ class Updater {
                 this._velocity.x = rng.sign() * rng.range(0.2, 2);
                 this._velocity.y = rng.sign() * rng.range(0.2, 2);
 
-                //return 'changeTerrain';
+                return 'changeTerrain';
             },
             changeTerrain: function* () {
                 if (this._makeHeightFunc) {
@@ -575,7 +592,7 @@ class Updater {
                     this._heightFunc = (x, y) =>
                         base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
                 }
-                yield 60 * rng.rangei(2, 30);
+                //yield 60 * rng.rangei(2, 30);
                 return 'update';
             },
             update: function* () {
@@ -584,6 +601,7 @@ class Updater {
                 const heightMap = this._heightMap;
 
                 const heightArray = heightMap.getLayerArray('height');
+                const malleabilityArray = heightMap.getLayerArray('malleability');
 
                 const frames = rng.rangei(10, 100);
 
@@ -610,6 +628,9 @@ class Updater {
                         const normalizedDist = Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
                         const k = 0.01;
                         dz *= k + (1 - k) * (1.0 - normalizedDist);
+
+                        const m = malleabilityArray[si];
+                        dz *= m;
 
                         heightArray[si] = wz + dz;
                     });

@@ -22,6 +22,16 @@ export function initTileLookupTable() {
                 colorFunc: grassColorFunc,
             },
 
+            FOUNDATION: {
+                walkable: false,
+                colorFunc: () => [1, 0, 0],
+            },
+
+            BOUNDARY: {
+                walkable: true,
+                colorFunc: () => [1, 1, 0],
+            },
+
             GRASS_UNTILLABLE: {
                 walkable: true,
                 walkCost: 20,

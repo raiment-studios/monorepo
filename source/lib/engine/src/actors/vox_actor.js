@@ -10,6 +10,7 @@ export class VOXActor {
         id,
         url, // required
         position = null,
+        rotation = 0,
         scale = 1.0,
         flags = {},
     }) {
@@ -18,6 +19,7 @@ export class VOXActor {
         this._url = url;
         this._scale = scale;
         this._position = position || new THREE.Vector3(0, 0, 0);
+        this._rotation = rotation;
     }
 
     get id() {
@@ -63,16 +65,21 @@ export class VOXActor {
         }
 
         // Create mesh from model data
-        const group = new THREE.Group();
+
         const scale = (this._scale * 20) / voxModel.models[0].size[0];
 
-        group.scale.set(scale, scale, scale);
-        group.position.set(
+        const mesh = model.mesh(ctx);
+        mesh.scale.set(scale, scale, scale);
+        mesh.position.set(
             (-scale * voxModel.models[0].size[0]) / 2,
             (-scale * voxModel.models[0].size[1]) / 2,
             0
         );
-        group.add(model.mesh(ctx));
+        mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), this._rotation);
+
+        const group = new THREE.Group();
+        group.add(mesh);
+        group.position.copy(this._position);
         return group;
     }
 }
