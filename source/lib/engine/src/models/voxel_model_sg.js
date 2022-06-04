@@ -65,14 +65,14 @@ export class VoxelModelSG {
         return max > -Infinity ? max : defaultValue;
     }
 
-    mesh(ctx) {
-        this.updateMesh(ctx);
+    mesh() {
+        this.updateMesh();
         return this._group;
     }
 
-    updateMesh({ engine }) {
+    updateMesh() {
         for (let [cx, cy, cz, chunk] of this._chunks.entries()) {
-            chunk.updateMesh(engine, this._group, cx, cy, cz);
+            chunk.updateMesh(this._group, cx, cy, cz);
         }
     }
 }
@@ -115,7 +115,7 @@ class Chunk {
         return -Infinity;
     }
 
-    updateMesh(engine, parent, cx, cy, cz) {
+    updateMesh(parent, cx, cy, cz) {
         // Already up to date
         if (!this._dirty) {
             return;

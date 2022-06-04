@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash';
+
 export class LookupTable {
     constructor({ normalize = (obj) => obj, table = null } = {}) {
         this._list = [];
@@ -23,6 +25,21 @@ export class LookupTable {
     get(index) {
         return this._list[index];
     }
+
+    getDerived(baseIndex, props) {
+        const base = this._list[baseIndex];
+        const derived = { ...base, ...props };
+
+        for (let index = 0; index < this._list.length; index++) {
+            const value = this._list[index];
+            if (isEqual(derived, value)) {
+                return index;
+            }
+        }
+        console.log(derived);
+        return this.addSet({ derived });
+    }
+
     remove(obj) {
         for (let i = 0; i < this._list.length; i++) {
             if (this._list[i] === obj) {

@@ -23,6 +23,10 @@ patterns:
     -   name: Command
     -   name: Cursor
     -   name: Wrapper
+problem_patterns:
+    - name: Sequencing
+    - name: Naming
+    - name: Data plumbing
 `);
 
 export default function () {

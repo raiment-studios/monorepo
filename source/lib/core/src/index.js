@@ -7,6 +7,7 @@ export * from './controllers/event_emitter.js';
 export * from './data/data_reader.js';
 
 export * from './flow/assert.js';
+export * from './flow/cursor_2d.js';
 export * from './flow/iterate_border2d.js';
 export * from './flow/iterate_circle2d.js';
 export * from './flow/iterate_count.js';
@@ -16,6 +17,7 @@ export * from './format/format_number.js';
 
 export * from './math/clamp.js';
 export * from './math/rng.js';
+export * from './math/simple_stats.js';
 export * from './math/simplex_noise.js';
 
 export * from './strings/nearest_overlap.js';

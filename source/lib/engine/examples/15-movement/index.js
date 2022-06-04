@@ -1,13 +1,8 @@
 /*
-
 🚧 TODO
-
-- Flatten terrain under the voxel model
-- "Lock" the terrain under the voxel model (and border around it)
 - Ensure model and trees don't overlap
 - Click to select building
 - Pop-up "story" dialog when building selected after moving close to it
-
 */
 
 import React from 'react';
@@ -49,11 +44,7 @@ export default function () {
 const db = {
     tiles: initTileLookupTable(),
 };
-
 const TILE = db.tiles.keys();
-
-const objectList = new LookupTable();
-objectList.add({});
 
 function makeHeightMap(rng) {
     const S = 192;
@@ -122,80 +113,6 @@ function EngineView() {
             });
         });
 
-        engine.events.on('actor.postinit', ({ actor }) => {
-            if (actor.id !== 'house') {
-                return;
-            }
-            engine.addSequence(function* () {
-                while (!actor.__mesh) {
-                    yield 5;
-                }
-                const mesh = actor.__mesh;
-                const bbox = new THREE.Box3();
-                bbox.setFromObject(mesh);
-
-                const [sx0, sy0] = heightMap.coordW2S(bbox.min.x, bbox.min.y);
-                const [sx1, sy1] = heightMap.coordW2S(bbox.max.x, bbox.max.y);
-
-                let heightSMax = -Infinity;
-                let heightSum = 0.0;
-                let heightCount = 0;
-                core.iterateRect2D(sx0, sy0, sx1, sy1, (sx, sy) => {
-                    const si = heightMap.coordS2I(sx, sy);
-                    if (si !== -1) {
-                        heightSMax = Math.max(heightSMax, heightArray[si]);
-                        heightSum += heightArray[si];
-                        heightCount++;
-                    }
-                });
-
-                const heightP = ((heightSum / heightCount) * 2) / 3 + (heightSMax * 1) / 3 + 3;
-                core.iterateRect2D(sx0, sy0, sx1, sy1, (sx, sy) => {
-                    const si = heightMap.coordS2I(sx, sy);
-                    if (si !== -1) {
-                        tileArray[si] = TILE.FOUNDATION;
-                        heightArray[si] = heightP;
-                        malleabilityArray[si] = 0.0;
-                    }
-                });
-
-                const bboxSC = new THREE.Box3();
-                bboxSC.min.set(sx0, sy0, 0.0);
-                bboxSC.max.set(sx1 - 1e-6, sy1 - 1e-6, 0.0);
-
-                const R = 20;
-                const R2 = R * Math.sqrt(2);
-                core.iterateRect2D(sx0 - R, sy0 - R, sx1 + R, sy1 + R, (sx, sy) => {
-                    const si = heightMap.coordS2I(sx, sy);
-                    if (si === -1) {
-                        return;
-                    }
-
-                    const pt = new THREE.Vector3(sx, sy, 0.0);
-                    const dist = bboxSC.distanceToPoint(pt);
-
-                    if (dist > 0) {
-                        const a1 = Math.pow(core.clamp(dist / R, 0, 1), 0.75);
-
-                        if (a1 < 0 || a1 > 1) debugger;
-
-                        const a0 = 1 - a1;
-                        const c = heightArray[si];
-                        tileArray[si] = TILE.BOUNDARY;
-                        heightArray[si] = heightP * a0 + a1 * c;
-                        malleabilityArray[si] = Math.min(malleabilityArray[si], a1 * a1);
-                    }
-                });
-                const R1 = R + 1;
-                core.iterateRect2D(sx0 - R1, sy0 - R1, sx1 + R1, sy1 + R1, (sx, sy) => {
-                    const si = heightMap.coordS2I(sx, sy);
-                    if (si !== -1) {
-                        heightMap.updateSegment(sx, sy);
-                    }
-                });
-            });
-        });
-
         engine.events.on('intersection', (results) => {
             const { x, y } = results.first.point;
             const actor = engine.actors.selectByID('kestrel');
@@ -207,35 +124,114 @@ function EngineView() {
             new OrbitCamera({ radius: 72, periodMS: 24000, offsetZ: 48 }), //
             new DayNightLighting({ speed: 1, nightSpeed: 16 }),
             new GroundPlane(),
-            ...core.generate(
-                2,
-                () =>
-                    new VOXActor({
-                        id: 'house',
-                        url: assetURL['obj_house5c.vox'],
-                        scale: 2,
-                        flags: {
-                            pinToGroundHeight: true,
-                            castShadow: true,
-                        },
-                        position: new THREE.Vector3(rng.rangei(-76, 76), rng.range(-76, 76), 0.0),
-                        rotation: (Math.PI / 2) * rng.rangei(0, 4),
-                    })
-            ),
             heightMap
         );
 
-        engine.opt.heightMap = heightMap;
+        engine.addSequence(function* () {
+            // Find a valid location
+            // Mark that as unwalkable & reserved
+            // Flatten it
+            // Place the actor
 
-        engine.opt.walkableS = function (sx, sy) {
-            const si = sy * heightMap.segments + sx;
-            if (si === -1) {
-                return false;
+            for (let i = 0; i < 8; i++) {
+                const actor = new VOXActor({
+                    id: 'house-xyz',
+                    url: assetURL['obj_house5c.vox'],
+                    scale: 2,
+                    flags: {
+                        pinToGroundHeight: true,
+                        castShadow: true,
+                    },
+                    position: new THREE.Vector3(rng.rangei(-76, 76), rng.range(-76, 76), 0.0),
+                    rotation: (Math.PI / 2) * rng.rangei(0, 4),
+                });
+
+                const bbox = yield actor.modelBounds();
+                const size = new THREE.Vector3();
+                bbox.min.floor();
+                bbox.max.ceil();
+                bbox.getSize(size);
+
+                const minX = -bbox.min.x;
+                const minY = -bbox.min.y;
+                const maxX = heightMap.segments - size.x - minX;
+                const maxY = heightMap.segments - size.y - minY;
+
+                const cursor = new core.Cursor2D(heightMap.segments, heightMap.segments);
+                let attempts = 0;
+                let sx, sy;
+                while (attempts < 10) {
+                    sx = rng.rangei(minX, maxX);
+                    sy = rng.rangei(minY, maxY);
+
+                    const rect = [
+                        sx + bbox.min.x,
+                        sy + bbox.min.y,
+                        sx + bbox.max.x,
+                        sy + bbox.max.y,
+                    ];
+
+                    let valid = true;
+                    const stats = new core.SimpleStats();
+                    cursor.rect(...rect, (sx, sy, { index }) => {
+                        const tile = db.tiles.get(tileArray[index]);
+                        if (!tile.walkable) {
+                            valid = false;
+                        }
+                        stats.add(heightArray[index]);
+                    });
+                    if (!valid) {
+                        attempts++;
+                        continue;
+                    }
+
+                    const baseHeight = (stats.average() * 2) / 3 + stats.max() / 3;
+                    cursor.rect(...rect, (sx, sy, { index }) => {
+                        tileArray[index] = db.tiles.getDerived(TILE.FOUNDATION, {});
+                        heightArray[index] = baseHeight;
+                        malleabilityArray[index] = 0.0;
+                    });
+
+                    const bboxSC = new THREE.Box3();
+                    bboxSC.min.set(rect[0], rect[1], 0.0);
+                    bboxSC.max.set(rect[2] - 1e-6, rect[3] - 1e-6, 0.0);
+
+                    const R = 20;
+                    const rect3 = [...rect];
+                    rect3[0] -= R;
+                    rect3[1] -= R;
+                    rect3[2] += R;
+                    rect3[3] += R;
+                    cursor.rect(...rect3, (sx, sy, { index }) => {
+                        const pt = new THREE.Vector3(sx, sy, 0.0);
+                        const dist = bboxSC.distanceToPoint(pt);
+                        if (dist > 0) {
+                            const a1 = Math.pow(core.clamp(dist / R, 0, 1), 0.75);
+                            const a0 = 1 - a1;
+                            const c = heightArray[index];
+                            heightArray[index] = baseHeight * a0 + a1 * c;
+                            malleabilityArray[index] = Math.min(malleabilityArray[index], a1 * a1);
+                        }
+                    });
+                    rect3[0] -= 1;
+                    rect3[1] -= 1;
+                    rect3[2] += 1;
+                    rect3[3] += 1;
+                    cursor.rect(...rect3, (sx, sy) => {
+                        heightMap.updateSegment(sx, sy);
+                    });
+
+                    break;
+                }
+                if (attempts === 10) {
+                    continue;
+                }
+
+                const [wx, wy] = heightMap.coordS2W(sx, sy);
+                actor.position.set(wx, wy, 0.0);
+                engine.actors.push(actor);
             }
-            const tileIndex = tileArray[si];
-            const tile = db.tiles.get(tileIndex);
-            return tile.walkable;
-        };
+        });
 
         engine.opt.generateRandomWalkablePosition = function () {
             const walkable = (wx, wy) => {
@@ -254,15 +250,6 @@ function EngineView() {
             } while (!walkable(worldX, worldY));
 
             return [worldX, worldY];
-        };
-
-        engine.opt.generateRandomWalkablePosition2 = function () {
-            const [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
-            return new THREE.Vector3(worldX, worldY, 0.0);
-        };
-
-        engine.opt.generatePathfindingBehavior = function (actor) {
-            return makePathfindBehaviorForHeightmap(heightMap, actor);
         };
 
         engine.addSequence(function* () {
@@ -605,7 +592,7 @@ class Updater {
 
                 const frames = rng.rangei(10, 100);
 
-                const pen = new Pen2D(heightMap.segments, heightMap.segments);
+                const pen = new core.Cursor2D(heightMap.segments, heightMap.segments);
 
                 for (let i = 0; i < frames; i++) {
                     const centerSX = Math.floor(this._position.x);
@@ -712,20 +699,20 @@ class Updater2 {
 
                 const frames = rng.rangei(10, 100);
 
-                const pen = new Pen2D(heightMap.segments, heightMap.segments);
+                const pen = new core.Cursor2D(heightMap.segments, heightMap.segments);
 
                 for (let i = 0; i < frames; i++) {
                     const centerSX = Math.floor(this._position.x);
                     const centerSY = Math.floor(this._position.y);
 
-                    const stats = new SimpleStats();
+                    const stats = new core.SimpleStats();
                     pen.border(centerSX, centerSY, D, (sx, sy) => {
                         const si = sy * heightMap.segments + sx;
                         const wz = heightArray[si];
                         stats.add(wz);
                     });
 
-                    const avg = stats.mean();
+                    const avg = stats.average();
                     pen.border(centerSX, centerSY, D, (sx, sy, { index: si, distance }) => {
                         const wz = heightArray[si];
                         const m = malleabilityArray[si];
@@ -746,51 +733,5 @@ class Updater2 {
                 return 'update';
             },
         };
-    }
-}
-
-class SimpleStats {
-    constructor() {
-        this._sum = 0.0;
-        this._count = 0;
-    }
-    add(value) {
-        this._sum += value;
-        this._count++;
-    }
-    mean() {
-        return this._sum / this._count;
-    }
-}
-
-/**
- * A iterator-like utility for walking regions of a 2D canvas.
- */
-class Pen2D {
-    constructor(width, height) {
-        this._width = width;
-        this._height = height;
-    }
-
-    border(cx, cy, borderWidth, cb) {
-        const extra = {
-            index: 0,
-            distance: 0,
-        };
-
-        const y0 = Math.max(cy - borderWidth, 0);
-        const y1 = Math.min(cy + borderWidth, this._height - 1);
-        const x0 = Math.max(cx - borderWidth, 0);
-        const x1 = Math.min(cx + borderWidth, this._width - 1);
-
-        for (let y = y0; y <= y1; y++) {
-            for (let x = x0; x <= x1; x++) {
-                extra.index = y * this._width + x;
-                const dx = x - cx;
-                const dy = y - cy;
-                extra.distance = Math.sqrt(dx * dx + dy * dy);
-                cb(x, y, extra);
-            }
-        }
     }
 }

@@ -20,7 +20,12 @@ export class VOXActor {
         this._scale = scale;
         this._position = position || new THREE.Vector3(0, 0, 0);
         this._rotation = rotation;
+        this._mesh = null;
     }
+
+    // ------------------------------------------------------------------------
+    // @group Engine methods
+    // ------------------------------------------------------------------------
 
     get id() {
         return this._id;
@@ -35,55 +40,83 @@ export class VOXActor {
     }
 
     async initMesh(ctx) {
-        const url = this._url;
-
-        // Fetch data
-        const resp = await fetch(url);
-        const blob = await resp.blob();
-        const arrayBuffer = await blob.arrayBuffer();
-
-        // Parse VOX format into memmory
-        const voxModel = readVOX(arrayBuffer);
-
-        // Create internal model
-        const model = new VoxelModelSG();
-        const colorArray = voxModel.models[0].palette || defaultPalette();
-
-        const voxelArray = voxModel.models[0].voxels;
-        for (let i = 0; i < voxelArray.length; i += 4) {
-            const x = voxelArray[i + 0];
-            const y = voxelArray[i + 1];
-            const z = voxelArray[i + 2];
-            const colorIndex = 4 * (voxelArray[i + 3] - 1);
-
-            const color = [
-                colorArray[colorIndex + 0] / 255.0,
-                colorArray[colorIndex + 1] / 255.0,
-                colorArray[colorIndex + 2] / 255.0,
-            ];
-            model.set(x, y, z, color);
-        }
-
-        // Create mesh from model data
-        const mesh = model.mesh(ctx);
-        for (let child of mesh.children) {
-            child.geometry.translate(
-                -voxModel.models[0].size[0] / 2,
-                -voxModel.models[0].size[1] / 2,
-                0
-            );
-        }
-
-        const maxXY = Math.max(voxModel.models[0].size[0], voxModel.models[0].size[1]);
-        const scale = (this._scale * 20) / maxXY;
-        mesh.scale.set(scale, scale, scale);
-        mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), this._rotation);
-
+        const mesh = await this._ensureMesh();
         const group = new THREE.Group();
         group.add(mesh);
         group.position.copy(this._position);
 
         return group;
+    }
+
+    // ------------------------------------------------------------------------
+    // @group Engine methods
+    // ------------------------------------------------------------------------
+
+    async _fetchModel() {
+        const url = this._url;
+
+        this._cache = this._cache || {};
+        let voxModel = this._cache[url];
+        if (!voxModel) {
+            // Fetch data
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            const arrayBuffer = await blob.arrayBuffer();
+
+            // Parse VOX format into memmory
+            voxModel = readVOX(arrayBuffer);
+            this._cache[url] = voxModel;
+        }
+        return voxModel;
+    }
+
+    async _ensureMesh() {
+        if (!this._mesh) {
+            // Create internal model
+            const voxModel = await this._fetchModel();
+            const model = new VoxelModelSG();
+            const colorArray = voxModel.models[0].palette || defaultPalette();
+
+            const voxelArray = voxModel.models[0].voxels;
+            for (let i = 0; i < voxelArray.length; i += 4) {
+                const x = voxelArray[i + 0];
+                const y = voxelArray[i + 1];
+                const z = voxelArray[i + 2];
+                const colorIndex = 4 * (voxelArray[i + 3] - 1);
+
+                const color = [
+                    colorArray[colorIndex + 0] / 255.0,
+                    colorArray[colorIndex + 1] / 255.0,
+                    colorArray[colorIndex + 2] / 255.0,
+                ];
+                model.set(x, y, z, color);
+            }
+
+            // Create mesh from model data
+            const mesh = model.mesh();
+            for (let child of mesh.children) {
+                child.geometry.translate(
+                    -voxModel.models[0].size[0] / 2,
+                    -voxModel.models[0].size[1] / 2,
+                    0
+                );
+            }
+
+            const maxXY = Math.max(voxModel.models[0].size[0], voxModel.models[0].size[1]);
+            const scale = (this._scale * 20) / maxXY;
+            mesh.scale.set(scale, scale, scale);
+            mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), this._rotation);
+            this._mesh = mesh;
+        }
+        return this._mesh;
+    }
+
+    async modelBounds() {
+        const mesh = await this._ensureMesh();
+
+        const bbox = new THREE.Box3();
+        bbox.setFromObject(mesh);
+        return bbox;
     }
 }
 
