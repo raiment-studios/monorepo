@@ -204,7 +204,7 @@ function EngineView() {
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 128, periodMS: 24000, offsetZ: 24 }), //
+            new OrbitCamera({ radius: 72, periodMS: 24000, offsetZ: 48 }), //
             new DayNightLighting({ speed: 1, nightSpeed: 16 }),
             new GroundPlane(),
             ...core.generate(
@@ -359,8 +359,8 @@ function EngineView() {
             engine.actors.push(
                 new Updater(heightMap),
                 new Updater(heightMap),
-                new Updater(heightMap),
-                new Updater(heightMap)
+                new Updater2(heightMap),
+                new Updater2(heightMap)
             );
             return;
         });
@@ -647,6 +647,122 @@ class Updater {
     }
 }
 
+class Updater2 {
+    constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
+        this._heightMap = heightMap;
+        this._rng = core.makeRNG();
+        this._heightFunc = null;
+        this._makeHeightFunc = makeHeightFunc;
+        this._heightScale = heightScale;
+
+        // Note: this actor acts in "heightmap segment space", not "world space". For example,
+        // the collider is set to the segment bounds, not the world heightmap bounds.
+        this._position = new THREE.Vector3(0, 0, 0);
+        this._velocity = new THREE.Vector3(0, 0, 0);
+        this._acceleration = new THREE.Vector3(0, 0, 0);
+
+        const S = this._heightMap.segments;
+        this._collider = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S));
+    }
+
+    get position() {
+        return this._position;
+    }
+    get velocity() {
+        return this._velocity;
+    }
+
+    get acceleration() {
+        return this._acceleration;
+    }
+
+    update() {
+        const rng = this._rng;
+
+        updatePosition(this, 1);
+        updateBoxCollision(this, this._collider);
+
+        const K = 0.25;
+        const MV = 2;
+        this._velocity.x += K * rng.range(-1, 1);
+        this._velocity.y += K * rng.range(-1, 1);
+        this._velocity.clampScalar(-MV, MV);
+    }
+
+    stateMachine() {
+        const rng = this._rng;
+
+        return {
+            _bind: this,
+            _start: function* () {
+                this._position.x = rng.range(0, this._heightMap.segments);
+                this._position.y = rng.range(0, this._heightMap.segments);
+                this._velocity.x = rng.sign() * rng.range(0.2, 2);
+                this._velocity.y = rng.sign() * rng.range(0.2, 2);
+
+                return 'update';
+            },
+            update: function* () {
+                const D = 32;
+                const MAX_DIST = Math.sqrt(2 * D * D);
+                const heightMap = this._heightMap;
+
+                const heightArray = heightMap.getLayerArray('height');
+                const malleabilityArray = heightMap.getLayerArray('malleability');
+
+                const frames = rng.rangei(10, 100);
+
+                const pen = new Pen2D(heightMap.segments, heightMap.segments);
+
+                for (let i = 0; i < frames; i++) {
+                    const centerSX = Math.floor(this._position.x);
+                    const centerSY = Math.floor(this._position.y);
+
+                    const stats = new SimpleStats();
+                    pen.border(centerSX, centerSY, D, (sx, sy) => {
+                        const si = sy * heightMap.segments + sx;
+                        const wz = heightArray[si];
+                        stats.add(wz);
+                    });
+
+                    const avg = stats.mean();
+                    pen.border(centerSX, centerSY, D, (sx, sy, { index: si, distance }) => {
+                        const wz = heightArray[si];
+                        const m = malleabilityArray[si];
+                        const a = m * 0.25 * (1 - core.clamp(distance / D, 0, 1));
+                        heightArray[si] = wz * (1 - a) + avg * a;
+                    });
+
+                    pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
+                        heightMap.updateSegment(sx, sy);
+                    });
+
+                    pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
+                        heightMap.updateSegment(sx, sy);
+                    });
+                    yield 1;
+                }
+
+                return 'update';
+            },
+        };
+    }
+}
+
+class SimpleStats {
+    constructor() {
+        this._sum = 0.0;
+        this._count = 0;
+    }
+    add(value) {
+        this._sum += value;
+        this._count++;
+    }
+    mean() {
+        return this._sum / this._count;
+    }
+}
+
 /**
  * A iterator-like utility for walking regions of a 2D canvas.
  */
@@ -657,6 +773,11 @@ class Pen2D {
     }
 
     border(cx, cy, borderWidth, cb) {
+        const extra = {
+            index: 0,
+            distance: 0,
+        };
+
         const y0 = Math.max(cy - borderWidth, 0);
         const y1 = Math.min(cy + borderWidth, this._height - 1);
         const x0 = Math.max(cx - borderWidth, 0);
@@ -664,7 +785,11 @@ class Pen2D {
 
         for (let y = y0; y <= y1; y++) {
             for (let x = x0; x <= x1; x++) {
-                cb(x, y);
+                extra.index = y * this._width + x;
+                const dx = x - cx;
+                const dy = y - cy;
+                extra.distance = Math.sqrt(dx * dx + dy * dy);
+                cb(x, y, extra);
             }
         }
     }

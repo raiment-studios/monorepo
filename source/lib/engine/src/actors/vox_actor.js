@@ -65,21 +65,24 @@ export class VOXActor {
         }
 
         // Create mesh from model data
-
-        const scale = (this._scale * 20) / voxModel.models[0].size[0];
-
         const mesh = model.mesh(ctx);
+        for (let child of mesh.children) {
+            child.geometry.translate(
+                -voxModel.models[0].size[0] / 2,
+                -voxModel.models[0].size[1] / 2,
+                0
+            );
+        }
+
+        const maxXY = Math.max(voxModel.models[0].size[0], voxModel.models[0].size[1]);
+        const scale = (this._scale * 20) / maxXY;
         mesh.scale.set(scale, scale, scale);
-        mesh.position.set(
-            (-scale * voxModel.models[0].size[0]) / 2,
-            (-scale * voxModel.models[0].size[1]) / 2,
-            0
-        );
         mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), this._rotation);
 
         const group = new THREE.Group();
         group.add(mesh);
         group.position.copy(this._position);
+
         return group;
     }
 }

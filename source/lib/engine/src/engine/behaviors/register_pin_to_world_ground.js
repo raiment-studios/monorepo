@@ -20,7 +20,6 @@ export function registerPinToGroundHeight(engine) {
 
         // Ignore if the ground height is not defined at this world coordinate
         if (z > -Infinity && z !== pos.z) {
-            console.log(z - pos.z);
             actor.position.set(pos.x, pos.y, z);
         }
     });

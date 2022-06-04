@@ -1,6 +1,11 @@
 import { LookupTable } from './lookup_table';
 import * as core from '../../../core';
 
+function mix3(c0, c1, a) {
+    const b = 1 - a;
+    return [c0[0] * b + c1[0] * a, c0[1] * b + c1[1] * a, c0[2] * b + c1[2] * a];
+}
+
 export function initTileLookupTable() {
     const grassColorFunc = makeGrassColorFunc(256);
 
@@ -24,12 +29,12 @@ export function initTileLookupTable() {
 
             FOUNDATION: {
                 walkable: false,
-                colorFunc: () => [1, 0, 0],
+                colorFunc: (sx, sy) => mix3([1, 0, 0], grassColorFunc(sx, sy), 0.85),
             },
 
             BOUNDARY: {
                 walkable: true,
-                colorFunc: () => [1, 1, 0],
+                colorFunc: (sx, sy) => mix3([1, 1, 0], grassColorFunc(sx, sy), 0.85),
             },
 
             GRASS_UNTILLABLE: {
