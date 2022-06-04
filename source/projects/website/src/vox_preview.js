@@ -9,6 +9,7 @@ import {
     BasicLighting,
     VOXActor,
 } from '../../../lib/engine/src';
+import * as fs from './__runtime/fs';
 
 export function VOXPreview({ url }) {
     const [screenshotDataURI, setScreenshotDataURI] = React.useState(null);
@@ -61,6 +62,11 @@ export function VOXPreview({ url }) {
                         const canvas = engine.renderers.three.canvas;
                         const dataURI = canvas.toDataURL('image/png');
                         setScreenshotDataURI(dataURI);
+
+                        fs.writeFile(`${url}.screenshot.png`, dataURI, {
+                            directory: '$(MONOREPO_ROOT)/source',
+                            encoding: 'data-uri',
+                        });
                     }}
                 >
                     capture screenshot

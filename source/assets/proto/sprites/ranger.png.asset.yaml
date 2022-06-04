@@ -1,6 +1,12 @@
-license: |
-    Part of (or All) the graphic tiles used in this program is the public 
-    domain roguelike tileset "RLTiles".
-    Some of the tiles have been modified by Raiment Studios (https://github.com/raiment-studios/).
+license: >
+  Part of (or All) the graphic tiles used in this program is the public 
 
-    You can find the original tileset at: http://rltiles.sf.net
+  domain roguelike tileset "RLTiles".
+
+  Some of the tiles have been modified by Raiment Studios (https://github.com/raiment-studios/).
+
+
+  You can find the original tileset at: http://rltiles.sf.net
+attributes:
+  width: 32
+  height: 32

@@ -32,6 +32,7 @@ export async function build(
         './__bootstrap.js': await app.asset(
             production ? 'production/__bootstrap.js' : '__bootstrap.js'
         ),
+        './__runtime/fs': await app.asset('fs/index.js'),
     };
 
     app.stats.buildCount++;

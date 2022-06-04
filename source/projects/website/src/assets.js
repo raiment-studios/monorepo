@@ -11,6 +11,7 @@ import * as core from '../../../lib/core';
 
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.asset.yaml,.png,.vox}';
 import { VOXPreview } from './vox_preview';
+import * as fs from './__runtime/fs';
 
 const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
 
@@ -164,7 +165,7 @@ function VOXTileDetails({ url }) {
 
 function ImageInfo({ url }) {
     const [data, setData] = React.useState(null);
-    const [active, setActive] = React.useState(false);
+    const [active, setActive] = useLocalStorage(`image-info-active-${url}`, false);
 
     useAsyncEffect(async (token) => {
         const resp = await fetch(`${url}.asset.yaml`);
@@ -197,11 +198,14 @@ function ImageInfo({ url }) {
                 gridColumnEnd: active ? 5 : 'inherit',
                 boxShadow: '2px 2px 2px 2px rgba(0,0,0,0.05)',
             }}
-            onClick={() => {
-                setActive(!active);
-            }}
         >
-            <PixelatedImage src={url} scale={4} />
+            <PixelatedImage
+                src={url}
+                scale={4}
+                onClick={() => {
+                    setActive(!active);
+                }}
+            />
             <div style={{ marginTop: '0.25rem', fontSize: '90%' }}>{url.split('/').pop()}</div>
             <div style={{ fontSize: '90%' }}>{url.split('/')[1]}</div>
             {active && (
@@ -221,6 +225,20 @@ function ImageInfo({ url }) {
                     </pre>
                     <h3>Attributes</h3>
                     <pre>{data && data.attributes && core.stringifyYAML(data.attributes)}</pre>
+                    <h3>Update</h3>
+                    <button
+                        onClick={async (evt) => {
+                            evt.preventDefault();
+                            if (!data) {
+                                return;
+                            }
+                            console.log('hi?');
+                            const filename = `${url}.asset.yaml`;
+                            await fs.writeFile(filename, core.stringifyYAML(data));
+                        }}
+                    >
+                        Update
+                    </button>
                 </div>
             )}
         </Flex>

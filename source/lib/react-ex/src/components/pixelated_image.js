@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAsyncEffect } from '../hooks/use_async_effect';
 
-export function PixelatedImage({ src, scale = 6 }) {
+export function PixelatedImage({ src, scale = 6, onClick }) {
     const [image, setImage] = React.useState(null);
 
     useAsyncEffect(async (token) => {
@@ -19,6 +19,7 @@ export function PixelatedImage({ src, scale = 6 }) {
                     imageRendering: 'pixelated',
                 }}
                 src={image.src}
+                onClick={onClick}
             />
         )
     );

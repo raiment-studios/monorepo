@@ -1,4 +1,7 @@
 license: |
-    https://creativecommons.org/publicdomain/zero/1.0/
+  https://creativecommons.org/publicdomain/zero/1.0/
 
-    Created by Raiment Studios (https://github.com/raiment-studios/).
+  Created by Raiment Studios (https://github.com/raiment-studios/).
+attributes:
+  width: 32
+  height: 32
