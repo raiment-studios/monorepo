@@ -234,7 +234,13 @@ function ImageInfo({ url }) {
                             }
                             console.log('hi?');
                             const filename = `${url}.asset.yaml`;
-                            await fs.writeFile(filename, core.stringifyYAML(data));
+                            await fs.writeFile(
+                                `$(MONOREPO_ROOT)/source/${filename}`,
+                                core.stringifyYAML(data),
+                                {
+                                    substitute_env: true,
+                                }
+                            );
                         }}
                     >
                         Update

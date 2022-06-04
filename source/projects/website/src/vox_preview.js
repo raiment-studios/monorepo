@@ -63,8 +63,8 @@ export function VOXPreview({ url }) {
                         const dataURI = canvas.toDataURL('image/png');
                         setScreenshotDataURI(dataURI);
 
-                        fs.writeFile(`${url}.screenshot.png`, dataURI, {
-                            directory: '$(MONOREPO_ROOT)/source',
+                        fs.writeFile(`$(MONOREPO_ROOT)/source/${url}.screenshot.png`, dataURI, {
+                            substitute_env: true,
                             encoding: 'data-uri',
                         });
                     }}

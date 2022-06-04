@@ -76,40 +76,28 @@ export async function startServer(app, { port, filename, content }) {
  */
 function registerExperimentalFS(app, { server, content, workingDir }) {
     server.post('/internal-api/experimental-fs/v1', async (req, res) => {
-        const { filename, data, options } = req.body;
+        let { filename, data, options } = req.body;
 
-        let localPath;
-        if (options?.directory) {
-            function swapEnvironmentVariables(s) {
-                return s.replace(/\$\((.+)\)/g, function (m, name) {
-                    return process.env[name];
-                });
-            }
-            const dir = swapEnvironmentVariables(options.directory);
-            localPath = path.join(dir, filename);
-        } else {
-            localPath = content.references[filename]?.filepath;
-            if (!localPath) {
-                app.print(`Returning {{loc 404}} for {{obj ${filename}}`);
-                return res.sendStatus(404);
-            }
+        if (options?.substitute_env) {
+            filename = filename.replace(/\$\((.+)\)/g, function (m, name) {
+                return process.env[name];
+            });
         }
 
-        let payload = data;
         if (options?.encoding === 'data-uri') {
             // https://gist.github.com/kapad/5b93b14f8a8b193745807b969b189489
             const BASE64_MARKER = ';base64,';
             const base64Index = data.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
             const base64 = data.substring(base64Index);
-            payload = Buffer.from(base64, 'base64');
+            data = Buffer.from(base64, 'base64');
         }
 
         app.print(
-            `Writing to file {{obj ${path.relative(workingDir, localPath)}}} {{loc ${
+            `Writing to file {{obj ${path.relative(workingDir, filename)}}} {{loc ${
                 data.length
             }}} bytes.`
         );
-        await fs.writeFile(localPath, payload);
+        await fs.writeFile(filename, data);
         res.set('etag', false);
         res.set('Cache-Control', 'no-store');
         res.send({ success: true });
