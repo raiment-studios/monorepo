@@ -111,9 +111,20 @@ function EngineView() {
         );
 
         engine.addSequence(function* () {
-            for (let i = 0; i < 8; i++) {
+            engine.actors.push(new Updater(heightMap));
+            engine.actors.push(new Updater2(heightMap));
+            yield 120;
+
+            for (let i = 0; i < 5; i++) {
                 const actor = new VOXActor({
-                    url: assetURL['obj_house5c.vox'],
+                    url: assetURL[
+                        rng.select([
+                            'obj_house3a.vox', //
+                            'obj_house5c.vox', //
+                            'obj_house5c.vox', //
+                            'obj_house5c.vox', //
+                        ])
+                    ],
                     scale: 2,
                     flags: {
                         pinToGroundHeight: true,
@@ -123,6 +134,7 @@ function EngineView() {
                     rotation: (Math.PI / 2) * rng.rangei(0, 4),
                 });
                 yield placeActor({ engine, actor, heightMap });
+                yield 10;
             }
 
             for (let clusters = 0; clusters < 24; clusters++) {
@@ -141,13 +153,12 @@ function EngineView() {
                     });
                     yield;
                 }
+                yield 10;
             }
 
             engine.actors.push(generateKestrel({ engine, heightMap }));
 
             yield 30;
-            engine.actors.push(new Updater(heightMap));
-            engine.actors.push(new Updater2(heightMap));
             engine.actors.push(new Updater(heightMap));
             engine.actors.push(new Updater2(heightMap));
         });

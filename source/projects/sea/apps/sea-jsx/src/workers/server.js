@@ -10,7 +10,7 @@ export async function startServer(app, { port, filename, content }) {
     const workingDir = path.relative(process.cwd(), path.dirname(filename));
 
     const server = express();
-    server.use(express.json());
+    server.use(express.json({ limit: '200mb' }));
 
     // Returns a unique ID for the currently built file. This allows the client to use
     // long-polling to automatically refresh on a change.
