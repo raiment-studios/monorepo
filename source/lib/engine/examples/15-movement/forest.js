@@ -3,38 +3,7 @@ import chroma from 'chroma-js';
 import * as THREE from 'three';
 import { VoxelModelSG } from '../..';
 
-export class Forest {
-    constructor(params) {
-        this._params = Object.assign(
-            {
-                seed: 31174,
-                count: 32,
-            },
-            params
-        );
-    }
-    init({ engine }) {
-        const { count, seed } = this._params;
-        //const { terrain } = engine.world;
-
-        const rng = core.makeRNG(seed);
-        const W = 128; //Math.floor(terrain.size / 2);
-        for (let i = 0; i < count; i++) {
-            let position;
-            for (let attempt = 0; attempt < 100; attempt++) {
-                position = [rng.rangei(-W, W), rng.rangei(-W, W)];
-
-                //      const type = terrain.getValue(position[0], position[1], 'type');
-                //if (type === 0) {
-                //break;
-                //}
-            }
-            engine.actors.push(new TreeActor({ position }));
-        }
-    }
-}
-
-class TreeActor {
+export class TreeActor {
     constructor(params) {
         this._params = Object.assign(
             {
@@ -42,6 +11,7 @@ class TreeActor {
             },
             params
         );
+        this._mesh = null;
         this._group = null;
 
         this._position = new THREE.Vector3(
@@ -68,8 +38,22 @@ class TreeActor {
         };
     }
 
+    async placementConstraints({ engine }) {
+        const mesh = await this._ensureMesh({ engine });
+        const bbox = new THREE.Box3();
+        bbox.setFromObject(mesh);
+
+        return {
+            type: 'TBD',
+            box3: bbox,
+            malleabilityExtents: 20,
+            malleabilityExponent: 1,
+            foundationSize: 0,
+        };
+    }
+
     async initMesh({ engine }) {
-        const rng = core.makeRNG(2998474);
+        const rng = engine.rng;
         const { position } = this._params;
         this._group = new THREE.Group();
         this._group.position.set(
@@ -77,12 +61,20 @@ class TreeActor {
             position[1] + rng.range(-1e-2, 1e-2),
             0
         );
-        const mesh = await this._buildMesh({ engine, rng });
+        const mesh = await this._ensureMesh({ engine });
         this._group.add(mesh);
 
         return this._group;
     }
-    async _buildMesh({ engine, rng }) {
+    async _ensureMesh(ctx) {
+        if (!this._mesh) {
+            this._mesh = await this._buildMesh(ctx);
+        }
+        return this._mesh;
+    }
+
+    async _buildMesh({ engine }) {
+        const rng = engine.rng.fork();
         const model = new VoxelModelSG();
 
         const func = await treeShader.generate({

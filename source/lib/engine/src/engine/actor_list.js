@@ -20,6 +20,15 @@ export class ActorList {
                 debugger;
             }
 
+            if (actor.id) {
+                const existing = this._idCache[actor.id];
+                if (existing) {
+                    console.warn(`Actor with id '${actor.id}' already exists`);
+                } else {
+                    this._idCache[actor.id] = actor;
+                }
+            }
+
             this._added.push(actor);
         }
     }

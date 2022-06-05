@@ -1,5 +1,10 @@
 /**
  * A iterator-like utility for walking regions of a 2D canvas.
+ *
+ * The design should prefer the ease-of-use from the callers perspective
+ * over the raw efficiency. There's some tension in this choice since
+ * this is class creates inner loops that may have a tangible performance
+ * impact.
  */
 export class Cursor2D {
     constructor(width, height) {
@@ -44,6 +49,40 @@ export class Cursor2D {
             for (let x = x0; x < x1; x++) {
                 extra.index = y * this._width + x;
                 cb(x, y, extra);
+            }
+        }
+    }
+
+    box(box2, options, cb) {
+        if (cb === undefined) {
+            cb = options;
+        }
+
+        // Options
+        const { inflate = 0 } = options || {};
+
+        if (inflate !== 0) {
+            box2 = box2.clone();
+            box2.expandByScalar(inflate);
+        }
+
+        const x0 = Math.max(Math.floor(box2.min.x), 0);
+        const y0 = Math.max(Math.floor(box2.min.y), 0);
+        const x1 = Math.min(Math.ceil(box2.max.x), this._width);
+        const y1 = Math.min(Math.ceil(box2.max.y), this._height);
+
+        const it = {
+            x: 0,
+            y: 0,
+            index: 0,
+            distance: 0,
+        };
+        for (let y = y0; y < y1; y++) {
+            for (let x = x0; x < x1; x++) {
+                it.x = x;
+                it.y = y;
+                it.index = y * this._width + x;
+                cb(it);
             }
         }
     }

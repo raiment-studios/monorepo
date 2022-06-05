@@ -52,11 +52,13 @@ export class VOXActor {
     // @group Engine methods
     // ------------------------------------------------------------------------
 
+    static _cache = {};
+
     async _fetchModel() {
+        const cache = VOXActor._cache;
         const url = this._url;
 
-        this._cache = this._cache || {};
-        let voxModel = this._cache[url];
+        let voxModel = cache[url]?.model;
         if (!voxModel) {
             // Fetch data
             const resp = await fetch(url);
@@ -65,8 +67,21 @@ export class VOXActor {
 
             // Parse VOX format into memmory
             voxModel = readVOX(arrayBuffer);
-            this._cache[url] = voxModel;
+            cache[url] = { timestamp: Date.now(), model: voxModel };
+        } else {
+            cache[url].timestamp = Date.now();
         }
+
+        setTimeout(() => {
+            const now = Date.now();
+            for (let [k, v] of Object.entries(cache)) {
+                if (now - v.timestamp > 2500) {
+                    console.log('Removing cache', k);
+                    delete cache[k];
+                }
+            }
+        }, 5000);
+
         return voxModel;
     }
 
@@ -111,12 +126,18 @@ export class VOXActor {
         return this._mesh;
     }
 
-    async modelBounds() {
+    async placementConstraints() {
         const mesh = await this._ensureMesh();
-
         const bbox = new THREE.Box3();
         bbox.setFromObject(mesh);
-        return bbox;
+
+        return {
+            type: 'TBD',
+            box3: bbox,
+            malleabilityExtents: 20,
+            malleabilityExponent: 2,
+            walkableBoundary: 8,
+        };
     }
 }
 

@@ -23,9 +23,8 @@ import {
     DayNightLighting,
     VOXActor,
 } from '../..';
-import { Forest } from './forest.js';
+import { TreeActor } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
-import { LookupTable } from './lookup_table';
 import { initTileLookupTable } from './tiles';
 
 const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
@@ -94,48 +93,26 @@ function EngineView() {
 
         const heightMap = makeHeightMap(rng);
         const tileArray = heightMap.getLayerArray('tile');
-        const heightArray = heightMap.getLayerArray('height');
-        const malleabilityArray = heightMap.getLayerArray('malleability');
-
-        engine.events.on('actor.postinit', ({ actor }) => {
-            const shape = actor.groundCollisionShape;
-            if (!shape) {
-                return;
-            }
-
-            const [sx, sy] = heightMap.coordW2S(actor.position.x, actor.position.y);
-            core.iterateCircle2D(sx, sy, 2 * shape.width, (sx, sy) => {
-                const si = heightMap.coordS2I(sx, sy);
-                if (si !== -1) {
-                    tileArray[si] = TILE.GRASS_UNWALKABLE;
-                    heightMap.updateSegment(sx, sy);
-                }
-            });
-        });
 
         engine.events.on('intersection', (results) => {
             const { x, y } = results.first.point;
             const actor = engine.actors.selectByID('kestrel');
-            actor._goal = ['move', x, y];
+            if (actor) {
+                actor._goal = ['move', x, y];
+            }
         });
 
         engine.actors.push(
             new Grid(),
-            new OrbitCamera({ radius: 72, periodMS: 24000, offsetZ: 48 }), //
+            new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 48 }), //
             new DayNightLighting({ speed: 1, nightSpeed: 16 }),
             new GroundPlane(),
             heightMap
         );
 
         engine.addSequence(function* () {
-            // Find a valid location
-            // Mark that as unwalkable & reserved
-            // Flatten it
-            // Place the actor
-
             for (let i = 0; i < 8; i++) {
                 const actor = new VOXActor({
-                    id: 'house-xyz',
                     url: assetURL['obj_house5c.vox'],
                     scale: 2,
                     flags: {
@@ -145,92 +122,34 @@ function EngineView() {
                     position: new THREE.Vector3(rng.rangei(-76, 76), rng.range(-76, 76), 0.0),
                     rotation: (Math.PI / 2) * rng.rangei(0, 4),
                 });
-
-                const bbox = yield actor.modelBounds();
-                const size = new THREE.Vector3();
-                bbox.min.floor();
-                bbox.max.ceil();
-                bbox.getSize(size);
-
-                const minX = -bbox.min.x;
-                const minY = -bbox.min.y;
-                const maxX = heightMap.segments - size.x - minX;
-                const maxY = heightMap.segments - size.y - minY;
-
-                const cursor = new core.Cursor2D(heightMap.segments, heightMap.segments);
-                let attempts = 0;
-                let sx, sy;
-                while (attempts < 10) {
-                    sx = rng.rangei(minX, maxX);
-                    sy = rng.rangei(minY, maxY);
-
-                    const rect = [
-                        sx + bbox.min.x,
-                        sy + bbox.min.y,
-                        sx + bbox.max.x,
-                        sy + bbox.max.y,
-                    ];
-
-                    let valid = true;
-                    const stats = new core.SimpleStats();
-                    cursor.rect(...rect, (sx, sy, { index }) => {
-                        const tile = db.tiles.get(tileArray[index]);
-                        if (!tile.walkable) {
-                            valid = false;
-                        }
-                        stats.add(heightArray[index]);
-                    });
-                    if (!valid) {
-                        attempts++;
-                        continue;
-                    }
-
-                    const baseHeight = (stats.average() * 2) / 3 + stats.max() / 3;
-                    cursor.rect(...rect, (sx, sy, { index }) => {
-                        tileArray[index] = db.tiles.getDerived(TILE.FOUNDATION, {});
-                        heightArray[index] = baseHeight;
-                        malleabilityArray[index] = 0.0;
-                    });
-
-                    const bboxSC = new THREE.Box3();
-                    bboxSC.min.set(rect[0], rect[1], 0.0);
-                    bboxSC.max.set(rect[2] - 1e-6, rect[3] - 1e-6, 0.0);
-
-                    const R = 20;
-                    const rect3 = [...rect];
-                    rect3[0] -= R;
-                    rect3[1] -= R;
-                    rect3[2] += R;
-                    rect3[3] += R;
-                    cursor.rect(...rect3, (sx, sy, { index }) => {
-                        const pt = new THREE.Vector3(sx, sy, 0.0);
-                        const dist = bboxSC.distanceToPoint(pt);
-                        if (dist > 0) {
-                            const a1 = Math.pow(core.clamp(dist / R, 0, 1), 0.75);
-                            const a0 = 1 - a1;
-                            const c = heightArray[index];
-                            heightArray[index] = baseHeight * a0 + a1 * c;
-                            malleabilityArray[index] = Math.min(malleabilityArray[index], a1 * a1);
-                        }
-                    });
-                    rect3[0] -= 1;
-                    rect3[1] -= 1;
-                    rect3[2] += 1;
-                    rect3[3] += 1;
-                    cursor.rect(...rect3, (sx, sy) => {
-                        heightMap.updateSegment(sx, sy);
-                    });
-
-                    break;
-                }
-                if (attempts === 10) {
-                    continue;
-                }
-
-                const [wx, wy] = heightMap.coordS2W(sx, sy);
-                actor.position.set(wx, wy, 0.0);
-                engine.actors.push(actor);
+                yield placeActor({ engine, actor, heightMap });
             }
+
+            for (let clusters = 0; clusters < 24; clusters++) {
+                const cx = rng.rangei(0, heightMap.segments);
+                const cy = rng.rangei(0, heightMap.segments);
+                const count = rng.rangei(3, 8);
+                for (let i = 0; i < count; i++) {
+                    const actor = new TreeActor();
+                    yield placeActor({
+                        engine,
+                        actor,
+                        heightMap,
+                        generatePosition: (rng, minX, minY, maxX, maxY) => {
+                            return [cx + rng.rangei(-20, 20), cy + rng.rangei(-20, 20)];
+                        },
+                    });
+                    yield;
+                }
+            }
+
+            engine.actors.push(generateKestrel({ engine, heightMap }));
+
+            yield 30;
+            engine.actors.push(new Updater(heightMap));
+            engine.actors.push(new Updater2(heightMap));
+            engine.actors.push(new Updater(heightMap));
+            engine.actors.push(new Updater2(heightMap));
         });
 
         engine.opt.generateRandomWalkablePosition = function () {
@@ -258,102 +177,194 @@ function EngineView() {
             yield 2 * 60;
             engine.journal.message('Your quest is to seek out Tristan.');
         });
-
-        // Use a sequence (i.e. a script run across multiple frames) to ensure the
-        // initialization order.
-        engine.addSequence(function* () {
-            // Stage 1
-            engine.actors
-                .push
-                //new Forest({ count: 40 }) //
-                ();
-            yield;
-
-            // Stage 2
-            // After the forest is initialized, add the sprites as they depend on
-            // the forest being placed and unwalkable areas being defined.
-            engine.actors.push(
-                ...core.generate(1, (i) => {
-                    let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
-
-                    return new VoxelSprite({
-                        id: 'kestrel',
-                        url: assetURL['kestrel.png'],
-                        flags: {
-                            billboard: true,
-                            pinToGroundHeight: true,
-                        },
-                        worldX,
-                        worldY,
-                        stateMachine: function ({ engine, actor }) {
-                            // The goal is the "overall" motivation for the actor.  So the FSM
-                            // should continually look to that to decide it's own execution and
-                            // transitions.
-                            actor._goal = null;
-
-                            let pathfind = makePathfindBehaviorForHeightmap(heightMap, actor);
-
-                            return {
-                                _start: function* () {
-                                    return 'idle';
-                                },
-                                ...pathfind,
-
-                                idle: function* () {
-                                    yield 30;
-                                    if (actor._goal?.[0] === 'move') {
-                                        let [cmd, x, y] = actor._goal;
-                                        actor._goal = null;
-                                        x = Math.floor(x);
-                                        y = Math.floor(y);
-                                        engine.journal.message(
-                                            `Kestrel decides to move to ${x},${y}`
-                                        );
-                                        return ['move', x, y];
-                                    }
-                                    return 'idle';
-                                },
-                                move: function* (wx, wy) {
-                                    const [sx, sy] = heightMap.coordW2S(wx, wy);
-                                    return [
-                                        'pathfind.moveLoop',
-                                        sx,
-                                        sy,
-                                        'idle',
-                                        {
-                                            interruptCb: () => {
-                                                if (
-                                                    actor._goal &&
-                                                    (actor._goal[0] !== 'move' ||
-                                                        actor._goal[1] !== wx ||
-                                                        actor._goal[2] !== wy)
-                                                ) {
-                                                    return 'idle';
-                                                }
-                                                return null;
-                                            },
-                                        },
-                                    ];
-                                },
-                            };
-                        },
-                    });
-                })
-            );
-
-            yield;
-
-            engine.actors.push(
-                new Updater(heightMap),
-                new Updater(heightMap),
-                new Updater2(heightMap),
-                new Updater2(heightMap)
-            );
-            return;
-        });
     });
 
     return <EngineFrame engine={engine} recorder="three" />;
+}
+
+function generateKestrel({ engine, heightMap }) {
+    let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+
+    return new VoxelSprite({
+        id: 'kestrel',
+        url: assetURL['kestrel.png'],
+        flags: {
+            billboard: true,
+            pinToGroundHeight: true,
+        },
+        worldX,
+        worldY,
+        stateMachine: function ({ engine, actor }) {
+            // The goal is the "overall" motivation for the actor.  So the FSM
+            // should continually look to that to decide it's own execution and
+            // transitions.
+            actor._goal = null;
+
+            let pathfind = makePathfindBehaviorForHeightmap(heightMap, actor);
+
+            return {
+                _start: function* () {
+                    return 'idle';
+                },
+                ...pathfind,
+
+                idle: function* () {
+                    yield 30;
+                    if (actor._goal?.[0] === 'move') {
+                        let [cmd, x, y] = actor._goal;
+                        actor._goal = null;
+                        x = Math.floor(x);
+                        y = Math.floor(y);
+                        engine.journal.message(`Kestrel decides to move to ${x},${y}`);
+                        return ['move', x, y];
+                    }
+                    return 'idle';
+                },
+                move: function* (wx, wy) {
+                    const [sx, sy] = heightMap.coordW2S(wx, wy);
+                    return [
+                        'pathfind.moveLoop',
+                        sx,
+                        sy,
+                        'idle',
+                        {
+                            interruptCb: () => {
+                                if (
+                                    actor._goal &&
+                                    (actor._goal[0] !== 'move' ||
+                                        actor._goal[1] !== wx ||
+                                        actor._goal[2] !== wy)
+                                ) {
+                                    return 'idle';
+                                }
+                                return null;
+                            },
+                        },
+                    ];
+                },
+            };
+        },
+    });
+}
+
+async function placeActor({
+    engine,
+    actor,
+    heightMap,
+
+    generatePosition = (rng, minX, minY, maxX, maxY) => {
+        const sx = rng.rangei(minX, maxX);
+        const sy = rng.rangei(minY, maxY);
+        return [sx, sy];
+    },
+}) {
+    const rng = engine.rng;
+    const tileArray = heightMap.getLayerArray('tile');
+    const heightArray = heightMap.getLayerArray('height');
+    const malleabilityArray = heightMap.getLayerArray('malleability');
+
+    const constraints = await actor.placementConstraints({ engine });
+    const bbox = constraints.box3;
+    const size = new THREE.Vector3();
+    bbox.min.floor();
+    bbox.max.ceil();
+    bbox.getSize(size);
+
+    const {
+        malleabilityExponent = 1,
+        malleabilityExtents = 8, //
+        walkableBoundary = 2,
+        foundationSize = null,
+    } = constraints;
+
+    const minX = -bbox.min.x;
+    const minY = -bbox.min.y;
+    const maxX = heightMap.segments - size.x - minX;
+    const maxY = heightMap.segments - size.y - minY;
+
+    const cursor = new core.Cursor2D(heightMap.segments, heightMap.segments);
+
+    let placement = null;
+    for (let attempt = 0; placement === null && attempt < 20; attempt++) {
+        const ε = 1e-6;
+
+        const [sx, sy] = generatePosition(rng, minX, minY, maxX, maxY);
+        if (sx < minX || sx > maxX || sy < minY || sy > maxY) {
+            continue;
+        }
+
+        const modelBox = new THREE.Box2();
+        modelBox.min.set(sx + bbox.min.x, sy + bbox.min.y);
+        modelBox.max.set(sx + bbox.max.x, sy + bbox.max.y);
+
+        let valid = true;
+        const stats = new core.SimpleStats();
+        cursor.box(modelBox, { inflate: walkableBoundary }, ({ index }) => {
+            const tile = db.tiles.get(tileArray[index]);
+            if (!tile.walkable) {
+                valid = false;
+            }
+            stats.add(heightArray[index]);
+        });
+        if (!valid) {
+            continue;
+        }
+
+        // If an explicit size has been set, use that rather than the model bounds
+        let malleabilityBase = 0.0;
+        if (foundationSize !== null) {
+            const center = new THREE.Vector2();
+            modelBox.getCenter(center);
+            modelBox.setFromCenterAndSize(
+                center,
+                new THREE.Vector2(foundationSize, foundationSize)
+            );
+            if (foundationSize === 0) {
+                malleabilityBase = 1.0;
+            }
+        }
+
+        const baseHeight = (stats.average() * 2) / 3 + stats.max() / 3;
+        cursor.box(modelBox, ({ index }) => {
+            tileArray[index] = db.tiles.getDerived(tileArray[index], { walkable: false });
+            heightArray[index] = baseHeight;
+            malleabilityArray[index] = malleabilityBase;
+        });
+
+        const innerBounds = modelBox.clone();
+        innerBounds.max.addScalar(-ε);
+
+        cursor.box(modelBox, { inflate: malleabilityExtents }, ({ x, y, index }) => {
+            const pt = new THREE.Vector2(x, y);
+            const dist = innerBounds.distanceToPoint(pt);
+            if (dist > 0) {
+                const a1 = Math.pow(core.clamp(dist / malleabilityExtents, 0, 1), 0.75);
+                const a0 = 1 - a1;
+                const c = heightArray[index];
+                heightArray[index] = baseHeight * a0 + a1 * c;
+                const value = Math.pow(a1, malleabilityExponent);
+
+                malleabilityArray[index] = Math.min(malleabilityArray[index], value);
+            }
+        });
+
+        cursor.box(modelBox, { inflate: malleabilityExtents + 1 }, ({ x, y }) => {
+            heightMap.updateSegment(x, y);
+        });
+        placement = { sx, sy };
+    }
+    if (placement === null) {
+        console.warn('Could not place house');
+        return false;
+    }
+
+    const { sx, sy } = placement;
+
+    const [wx, wy] = heightMap.coordS2W(sx, sy);
+    actor.position.set(wx, wy, 0.0);
+    engine.actors.push(actor);
+
+    return true;
 }
 
 /**

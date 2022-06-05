@@ -6,13 +6,14 @@ import { StateMachine } from '../state_machine';
 import { registerPinToGroundHeight } from './behaviors/register_pin_to_world_ground';
 import { registerBillboard } from './behaviors/register_billboard';
 import { Journal } from './journal';
+import { makeRNG } from '../../../core';
 
 export class Engine {
     //-----------------------------------------------------------------------//
     // Construction
     //-----------------------------------------------------------------------//
 
-    constructor() {
+    constructor({ seed } = {}) {
         EventEmitter.composeInto(this);
 
         this._uuid = generateUUID();
@@ -30,7 +31,8 @@ export class Engine {
 
         this._hostElement = null;
         this._renderers = {};
-        this._cache = {};
+        this._cache = {}; // 🚧 TODO: Document this!
+        this._rng = makeRNG(seed);
         this._actors = new ActorList();
         this._world = new World(this);
         this._journal = new Journal(this);
@@ -54,6 +56,10 @@ export class Engine {
 
     get uuid() {
         return this._uuid;
+    }
+
+    get rng() {
+        return this._rng;
     }
 
     get renderers() {
