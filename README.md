@@ -118,6 +118,9 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 #### 2022
 
 -   Week 22
+    -   [x] ➕ `Cursor2D` to `@raiment/core`
+    -   [x] ➕ `SimpleStats` to `@raiment/core`
+    -   [x] 🧬 Add experimental `fs` support to `sea-jsx` for faster iteration
     -   [x] ➕ Add `DataReader` to `@raiment/core`
     -   [x] 🗃️ Begin migration from `mesh()` to `initMesh()` method
     -   [x] ➕ Add `VOXActor`
