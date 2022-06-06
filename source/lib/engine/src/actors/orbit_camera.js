@@ -10,8 +10,9 @@ export class OrbitCamera {
         this._id = id;
         this._periodMS = periodMS;
         this._radius = new AnimScale(radius);
-        this._lookAt = new AnimVector3(0, 0, offsetZ);
+        this._lookAt = new AnimVector3(0, 0, 0);
         this._angle = 0.0;
+        this._offsetZ = offsetZ;
 
         this._autoHeight = true;
         this._autoRotate = true;
@@ -61,7 +62,7 @@ export class OrbitCamera {
 
         const cx = lookX + radius * Math.cos(ang);
         const cy = lookY + radius * Math.sin(ang);
-        const cz = lookZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
+        const cz = lookZ + this._offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
 
         camera.position.set(cx, cy, cz);
         camera.up = worldUp;
