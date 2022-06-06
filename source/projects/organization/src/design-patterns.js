@@ -1,54 +1,85 @@
 import React from 'react';
-import { ReadingFrame } from '../../../lib/react-ex';
-import { parseYAML } from '../../../lib/core';
-
-const content = parseYAML(`
-patterns:
-    -   name: Pattern Template
-        aka: alias 1, alias 2, alias 3
-        motivation: todo
-        use_cases: todo
-        structure: todo
-        potential_benefits: todo
-        potential_risks: todo
-        implementation: todo
-        illustrative_examples: todo
-        known_uses: todo
-        related: todo
-    -   name: Shared Object
-        risks:
-            - Synchronized
-    -   name: Callbacks
-    -   name: Event Emitter
-    -   name: Command
-    -   name: Cursor
-    -   name: Wrapper
-problem_patterns:
-    - name: Sequencing
-    - name: Naming
-    - name: Data plumbing
-`);
+import { ReadingFrame, useLocalStorage, Flex } from '../../../lib/react-ex';
+import contentImport from 'yaml:./design-patterns.yaml';
+import _ from 'lodash';
 
 export default function () {
+    const content = normalize(contentImport);
+
+    const groups = _.groupBy(content.patterns, (p) => p.type);
     return (
-        <ReadingFrame>
+        <ReadingFrame width="42rem">
             <h1>Design Patterns</h1>
 
-            {content.patterns.map((pattern) => (
-                <Pattern key={pattern.name} pattern={pattern} />
+            {Object.entries(groups).map(([key, group]) => (
+                <div key={key} style={{ marginBottom: '4rem' }}>
+                    <h1>{key}</h1>
+                    {group.map((pattern) => (
+                        <Pattern key={pattern.name} pattern={pattern} />
+                    ))}
+                </div>
             ))}
         </ReadingFrame>
     );
 }
 
 function Pattern({ pattern }) {
+    const [expanded, setExpanded] = useLocalStorage(`pattern-expanded-${pattern.name}`, true);
+
     return (
         <div>
-            <h2>{pattern.name}</h2>
-            <h3>Potential risks</h3>
-            {pattern.risks?.map((risk) => (
-                <div>{risk}</div>
-            ))}
+            <Flex
+                style={{
+                    margin: '1.25rem 0 0.5rem',
+                    borderBottom: 'solid 1px #CCC',
+                }}
+            >
+                <div style={{ fontWeight: 'bold', fontSize: 24 }}>{pattern.name}</div>
+                <div
+                    style={{ padding: '0 8px', cursor: 'pointer', userSelect: 'none' }}
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    {expanded ? '▼' : '▶'}
+                </div>
+            </Flex>
+            {expanded && (
+                <>
+                    {pattern.overview &&
+                        pattern.overview
+                            ?.trim()
+                            .split(/\n\n/)
+                            .map((p, i) => <p key={i}>{p}</p>)}
+
+                    <StringList title="Also known as" list={pattern.aliases} />
+                    <StringList title="Potential benefits" list={pattern.benefits} />
+                    <StringList title="Potential risks" list={pattern.risks} />
+                    <StringList title="Illustrative examples" list={pattern.examples} />
+                </>
+            )}
         </div>
     );
+}
+
+function StringList({ title, list }) {
+    return (
+        <>
+            <h4>{title}</h4>
+            {list ? (
+                <ol>
+                    {list.map((name) => (
+                        <li key={name}>{name}</li>
+                    ))}
+                </ol>
+            ) : (
+                <div style={{ color: 'red' }}>TODO</div>
+            )}
+        </>
+    );
+}
+
+function normalize(content) {
+    for (let pattern of content.patterns) {
+        pattern.type ??= 'Software Pattern';
+    }
+    return content;
 }

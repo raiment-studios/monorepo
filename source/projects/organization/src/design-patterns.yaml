@@ -1,0 +1,112 @@
+patterns:
+    - name: Pattern Template
+      aka: alias 1, alias 2, alias 3
+      motivation: todo
+      use_cases: todo
+      structure: todo
+      potential_benefits: todo
+      potential_risks: todo
+      implementation: todo
+      illustrative_examples: todo
+      known_uses: todo
+      related: todo
+    - name: Shared Object
+      risks:
+          - Synchronized access may have a performance impact
+          - Centralized object may become complex or bloated
+    - name: Context
+    - name: Callbacks
+    - name: Errors
+      overview: |
+          Consider chaining. An error may cause another effect in a caller. That caller may not 
+          ultimately handle the error so, it wants to add to the context of the error. It should
+          wrap the error since it is a error with a causal dependency.
+
+          Errors generally have a optional "cause" (what specifically triggered the error) 
+          and "context" (additional information which may help the developer debug the issue) 
+          and "user message" (a plain English description of the error for either the developer
+          and/or end user) and "error code" (a unique identifier for the particular error class
+          for grouping, linking, or analytics).
+
+          Worth noting there are different kinds of errors: (1) programmer errors, (2) transient 
+          errors, (3) hardware failures, etc.
+    - name: Chaining
+    - name: Event Emitter
+      benefits:
+          - Loose coupling
+    - name: Command
+    - name: Deadline
+      overview: |
+          A control flow pattern where an operation must finish by a certain time or it should be 
+          aborted.
+    - name: Interrupt
+      overview: |
+          A control flow pattern where a operation should safely pause in a resumable fashion due to 
+          a higher-priority request. Requires the code to be able to pause/resume safely.
+    - name: Cosmetic data
+      overview: |
+          Data intended for user consumption. Conditional code should not rely on these values.
+      aliases:
+          - Display strings
+    - name: Cursor
+      overview: |
+          An iterator with context of what it is iterating over.  Decouples the user from the process 
+          of iteration and allows the user to focus on (1) each data item is handled and (2) how
+          error conditions are handled.
+
+          Decouples the internal structure of a data structure from how its contents are processed.
+      examples:
+          - Traversal of a tree (breadth-first versus depth-first)
+          - Iteration of a shape in a 2D canvas (circle)
+    - name: Wrapper
+    - name: Coordinator
+      overview: |
+          Shared object that helps create a loose coupling between dependencies.
+
+          Risks: this is a bottleneck single object that needs to deal with concurrently or
+          synchronization challenges.  Advantage and disadvantage that all hard dependencies
+          on all consumers are all located in one place.
+    - name: Pool
+      overview: |
+          Considerations for concurrency or any other local/global coordination that may
+          take time.
+
+    - name: Typo
+      type: Debugging Pattern
+      overview: |
+          The code is fundamentally correct and structured correctly. However, a small detail
+          is incorrect. Often it "looks" correct but similar, but not quite what it needs to be.
+      illustrative_examples:
+          - The wrong variable name
+          - A number typed incorrectly or in the wrong format (decimal vs. hexidecimal)
+    - name: Versioning or Environment
+      type: Debugging Pattern
+      overview: |
+          The wrong version of software is being installed, used.
+
+          Consider a controlled environment like Docker or a virtual machine.
+    - name: Unhandled error
+      type: Debugging Pattern
+      overview: |
+          Internal errors from libraries or third-party services are not being caught. The
+          code is proceeding without it being obvious that the root cause was there and
+          a non-obvious secondary effect is what is being seen instead.
+
+    - name: Error condition isolation
+      type: Debugging Pattern
+      overview: |
+          The overall goal is to isolate the issue.
+
+          Binary search
+
+          Find a case that doesn't work. Find a case that works. Gradually reduce the 
+          differences between those two cases until, you've isolated the key difference.
+
+    - name: Sequence
+      overview: |
+          A set of dependencies that are structured to run in a particular order that
+          minimizes dependency coordination.  Grouping into blocks.
+problem_patterns:
+    - name: Sequencing
+    - name: Naming
+    - name: Data plumbing

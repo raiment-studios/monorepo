@@ -1,13 +1,16 @@
 import React from 'react';
 import { useCommonStyles } from '../hooks/use_common_styles';
 
-export function ReadingFrame({ children }) {
+export function ReadingFrame({
+    width = '62rem', //
+    children,
+}) {
     useCommonStyles();
 
     return (
         <div
             style={{
-                width: '62rem',
+                width,
                 margin: '1rem auto 2rem',
             }}
         >
