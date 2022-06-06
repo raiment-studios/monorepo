@@ -34,7 +34,7 @@ export function VOXPreview({ url }) {
             const dy = Math.max(Math.abs(bbox.min.y), Math.abs(bbox.max.y));
             const dz = Math.max(0, bbox.max.z);
             camera.radius = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            camera.lookAtZ = (dz * 1) / 3;
+            camera.lookAt(0, 0, (dz * 1) / 3);
         });
     });
 
