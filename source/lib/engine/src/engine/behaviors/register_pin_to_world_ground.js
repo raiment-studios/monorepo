@@ -21,6 +21,20 @@ export function registerPinToGroundHeight(engine) {
         // Ignore if the ground height is not defined at this world coordinate
         if (z > -Infinity && z !== pos.z) {
             actor.position.set(pos.x, pos.y, z);
+            setMatrixWorldNeedsUpdate(actor.__mesh, true);
         }
     });
+}
+
+function setMatrixWorldNeedsUpdate(meshLike, value) {
+    if (!meshLike) {
+        return;
+    }
+
+    meshLike.matrixWorldNeedsUpdate = value;
+    if (meshLike.children) {
+        for (let child of meshLike.children) {
+            setMatrixWorldNeedsUpdate(child, value);
+        }
+    }
 }

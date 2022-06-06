@@ -199,6 +199,10 @@ export class HeightMap {
         this._recomputeVertexAttrs(sx, sy, false);
     }
 
+    updateSegmentHeight(sx, sy) {
+        this._recomputeVertexHeight(sx, sy);
+    }
+
     updateMesh() {
         const segs = this._segments;
         for (let sy = 0; sy < segs; sy++) {
@@ -260,10 +264,6 @@ export class HeightMap {
     }
 
     /**
-     *
-     * @todo: Merge this with the build function to encapsulate the dependencies on the
-     * array layout (i.e. avoid either hard-coded indexing in lots of different places or
-     * low-level abstracted functions that complicate the code).
      */
     _recomputeVertexAttrs(sx, sy, init = false) {
         const segments = this._segments;
@@ -304,10 +304,26 @@ export class HeightMap {
         }
 
         function quad(vi, fi, p0, p1, p2, p3, normal, color, shade) {
-            copy3(positionArr, vi + 0, p0);
+            positionArr[vi + 0] = p0[0];
+            positionArr[vi + 1] = p0[1];
+            positionArr[vi + 2] = p0[2];
+
+            positionArr[vi + 3] = p1[0];
+            positionArr[vi + 4] = p1[1];
+            positionArr[vi + 5] = p1[2];
+
+            positionArr[vi + 6] = p2[0];
+            positionArr[vi + 7] = p2[1];
+            positionArr[vi + 8] = p2[2];
+
+            positionArr[vi + 9] = p3[0];
+            positionArr[vi + 10] = p3[1];
+            positionArr[vi + 11] = p3[2];
+
+            /*copy3(positionArr, vi + 0, p0);
             copy3(positionArr, vi + 3, p1);
             copy3(positionArr, vi + 6, p2);
-            copy3(positionArr, vi + 9, p3);
+            copy3(positionArr, vi + 9, p3);*/
 
             copy3(normalArr, vi + 0, normal);
             copy3(normalArr, vi + 3, normal);
@@ -423,5 +439,99 @@ export class HeightMap {
         if (init) {
             indexAttr.needsUpdate = true;
         }
+    }
+
+    /**
+     * Specialization of _recomputeVertexAttrs that only updates height.
+     *
+     * Given this can be called quite frequently, this optimization can be worth the
+     * duplicated code.
+     */
+    _recomputeVertexHeight(sx, sy) {
+        const segments = this._segments;
+        sx = Math.floor(sx);
+        sy = Math.floor(sy);
+
+        if (sx < 0 || sx >= segments || sy < 0 || sy >= segments) {
+            return;
+        }
+        if (!this._mesh) {
+            return;
+        }
+
+        const i = sy * segments + sx;
+        console.assert(i >= 0 && i < segments * segments, 'Index out of range');
+
+        const heights = this._layers.height;
+        const positionAttr = this._mesh.geometry.attributes.position;
+        const positionArr = positionAttr.array;
+
+        core.assert(positionArr.length === 5 * 4 * 3 * segments * segments);
+
+        function sort2(a, b) {
+            return a < b ? [a, b] : [b, a];
+        }
+
+        function quad(vi, p0, p1, p2, p3) {
+            positionArr[vi + 2] = p0;
+            positionArr[vi + 5] = p1;
+            positionArr[vi + 8] = p2;
+            positionArr[vi + 11] = p3;
+        }
+
+        let [z0, z1] = [0, heights[i]];
+
+        //
+        // 5 Faces with 4 vertices of 3 components for each height tile
+        // Stride per quad is 12
+        // 5 Faces with 6 indices for each height tile
+        //
+        let vi = 5 * 4 * 3 * i;
+
+        quad(
+            vi,
+            z1, //
+            z1, //
+            z1, //
+            z1 //
+        );
+
+        [z0, z1] = sort2(sx > 0 ? heights[i - 1] : 0, heights[i]);
+        quad(
+            vi + 12,
+            z0, //
+            z1, //
+            z1, //
+            z0 //
+        );
+
+        [z0, z1] = sort2(sx + 1 < segments ? heights[i + 1] : 0, heights[i]);
+        quad(
+            vi + 24,
+            z0, //
+            z0, //
+            z1, //
+            z1 //
+        );
+
+        [z0, z1] = sort2(sy > 0 ? heights[i - segments] : 0, heights[i]);
+        quad(
+            vi + 3 * 12,
+            z0, //
+            z0, //
+            z1, //
+            z1 //
+        );
+
+        [z0, z1] = sort2(sy + 1 < segments ? heights[i + segments] : 0, heights[i]);
+        quad(
+            vi + 4 * 12,
+            z0, //
+            z1, //
+            z1, //
+            z0 //
+        );
+
+        positionAttr.needsUpdate = true;
     }
 }

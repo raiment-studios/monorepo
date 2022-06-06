@@ -108,6 +108,7 @@ function EngineView() {
                 return;
             }
             camera.radius = 24;
+            camera.offsetZ = 2;
             const pt = actor.position.clone();
             pt.z += 5;
             camera.lookAt(pt);
@@ -628,6 +629,7 @@ class Updater {
                 for (let i = 0; i < frames; i++) {
                     const centerSX = Math.floor(this._position.x);
                     const centerSY = Math.floor(this._position.y);
+
                     pen.border(centerSX, centerSY, D, (sx, sy) => {
                         const si = sy * heightMap.segments + sx;
                         const lsx = sx - centerSX;
@@ -654,9 +656,9 @@ class Updater {
                     });
 
                     pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-                        heightMap.updateSegment(sx, sy);
+                        heightMap.updateSegmentHeight(sx, sy);
                     });
-                    yield 1;
+                    yield 2;
                 }
 
                 return 'changeTerrain';
@@ -722,7 +724,6 @@ class Updater2 {
             },
             update: function* () {
                 const D = 32;
-                const MAX_DIST = Math.sqrt(2 * D * D);
                 const heightMap = this._heightMap;
 
                 const heightArray = heightMap.getLayerArray('height');
@@ -752,13 +753,9 @@ class Updater2 {
                     });
 
                     pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-                        heightMap.updateSegment(sx, sy);
+                        heightMap.updateSegmentHeight(sx, sy);
                     });
-
-                    pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-                        heightMap.updateSegment(sx, sy);
-                    });
-                    yield 1;
+                    yield 2;
                 }
 
                 return 'update';

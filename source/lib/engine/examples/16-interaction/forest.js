@@ -38,6 +38,10 @@ export class TreeActor {
         };
     }
 
+    get frame10Parity() {
+        return 7;
+    }
+
     async placementConstraints({ engine }) {
         const mesh = await this._ensureMesh({ engine });
         const bbox = new THREE.Box3();
@@ -88,7 +92,9 @@ export class TreeActor {
         }
         model.updateMesh({ engine });
 
-        return model.mesh({ engine });
+        const mesh = model.mesh({ engine });
+        mesh.matrixAutoUpdate = false;
+        return mesh;
     }
 }
 

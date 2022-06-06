@@ -12,7 +12,7 @@ export class OrbitCamera {
         this._radius = new AnimScale(radius);
         this._lookAt = new AnimVector3(0, 0, 0);
         this._angle = 0.0;
-        this._offsetZ = offsetZ;
+        this._offsetZ = new AnimScale(offsetZ);
 
         this._autoHeight = true;
         this._autoRotate = true;
@@ -31,6 +31,9 @@ export class OrbitCamera {
         }
         this._radius.target = v;
     }
+    set offsetZ(value) {
+        this._offsetZ.target = value;
+    }
 
     lookAt(pt) {
         this._autoHeight = false;
@@ -42,6 +45,7 @@ export class OrbitCamera {
         const worldUp = new THREE.Vector3(0, 0, 1);
         const camera = engine.renderers.three.camera;
 
+        const offsetZ = this._offsetZ.update(ε).current;
         const radius = this._radius.update(ε).current;
 
         this._lookAt.update(ε / 2.0);
@@ -62,7 +66,7 @@ export class OrbitCamera {
 
         const cx = lookX + radius * Math.cos(ang);
         const cy = lookY + radius * Math.sin(ang);
-        const cz = lookZ + this._offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
+        const cz = lookZ + offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
 
         camera.position.set(cx, cy, cz);
         camera.up = worldUp;
