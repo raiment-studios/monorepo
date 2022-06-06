@@ -109,7 +109,7 @@ function EngineView() {
             }
             camera.radius = 24;
             const pt = actor.position.clone();
-            pt.z += 3;
+            pt.z += 5;
             camera.lookAt(pt);
         });
 

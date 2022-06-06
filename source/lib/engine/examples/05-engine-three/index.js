@@ -30,8 +30,11 @@ class Sphere {
         this._mesh = null;
 
         this._rng = core.makeRNG();
+    }
+
+    stateMachine() {
         const rng = this._rng;
-        this.stateMachine = new StateMachine({
+        return {
             _bind: this,
             _start: function* () {
                 const mv = 16;
@@ -59,12 +62,10 @@ class Sphere {
                 yield count;
                 return rng.range(0, 10) < 7 ? 'accelerateRandom' : 'accelerateOrigin';
             },
-        });
+        };
     }
 
     update() {
-        this.stateMachine.update();
-
         const dt = 1 / 60;
 
         this.velocity.addScaledVector(this.acceleration, dt);

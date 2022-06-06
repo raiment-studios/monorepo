@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReadingFrame, useAsyncEffect, Flex, PixelatedImage } from '../../../react-ex';
+import { ReadingFrame, useAsyncEffect, Flex, PixelatedImage, TextDown } from '../../../react-ex';
 import * as core from '../../../core';
 import * as THREE from 'three';
 import {
@@ -292,7 +292,7 @@ function ImageInfo({ url }) {
             <div>
                 <h3>{url}</h3>
                 <h3>License</h3>
-                <pre>{textToReact(data?.license)}</pre>
+                <TextDown text={data?.license} />
             </div>
             <div style={{ flex: '1 0 0' }} />
         </Flex>

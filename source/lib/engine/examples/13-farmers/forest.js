@@ -68,7 +68,7 @@ class TreeActor {
         };
     }
 
-    async mesh({ engine }) {
+    async initMesh({ engine }) {
         const rng = core.makeRNG(2998474);
         const { position } = this._params;
         this._group = new THREE.Group();
