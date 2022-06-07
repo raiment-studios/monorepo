@@ -24,8 +24,8 @@ RUN wget https://nodejs.org/dist/v16.14.0/node-v16.14.0-linux-x64.tar.xz && \
     rm -f node-v16.14.0-linux-x64.tar.xz
 
 # Install Go
-RUN wget https://golang.org/dl/go1.17.7.linux-amd64.tar.gz  && \
-    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.17.7.linux-amd64.tar.gz
+RUN wget https://golang.org/dl/go1.18.3.linux-amd64.tar.gz  && \
+    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
 ENV PATH $PATH:/usr/local/go/bin
 
 
