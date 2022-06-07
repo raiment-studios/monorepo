@@ -4,7 +4,7 @@
 ![](https://img.shields.io/badge/license-MIT-039)
 [![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
 
-A JavaScript + WASM simulation and game engine built on top of THREE.js.
+A JavaScript + WASM simulation and game engine built on top of [three.js](https://threejs.org/). It is specifically tailored to Raiment Studios style games including 2.5D and 3D geometry, a pixel-based rendering style, and procedural generation and updates
 
 ## Getting started
 
@@ -84,7 +84,7 @@ class Actor {
 
 ## Design
 
-⚠️ TODO
+-   For simplicity, everything is assumed to be locked to 60fps
 
 ## FAQ
 

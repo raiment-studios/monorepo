@@ -12,16 +12,18 @@ import * as THREE from 'three';
 import {
     useEngine,
     EngineFrame,
+    Actor,
     Grid,
     OrbitCamera,
     GroundPlane,
     HeightMap,
     PathfinderGraph,
     VoxelSprite,
-    updatePosition,
-    updateBoxCollision,
     DayNightLighting,
     VOXActor,
+    componentEvents,
+    componentPhysicsPVA,
+    componentSelfColliderBox3,
 } from '../..';
 import { TreeActor } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
@@ -124,7 +126,7 @@ function EngineView() {
 
         engine.addSequence(function* () {
             engine.actors.push(new Updater(heightMap));
-            engine.actors.push(new Updater2(heightMap));
+            engine.actors.push(new Updater2({ heightMap }));
 
             for (let i = 0; i < 3; i++) {
                 const actor = new VOXActor({
@@ -166,11 +168,11 @@ function EngineView() {
                 yield 10;
             }
 
-            engine.actors.push(generateKestrel({ engine, heightMap }));
+            if (false) engine.actors.push(generateKestrel({ engine, heightMap }));
 
             yield 30;
             engine.actors.push(new Updater(heightMap));
-            engine.actors.push(new Updater2(heightMap));
+            engine.actors.push(new Updater2({ heightMap }));
         });
 
         engine.opt.generateRandomWalkablePosition = function () {
@@ -543,75 +545,57 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
     });
 }
 
-class Updater {
-    constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
+class Updater extends Actor {
+    constructor(heightMap, { heightScale = 512, ...rest } = {}) {
+        super(rest);
         this._heightMap = heightMap;
-        this._rng = core.makeRNG();
         this._heightFunc = null;
-        this._makeHeightFunc = makeHeightFunc;
         this._heightScale = heightScale;
+
+        const S = heightMap.segments;
 
         // Note: this actor acts in "heightmap segment space", not "world space". For example,
         // the collider is set to the segment bounds, not the world heightmap bounds.
-        this._position = new THREE.Vector3(0, 0, 0);
-        this._velocity = new THREE.Vector3(0, 0, 0);
-        this._acceleration = new THREE.Vector3(0, 0, 0);
+        this.mixin(componentEvents);
 
-        const S = this._heightMap.segments;
-        this._collider = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S));
+        this.mixin(componentPhysicsPVA, { update: true });
+        this.mixin(componentSelfColliderBox3, {
+            box: new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S)),
+        });
     }
 
-    get position() {
-        return this._position;
-    }
-    get velocity() {
-        return this._velocity;
-    }
-
-    get acceleration() {
-        return this._acceleration;
-    }
-
-    update() {
-        const rng = this._rng;
-
-        updatePosition(this, 1);
-        updateBoxCollision(this, this._collider);
+    update({ engine }) {
+        const rng = engine.rng;
 
         const K = 0.25;
         const MV = 2;
-        this._velocity.x += K * rng.range(-1, 1);
-        this._velocity.y += K * rng.range(-1, 1);
-        this._velocity.clampScalar(-MV, MV);
+        this.velocity.x += K * rng.range(-1, 1);
+        this.velocity.y += K * rng.range(-1, 1);
+        this.velocity.clampScalar(-MV, MV);
     }
 
-    stateMachine() {
-        const rng = this._rng;
+    stateMachine({ engine }) {
+        const rng = engine.rng;
 
         return {
             _bind: this,
             _start: function* () {
-                this._position.x = rng.range(0, this._heightMap.segments);
-                this._position.y = rng.range(0, this._heightMap.segments);
-                this._velocity.x = rng.sign() * rng.range(0.2, 2);
-                this._velocity.y = rng.sign() * rng.range(0.2, 2);
+                this.position.x = rng.range(0, this._heightMap.segments);
+                this.position.y = rng.range(0, this._heightMap.segments);
+                this.velocity.x = rng.sign() * rng.range(0.2, 2);
+                this.velocity.y = rng.sign() * rng.range(0.2, 2);
 
                 return 'changeTerrain';
             },
             changeTerrain: function* () {
-                if (this._makeHeightFunc) {
-                    this._heightFunc = this._makeHeightFunc({ heightMap: this._heightMap });
-                } else {
-                    const simplex = core.makeSimplexNoise(4342);
-                    const amplitude = 0.04 * rng.range(0.4, 5);
-                    const ox = rng.range(-1000, 1000);
-                    const oy = rng.range(-1000, 1000);
-                    const s = 1 / (rng.range(0.5, 2) * this._heightMap.segments);
-                    const base = rng.range(0, 0.02);
-                    this._heightFunc = (x, y) =>
-                        base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
-                }
-                //yield 60 * rng.rangei(2, 30);
+                const simplex = core.makeSimplexNoise(4342);
+                const amplitude = 0.04 * rng.range(0.4, 5);
+                const ox = rng.range(-1000, 1000);
+                const oy = rng.range(-1000, 1000);
+                const s = 1 / (rng.range(0.5, 2) * this._heightMap.segments);
+                const base = rng.range(0, 0.02);
+                this._heightFunc = (x, y) =>
+                    base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
                 return 'update';
             },
             update: function* () {
@@ -627,8 +611,8 @@ class Updater {
                 const pen = new core.Cursor2D(heightMap.segments, heightMap.segments);
 
                 for (let i = 0; i < frames; i++) {
-                    const centerSX = Math.floor(this._position.x);
-                    const centerSY = Math.floor(this._position.y);
+                    const centerSX = Math.floor(this.position.x);
+                    const centerSY = Math.floor(this.position.y);
 
                     pen.border(centerSX, centerSY, D, (sx, sy) => {
                         const si = sy * heightMap.segments + sx;
@@ -667,75 +651,56 @@ class Updater {
     }
 }
 
-class Updater2 {
-    constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
+class Updater2 extends Actor {
+    constructor({ heightMap, ...rest }) {
+        super(rest);
+
+        const S = heightMap.segments;
+
+        this.mixin(componentEvents);
+        this.mixin(componentPhysicsPVA, { update: true });
+        this.mixin(componentSelfColliderBox3, {
+            box: new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S)),
+        });
+
         this._heightMap = heightMap;
-        this._rng = core.makeRNG();
-        this._heightFunc = null;
-        this._makeHeightFunc = makeHeightFunc;
-        this._heightScale = heightScale;
-
-        // Note: this actor acts in "heightmap segment space", not "world space". For example,
-        // the collider is set to the segment bounds, not the world heightmap bounds.
-        this._position = new THREE.Vector3(0, 0, 0);
-        this._velocity = new THREE.Vector3(0, 0, 0);
-        this._acceleration = new THREE.Vector3(0, 0, 0);
-
-        const S = this._heightMap.segments;
-        this._collider = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S));
     }
 
-    get position() {
-        return this._position;
-    }
-    get velocity() {
-        return this._velocity;
-    }
-
-    get acceleration() {
-        return this._acceleration;
-    }
-
-    update() {
-        const rng = this._rng;
-
-        updatePosition(this, 1);
-        updateBoxCollision(this, this._collider);
+    update({ engine }) {
+        const rng = engine.rng;
 
         const K = 0.25;
         const MV = 2;
-        this._velocity.x += K * rng.range(-1, 1);
-        this._velocity.y += K * rng.range(-1, 1);
-        this._velocity.clampScalar(-MV, MV);
+        this.velocity.x += K * rng.range(-1, 1);
+        this.velocity.y += K * rng.range(-1, 1);
+        this.velocity.clampScalar(-MV, MV);
     }
 
-    stateMachine() {
-        const rng = this._rng;
+    stateMachine({ engine, actor }) {
+        const rng = engine.rng;
+        const heightMap = this._heightMap;
+        const heightArray = heightMap.getLayerArray('height');
+        const malleabilityArray = heightMap.getLayerArray('malleability');
 
         return {
-            _bind: this,
+            _bind: actor,
             _start: function* () {
-                this._position.x = rng.range(0, this._heightMap.segments);
-                this._position.y = rng.range(0, this._heightMap.segments);
-                this._velocity.x = rng.sign() * rng.range(0.2, 2);
-                this._velocity.y = rng.sign() * rng.range(0.2, 2);
+                this.position.x = rng.range(0, heightMap.segments);
+                this.position.y = rng.range(0, heightMap.segments);
+                this.velocity.x = rng.sign() * rng.range(0.2, 2);
+                this.velocity.y = rng.sign() * rng.range(0.2, 2);
 
                 return 'update';
             },
             update: function* () {
                 const D = 32;
-                const heightMap = this._heightMap;
-
-                const heightArray = heightMap.getLayerArray('height');
-                const malleabilityArray = heightMap.getLayerArray('malleability');
 
                 const frames = rng.rangei(10, 100);
-
                 const pen = new core.Cursor2D(heightMap.segments, heightMap.segments);
 
                 for (let i = 0; i < frames; i++) {
-                    const centerSX = Math.floor(this._position.x);
-                    const centerSY = Math.floor(this._position.y);
+                    const centerSX = Math.floor(this.position.x);
+                    const centerSY = Math.floor(this.position.y);
 
                     const stats = new core.SimpleStats();
                     pen.border(centerSX, centerSY, D, (sx, sy) => {

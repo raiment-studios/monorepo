@@ -17,6 +17,12 @@ export * from './actors/weather_system';
 
 export * from './ai/pathfinder_graph';
 
+export * from './components/component_events';
+export * from './components/component_physics_pva';
+export * from './components/component_self_collider_box3';
+
+export * from './engine/actor';
+
 export * from './image/get_image_pixel_data';
 export * from './image/load_image';
 

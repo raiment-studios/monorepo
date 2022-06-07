@@ -191,22 +191,19 @@ export class Engine {
             }
 
             ctx.actor = actor;
+            ctx.mesh = actor.__mesh;
 
             this.events.fire('actor.preupdate', ctx);
+            actor.events?.fire('preupdate', ctx);
 
             // Note: we could peer into the stateMachine and remove actors that we know are
             // busy waiting on a promise or for a long number of cycles and only readd them
             // when they are active again. This may be a potential optimization for later,
             // especially if there are many "infrequent" actors in the engine.
             actor.__stateMachine?.update(ctx);
-        }
-
-        for (let actor of this._actors) {
-            ctx.actor = actor;
-            ctx.mesh = actor.__mesh;
-
             actor.update?.(ctx);
 
+            actor.events?.fire('postupdate', ctx);
             this.events.fire('actor.postupdate', ctx);
         }
         this.events.fire('engine.preupdate', ctx);
