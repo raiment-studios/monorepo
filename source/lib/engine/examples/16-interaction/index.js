@@ -125,7 +125,7 @@ function EngineView() {
         );
 
         engine.addSequence(function* () {
-            engine.actors.push(new Updater(heightMap));
+            engine.actors.push(new Updater({ heightMap }));
             engine.actors.push(new Updater2({ heightMap }));
 
             for (let i = 0; i < 3; i++) {
@@ -171,7 +171,7 @@ function EngineView() {
             if (false) engine.actors.push(generateKestrel({ engine, heightMap }));
 
             yield 30;
-            engine.actors.push(new Updater(heightMap));
+            engine.actors.push(new Updater({ heightMap }));
             engine.actors.push(new Updater2({ heightMap }));
         });
 
@@ -545,23 +545,19 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
     });
 }
 
-class Updater extends Actor {
-    constructor(heightMap, { heightScale = 512, ...rest } = {}) {
+class UpdaterBase extends Actor {
+    constructor({ heightMap, ...rest }) {
         super(rest);
-        this._heightMap = heightMap;
-        this._heightFunc = null;
-        this._heightScale = heightScale;
 
         const S = heightMap.segments;
 
-        // Note: this actor acts in "heightmap segment space", not "world space". For example,
-        // the collider is set to the segment bounds, not the world heightmap bounds.
         this.mixin(componentEvents);
-
         this.mixin(componentPhysicsPVA, { update: true });
         this.mixin(componentSelfColliderBox3, {
             box: new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S)),
         });
+
+        this._heightMap = heightMap;
     }
 
     update({ engine }) {
@@ -572,6 +568,15 @@ class Updater extends Actor {
         this.velocity.x += K * rng.range(-1, 1);
         this.velocity.y += K * rng.range(-1, 1);
         this.velocity.clampScalar(-MV, MV);
+    }
+}
+
+class Updater extends UpdaterBase {
+    constructor({ heightMap, heightScale = 512, ...rest } = {}) {
+        super({ heightMap, ...rest });
+
+        this._heightFunc = null;
+        this._heightScale = heightScale;
     }
 
     stateMachine({ engine }) {
@@ -651,29 +656,9 @@ class Updater extends Actor {
     }
 }
 
-class Updater2 extends Actor {
-    constructor({ heightMap, ...rest }) {
+class Updater2 extends UpdaterBase {
+    constructor({ ...rest }) {
         super(rest);
-
-        const S = heightMap.segments;
-
-        this.mixin(componentEvents);
-        this.mixin(componentPhysicsPVA, { update: true });
-        this.mixin(componentSelfColliderBox3, {
-            box: new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(S, S, S)),
-        });
-
-        this._heightMap = heightMap;
-    }
-
-    update({ engine }) {
-        const rng = engine.rng;
-
-        const K = 0.25;
-        const MV = 2;
-        this.velocity.x += K * rng.range(-1, 1);
-        this.velocity.y += K * rng.range(-1, 1);
-        this.velocity.clampScalar(-MV, MV);
     }
 
     stateMachine({ engine, actor }) {
