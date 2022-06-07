@@ -11,6 +11,7 @@ export * from './actors/height_map';
 export * from './actors/orbit_camera';
 export * from './actors/rain';
 export * from './actors/snow';
+export * from './actors/terrain_morph';
 export * from './actors/vox_actor';
 export * from './actors/voxel_sprite';
 export * from './actors/weather_system';

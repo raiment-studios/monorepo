@@ -148,18 +148,17 @@ export class Engine {
 
                 // Let the actor initialize itself on the first frame
                 //
-                // BY DESIGN: this is called before the state machine is initialized
+                // 📐 DESIGN NOTES
+                //
+                // - This is called before the state machine is initialized in case the state machine
+                //   needs data from the initialization process.
+                //
                 actor.init?.(ctx);
-
-                // Give the actor a chance to init *before* validating in case there's logic
-                // that needs to be run first to put the actor in a valid state.
                 this.events.fire('actor.postinit', ctx);
 
-                if (actor.stateMachine) {
-                    const desc = actor.stateMachine(ctx);
-                    if (desc) {
-                        actor.__stateMachine = new StateMachine(desc);
-                    }
+                const desc = actor.stateMachine?.(ctx);
+                if (desc) {
+                    actor.__stateMachine = new StateMachine(desc);
                 }
 
                 // Let each renderer know about the new actora

@@ -6,22 +6,22 @@
 
 <!-- TOC -->
 
-- [Contributing](#contributing)
-    - [Overview](#overview)
-    - [Legal front matter](#legal-front-matter)
-        - [Intellectual property, copyright, and legal matters](#intellectual-property-copyright-and-legal-matters)
-    - [Supported coding environment](#supported-coding-environment)
-    - [Directory structure](#directory-structure)
-    - [Development process](#development-process)
-        - [Build conventions](#build-conventions)
-    - [Communication conventions](#communication-conventions)
-        - [Emoji conventions](#emoji-conventions)
-        - [Badge conventions](#badge-conventions)
-    - [Type of contributions](#type-of-contributions)
-        - [Content](#content)
-        - [Refinements](#refinements)
-        - [Features](#features)
-        - [Gardening](#gardening)
+-   [Contributing](#contributing)
+    -   [Overview](#overview)
+    -   [Legal front matter](#legal-front-matter)
+        -   [Intellectual property, copyright, and legal matters](#intellectual-property-copyright-and-legal-matters)
+    -   [Supported coding environment](#supported-coding-environment)
+    -   [Directory structure](#directory-structure)
+    -   [Development process](#development-process)
+        -   [Build conventions](#build-conventions)
+    -   [Communication conventions](#communication-conventions)
+        -   [Emoji conventions](#emoji-conventions)
+        -   [Badge conventions](#badge-conventions)
+    -   [Type of contributions](#type-of-contributions)
+        -   [Content](#content)
+        -   [Refinements](#refinements)
+        -   [Features](#features)
+        -   [Gardening](#gardening)
 
 <!-- /TOC -->
 
@@ -93,6 +93,8 @@ Emojis are used as visual symbols in the project. As symbols, they can help conv
 -   🗃️ Internal organization, code improvements, or architecture
 -   ⚖️ Legal matter
 -   🦕 Historical matter
+-   📐 Design decision
+-   🀄 Design pattern
 
 ### Badge conventions
 

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function componentPhysicsPVA(actor) {
+export function componentPhysicsPVA({ actor, methods }) {
     return {
         name: 'physicsPVA',
         properties: {
@@ -15,14 +15,15 @@ export function componentPhysicsPVA(actor) {
             },
         },
         events: {
-            preupdate() {
-                this.update(1);
+            preupdate: function () {
+                methods.update(1);
             },
         },
-
-        update(dt) {
-            actor.velocity.addScaledVector(actor.acceleration, dt);
-            actor.position.addScaledVector(actor.velocity, dt);
+        methods: {
+            update(dt) {
+                actor.velocity.addScaledVector(actor.acceleration, dt);
+                actor.position.addScaledVector(actor.velocity, dt);
+            },
         },
     };
 }

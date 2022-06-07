@@ -67,7 +67,6 @@ export class EventEmitter {
 
     fire(event, ...args) {
         const arr = this._events[event];
-
         if (arr && arr.length > 0) {
             arr.forEach((cb) => {
                 cb(...args);

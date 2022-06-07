@@ -151,7 +151,11 @@ export class HeightMap {
     }
 
     getLayerArray(layerName) {
-        return this._layers[layerName];
+        const arr = this._layers[layerName];
+        if (!arr) {
+            throw new Error(`Unknown layer '${layer}'`);
+        }
+        return arr;
     }
 
     getLayerWC(layerName, wx, wy) {
