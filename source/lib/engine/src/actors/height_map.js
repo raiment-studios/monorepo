@@ -669,7 +669,7 @@ class LookupTable {
             if (baseObject[key] === value) {
                 continue;
             }
-            let id = this._uidMap(value);
+            let id = this._uidMap.get(value);
             if (id === undefined) {
                 id = this._uidCount++;
                 this._uidMap.set(value, id);
@@ -681,7 +681,7 @@ class LookupTable {
         // Find or create the derived object
         let derivedObject = this._set[derivedName];
         if (!derivedObject) {
-            this.addSet({ derivedName: { ...baseObject, ...props, name: derivedName } });
+            this.addSet({ [derivedName]: { ...baseObject, ...props, name: derivedName } });
         }
 
         return derivedObject;
