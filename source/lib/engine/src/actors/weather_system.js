@@ -3,10 +3,45 @@ import { Rain } from './rain';
 import { Snow } from './snow';
 
 export class WeatherSystem {
-    constructor() {
+    constructor({ startState = null, heightMap = null } = {}) {
         this.id = 'weather_system';
-
         this.condition = null;
+
+        this._startState = startState;
+        this._heightMap = heightMap;
+    }
+
+    update({ engine, frameNumber }) {
+        const heightMap = this._heightMap;
+        if (!heightMap) {
+            return;
+        }
+        if (frameNumber % 4 !== 0) {
+            return;
+        }
+
+        const snowArray = heightMap.layers.snow?.array;
+        if (!snowArray) {
+            return;
+        }
+
+        const rng = engine.rng;
+        for (let i = 0; i < 2000; i++) {
+            const sx = rng.rangei(0, 256);
+            const sy = rng.rangei(0, 256);
+            const si = sy * heightMap.segments + sx;
+            const v0 = snowArray[si];
+            let v1;
+            if (this.condition === 'snow') {
+                v1 = Math.min(v0 + 0.2, 2.0);
+            } else {
+                v1 = Math.max(v0 - 0.2, 0.0);
+            }
+            if (v0 !== v1) {
+                snowArray[si] = v1;
+                heightMap.updateSegment(sx, sy);
+            }
+        }
     }
 
     stateMachine({ engine }) {
@@ -79,7 +114,7 @@ export class WeatherSystem {
             return desc;
         };
 
-        return makeStates({
+        const desc = makeStates({
             _start: {
                 transitions: [
                     [80, 'clear'],
@@ -115,7 +150,7 @@ export class WeatherSystem {
             },
             snow: {
                 condition: 'snow',
-                effect: [Snow, { count: 500000 }],
+                effect: [Snow, { count: 350000 }],
                 duration: [20, 200],
                 transitions: [[100, 'snowLight']],
                 messages: {
@@ -176,5 +211,14 @@ export class WeatherSystem {
                 ],
             },
         });
+
+        if (this._startState) {
+            const state = this._startState;
+            desc._start = function* () {
+                return state;
+            };
+        }
+
+        return desc;
     }
 }

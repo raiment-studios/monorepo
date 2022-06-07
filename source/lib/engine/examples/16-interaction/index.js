@@ -22,6 +22,7 @@ import {
     VOXActor,
     TerrainMorphHeight,
     TerrainMorphAverage,
+    WeatherSystem,
 } from '../..';
 import { TreeActor } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
@@ -129,6 +130,7 @@ function makeHeightMap(rng) {
             },
             object: { type: Int16Array },
             malleability: { type: Float32Array, defaultValue: 1.0 },
+            snow: { type: Float32Array },
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -140,9 +142,15 @@ function makeHeightMap(rng) {
 
     Object.assign(TILE, heightMap.layers.tile.table.keys());
 
-    heightMap.colorFunc = function (sx, sy) {
+    const snowArray = heightMap.layers.snow.array;
+    heightMap.colorFunc = function (sx, sy, _wz, si) {
         const tile = heightMap.layers.tile.lookup(sx, sy);
         const rgb = tile.colorFunc(sx, sy);
+
+        const s = core.clamp(snowArray[si], 0.0, 1.0);
+        rgb[0] = rgb[0] * (1 - s) + s * 1.0;
+        rgb[1] = rgb[1] * (1 - s) + s * 1.0;
+        rgb[2] = rgb[2] * (1 - s) + s * 1.0;
         return rgb;
     };
 
@@ -187,6 +195,7 @@ function EngineView() {
         );
 
         engine.addSequence(function* () {
+            engine.actors.push(new WeatherSystem({ startState: 'snow', heightMap }));
             engine.actors.push(new TerrainMorphHeight({ heightMap }));
             engine.actors.push(new TerrainMorphAverage({ heightMap }));
 
@@ -311,14 +320,13 @@ function generateKestrel({ engine, heightMap }) {
     ///////////////////////////////////////////////////////////////////////////
 
     const heightArray = heightMap.getLayerArray('height');
-    const tileArray = heightMap.getLayerArray('tile');
     const SEGMENTS = heightMap.segments;
 
     const tileAt = (sx, sy) => {
         if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
             return null;
         }
-        return heightMap.layers.tiles.lookup(sx, sy);
+        return heightMap.layers.tile.lookup(sx, sy);
     };
 
     const walkable = (sx, sy) => {
