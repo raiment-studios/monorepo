@@ -16,18 +16,18 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 # Install NodeJS
-RUN wget https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz && \
-    tar xvf node-v${NODE_VERSION}-linux-x64.tar.xz && \
-    cp -r node-v${NODE_VERSION}-linux-x64/bin /usr/ && \
-    cp -r node-v${NODE_VERSION}-linux-x64/include /usr/ && \
-    cp -r node-v${NODE_VERSION}-linux-x64/lib /usr/ && \
-    cp -r node-v${NODE_VERSION}-linux-x64/share /usr/ && \
-    rm -rf node-v${NODE_VERSION}-linux-x64 && \
-    rm -f node-v${NODE_VERSION}-linux-x64.tar.xz
+RUN wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz && \
+    tar xvf node-v$NODE_VERSION-linux-x64.tar.xz && \
+    cp -r node-v$NODE_VERSION-linux-x64/bin /usr/ && \
+    cp -r node-v$NODE_VERSION-linux-x64/include /usr/ && \
+    cp -r node-v$NODE_VERSION-linux-x64/lib /usr/ && \
+    cp -r node-v$NODE_VERSION-linux-x64/share /usr/ && \
+    rm -rf node-v$NODE_VERSION-linux-x64 && \
+    rm -f node-v$NODE_VERSION-linux-x64.tar.xz
 
 # Install Go
-RUN wget https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz  && \
-    rm -rf /usr/local/go && tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
+RUN wget https://golang.org/dl/go$GO_VERSION.linux-amd64.tar.gz  && \
+    rm -rf /usr/local/go && tar -C /usr/local -xzf go$GO_VERSION.linux-amd64.tar.gz
 ENV PATH $PATH:/usr/local/go/bin
 
 
