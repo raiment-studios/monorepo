@@ -71,6 +71,20 @@ patterns:
           Considerations for concurrency or any other local/global coordination that may
           take time.
 
+    - name: Goal
+      overview: |
+          A high-level objective for a program, process, thread, or other flow of control.
+          A goal is usually polled by running code to interrupt pursuit of a prior goal
+          and redirect to the new direction. 
+
+          To explain by example, a file server might have two potential "goals": 
+          SERVE_FILES and EXIT. The file server may use several threads.  When the server
+          goal changes to EXIT, this is a passive signal to tell the threads to cleanly
+          abort any current operations, clean-up, and exit.
+
+          See Go Contexts: https://www.digitalocean.com/community/tutorials/how-to-use-contexts-in-go
+          and the Done state.
+
     - name: Typo
       type: Debugging Pattern
       overview: |

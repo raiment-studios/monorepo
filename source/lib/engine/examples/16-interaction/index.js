@@ -141,11 +141,10 @@ function EngineView() {
                         pinToGroundHeight: true,
                         castShadow: true,
                     },
-                    position: new THREE.Vector3(rng.rangei(-76, 76), rng.range(-76, 76), 0.0),
                     rotation: (Math.PI / 2) * rng.rangei(0, 4),
                 });
                 yield placeActor({ engine, actor, heightMap });
-                yield 10;
+                yield;
             }
 
             for (let clusters = 0; clusters < 24; clusters++) {
