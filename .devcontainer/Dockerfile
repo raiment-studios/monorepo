@@ -12,8 +12,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     tree \
     gpg gpg-agent git-secret git-lfs
 
-
-
 # Install NodeJS
 RUN wget "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" && \
     tar xvf "node-v${NODE_VERSION}-linux-x64.tar.xz" && \
