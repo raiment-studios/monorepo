@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as core from '@raiment/core';
+import { isEqual } from 'lodash';
 
 /**
  * Generates a unit terrain where, by default, it has size = 1 that covers the
@@ -28,22 +29,15 @@ export class HeightMap {
         this._scale = scale;
         this._segments = segments;
         this._opacity = opacity;
-
-        this._layers = {
-            height: new Float32Array(segments * segments),
-        };
-        for (let [layerName, Type] of Object.entries(layers)) {
-            if (layerName === 'height') {
-                console.warn(`height layer is implicitly defined`);
-                continue;
-            }
-            this.addLayer(layerName, Type);
-        }
-
-        this._layers.height.fill(0);
+        this._layers = {};
         this._colorFunc = colorFunc;
         this._heightFunc = heightFunc;
         this._mesh = null;
+
+        this.addLayer('height', { type: Float32Array });
+        for (let [layerName, options] of Object.entries(layers)) {
+            this.addLayer(layerName, options);
+        }
 
         for (let y = 0; y < segments; y++) {
             for (let x = 0; x < segments; x++) {
@@ -53,15 +47,14 @@ export class HeightMap {
                 const i = y * segments + x;
 
                 // Heights are "pre-scaled"
-                this._layers.height[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
+                this._layers.height.array[i] =
+                    this._heightFunc(scale * u, scale * v, u, v) * this._scale;
             }
         }
-
-        core.assert(this._layers.height.length === this._segments * this._segments);
     }
 
     // ------------------------------------------------------------------------
-    // @Properites
+    // @group Properties
     // ------------------------------------------------------------------------
 
     get offset() {
@@ -73,6 +66,10 @@ export class HeightMap {
 
     get segments() {
         return this._segments;
+    }
+
+    get layers() {
+        return this._layers;
     }
 
     get colorFunc() {
@@ -143,15 +140,14 @@ export class HeightMap {
     // @group Layer manipulation
     // ------------------------------------------------------------------------
 
-    addLayer(layerName, Type) {
-        const n = this.segments;
-        const layer = new Type(n * n);
-        layer.fill(0);
+    addLayer(layerName, { type, ...rest }) {
+        const N = this.segments;
+        const layer = new Layer(layerName, N, N, type, rest);
         this._layers[layerName] = layer;
     }
 
     getLayerArray(layerName) {
-        const arr = this._layers[layerName];
+        const arr = this._layers[layerName]?.array;
         if (!arr) {
             throw new Error(`Unknown layer '${layer}'`);
         }
@@ -170,7 +166,7 @@ export class HeightMap {
 
     getLayerSC(layerName, sx, sy) {
         const i = sy * this._segments + sx;
-        return this._layers[layerName][i];
+        return this._layers[layerName].array[i];
     }
 
     setLayerSC(layerName, sx, sy, value, updateMesh = true) {
@@ -178,7 +174,7 @@ export class HeightMap {
         if (index === -1) {
             return;
         }
-        this._layers[layerName][index] = value;
+        this._layers[layerName].array[index] = value;
 
         // The quads to the side of each segment depend on the height of the neighbor,
         // so the neighbors need to be updated as well. Thus, is a large region is being
@@ -284,7 +280,7 @@ export class HeightMap {
         const i = sy * segments + sx;
         console.assert(i >= 0 && i < segments * segments, 'Index out of range');
 
-        const heights = this._layers.height;
+        const heights = this._layers.height.array;
         const indexAttr = this._mesh.geometry.index;
         const indexArr = indexAttr.array;
         const positionAttr = this._mesh.geometry.attributes.position;
@@ -323,11 +319,6 @@ export class HeightMap {
             positionArr[vi + 9] = p3[0];
             positionArr[vi + 10] = p3[1];
             positionArr[vi + 11] = p3[2];
-
-            /*copy3(positionArr, vi + 0, p0);
-            copy3(positionArr, vi + 3, p1);
-            copy3(positionArr, vi + 6, p2);
-            copy3(positionArr, vi + 9, p3);*/
 
             copy3(normalArr, vi + 0, normal);
             copy3(normalArr, vi + 3, normal);
@@ -466,7 +457,7 @@ export class HeightMap {
         const i = sy * segments + sx;
         console.assert(i >= 0 && i < segments * segments, 'Index out of range');
 
-        const heights = this._layers.height;
+        const heights = this._layers.height.array;
         const positionAttr = this._mesh.geometry.attributes.position;
         const positionArr = positionAttr.array;
 
@@ -537,5 +528,206 @@ export class HeightMap {
         );
 
         positionAttr.needsUpdate = true;
+    }
+}
+
+/**
+ * Layer represents a flexible class for storing information at each discrete
+ * point of the height. There are two major variations.
+ *
+ * ### Numeric layers
+ *
+ * These layers are TypedArrays that can store values.
+ *
+ * ### Object layers
+ *
+ * There layers store an index value in the layer array itself and an
+ * accompanying look-up table for mapping that value to a shared object.
+ *
+ */
+class Layer {
+    // --------------------------------------------------------------------- //
+    // @group Construction
+    // --------------------------------------------------------------------- //
+
+    constructor(name, width, height, Type, { defaultValue = 0, lookup = null }) {
+        this._name = name;
+        this._width = width;
+        this._height = height;
+        this._array = new Type(width * height);
+        this._table = lookup ? new LookupTable(lookup) : null;
+
+        if (typeof defaultValue === 'string') {
+            defaultValue = this._table.indexForName(defaultValue);
+        }
+        this._array.fill(defaultValue);
+    }
+
+    // --------------------------------------------------------------------- //
+    // @group Properties
+    // --------------------------------------------------------------------- //
+
+    /**
+     * Return direct access to the value array
+     */
+    get array() {
+        return this._array;
+    }
+
+    /**
+     * Return direct access to the lookup table
+     */
+    get table() {
+        return this._table;
+    }
+
+    // --------------------------------------------------------------------- //
+    // @group Accessors
+    // --------------------------------------------------------------------- //
+
+    /**
+     * Return value at the given coordinate
+     */
+    get(x, y) {
+        const i = y * this._width + x;
+        return this._array[i];
+    }
+
+    /**
+     * Return object at the given coordinate after looking up the value.
+     */
+    lookup(x, y) {
+        const i = y * this._width + x;
+        const value = this._array[i];
+        return this._table.get(value);
+    }
+
+    /**
+     * Return object using the array index rather than coordinate.
+     */
+    lookupIndex(i) {
+        const value = this._array[i];
+        return this._table.get(value);
+    }
+
+    // --------------------------------------------------------------------- //
+    // @group Mutators
+    // --------------------------------------------------------------------- //
+
+    /**
+     * Modify at the object given location (cloning into a new value if needed)
+     *
+     * 1. Look-up the object at the given index
+     * 2. Modify the given props of the object
+     * 3. Update the look-up table if this creates a unique object
+     * 4. Set the object at the index to the modified object
+     *
+     * ⚠️ Performance warning: this requires a search of all existing objects
+     * in the lookup table.
+     */
+    mutateAtIndex(index, props) {
+        const value = this._array[index];
+        this._array[index] = this._table.getDerived(value, props);
+    }
+}
+
+class LookupTable {
+    constructor({ normalize = (obj) => obj, table = null } = {}) {
+        this._list = [];
+        this._free = [];
+        this._normalize = normalize;
+        this._set = {};
+
+        if (table) {
+            this.addSet(table);
+        }
+
+        this._uidCount = 0;
+        this._uidMap = new Map();
+    }
+
+    get(index) {
+        return this._list[index];
+    }
+    indexForName(name) {
+        return this._set[name];
+    }
+
+    getDerived(baseIndex, props) {
+        const baseObject = this._list[baseIndex];
+
+        // Encode the deltas to create a deterministic derived name.
+        //
+        // 📝 This relies on object identity to avoid creating equivalent
+        // objects. Thus getDerived is "safest" to use with primitive types
+        // or where the caller is careful not to pass in temporary objects.
+        //
+        // 📝 The comparison is shallow.
+        //
+        const deltas = [];
+        for (let [key, value] of Object.entries(props)) {
+            if (baseObject[key] === value) {
+                continue;
+            }
+            let id = this._uidMap(value);
+            if (id === undefined) {
+                id = this._uidCount++;
+                this._uidMap.set(value, id);
+            }
+            deltas.push(id);
+        }
+        const derivedName = `${baseObject.name}-d${deltas.join('-')}`;
+
+        // Find or create the derived object
+        let derivedObject = this._set[derivedName];
+        if (!derivedObject) {
+            this.addSet({ derivedName: { ...baseObject, ...props, name: derivedName } });
+        }
+
+        return derivedObject;
+    }
+
+    remove(obj) {
+        for (let i = 0; i < this._list.length; i++) {
+            if (this._list[i] === obj) {
+                this._list[i] = null;
+                this._free.push(i);
+
+                for (let [key, value] of Object.entries(this._set)) {
+                    if (value === i) {
+                        delete this._set[key];
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+
+    keys() {
+        return this._set;
+    }
+
+    addSet(m) {
+        for (let [key, value] of Object.entries(m)) {
+            const index = this._addObject(key, value);
+            this._set[key] = index;
+        }
+        return this._set;
+    }
+
+    _addObject(name, obj) {
+        let i;
+        if (this._free.length) {
+            i = this._free.shift();
+        } else {
+            i = this._list.length;
+        }
+        this._normalize(obj, i);
+        obj.name = name;
+        obj.index = i;
+
+        this._list.push(obj);
+        return i;
     }
 }

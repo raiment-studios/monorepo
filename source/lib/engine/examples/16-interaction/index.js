@@ -25,7 +25,6 @@ import {
 } from '../..';
 import { TreeActor } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
-import { initTileLookupTable } from './tiles';
 import { componentPathfinder } from './component_pathfinder';
 
 const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
@@ -41,10 +40,7 @@ export default function () {
     );
 }
 
-const db = {
-    tiles: initTileLookupTable(),
-};
-const TILE = db.tiles.keys();
+const TILE = {};
 
 function makeHeightMap(rng) {
     const S = 192;
@@ -52,14 +48,87 @@ function makeHeightMap(rng) {
     const simplex2 = core.makeSimplexNoise(rng.uint31());
     const simplex3 = core.makeSimplexNoise(rng.uint31());
 
+    function mix3(c0, c1, a) {
+        const b = 1 - a;
+        return [c0[0] * b + c1[0] * a, c0[1] * b + c1[1] * a, c0[2] * b + c1[2] * a];
+    }
+
+    function makeGrassColorFunc(segments) {
+        const scale = 1 / ((segments * 100) / 256);
+
+        const simplex2 = core.makeSimplexNoise();
+        const simplex3 = core.makeSimplexNoise();
+
+        return function (sx, sy) {
+            const rgb = [146 / 255, 201 / 255, 117 / 255];
+            const a = (1 + simplex3.noise2D(sx, sy)) / 2;
+            const b = (1 + simplex2.noise2D(sx * scale, sy * scale)) / 2;
+            const t = 0.5 * b + 0.5;
+            const s = t + a * (1 - t);
+            return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
+        };
+    }
+    const grassColorFunc = makeGrassColorFunc(256);
+
     const heightMap = new HeightMap({
         offset: [-256 / 2, -256 / 2, 0],
         scale: 256,
         segments: 256,
         layers: {
-            tile: Int8Array,
-            object: Int16Array,
-            malleability: Float32Array,
+            tile: {
+                type: Int8Array,
+                defaultValue: 'GRASS',
+                lookup: {
+                    normalize: (obj) => {
+                        return {
+                            walkCost: obj.walkable ? 0 : 1e10,
+                            tillable: true,
+                            ...obj,
+                        };
+                    },
+                    table: {
+                        GRASS: {
+                            walkable: true,
+                            colorFunc: grassColorFunc,
+                        },
+                        GRASS_UNWALKABLE: {
+                            walkable: false,
+                            colorFunc: grassColorFunc,
+                        },
+
+                        FOUNDATION: {
+                            walkable: false,
+                            colorFunc: (sx, sy) => mix3([1, 0, 0], grassColorFunc(sx, sy), 0.85),
+                        },
+
+                        BOUNDARY: {
+                            walkable: true,
+                            colorFunc: (sx, sy) => mix3([1, 1, 0], grassColorFunc(sx, sy), 0.85),
+                        },
+
+                        GRASS_UNTILLABLE: {
+                            walkable: true,
+                            walkCost: 20,
+                            tillable: false,
+                            colorFunc: grassColorFunc,
+                        },
+                        DIRT_WALKABLE: {
+                            walkable: true,
+                            walkCost: 10,
+                            colorFunc: (sx, sy) => {
+                                const base = grassColorFunc(sx, sy);
+                                const a = sy % 2 ? 0.75 : 1.0;
+                                base[0] *= 1.25 * a;
+                                base[1] *= 0.5 * a;
+                                base[2] *= 0.5 * a;
+                                return base;
+                            },
+                        },
+                    },
+                },
+            },
+            object: { type: Int16Array },
+            malleability: { type: Float32Array, defaultValue: 1.0 },
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -69,16 +138,10 @@ function makeHeightMap(rng) {
         },
     });
 
-    const tileArray = heightMap.getLayerArray('tile');
-    const objectArray = heightMap.getLayerArray('object');
-    const malleabilityArray = heightMap.getLayerArray('malleability');
+    Object.assign(TILE, heightMap.layers.tile.table.keys());
 
-    tileArray.fill(TILE.GRASS);
-    objectArray.fill(0);
-    malleabilityArray.fill(1.0);
-
-    heightMap.colorFunc = function (sx, sy, wz, si) {
-        const tile = db.tiles.get(tileArray[si]);
+    heightMap.colorFunc = function (sx, sy) {
+        const tile = heightMap.layers.tile.lookup(sx, sy);
         const rgb = tile.colorFunc(sx, sy);
         return rgb;
     };
@@ -255,7 +318,7 @@ function generateKestrel({ engine, heightMap }) {
         if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
             return null;
         }
-        return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
+        return heightMap.layers.tiles.lookup(sx, sy);
     };
 
     const walkable = (sx, sy) => {
@@ -357,7 +420,7 @@ async function placeActor({
         let valid = true;
         const stats = new core.SimpleStats();
         cursor.box(modelBox, { inflate: walkableBoundary }, ({ index }) => {
-            const tile = db.tiles.get(tileArray[index]);
+            const tile = heightMap.layers.tile.lookupIndex(index);
             if (!tile.walkable) {
                 valid = false;
             }
@@ -383,7 +446,7 @@ async function placeActor({
 
         const baseHeight = (stats.average() * 2) / 3 + stats.max() / 3;
         cursor.box(modelBox, ({ index }) => {
-            tileArray[index] = db.tiles.getDerived(tileArray[index], { walkable: false });
+            heightMap.layers.tile.mutateAtIndex(index, { walkable: false });
             heightArray[index] = baseHeight;
             malleabilityArray[index] = malleabilityBase;
         });

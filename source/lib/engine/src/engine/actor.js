@@ -67,7 +67,6 @@ export class Actor {
         }
 
         if (stateMachine) {
-            console.log('HEY');
             // 🀄 Function chaining
             const prior = this.stateMachine;
             this.stateMachine = (...args) => {
