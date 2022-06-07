@@ -15,7 +15,17 @@ export async function watchLoop(app, { filename, watchList, onBuild }) {
     while (true) {
         let dirty = false;
         for (let [filename, modified] of Object.entries(state.watchList)) {
-            let { mtime } = await fs.stat(filename);
+            let mtime;
+            try {
+                mtime = (await fs.stat(filename)).mtime;
+            } catch (err) {
+                if (err.code === 'ENOENT') {
+                    console.warn('Warning: file not found', err.path);
+                    continue;
+                } else {
+                    throw err;
+                }
+            }
             if (mtime > modified) {
                 app.print(`Refreshing ({{obj ${filename}}} modified).`);
                 state.watchList[filename] = mtime;

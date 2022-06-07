@@ -26,6 +26,7 @@ import {
 import { TreeActor } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
 import { initTileLookupTable } from './tiles';
+import { componentPathfinder } from './component_pathfinder';
 
 const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
 
@@ -206,7 +207,7 @@ function EngineView() {
 function generateKestrel({ engine, heightMap }) {
     let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
 
-    return new VoxelSprite({
+    const actor = new VoxelSprite({
         id: 'kestrel',
         url: assetURL['kestrel.png'],
         flags: {
@@ -221,14 +222,10 @@ function generateKestrel({ engine, heightMap }) {
             // transitions.
             actor._goal = null;
 
-            let pathfind = makePathfindBehaviorForHeightmap(heightMap, actor);
-
             return {
                 _start: function* () {
                     return 'idle';
                 },
-                ...pathfind,
-
                 idle: function* () {
                     yield 30;
                     if (actor._goal?.[0] === 'move') {
@@ -243,29 +240,69 @@ function generateKestrel({ engine, heightMap }) {
                 },
                 move: function* (wx, wy) {
                     const [sx, sy] = heightMap.coordW2S(wx, wy);
-                    return [
-                        'pathfind.moveLoop',
-                        sx,
-                        sy,
-                        'idle',
-                        {
-                            interruptCb: () => {
-                                if (
-                                    actor._goal &&
-                                    (actor._goal[0] !== 'move' ||
-                                        actor._goal[1] !== wx ||
-                                        actor._goal[2] !== wy)
-                                ) {
-                                    return 'idle';
-                                }
-                                return null;
-                            },
-                        },
-                    ];
+                    return ['pathfind.moveLoop', sx, sy, 'idle'];
                 },
             };
         },
     });
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    const heightArray = heightMap.getLayerArray('height');
+    const tileArray = heightMap.getLayerArray('tile');
+    const SEGMENTS = heightMap.segments;
+
+    const tileAt = (sx, sy) => {
+        if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
+            return null;
+        }
+        return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
+    };
+
+    const walkable = (sx, sy) => {
+        const tile = tileAt(sx, sy);
+        return tile ? tile.walkable : false;
+    };
+
+    // Pathfinding object...
+    const pathfinder = new PathfinderGraph({
+        width: SEGMENTS,
+        height: SEGMENTS,
+        walkable,
+        baseCost: (a) => tileAt(a.x, a.y)?.walkCost ?? 0.0,
+        edgeCost: (a, b) => {
+            const hb = heightArray[b.y * SEGMENTS + b.x];
+            const ha = heightArray[a.y * SEGMENTS + a.x];
+            return Math.max(0, 10 * (hb - ha));
+        },
+    });
+
+    actor.mixin(componentPathfinder, {
+        pathfinder,
+        moveDelay: 4,
+        positionFunc: ({ actor }) => {
+            return heightMap.coordW2S(actor.position.x, actor.position.y);
+        },
+        onMove: (sx, sy) => {
+            const [wx, wy] = heightMap.coordS2W(sx, sy);
+            actor.position.x = wx;
+            actor.position.y = wy;
+        },
+        interruptFunc: (sx, sy) => {
+            const [wx, wy] = heightMap.coordS2W(sx, sy);
+            if (
+                actor._goal &&
+                (actor._goal[0] !== 'move' || actor._goal[1] !== wx || actor._goal[2] !== wy)
+            ) {
+                return 'idle';
+            }
+            return null;
+        },
+    });
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    return actor;
 }
 
 async function placeActor({
@@ -386,159 +423,4 @@ async function placeActor({
     engine.actors.push(actor);
 
     return true;
-}
-
-/**
- * A reusable set of state machine states for pathfinding.
- *
- * Avoids binding to the Actor or Heightmap classes and instead depends on
- * only the PathfinderGraph object and a current position callback.
- *
- * Returns a set of states which can be merged into a StateMachine descriptor.
- */
-function makePathfindBehavior({
-    // Required
-    pathfinder,
-    positionFunc,
-
-    // Optional
-    prefix = 'pathfind.', //
-    MAX_SEARCH_DISTANCE = 100,
-    rng = core.makeRNG(),
-
-    onMove,
-    moveDelay = 0,
-}) {
-    const prefixName = (s) => `${prefix}${s}`;
-    const STATE_TARGET = prefixName('target');
-    const STATE_MOVE = prefixName('move');
-    const STATE_MOVELOOP = prefixName('moveLoop');
-
-    return {
-        [STATE_TARGET]: function* () {
-            // "Think" for a few frames
-            yield rng.rangei(5, 10);
-
-            // Choose a random point to target and retry until it
-            // is a valid destination
-            const ex = rng.rangei(0, pathfinder.width);
-            const ey = rng.rangei(0, pathfinder.height);
-            if (!pathfinder.walkable(ex, ey)) {
-                return STATE_TARGET;
-            }
-            return [STATE_MOVELOOP, ex, ey];
-        },
-        [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET, options) {
-            // Use the current position as the starting point
-            const [sx, sy] = positionFunc();
-            if (!pathfinder.walkable(sx, sy)) {
-                console.error('starting on an unwalkable tile');
-                debugger;
-            }
-
-            // If we're at the destination, end the loop and choose a new target
-            if (sx === ex && sy === ey) {
-                return doneState;
-            }
-
-            // If the destination is "far away", compute a path to an intermediate
-            // point.  Otherwise, compute the path to the destination
-
-            const dx = ex - sx;
-            const dy = ey - sy;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const m = dist / MAX_SEARCH_DISTANCE;
-            let result;
-            if (m <= 1) {
-                result = yield pathfinder.pathfind(sx, sy, ex, ey);
-            } else {
-                // Choose the naive "ideal" intermediate point (straight-line to the
-                // target)
-                const xi = Math.ceil(sx + dx / m);
-                const yi = Math.ceil(sy + dy / m);
-
-                // Make that the guess as to where we should go next
-                let xg = xi;
-                let yg = yi;
-
-                let jitter = 1.0;
-                while (!pathfinder.walkable(xg, yg)) {
-                    xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
-                    yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
-                    jitter += 0.25;
-                }
-
-                result = yield pathfinder.pathfind(sx, sy, xg, yg);
-            }
-
-            // Move!
-            const path = result.map((g) => ({ x: g[0], y: g[1] }));
-            return [STATE_MOVE, path, ex, ey, doneState, options];
-        },
-
-        [STATE_MOVE]: function* (path, ex, ey, doneState, options = {}) {
-            const { interruptCb } = options;
-            let x, y;
-            while (path.length) {
-                ({ x, y } = path.shift());
-                onMove(x, y);
-
-                const interruptState = interruptCb?.();
-                if (interruptState) {
-                    return interruptState;
-                }
-
-                yield moveDelay;
-            }
-            return [STATE_MOVELOOP, ex, ey, doneState, options];
-        },
-    };
-}
-
-/**
- * Add in the necessary glue to connect the generic pathfind behavior
- * generator to the heightmap
- */
-function makePathfindBehaviorForHeightmap(heightMap, actor) {
-    const heightArray = heightMap.getLayerArray('height');
-    const tileArray = heightMap.getLayerArray('tile');
-    const SEGMENTS = heightMap.segments;
-
-    const tileAt = (sx, sy) => {
-        if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
-            return null;
-        }
-        return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
-    };
-
-    const walkable = (sx, sy) => {
-        const tile = tileAt(sx, sy);
-        return tile ? tile.walkable : false;
-    };
-
-    // Pathfinding object...
-    const pathfinder = new PathfinderGraph({
-        width: SEGMENTS,
-        height: SEGMENTS,
-        walkable,
-        baseCost: (a) => tileAt(a.x, a.y)?.walkCost ?? 0.0,
-        edgeCost: (a, b) => {
-            const hb = heightArray[b.y * SEGMENTS + b.x];
-            const ha = heightArray[a.y * SEGMENTS + a.x];
-            return Math.max(0, 10 * (hb - ha));
-        },
-    });
-
-    return makePathfindBehavior({
-        pathfinder,
-        moveDelay: 4,
-        positionFunc: () => {
-            return heightMap.coordW2S(actor.position.x, actor.position.y);
-        },
-        onMove: (sx, sy) => {
-            const [wx, wy] = heightMap.coordS2W(sx, sy);
-            actor.position.x = wx;
-            actor.position.y = wy;
-        },
-    });
 }

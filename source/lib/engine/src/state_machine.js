@@ -66,6 +66,12 @@ export class StateMachine {
                 : [result.value, []];
 
             const generator = this._states[nextState];
+            if (nextState && !generator) {
+                console.warn(
+                    `Transition to unrecognized state '${nextState}'. StateMachine halting.`
+                );
+            }
+
             this._priorStateName = this._activeStateName;
             this._activeStateName = nextState;
             this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;

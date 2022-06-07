@@ -80,7 +80,10 @@ class Actor {
 
 #### StateMachine
 
-⚠️ TODO
+-   Actors have a optional stateMachine
+-   Goals can be added to _suggest_ a change in state
+-   Components can be mixed in to add additional states to the StateMachine
+-   Nested StateMachines are not currently supported.
 
 ## Design
 

@@ -12,14 +12,20 @@ export class Actor {
     // @group Construction
     //-----------------------------------------------------------------------//
 
-    constructor({ id = null } = {}) {
+    constructor({ id = null, mixins = [] } = {}) {
         this._id = id;
         this._opt = {};
+
+        for (let comp of mixins) {
+            console.log(comp);
+            const args = Array.isArray(comp) ? comp : [comp];
+            this.mixin(...args);
+        }
     }
 
     dispose() {}
 
-    mixin(componentFunc, options) {
+    mixin(componentFunc, options = {}) {
         //
         // ⚠️ TODO: "ctx.methods" should be improved --
         //
@@ -61,6 +67,7 @@ export class Actor {
         }
 
         if (stateMachine) {
+            console.log('HEY');
             // 🀄 Function chaining
             const prior = this.stateMachine;
             this.stateMachine = (...args) => {
