@@ -1,4 +1,4 @@
-import MersenneTwister from 'mersenne-twister';
+import { MersenneTwister } from 'fast-mersenne-twister';
 
 export function makeRNG(...args) {
     return new RNG(...args);
@@ -64,7 +64,8 @@ class RNG {
     }
 
     uint31() {
-        return this._rng.random_int31();
+        //return this._rng.random_int31();
+        return this._rng.random31Bit();
     }
 
     range(minValue, maxValue) {

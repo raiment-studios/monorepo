@@ -1,7 +1,17 @@
 {
     "transform": {
-        "^.+\\.js?$": [ "esbuild-jest", {
-            "sourcemap": "inline"
-        }]
-    }
+        "^.+\\.js?$": [
+            "/workspaces/monorepo/source/projects/sea/apps/sea-jest/node_modules/esbuild-jest",
+            {
+                "sourcemap": "inline"
+            }
+        ],
+        "node_modules/fast-mersenne-twister/.+\\.js$": [
+            "/workspaces/monorepo/source/projects/sea/apps/sea-jest/node_modules/esbuild-jest",
+            {
+                "sourcemap": "inline"
+            }
+        ]
+    },
+    "snapshotResolver": "./jest.snapshot-resolver.cjs"
 }

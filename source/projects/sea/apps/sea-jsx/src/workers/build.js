@@ -437,9 +437,7 @@ function registerGlobPlugin(build, workingDir, references) {
         }
 
         return {
-            contents: JSON.stringify({
-                matches: Object.values(references).map((ref) => ({ url: ref.url })),
-            }),
+            contents: JSON.stringify(Object.values(references).map((ref) => ref.url)),
             loader: 'json',
         };
     });

@@ -1,7 +1,7 @@
 import * as core from '@raiment/core';
 import chroma from 'chroma-js';
 import * as THREE from 'three';
-import { VoxelModelSG } from '../..';
+import { VoxelModelSG } from '../../src';
 
 export class TreeActor {
     constructor(params) {
@@ -38,8 +38,8 @@ export class TreeActor {
         };
     }
 
-    get frame10Parity() {
-        return 7;
+    get updateInterval() {
+        return 10;
     }
 
     async placementConstraints({ engine }) {

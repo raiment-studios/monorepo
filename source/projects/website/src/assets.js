@@ -13,7 +13,7 @@ import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.asset.yaml,.png,.v
 import { VOXPreview } from './vox_preview';
 import * as fs from './__runtime/fs';
 
-const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
+const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
 
 export default function () {
     const [sortOrder, setSortOrder] = React.useState('alphabetical');

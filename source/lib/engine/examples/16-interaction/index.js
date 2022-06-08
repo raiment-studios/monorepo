@@ -1,6 +1,5 @@
 /*
 🚧 TODO
-- Ensure model and trees don't overlap
 - Click to select building
 - Pop-up "story" dialog when building selected after moving close to it
 */
@@ -19,17 +18,17 @@ import {
     PathfinderGraph,
     VoxelSprite,
     DayNightLighting,
-    BasicLighting,
     VOXActor,
     TerrainMorphHeight,
     TerrainMorphAverage,
     WeatherSystem,
+    componentGoal,
+    componentPathfinder,
 } from '../..';
-import { TreeActor } from './forest.js';
-import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
-import { componentPathfinder } from './component_pathfinder';
+import { TreeActor } from './tree_actor.js';
 
-const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
+import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
+const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
 
 export default function () {
     return (
@@ -43,6 +42,103 @@ export default function () {
 }
 
 const TILE = {};
+
+function EngineView() {
+    const engine = useEngine(() => {
+        const rng = core.makeRNG();
+
+        const heightMap = makeHeightMap(rng);
+        Object.assign(TILE, heightMap.layers.tile.table.keys());
+
+        engine.events.on('intersection', (results) => {
+            const { x, y } = results.first.point;
+            const actor = engine.actors.selectByID('kestrel');
+            if (actor) {
+                actor.goal = ['move', x, y];
+            }
+        });
+        engine.events.on('engine.preupdate', () => {
+            const actor = engine.actors.selectByID('kestrel');
+            const camera = engine.actors.selectByID('camera');
+            if (!actor || !camera) {
+                return;
+            }
+            camera.radius = 24;
+            camera.offsetZ = 2;
+            const pt = actor.position.clone();
+            pt.z += 5;
+            camera.lookAt(pt);
+        });
+
+        engine.addSequence(function* () {
+            engine.actors.push(
+                new Grid(),
+                new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 48 }), //
+                new DayNightLighting({ speed: 1, nightSpeed: 16 }),
+                new GroundPlane(),
+                heightMap,
+                new WeatherSystem({ startState: 'clear', heightMap }),
+                new TerrainMorphHeight({ heightMap }),
+                new TerrainMorphAverage({ heightMap })
+            );
+
+            for (let i = 0; i < 3; i++) {
+                const actor = new VOXActor({
+                    url: assetURL[
+                        rng.select([
+                            'obj_house3a.vox', //
+                            'obj_house5c.vox', //
+                            'obj_house5c.vox', //
+                        ])
+                    ],
+                    scale: 2,
+                    flags: {
+                        pinToGroundHeight: true,
+                        castShadow: true,
+                        receiveShadow: true,
+                    },
+                    rotation: (Math.PI / 2) * rng.rangei(0, 4),
+                });
+                yield placeActor({ engine, actor, heightMap });
+                yield;
+            }
+
+            for (let clusters = 0; clusters < 24; clusters++) {
+                const cx = rng.rangei(0, heightMap.segments);
+                const cy = rng.rangei(0, heightMap.segments);
+                const count = rng.rangei(3, 8);
+                for (let i = 0; i < count; i++) {
+                    const actor = new TreeActor();
+                    yield placeActor({
+                        engine,
+                        actor,
+                        heightMap,
+                        generatePosition: (rng, minX, minY, maxX, maxY) => {
+                            return [cx + rng.rangei(-20, 20), cy + rng.rangei(-20, 20)];
+                        },
+                    });
+                    yield;
+                }
+                yield 10;
+            }
+
+            engine.actors.push(generateKestrel({ engine, heightMap }));
+
+            yield 30;
+            engine.actors.push(new TerrainMorphHeight({ heightMap }));
+            engine.actors.push(new TerrainMorphAverage({ heightMap }));
+        });
+
+        engine.addSequence(function* () {
+            yield 10;
+            engine.journal.message('Welcome to Galthea, the world of Kestrel');
+            yield 2 * 60;
+            engine.journal.message('Your quest is to seek out Tristan.');
+        });
+    });
+
+    return <EngineFrame engine={engine} recorder="three" />;
+}
 
 function makeHeightMap(rng) {
     const S = 192;
@@ -141,8 +237,6 @@ function makeHeightMap(rng) {
         },
     });
 
-    Object.assign(TILE, heightMap.layers.tile.table.keys());
-
     const snowArray = heightMap.layers.snow.array;
     heightMap.colorFunc = function (sx, sy, _wz, si) {
         const tile = heightMap.layers.tile.lookup(sx, sy);
@@ -160,125 +254,30 @@ function makeHeightMap(rng) {
     return heightMap;
 }
 
-function EngineView() {
-    const engine = useEngine(() => {
-        const rng = core.makeRNG();
+function generateKestrel({ engine, heightMap }) {
+    const rng = engine.rng;
+    const tileArray = heightMap.getLayerArray('tile');
 
-        const heightMap = makeHeightMap(rng);
-        const tileArray = heightMap.getLayerArray('tile');
-
-        engine.events.on('intersection', (results) => {
-            const { x, y } = results.first.point;
-            const actor = engine.actors.selectByID('kestrel');
-            if (actor) {
-                actor._goal = ['move', x, y];
+    function generateRandomWalkablePosition() {
+        const walkable = (wx, wy) => {
+            const si = heightMap.coordW2I(wx, wy);
+            if (si === -1) {
+                return false;
             }
-        });
-        engine.events.on('engine.preupdate', () => {
-            const actor = engine.actors.selectByID('kestrel');
-            const camera = engine.actors.selectByID('camera');
-            if (!actor || !camera) {
-                return;
-            }
-            camera.radius = 24;
-            camera.offsetZ = 2;
-            const pt = actor.position.clone();
-            pt.z += 5;
-            camera.lookAt(pt);
-        });
-
-        engine.actors.push(
-            new Grid(),
-            new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 48 }), //
-            new DayNightLighting({ speed: 1, nightSpeed: 16 }),
-            //new BasicLighting(),
-            new GroundPlane(),
-            heightMap
-        );
-
-        engine.addSequence(function* () {
-            engine.actors.push(new WeatherSystem({ startState: 'snow', heightMap }));
-            engine.actors.push(new TerrainMorphHeight({ heightMap }));
-            engine.actors.push(new TerrainMorphAverage({ heightMap }));
-
-            for (let i = 0; i < 3; i++) {
-                const actor = new VOXActor({
-                    url: assetURL[
-                        rng.select([
-                            'obj_house3a.vox', //
-                            'obj_house5c.vox', //
-                            'obj_house5c.vox', //
-                        ])
-                    ],
-                    scale: 2,
-                    flags: {
-                        pinToGroundHeight: true,
-                        castShadow: true,
-                    },
-                    rotation: (Math.PI / 2) * rng.rangei(0, 4),
-                });
-                yield placeActor({ engine, actor, heightMap });
-                yield;
-            }
-
-            for (let clusters = 0; clusters < 24; clusters++) {
-                const cx = rng.rangei(0, heightMap.segments);
-                const cy = rng.rangei(0, heightMap.segments);
-                const count = rng.rangei(3, 8);
-                for (let i = 0; i < count; i++) {
-                    const actor = new TreeActor();
-                    yield placeActor({
-                        engine,
-                        actor,
-                        heightMap,
-                        generatePosition: (rng, minX, minY, maxX, maxY) => {
-                            return [cx + rng.rangei(-20, 20), cy + rng.rangei(-20, 20)];
-                        },
-                    });
-                    yield;
-                }
-                yield 10;
-            }
-
-            engine.actors.push(generateKestrel({ engine, heightMap }));
-
-            yield 30;
-            engine.actors.push(new TerrainMorphHeight({ heightMap }));
-            engine.actors.push(new TerrainMorphAverage({ heightMap }));
-        });
-
-        engine.opt.generateRandomWalkablePosition = function () {
-            const walkable = (wx, wy) => {
-                const si = heightMap.coordW2I(wx, wy);
-                if (si === -1) {
-                    return false;
-                }
-                const tileIndex = tileArray[si];
-                return tileIndex === TILE.GRASS;
-            };
-
-            let worldX, worldY;
-            do {
-                worldX = rng.rangei(0, heightMap.segments);
-                worldY = rng.rangei(0, heightMap.segments);
-            } while (!walkable(worldX, worldY));
-
-            return [worldX, worldY];
+            const tileIndex = tileArray[si];
+            return tileIndex === TILE.GRASS;
         };
 
-        engine.addSequence(function* () {
-            yield 10;
-            engine.journal.message('Welcome to Galthea, the world of Kestrel');
-            yield 2 * 60;
-            engine.journal.message('Your quest is to seek out Tristan.');
-        });
-    });
+        let worldX, worldY;
+        do {
+            worldX = rng.rangei(0, heightMap.segments);
+            worldY = rng.rangei(0, heightMap.segments);
+        } while (!walkable(worldX, worldY));
 
-    return <EngineFrame engine={engine} recorder="three" />;
-}
+        return [worldX, worldY];
+    }
 
-function generateKestrel({ engine, heightMap }) {
-    let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+    let [worldX, worldY] = generateRandomWalkablePosition();
 
     const actor = new VoxelSprite({
         id: 'kestrel',
@@ -287,23 +286,24 @@ function generateKestrel({ engine, heightMap }) {
             billboard: true,
             pinToGroundHeight: true,
         },
-        worldX,
-        worldY,
-        stateMachine: function ({ engine, actor }) {
+        mixins: [
             // The goal is the "overall" motivation for the actor.  So the FSM
             // should continually look to that to decide it's own execution and
             // transitions.
-            actor._goal = null;
-
+            componentGoal,
+        ],
+        worldX,
+        worldY,
+        stateMachine: function ({ engine, actor }) {
             return {
                 _start: function* () {
                     return 'idle';
                 },
                 idle: function* () {
-                    yield 30;
-                    if (actor._goal?.[0] === 'move') {
-                        let [cmd, x, y] = actor._goal;
-                        actor._goal = null;
+                    yield 10;
+                    if (actor.goal?.[0] === 'move') {
+                        let [cmd, x, y] = actor.goal;
+                        actor.goal = null;
                         x = Math.floor(x);
                         y = Math.floor(y);
                         engine.journal.message(`Kestrel decides to move to ${x},${y}`);
@@ -363,8 +363,8 @@ function generateKestrel({ engine, heightMap }) {
         interruptFunc: (sx, sy) => {
             const [wx, wy] = heightMap.coordS2W(sx, sy);
             if (
-                actor._goal &&
-                (actor._goal[0] !== 'move' || actor._goal[1] !== wx || actor._goal[2] !== wy)
+                actor.goal &&
+                (actor.goal[0] !== 'move' || actor.goal[1] !== wx || actor.goal[2] !== wy)
             ) {
                 return 'idle';
             }
@@ -389,7 +389,6 @@ async function placeActor({
     },
 }) {
     const rng = engine.rng;
-    const tileArray = heightMap.getLayerArray('tile');
     const heightArray = heightMap.getLayerArray('height');
     const malleabilityArray = heightMap.getLayerArray('malleability');
 

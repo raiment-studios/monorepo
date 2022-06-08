@@ -21,7 +21,7 @@ import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.y
 import { LookupTable } from './lookup_table';
 import { initTileLookupTable } from './tiles';
 
-const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
+const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
 
 export default function () {
     return (

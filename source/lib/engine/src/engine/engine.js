@@ -154,6 +154,16 @@ export class Engine {
                 //   needs data from the initialization process.
                 //
                 actor.init?.(ctx);
+
+                // For performance, an actor may only want to be updated every N frames.
+                // Randomize the offset of which N frames so that, in aggregate, the updates
+                // across all actors are evenly distributed.
+                const updateInterval = actor.updateInterval ?? 0;
+                if (updateInterval > 0) {
+                    actor.__updateParity = updateInterval;
+                    actor.__updateOffset = this.rng.rangei(0, updateInterval);
+                }
+
                 this.events.fire('actor.postinit', ctx);
 
                 const desc = actor.stateMachine?.(ctx);
@@ -183,9 +193,12 @@ export class Engine {
         // Run the logic update
         //
         this.events.fire('engine.preupdate', ctx);
-        const frame10Parity = ctx.frameNumber % 10;
         for (let actor of this._actors) {
-            if (actor.frame10Parity && actor.frame10Parity === frame10Parity) {
+            let shouldUpdate = actor.shouldUpdate ? actor.shouldUpdate() : true;
+            if (actor.__updateParity) {
+                shouldUpdate &= ctx.frameNumber % actor.__updateParity == actor.__updateOffset;
+            }
+            if (!shouldUpdate) {
                 continue;
             }
 

@@ -13,7 +13,7 @@ import {
 } from '../..';
 import assets from 'glob:**/*{.png,.asset.yaml}';
 
-const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url, url]));
+const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
 
 export default function () {
     const [data, setData] = React.useState('');

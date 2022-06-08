@@ -19,6 +19,8 @@ export * from './actors/weather_system';
 export * from './ai/pathfinder_graph';
 
 export * from './components/component_events';
+export * from './components/component_goal';
+export * from './components/component_pathfinder';
 export * from './components/component_physics_pva';
 export * from './components/component_self_collider_box3';
 

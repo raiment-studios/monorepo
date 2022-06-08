@@ -1,4 +1,4 @@
-import * as core from '../../../core/src';
+import * as core from '../../../core';
 
 /**
  * A reusable set of state machine states for pathfinding.
@@ -48,7 +48,6 @@ export function componentPathfinder(
                 const [sx, sy] = positionFunc({ actor });
                 if (!pathfinder.walkable(sx, sy)) {
                     console.error('starting on an unwalkable tile');
-                    debugger;
                 }
 
                 // If we're at the destination, end the loop and choose a new target

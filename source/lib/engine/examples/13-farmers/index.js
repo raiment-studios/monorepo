@@ -18,7 +18,7 @@ import {
 import { Forest } from './forest.js';
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}';
 
-const assetURL = Object.fromEntries(assets.matches.map(({ url }) => [url.split('/').pop(), url]));
+const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
 
 export default function () {
     return (

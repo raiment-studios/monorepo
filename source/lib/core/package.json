@@ -5,6 +5,7 @@
     "main": "src/index.js",
     "repository": "https://github.com/raiment-studios/monorepo",
     "dependencies": {
+        "fast-mersenne-twister": "^1.0.3",
         "js-levenshtein": "^1.1.6",
         "mersenne-twister": "^1.1.0",
         "nanoid": "^3.3.1",
@@ -12,6 +13,7 @@
         "yaml": "^1.10.2"
     },
     "devDependencies": {
+        "@raiment/sea-jest": "^0.1.9",
         "esbuild-jest": "^0.5.0",
         "jest": "^27.5.1"
     }

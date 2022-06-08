@@ -1,22 +1,24 @@
+.PHONY: ensure
 ensure:
+	cmp --silent node_modules/package.sentinel package.json || npm install
+	cp package.json node_modules/package.sentinel
+
+build: ensure
 	echo "TODO"
 
-build:
-	echo "TODO"
-
-dev:
+dev: ensure
 	npx nodemon --watch "src/**/*" --exec make run
 
-run:
+run: ensure
 	node . 
 
-test:
+test: ensure
 	npx jest --verbose .
 
-benchmark:
+benchmark: ensure
 	echo "TODO"
 
-publish-local:
+publish-local: ensure
 	-sudo npm uninstall --global @raiment/sea-jest
 	sudo npm install --global .
 
