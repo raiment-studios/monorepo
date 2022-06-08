@@ -82,25 +82,24 @@ function EngineView() {
                 new TerrainMorphAverage({ heightMap })
             );
 
-            if (false)
-                for (let i = 0; i < 3; i++) {
-                    const actor = new VOXActor({
-                        url: assetURL[
-                            rng.select([
-                                'obj_house3a.vox', //
-                                'obj_house5c.vox', //
-                                'obj_house5c.vox', //
-                            ])
-                        ],
-                        scale: 2,
-                        flags: {
-                            receiveShadow: true,
-                        },
-                        rotation: (Math.PI / 2) * rng.rangei(0, 4),
-                    });
-                    yield placeActor({ engine, actor, heightMap });
-                    yield;
-                }
+            for (let i = 0; i < 3; i++) {
+                const actor = new VOXActor({
+                    url: assetURL[
+                        rng.select([
+                            'obj_house3a.vox', //
+                            'obj_house5c.vox', //
+                            'obj_house5c.vox', //
+                        ])
+                    ],
+                    scale: 2,
+                    flags: {
+                        receiveShadow: true,
+                    },
+                    rotation: (Math.PI / 2) * rng.rangei(0, 4),
+                });
+                yield placeActor({ engine, actor, heightMap });
+                yield;
+            }
 
             for (let clusters = 0; clusters < 24; clusters++) {
                 const cx = rng.rangei(0, heightMap.segments);
@@ -391,6 +390,9 @@ async function placeActor({
     const heightArray = heightMap.getLayerArray('height');
     const malleabilityArray = heightMap.getLayerArray('malleability');
 
+    //
+    // Read the actor's constraints on how it should be placed
+    //
     const constraints = await actor.placementConstraints({ engine });
     const bbox = constraints.box3;
     const size = new THREE.Vector3();
@@ -399,6 +401,7 @@ async function placeActor({
     bbox.getSize(size);
 
     const {
+        malleabilityMin = 0,
         malleabilityExponent = 1,
         malleabilityExtents = 8, //
         walkableBoundary = 2,
@@ -410,9 +413,12 @@ async function placeActor({
     const maxX = heightMap.segments - size.x - minX;
     const maxY = heightMap.segments - size.y - minY;
 
-    const cursor = new core.Cursor2D(heightMap.segments, heightMap.segments);
-
+    //
+    // Iteratively make a random selection until constraints are met or the
+    // number of attemmpts is exceeded.
+    //
     let placement = null;
+    const cursor = new core.Cursor2D(heightMap.segments, heightMap.segments);
     for (let attempt = 0; placement === null && attempt < 20; attempt++) {
         const ε = 1e-6;
 
@@ -425,6 +431,9 @@ async function placeActor({
         modelBox.min.set(sx + bbox.min.x, sy + bbox.min.y);
         modelBox.max.set(sx + bbox.max.x, sy + bbox.max.y);
 
+        //
+        // Ensure placement only occurs on currently walkable tiles
+        //
         let valid = true;
         const stats = new core.SimpleStats();
         cursor.box(modelBox, { inflate: walkableBoundary }, ({ index }) => {
@@ -438,7 +447,12 @@ async function placeActor({
             continue;
         }
 
+        //
+        // Flatten the "foundation" area that the actor covers and mark that
+        // terrain as immalleable.
+        //
         // If an explicit size has been set, use that rather than the model bounds
+        //
         let malleabilityBase = 0.0;
         if (foundationSize !== null) {
             const center = new THREE.Vector2();
@@ -447,18 +461,25 @@ async function placeActor({
                 center,
                 new THREE.Vector2(foundationSize, foundationSize)
             );
-            if (foundationSize === 0) {
-                malleabilityBase = 1.0;
-            }
         }
 
         const baseHeight = (stats.average() * 2) / 3 + stats.max() / 3;
         cursor.box(modelBox, ({ index }) => {
             heightMap.layers.tile.mutateAtIndex(index, { walkable: false });
             heightArray[index] = baseHeight;
-            //malleabilityArray[index] = malleabilityBase;
+            if (foundationSize !== 0) {
+                malleabilityArray[index] = malleabilityBase;
+            }
         });
 
+        // Both...
+        //
+        // (1) Blend the heights of area surrounding the foundation with the foundation
+        // height to smooth the transitions.
+        //
+        // (2) Reduce the malleability of the area surrounding the foundation so that
+        // future terrain modifications tend to leave smooth transitions.
+        //
         const innerBounds = modelBox.clone();
         innerBounds.max.addScalar(-ε);
 
@@ -470,12 +491,17 @@ async function placeActor({
                 const a0 = 1 - a1;
                 const c = heightArray[index];
                 heightArray[index] = baseHeight * a0 + a1 * c;
-                const value = Math.pow(a1, malleabilityExponent);
 
+                const value =
+                    malleabilityMin + (1 - malleabilityMin) * Math.pow(a1, malleabilityExponent);
                 malleabilityArray[index] = Math.min(malleabilityArray[index], value);
             }
         });
 
+        //
+        // As heights have changed, update the region.  Remember that the neighbors
+        // of any segment whose height has changed also need to be updated.
+        //
         cursor.box(modelBox, { inflate: malleabilityExtents + 1 }, ({ x, y }) => {
             heightMap.updateSegment(x, y);
         });

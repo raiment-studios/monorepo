@@ -15,6 +15,7 @@
     -   [Development process](#development-process)
         -   [Build conventions](#build-conventions)
     -   [Communication conventions](#communication-conventions)
+        -   [Unicode conventions](#unicode-conventions)
         -   [Emoji conventions](#emoji-conventions)
         -   [Badge conventions](#badge-conventions)
     -   [Type of contributions](#type-of-contributions)
@@ -75,6 +76,16 @@ In practice, this means:
 -   Preferring `Makefile` commands over a `scripts` entry in `package.json`. If the `scripts` section is used, the `Makefile` should provide wrappers on those scripts.
 
 ## Communication conventions
+
+### Unicode conventions
+
+Using unicode symbols within code is acceptable and encouraged when appropriate. The primary encouraged case is where there is standard symbol in mathematics or physics can be represented in code accurately with unicode.
+
+For example:
+
+-   ε for small values
+-   Θ for angles
+-   Δ for deltas and differences
 
 ### Emoji conventions
 

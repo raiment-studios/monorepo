@@ -18,10 +18,14 @@ class TerrainMorphBase extends Actor {
         this._heightMap = heightMap;
     }
 
+    updateInterval() {
+        return 20;
+    }
+
     update({ engine }) {
         const rng = engine.rng;
 
-        const K = 0.25;
+        const K = 0.25 / this.updateInterval();
         const MV = 2;
         this.velocity.x += K * rng.range(-1, 1);
         this.velocity.y += K * rng.range(-1, 1);
@@ -57,6 +61,7 @@ export class TerrainMorphHeight extends TerrainMorphBase {
                 return 'changeTerrain';
             },
             changeTerrain: function* () {
+                yield rng.rangei(30, 120);
                 const simplex = core.makeSimplexNoise(4342);
                 const amplitude = 0.04 * rng.range(0.4, 5);
                 const ox = rng.range(-1000, 1000);
@@ -163,6 +168,7 @@ export class TerrainMorphAverage extends TerrainMorphBase {
                     yield 2;
                 }
 
+                yield rng.rangei(10, 30);
                 return 'update';
             },
         };

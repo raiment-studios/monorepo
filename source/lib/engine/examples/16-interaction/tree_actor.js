@@ -52,6 +52,7 @@ export class TreeActor {
             box3: bbox,
             malleabilityExtents: 20,
             malleabilityExponent: 1,
+            malleabilityMin: 0.75,
             foundationSize: 0,
         };
     }
