@@ -4,7 +4,7 @@
 
 ## What is the Raiment?
 
-**Raiment is a procedural, open world game: think Daggerfall set in a voxel-based world. It is designed specifically to be equally enjoyable to play as it is to contribute to.**
+**Raiment is an adventure game, akin the classics such as Sierra Online's original King's Quest, set in an open procedural world that borrows inspiration from the ambitions of Bethesda's Daggerfall. Set in a pixelated, voxel-based world, Raiment is designed ot be equally enjoyable to play as it is to contribute to.**
 
 https://user-images.githubusercontent.com/65878718/162589896-58fd3b08-50e6-49df-ac4d-e45653a95dbb.mp4
 
@@ -57,9 +57,9 @@ Project work is categorized into the following:
 
 ## Technology / Architecture
 
-The project is currently coded primarily in `JavaScript` in order to rapidly flesh out the first prototypes of the project and ensure they are easily accesible on the web. After the initial prototyping stabilizes, the project intends to migrate towards a `Rust` and `JavaScript` mix, utilizing `WASM` when appropriate.
+The project is currently coded primarily in `JavaScript` in order to rapidly flesh out the first prototypes of the project and ensure they are easily accesible on the web. After the initial prototyping stabilizes, the project intends to migrate towards a `Rust` and `JavaScript` mix, utilizing `WASM` when appropriate. See [tools](source/projects/organization/tools.md) for more details.
 
-See [tools](source/projects/organization/tools.md) for more details.
+The goal is to develop an engine separately from the game itself to allow for variations and different stories to be told by the community.
 
 ## Contributing
 

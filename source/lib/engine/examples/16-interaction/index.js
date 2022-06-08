@@ -82,26 +82,25 @@ function EngineView() {
                 new TerrainMorphAverage({ heightMap })
             );
 
-            for (let i = 0; i < 3; i++) {
-                const actor = new VOXActor({
-                    url: assetURL[
-                        rng.select([
-                            'obj_house3a.vox', //
-                            'obj_house5c.vox', //
-                            'obj_house5c.vox', //
-                        ])
-                    ],
-                    scale: 2,
-                    flags: {
-                        pinToGroundHeight: true,
-                        castShadow: true,
-                        receiveShadow: true,
-                    },
-                    rotation: (Math.PI / 2) * rng.rangei(0, 4),
-                });
-                yield placeActor({ engine, actor, heightMap });
-                yield;
-            }
+            if (false)
+                for (let i = 0; i < 3; i++) {
+                    const actor = new VOXActor({
+                        url: assetURL[
+                            rng.select([
+                                'obj_house3a.vox', //
+                                'obj_house5c.vox', //
+                                'obj_house5c.vox', //
+                            ])
+                        ],
+                        scale: 2,
+                        flags: {
+                            receiveShadow: true,
+                        },
+                        rotation: (Math.PI / 2) * rng.rangei(0, 4),
+                    });
+                    yield placeActor({ engine, actor, heightMap });
+                    yield;
+                }
 
             for (let clusters = 0; clusters < 24; clusters++) {
                 const cx = rng.rangei(0, heightMap.segments);
@@ -457,7 +456,7 @@ async function placeActor({
         cursor.box(modelBox, ({ index }) => {
             heightMap.layers.tile.mutateAtIndex(index, { walkable: false });
             heightArray[index] = baseHeight;
-            malleabilityArray[index] = malleabilityBase;
+            //malleabilityArray[index] = malleabilityBase;
         });
 
         const innerBounds = modelBox.clone();

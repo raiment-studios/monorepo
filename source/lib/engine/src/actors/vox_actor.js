@@ -15,7 +15,13 @@ export class VOXActor {
         flags = {},
     }) {
         this._id = id;
-        this._flags = Object.assign({}, flags);
+        this._flags = Object.assign(
+            {
+                pinToGroundHeight: true,
+                castShadow: true,
+            },
+            flags
+        );
         this._url = url;
         this._scale = scale;
         this._position = position || new THREE.Vector3(0, 0, 0);

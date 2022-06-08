@@ -597,6 +597,9 @@ class Layer {
      * Return object at the given coordinate after looking up the value.
      */
     lookup(x, y) {
+        if (!(x >= 0 && x < this._width && y >= 0 && y < this._height)) {
+            return null;
+        }
         const i = y * this._width + x;
         const value = this._array[i];
         return this._table.get(value);
