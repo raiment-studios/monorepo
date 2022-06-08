@@ -19,6 +19,7 @@ import {
     PathfinderGraph,
     VoxelSprite,
     DayNightLighting,
+    BasicLighting,
     VOXActor,
     TerrainMorphHeight,
     TerrainMorphAverage,
@@ -190,6 +191,7 @@ function EngineView() {
             new Grid(),
             new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 48 }), //
             new DayNightLighting({ speed: 1, nightSpeed: 16 }),
+            //new BasicLighting(),
             new GroundPlane(),
             heightMap
         );

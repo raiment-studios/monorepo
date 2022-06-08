@@ -28,7 +28,7 @@ export class DayNightLighting {
         const { renderer } = engine.renderers.three;
 
         const angle = ((this._timeOfDay - 6) * Math.PI) / 12;
-        const dist = 512;
+        const dist = 256;
         const x = dist * Math.cos(angle);
         const z = dist * Math.sin(angle);
         const y = dist / 5 + Math.sin(angle * 2);

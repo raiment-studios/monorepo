@@ -68,6 +68,9 @@ export class RendererThree {
             if (actor.flags?.castShadow) {
                 setCastShadowRecurvise(mesh, true);
             }
+            if (actor.flags?.receiveShadow) {
+                setReceiveShadowRecurvise(mesh, true);
+            }
             scene.add(mesh);
         }
 
@@ -133,6 +136,15 @@ function setCastShadowRecurvise(meshLike, value) {
     if (meshLike.children) {
         for (let child of meshLike.children) {
             setCastShadowRecurvise(child, value);
+        }
+    }
+}
+
+function setReceiveShadowRecurvise(meshLike, value) {
+    meshLike.receiveShadow = value;
+    if (meshLike.children) {
+        for (let child of meshLike.children) {
+            setReceiveShadowRecurvise(child, value);
         }
     }
 }
