@@ -117,6 +117,15 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### 2022
 
+-   Week 23
+    -   [x] 🗃️ Move to `@raiment/core` to `fast-mersenne-twister` for performance
+    -   [x] 🛠️ Simplify `sea-jsx` `glob:` to return URLs only
+    -   [x] ➕ Add engine `goal` mixin
+    -   [x] ➕ Add `updateInternval` to Actor
+    -   [x] 🛠️ Fix shadows in DayNightLighting (dist was past frustum extents)
+    -   [x] ➕ Improve Layers on `HeightMap` actor (can include lookup tables)
+    -   [x] ➕ Add components/mixins to `Actor`
+    -   [x] 🗃️ Miscellaneous small optimizations
 -   Week 22
     -   [x] ➕ `Cursor2D` to `@raiment/core`
     -   [x] ➕ `SimpleStats` to `@raiment/core`
