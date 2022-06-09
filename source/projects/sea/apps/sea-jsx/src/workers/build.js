@@ -133,7 +133,6 @@ export async function build(
     }
 
     app.print(`Captured {{loc ${Object.keys(references).length}}} file references.`);
-
     return {
         output,
         buildID,

@@ -1,7 +1,6 @@
 import * as core from '../../../core/src';
 import { Actor } from '../engine/actor';
 import { PathfinderGraph } from '../ai/pathfinder_graph';
-import { TILE } from '../../examples/16-interaction/index';
 
 export class RoadActor extends Actor {
     constructor({
