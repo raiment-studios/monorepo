@@ -4,7 +4,7 @@
 
 ## What is the Raiment?
 
-**Raiment is an adventure game, akin the classics such as Sierra Online's original King's Quest, set in an open procedural world that borrows inspiration from the ambitions of Bethesda's Daggerfall. Set in a pixelated, voxel-based world, Raiment is designed ot be equally enjoyable to play as it is to contribute to.**
+**Raiment is an adventure game borrowing from the tradition of classics such as Sierra Online's original King's Quest and mixing in the expansiveness of promised from Bethesda's Daggerfall. Pixelated, voxel-based arts gives Raiment a unique visual style. It is a game designed ot be equally enjoyable to play as it is to contribute to.**
 
 https://user-images.githubusercontent.com/65878718/162589896-58fd3b08-50e6-49df-ac4d-e45653a95dbb.mp4
 
