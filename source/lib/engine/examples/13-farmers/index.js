@@ -268,7 +268,7 @@ function EngineView() {
 
         // Use a sequence (i.e. a script run across multiple frames) to ensure the
         // initialization order.
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             // Stage 1
             engine.actors.push(new Forest({ count: 40 }));
 

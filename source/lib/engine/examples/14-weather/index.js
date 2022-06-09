@@ -166,7 +166,7 @@ function EngineView() {
             return makePathfindBehaviorForHeightmap(heightMap, actor);
         };
 
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             yield 10;
             engine.journal.message('Welcome to Galthea, the world of Kestrel');
             yield 2 * 60;
@@ -175,7 +175,7 @@ function EngineView() {
 
         // Use a sequence (i.e. a script run across multiple frames) to ensure the
         // initialization order.
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             // Stage 1
             engine.actors.push(
                 new Forest({ count: 40 }), //

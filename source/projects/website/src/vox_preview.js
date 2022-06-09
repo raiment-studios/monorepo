@@ -19,7 +19,7 @@ export function VOXPreview({ url }) {
         const actor = new VOXActor({ url });
         engine.actors.push(new Grid(), new BasicLighting(), camera, actor);
 
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             // Workaround until the engine architecture is more mature
             while (!actor.__mesh) {
                 yield 2;

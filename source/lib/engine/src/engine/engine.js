@@ -106,7 +106,7 @@ export class Engine {
      * created timed scripts, spread work across multiple frames, or to sequence
      * operations with dependencies that take multiple frames to resolve.
      */
-    addSequence(generatorFunc, self) {
+    sequence(generatorFunc, self) {
         // A sequence can be represented as a special case of a state machine
         this.actors.push({
             stateMachine() {
@@ -116,6 +116,11 @@ export class Engine {
                 };
             },
         });
+    }
+
+    addSequence(...args) {
+        console.warn(`DEPRECATED: call engine.sequence() instead`);
+        return this.sequence(...args);
     }
 
     //-----------------------------------------------------------------------//

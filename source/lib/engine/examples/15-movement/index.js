@@ -110,7 +110,7 @@ function EngineView() {
             heightMap
         );
 
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             engine.actors.push(new Updater(heightMap));
             engine.actors.push(new Updater2(heightMap));
             yield 120;
@@ -182,7 +182,7 @@ function EngineView() {
             return [worldX, worldY];
         };
 
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             yield 10;
             engine.journal.message('Welcome to Galthea, the world of Kestrel');
             yield 2 * 60;

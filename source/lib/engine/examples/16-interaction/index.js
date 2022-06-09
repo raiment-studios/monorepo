@@ -24,9 +24,9 @@ import {
     WeatherSystem,
     componentGoal,
     componentPathfinder,
-    Actor,
+    TreeActor,
+    RoadActor,
 } from '../..';
-import { TreeActor } from './tree_actor.js';
 
 import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
 const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
@@ -42,7 +42,7 @@ export default function () {
     );
 }
 
-const TILE = {};
+export const TILE = {};
 
 function EngineView() {
     const engine = useEngine(() => {
@@ -72,7 +72,7 @@ function EngineView() {
             camera.lookAt(pt);
         });
 
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             engine.actors.push(
                 new Grid(),
                 new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 48 }), //
@@ -86,18 +86,26 @@ function EngineView() {
 
             yield 100;
 
-            const actor = new RoadMaker({ heightMap });
-            engine.actors.push(actor);
+            const createRoadActor = () =>
+                new RoadActor({
+                    heightMap,
+                    tiles: {
+                        FOUNDATION: TILE.FOUNDATION,
+                        ROAD_CENTER: TILE.DIRT_CENTER,
+                        ROAD: TILE.DIRT,
+                    },
+                });
 
-            engine.addSequence(function* () {
+            engine.actors.push(createRoadActor());
+
+            engine.sequence(function* () {
                 for (let i = 0; i < 8; i++) {
                     yield 100;
-                    const actor = new RoadMaker({ heightMap });
-                    engine.actors.push(actor);
+                    engine.actors.push(createRoadActor());
                 }
             });
 
-            engine.addSequence(function* () {
+            engine.sequence(function* () {
                 for (let i = 0; i < 3; i++) {
                     const actor = new VOXActor({
                         url: assetURL[
@@ -145,7 +153,7 @@ function EngineView() {
             engine.actors.push(new TerrainMorphAverage({ heightMap }));
         });
 
-        engine.addSequence(function* () {
+        engine.sequence(function* () {
             yield 10;
             engine.journal.message('Welcome to Galthea, the world of Kestrel');
             yield 2 * 60;
@@ -154,103 +162,6 @@ function EngineView() {
     });
 
     return <EngineFrame engine={engine} recorder="three" />;
-}
-
-class RoadMaker extends Actor {
-    constructor({ heightMap, delay = 0, ...rest }) {
-        super(rest);
-        this._heightMap = heightMap;
-        this._delay = delay;
-    }
-
-    *sequence({ engine }) {
-        const heightMap = this._heightMap;
-        const rng = engine.rng;
-
-        const N = heightMap.segments;
-
-        yield this._delay;
-
-        const pathfinder = new PathfinderGraph({
-            width: N,
-            height: N,
-            walkable: (sx, sy) => {
-                return heightMap.layers.tile.lookup(sx, sy).walkable;
-            },
-            baseCost: (a) => heightMap.layers.tile.lookup(a.x, a.y)?.walkCost ?? 0.0,
-            edgeCost: (a, b) => {
-                const heightArray = heightMap.layers.height.array;
-                const hb = heightArray[b.y * N + b.x];
-                const ha = heightArray[a.y * N + a.x];
-                return Math.max(0, 10 * (hb - ha));
-            },
-        });
-
-        const K = 8;
-        const [sx, sy, ex, ey] = rng.select([
-            [0, rng.rangei(K, N - K), N - 1, rng.rangei(K, N - K)],
-            [rng.rangei(K, N - K), 0, rng.rangei(K, N - K), N - 1],
-        ]);
-
-        const roadWidth = rng.select([2, 2, 2, 2, 3, 3, 4]);
-
-        const cursor = new core.Cursor2D(heightMap.segments, heightMap.segments);
-
-        if (true) {
-            const result = yield pathfinder.pathfind(sx, sy, ex, ey);
-
-            const tile = rng.select([TILE.DIRT]);
-            for (let [x, y] of result) {
-                heightMap.layers.tile.mutate(x, y, { buildable: false });
-            }
-
-            let state = { abort: false };
-            for (let [x, y] of result) {
-                if (state.abort) {
-                    break;
-                }
-                cursor.border(x, y, roadWidth, (x, y, { distance }) => {
-                    if (distance > roadWidth) {
-                        return;
-                    }
-
-                    if (heightMap.layers.tile.lookup(x, y).index === TILE.FOUNDATION) {
-                        state.abort = true;
-                        return;
-                    }
-
-                    if (distance === 0) {
-                        heightMap.layers.tile.set(x, y, TILE.DIRT_CENTER);
-                    } else {
-                        const tileP = heightMap.layers.tile.get(x, y);
-                        if (tileP !== TILE.DIRT_CENTER) {
-                            heightMap.layers.tile.set(x, y, TILE.DIRT);
-                        }
-                    }
-                    const i = y * N + x;
-                    heightMap.layers.malleability.array[i] = 0.05;
-                });
-
-                const boundary = 4 + 3 * roadWidth;
-                cursor.border(x, y, boundary, (x, y, { distance }) => {
-                    if (distance > boundary) {
-                        return;
-                    }
-
-                    const m = 0.8 * Math.pow(core.clamp(distance / boundary, 0, 1), 2);
-                    const i = y * N + x;
-                    const p = heightMap.layers.malleability.array[i];
-                    heightMap.layers.malleability.array[i] = Math.min(p, m);
-                    heightMap.updateSegment(x, y);
-                });
-
-                yield;
-            }
-        }
-        yield;
-        yield;
-        yield;
-    }
 }
 
 function makeHeightMap(rng) {

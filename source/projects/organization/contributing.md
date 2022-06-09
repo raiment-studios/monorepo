@@ -15,6 +15,7 @@
     -   [Development process](#development-process)
         -   [Build conventions](#build-conventions)
     -   [Communication conventions](#communication-conventions)
+        -   [Coding conventions](#coding-conventions)
         -   [Unicode conventions](#unicode-conventions)
         -   [Emoji conventions](#emoji-conventions)
         -   [Badge conventions](#badge-conventions)
@@ -76,6 +77,10 @@ In practice, this means:
 -   Preferring `Makefile` commands over a `scripts` entry in `package.json`. If the `scripts` section is used, the `Makefile` should provide wrappers on those scripts.
 
 ## Communication conventions
+
+### Coding conventions
+
+_Prefer single word names (e.g. `sequence` rather than `addSequence`)_. When there are multiple operations, consider using an object with single word methods for each operation.
 
 ### Unicode conventions
 
