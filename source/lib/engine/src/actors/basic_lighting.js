@@ -1,3 +1,12 @@
+/*!
+
+    ## Basic Lighting
+
+    Adds simple lighting to the scene composed of a directional light,
+    basic fog, ambient light, and hemispherical light.
+
+*/
+
 import * as THREE from 'three';
 import chroma from 'chroma-js';
 

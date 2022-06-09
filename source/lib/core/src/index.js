@@ -20,6 +20,7 @@ export * from './math/rng.js';
 export * from './math/simple_stats.js';
 export * from './math/simplex_noise.js';
 
+export * from './strings/dedent.js';
 export * from './strings/nearest_overlap.js';
 export * from './strings/parse_yaml.js';
 export * from './strings/short_id.js';
