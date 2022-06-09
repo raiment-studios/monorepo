@@ -17,7 +17,6 @@ export class Actor {
         this._opt = {};
 
         for (let comp of mixins) {
-            console.log(comp);
             const args = Array.isArray(comp) ? comp : [comp];
             this.mixin(...args);
         }

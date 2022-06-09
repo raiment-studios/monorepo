@@ -589,6 +589,9 @@ class Layer {
      * Return value at the given coordinate
      */
     get(x, y) {
+        if (!(x >= 0 && x < this._width && y >= 0 && y < this._height)) {
+            return null;
+        }
         const i = y * this._width + x;
         return this._array[i];
     }
@@ -618,6 +621,24 @@ class Layer {
     // --------------------------------------------------------------------- //
 
     /**
+     * Set value at the given coordinate
+     */
+    set(x, y, value) {
+        if (!(x >= 0 && x < this._width && y >= 0 && y < this._height)) {
+            return;
+        }
+        const i = y * this._width + x;
+        return (this._array[i] = value);
+    }
+
+    /**
+     * Set value at the given index
+     */
+    setAtIndex(i, value) {
+        return (this._array[i] = value);
+    }
+
+    /**
      * Modify at the object given location (cloning into a new value if needed)
      *
      * 1. Look-up the object at the given index
@@ -629,6 +650,15 @@ class Layer {
      * in the lookup table.
      */
     mutateAtIndex(index, props) {
+        const value = this._array[index];
+        this._array[index] = this._table.getDerived(value, props);
+    }
+
+    mutate(x, y, props) {
+        if (!(x >= 0 && x < this._width && y >= 0 && y < this._height)) {
+            return;
+        }
+        const index = y * this._width + x;
         const value = this._array[index];
         this._array[index] = this._table.getDerived(value, props);
     }
@@ -679,15 +709,18 @@ class LookupTable {
             }
             deltas.push(id);
         }
-        const derivedName = `${baseObject.name}-d${deltas.join('-')}`;
+        if (deltas.length == 0) {
+            return baseIndex;
+        }
 
         // Find or create the derived object
+        const derivedName = `${baseObject.name}-d${deltas.join('-')}`;
         let derivedObject = this._set[derivedName];
         if (!derivedObject) {
             this.addSet({ [derivedName]: { ...baseObject, ...props, name: derivedName } });
+            derivedObject = this._set[derivedName];
         }
-
-        return derivedObject;
+        return derivedObject.index;
     }
 
     remove(obj) {

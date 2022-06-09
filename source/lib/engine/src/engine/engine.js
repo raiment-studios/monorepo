@@ -166,7 +166,24 @@ export class Engine {
 
                 this.events.fire('actor.postinit', ctx);
 
-                const desc = actor.stateMachine?.(ctx);
+                let desc;
+                if (actor.sequence) {
+                    const self = this;
+                    desc = {
+                        _start: function* () {
+                            yield* actor.sequence.call(actor, self.context());
+                        },
+                    };
+                }
+                if (actor.stateMachine) {
+                    if (desc) {
+                        console.error(
+                            `An Actor currently cannot have both a sequence and stateMachine`
+                        );
+                        throw new Error();
+                    }
+                    desc = actor.stateMachine(ctx);
+                }
                 if (desc) {
                     actor.__stateMachine = new StateMachine(desc);
                 }

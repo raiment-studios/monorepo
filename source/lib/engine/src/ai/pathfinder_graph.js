@@ -82,6 +82,11 @@ export class PathfinderGraph {
         const base = this._baseWeightFunc(node1);
         const edge = this._edgeCostFunc(node0, node1);
 
+        const walkable = this._walkableFunc(node1.x, node1.y);
+        if (!walkable) {
+            return 1e32;
+        }
+
         // Avoid negative numbers since the algorithm will want to always visit those
         // to reduce the overall score, even though that's not the shortest path!
         return dist + Math.max(0, base + edge);
