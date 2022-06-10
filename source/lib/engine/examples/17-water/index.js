@@ -52,7 +52,7 @@ function EngineView() {
         const rng = core.makeRNG();
 
         const heightMap = makeHeightMap(rng);
-        const waterMap = makeWaterMap(rng);
+        const waterMap = makeWaterMap(rng, 0.15);
 
         engine.sequence(function* () {
             engine.actors.push(
@@ -64,45 +64,42 @@ function EngineView() {
             );
 
             engine.actors.push({
+                get updateInterval() {
+                    return 0;
+                },
                 update() {
                     const heightArray = heightMap.layers.height.array;
                     const waterArray = heightMap.layers.water.array;
-                    const seaArray = waterMap.layers.height.array;
-                    const cursor = new core.Cursor2D(waterMap.segments, waterMap.segments);
+                    const waterHeightArray = waterMap.layers.height.array;
                     const cursor2 = new core.Cursor2D(waterMap.segments, waterMap.segments);
 
-                    for (let i = 0; i < 100; i++) {
-                        const cx = rng.rangei(0, heightMap.segments);
-                        const cy = rng.rangei(0, heightMap.segments);
+                    const cx = rng.rangei(0, heightMap.segments);
+                    const cy = rng.rangei(0, heightMap.segments);
 
-                        cursor2.border(cx, cy, 3, (sx, sy) => {
-                            const si = sy * heightMap.segments + sx;
+                    const D = 42;
+                    cursor2.border(cx, cy, D, (sx, sy, { distance }) => {
+                        const si = sy * heightMap.segments + sx;
 
-                            //seaArray[si] = (1.2 * heightArray[si]) / 256;
-                            const current = seaArray[si];
-                            const delta = core.clamp(waterArray[si] - 30, 0, 255);
-                            if (!(delta > 0)) {
-                                if (current !== 0) {
-                                    seaArray[si] = 0;
-                                    cursor.border(sx, sy, 1, (x, y) => {
-                                        waterMap.updateSegment(x, y);
-                                    });
-                                }
-                            } else {
-                                const value =
-                                    delta > 0 ? ((delta - 1) / 64) * 0.0256 + heightArray[si] : 0;
-
-                                let v2 = value * 0.5 + 0.5 * current;
-                                if (Math.abs(v2 - current) < 0.01) {
-                                    v2 = value;
-                                }
-                                seaArray[si] = v2;
-                                cursor.border(sx, sy, 1, (x, y) => {
-                                    waterMap.updateSegment(x, y);
-                                });
+                        //seaArray[si] = (1.2 * heightArray[si]) / 256;
+                        const current = waterHeightArray[si];
+                        const heightDelta = core.clamp(waterArray[si] - 30, 0, 255);
+                        if (!(heightDelta > 0)) {
+                            if (current !== 0) {
+                                waterHeightArray[si] = 0;
                             }
-                        });
-                    }
+                        } else {
+                            const targetHeight =
+                                ((heightDelta - 1) / 64) * 0.0256 + heightArray[si];
+
+                            const a0 = 1; //core.clamp(1 - distance / D, 0.5, 1);
+                            const a1 = 1 - a0;
+                            let v2 = targetHeight * a0 + a1 * current;
+                            waterHeightArray[si] = v2;
+                        }
+                    });
+                    cursor2.border(cx, cy, D + 1, (x, y) => {
+                        waterMap.updateSegment(x, y);
+                    });
                 },
             });
 
@@ -122,41 +119,39 @@ function EngineView() {
 
             engine.actors.push({
                 update() {
-                    for (let i = 0; i < 1000; i++) {
+                    for (let i = 0; i < 10000; i++) {
                         const sx = rng.rangei(0, heightMap.segments);
                         const sy = rng.rangei(0, heightMap.segments);
                         const si = sy * heightMap.segments + sx;
 
                         for (let scale = 64; scale >= 1; scale /= 2) {
-                            for (let [dx, dy] of neighbors) {
-                                const nx = sx + rng.sign() * rng.rangei(1, scale);
-                                const ny = sy + rng.sign() * rng.rangei(1, scale);
-                                if (
-                                    nx < 0 ||
-                                    nx >= heightMap.segments ||
-                                    ny < 0 ||
-                                    ny >= heightMap.segments
-                                ) {
-                                    continue;
-                                }
-                                const ni = ny * heightMap.segments + nx;
-
-                                const sw = waterArray[si];
-                                const nw = waterArray[ni];
-                                const sh = heightArray[si];
-                                const nh = heightArray[ni];
-
-                                if (sh < nh || sw === 0 || nw === 255) {
-                                    continue;
-                                }
-
-                                const base = Math.floor(sw / 2);
-                                const delta = core.clamp(base, 1, 255 - nw);
-                                waterArray[si] -= delta;
-                                waterArray[ni] += delta;
-                                heightMap.updateSegment(sx, sy);
-                                heightMap.updateSegment(nx, ny);
+                            const nx = sx + rng.sign() * rng.rangei(1, scale);
+                            const ny = sy + rng.sign() * rng.rangei(1, scale);
+                            if (
+                                nx < 0 ||
+                                nx >= heightMap.segments ||
+                                ny < 0 ||
+                                ny >= heightMap.segments
+                            ) {
+                                continue;
                             }
+                            const ni = ny * heightMap.segments + nx;
+
+                            const sw = waterArray[si];
+                            const nw = waterArray[ni];
+                            const sh = heightArray[si];
+                            const nh = heightArray[ni];
+
+                            if (sh < nh || sw === 0 || nw === 255) {
+                                continue;
+                            }
+
+                            const base = Math.floor(sw / 2);
+                            const delta = core.clamp(base, 1, 255 - nw);
+                            waterArray[si] -= delta;
+                            waterArray[ni] += delta;
+                            heightMap.updateSegment(sx, sy);
+                            heightMap.updateSegment(nx, ny);
                         }
                     }
                 },
@@ -192,12 +187,12 @@ function EngineView() {
     return <EngineFrame engine={engine} recorder="three" />;
 }
 
-function makeWaterMap(rng) {
+function makeWaterMap(rng, opacity = 0.45) {
     const heightMap = new HeightMap({
         offset: [-256 / 2, -256 / 2, 0],
         scale: 256,
         segments: 256,
-        opacity: 0.25,
+        opacity,
         layers: {},
         heightFunc: (sx, sy) => {
             return 4 * 0.01;
@@ -305,8 +300,9 @@ function makeHeightMap(rng) {
         const tile = heightMap.layers.tile.lookup(sx, sy);
         const rgb = tile.colorFunc(sx, sy);
         const water = waterArray[si] / 255;
-        const s = 0.35 * core.clamp(water, 0.0, 1.0);
-        return mix3(rgb, [0, 0, 1], s);
+        const F = 0.5; // 0.5
+        const s = F * core.clamp(water, 0.0, 1.0);
+        return mix3(rgb, [0.04, 0.23, 0.9], s);
     };
 
     heightMap.updateMesh();

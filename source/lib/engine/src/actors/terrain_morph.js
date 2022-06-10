@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { Actor } from '../engine/actor';
 import { componentEvents, componentPhysicsPVA, componentSelfColliderBox3 } from '..';
 
-class TerrainMorphBase extends Actor {
+export class TerrainMorphBase extends Actor {
     constructor({ heightMap, ...rest }) {
         super(rest);
 
