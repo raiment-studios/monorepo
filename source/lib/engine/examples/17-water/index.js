@@ -47,22 +47,120 @@ Will the simulation process be too slow?
     );
 }
 
-export const TILE = {};
-
 function EngineView() {
     const engine = useEngine(() => {
         const rng = core.makeRNG();
 
         const heightMap = makeHeightMap(rng);
-        Object.assign(TILE, heightMap.layers.tile.table.keys());
+        const waterMap = makeWaterMap(rng);
 
         engine.sequence(function* () {
             engine.actors.push(
                 new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 48 }), //
                 new DayNightLighting({ speed: 1, nightSpeed: 16 }),
                 heightMap,
-                new WeatherSystem({ startState: 'rain', heightMap })
+                waterMap,
+                new WeatherSystem({ startState: 'rainLight', heightMap })
             );
+
+            engine.actors.push({
+                update() {
+                    const heightArray = heightMap.layers.height.array;
+                    const waterArray = heightMap.layers.water.array;
+                    const seaArray = waterMap.layers.height.array;
+                    const cursor = new core.Cursor2D(waterMap.segments, waterMap.segments);
+                    const cursor2 = new core.Cursor2D(waterMap.segments, waterMap.segments);
+
+                    for (let i = 0; i < 100; i++) {
+                        const cx = rng.rangei(0, heightMap.segments);
+                        const cy = rng.rangei(0, heightMap.segments);
+
+                        cursor2.border(cx, cy, 3, (sx, sy) => {
+                            const si = sy * heightMap.segments + sx;
+
+                            //seaArray[si] = (1.2 * heightArray[si]) / 256;
+                            const current = seaArray[si];
+                            const delta = core.clamp(waterArray[si] - 30, 0, 255);
+                            if (!(delta > 0)) {
+                                if (current !== 0) {
+                                    seaArray[si] = 0;
+                                    cursor.border(sx, sy, 1, (x, y) => {
+                                        waterMap.updateSegment(x, y);
+                                    });
+                                }
+                            } else {
+                                const value =
+                                    delta > 0 ? ((delta - 1) / 64) * 0.0256 + heightArray[si] : 0;
+
+                                let v2 = value * 0.5 + 0.5 * current;
+                                if (Math.abs(v2 - current) < 0.01) {
+                                    v2 = value;
+                                }
+                                seaArray[si] = v2;
+                                cursor.border(sx, sy, 1, (x, y) => {
+                                    waterMap.updateSegment(x, y);
+                                });
+                            }
+                        });
+                    }
+                },
+            });
+
+            const heightArray = heightMap.layers.height.array;
+            const waterArray = heightMap.layers.water.array;
+
+            const neighbors = [
+                [-1, 1],
+                [0, 1],
+                [1, 1], //
+                [-1, 0],
+                [1, 0], //
+                [-1, -1],
+                [0, -1],
+                [1, -1], //
+            ];
+
+            engine.actors.push({
+                update() {
+                    for (let i = 0; i < 1000; i++) {
+                        const sx = rng.rangei(0, heightMap.segments);
+                        const sy = rng.rangei(0, heightMap.segments);
+                        const si = sy * heightMap.segments + sx;
+
+                        for (let scale = 64; scale >= 1; scale /= 2) {
+                            for (let [dx, dy] of neighbors) {
+                                const nx = sx + rng.sign() * rng.rangei(1, scale);
+                                const ny = sy + rng.sign() * rng.rangei(1, scale);
+                                if (
+                                    nx < 0 ||
+                                    nx >= heightMap.segments ||
+                                    ny < 0 ||
+                                    ny >= heightMap.segments
+                                ) {
+                                    continue;
+                                }
+                                const ni = ny * heightMap.segments + nx;
+
+                                const sw = waterArray[si];
+                                const nw = waterArray[ni];
+                                const sh = heightArray[si];
+                                const nh = heightArray[ni];
+
+                                if (sh < nh || sw === 0 || nw === 255) {
+                                    continue;
+                                }
+
+                                const base = Math.floor(sw / 2);
+                                const delta = core.clamp(base, 1, 255 - nw);
+                                waterArray[si] -= delta;
+                                waterArray[ni] += delta;
+                                heightMap.updateSegment(sx, sy);
+                                heightMap.updateSegment(nx, ny);
+                            }
+                        }
+                    }
+                },
+            });
 
             // Add some trees to give a sense of scale
             for (let clusters = 0; clusters < 6; clusters++) {
@@ -84,7 +182,7 @@ function EngineView() {
                 yield 10;
             }
 
-            if (false) {
+            if (true) {
                 engine.actors.push(new TerrainMorphHeight({ heightMap }));
                 engine.actors.push(new TerrainMorphAverage({ heightMap }));
             }
@@ -92,6 +190,29 @@ function EngineView() {
     });
 
     return <EngineFrame engine={engine} recorder="three" />;
+}
+
+function makeWaterMap(rng) {
+    const heightMap = new HeightMap({
+        offset: [-256 / 2, -256 / 2, 0],
+        scale: 256,
+        segments: 256,
+        opacity: 0.25,
+        layers: {},
+        heightFunc: (sx, sy) => {
+            return 4 * 0.01;
+        },
+        flags: {
+            receiveShadow: false,
+        },
+    });
+
+    heightMap.colorFunc = function (sx, sy, _wz, si) {
+        return [0, 0, 1];
+    };
+    heightMap.updateMesh();
+
+    return heightMap;
 }
 
 function makeHeightMap(rng) {
@@ -162,72 +283,13 @@ function makeHeightMap(rng) {
                             walkCost: 10,
                             colorFunc: grassColorFunc,
                         },
-                        GRASS_UNWALKABLE: {
-                            walkable: false,
-                            walkCost: 10,
-                            colorFunc: grassColorFunc,
-                        },
-                        ROAD: {
-                            walkable: true,
-                            walkCost: 2,
-                            colorFunc: () => [1, 0, 0],
-                        },
-                        FOUNDATION: {
-                            walkable: false,
-                            buildable: false,
-                            walkCost: 1000,
-                            colorFunc: (sx, sy) => [0.5, 0.5, 0.5],
-                        },
-
-                        BOUNDARY: {
-                            walkable: true,
-                            colorFunc: (sx, sy) => mix3([1, 1, 0], grassColorFunc(sx, sy), 0.85),
-                        },
-
-                        GRASS_UNTILLABLE: {
-                            walkable: true,
-                            walkCost: 20,
-                            tillable: false,
-                            colorFunc: grassColorFunc,
-                        },
-                        DIRT: {
-                            walkable: true,
-                            buildable: false,
-                            walkCost: 2,
-                            snowFactor: 0.25,
-                            colorFunc: dirtColorFunc,
-                        },
-                        DIRT_CENTER: {
-                            walkable: true,
-                            buildable: false,
-                            walkCost: 0.5,
-                            snowFactor: 0.1,
-                            colorFunc: (sx, sy) => {
-                                const base = dirtColorFunc(sx, sy);
-                                base[0] *= 0.95;
-                                base[1] *= 0.95;
-                                base[2] *= 0.95;
-                                return base;
-                            },
-                        },
-                        DIRT_WALKABLE: {
-                            walkable: true,
-                            walkCost: 4,
-                            colorFunc: (sx, sy) => {
-                                const base = grassColorFunc(sx, sy);
-                                const a = sy % 2 ? 0.75 : 1.0;
-                                base[0] *= 1.25 * a;
-                                base[1] *= 0.5 * a;
-                                base[2] *= 0.5 * a;
-                                return base;
-                            },
-                        },
                     },
                 },
             },
             object: { type: Int16Array },
             malleability: { type: Float32Array, defaultValue: 1.0 },
             snow: { type: Float32Array },
+            water: { type: Uint8Array, defaultValue: 100 },
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -238,14 +300,13 @@ function makeHeightMap(rng) {
     });
 
     const snowArray = heightMap.layers.snow.array;
+    const waterArray = heightMap.layers.water.array;
     heightMap.colorFunc = function (sx, sy, _wz, si) {
         const tile = heightMap.layers.tile.lookup(sx, sy);
         const rgb = tile.colorFunc(sx, sy);
-        const s = core.clamp(snowArray[si] * tile.snowFactor, 0.0, 1.0);
-        rgb[0] = rgb[0] * (1 - s) + s * 1.0;
-        rgb[1] = rgb[1] * (1 - s) + s * 1.0;
-        rgb[2] = rgb[2] * (1 - s) + s * 1.0;
-        return rgb;
+        const water = waterArray[si] / 255;
+        const s = 0.35 * core.clamp(water, 0.0, 1.0);
+        return mix3(rgb, [0, 0, 1], s);
     };
 
     heightMap.updateMesh();
