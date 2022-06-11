@@ -16,7 +16,8 @@ export class HeightMapPlane {
         scale = 1.0,
         segments = 16,
         heightFunc = null,
-        colorFunc = (sx, sy, si, worldHeight) => [1, 0, 0.5],
+        color,
+        colorFunc = null,
         opacity = 1.0,
         layers = {},
         isGround = true,
@@ -26,6 +27,7 @@ export class HeightMapPlane {
         this._segments = segments;
         this._opacity = opacity;
         this._layers = {};
+        this._color = color;
         this._colorFunc = colorFunc;
         this._heightFunc = heightFunc;
         this._mesh = null;
@@ -43,8 +45,8 @@ export class HeightMapPlane {
                 const i = y * segments + x;
 
                 // Heights are "pre-scaled"
-                this._layers.height.array[i] =
-                    this._heightFunc(scale * u, scale * v, u, v) * this._scale;
+                const h = this._heightFunc(scale * u, scale * v, u, v);
+                this._layers.height.array[i] = h * this._scale;
             }
         }
 
@@ -221,44 +223,68 @@ export class HeightMapPlane {
             // TODO: segs + 1?
             position: new Float32Array(3 * stride * stride),
             normal: new Float32Array(3 * stride * stride),
-            color: new Float32Array(3 * stride * stride),
+            color: this._colorFunc ? new Float32Array(3 * stride * stride) : undefined,
             index: new Uint32Array(6 * segs * segs),
         };
 
         let geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(arrays.position, 3));
         geometry.setAttribute('normal', new THREE.Float32BufferAttribute(arrays.normal, 3));
-        geometry.setAttribute('color', new THREE.Float32BufferAttribute(arrays.color, 3));
+        if (arrays.color) {
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(arrays.color, 3));
+        }
         geometry.setIndex(new THREE.BufferAttribute(arrays.index, 1));
 
-        geometry.computeBoundingBox();
+        if (true) {
+            // Add normals so this can be a phong material and lights can be used
+            //
+            const materialOptions = {
+                color: this._color ?? 0xffffff,
+                shininess: 10,
+                //side: THREE.DoubleSide,
+            };
+            if (this._opacity < 1.0) {
+                materialOptions.opacity = this._opacity;
+                materialOptions.transparent = true;
+            }
+            let material = new THREE.MeshPhongMaterial(materialOptions);
+            material.vertexColors = !!this._colorFunc;
+            material.needsUpdate = true;
 
-        // Add normals so this can be a phong material and lights can be used
-        //
-        const materialOptions = {
-            color: 0xffffff,
-            shininess: 10,
-            //side: THREE.DoubleSide,
-        };
-        if (this._opacity < 1.0) {
-            materialOptions.opacity = this._opacity;
-            materialOptions.transparent = true;
-        }
-        let material = new THREE.MeshPhongMaterial(materialOptions);
-        material.vertexColors = true;
-        material.needsUpdate = true;
+            this._mesh = new THREE.Mesh(geometry, material);
+            this._mesh.position.set(...this._offset);
+            this._mesh.castShadow = false;
+            this._mesh.receiveShadow = true;
 
-        this._mesh = new THREE.Mesh(geometry, material);
-        this._mesh.position.set(...this._offset);
-        this._mesh.castShadow = false;
-        this._mesh.receiveShadow = true;
+            for (let sy = 0; sy < segs; sy++) {
+                for (let sx = 0; sx < segs; sx++) {
+                    this._recomputeVertexAttrs(sx, sy, true);
+                }
+            }
 
-        for (let sy = 0; sy < segs; sy++) {
-            for (let sx = 0; sx < segs; sx++) {
-                this._recomputeVertexAttrs(sx, sy, true);
+            geometry.computeBoundingBox();
+        } else {
+            const materialOptions = {
+                color: 0xffffff,
+                shininess: 10,
+                //side: THREE.DoubleSide,
+                size: 20,
+            };
+            if (this._opacity < 1.0) {
+                materialOptions.opacity = this._opacity * 0.1;
+                materialOptions.transparent = true;
+            }
+            const material = new THREE.PointsMaterial(materialOptions);
+
+            this._mesh = new THREE.Points(geometry, material);
+            this._mesh.position.set(...this._offset);
+
+            for (let sy = 0; sy < segs; sy++) {
+                for (let sx = 0; sx < segs; sx++) {
+                    this._recomputeVertexAttrs(sx, sy, true);
+                }
             }
         }
-        geometry.computeBoundingBox();
 
         return this._mesh;
     }
@@ -278,8 +304,8 @@ export class HeightMapPlane {
             return;
         }
 
-        const i = sy * stride + sx;
-        console.assert(i >= 0 && i < stride * stride, 'Index out of range');
+        const segIndex = sy * segments + sx;
+        const strideIndex = sy * stride + sx;
 
         const heights = this._layers.height.array;
         const indexAttr = this._mesh.geometry.index;
@@ -289,7 +315,7 @@ export class HeightMapPlane {
         const normalAttr = this._mesh.geometry.attributes.normal;
         const normalArr = normalAttr.array;
         const colorAttr = this._mesh.geometry.attributes.color;
-        const colorArr = colorAttr.array;
+        const colorArr = colorAttr?.array;
 
         function copy3(dst, index, src) {
             if (!(index + 2 < dst.length)) {
@@ -324,43 +350,41 @@ export class HeightMapPlane {
             copy3(normalArr, vi + row + 0, normal);
             copy3(normalArr, vi + row + 3, normal);
 
-            const c = [
-                color[0] * shade, //
-                color[1] * shade,
-                color[2] * shade,
-            ];
-            copy3(colorArr, vi + 0, c);
-            copy3(colorArr, vi + 3, c);
-            copy3(colorArr, vi + row + 0, c);
-            copy3(colorArr, vi + row + 3, c);
+            if (colorArr) {
+                const c = [
+                    color[0] * shade, //
+                    color[1] * shade,
+                    color[2] * shade,
+                ];
+                copy3(colorArr, vi + 0, c);
+                copy3(colorArr, vi + 3, c);
+                copy3(colorArr, vi + row + 0, c);
+                copy3(colorArr, vi + row + 3, c);
+            }
 
             // This should be a noop for the update case
             if (init) {
                 indexArr[fi + 0] = vi / 3 + 0;
                 indexArr[fi + 1] = vi / 3 + 1;
-                indexArr[fi + 2] = vi / 3 + 1 + stride;
+                indexArr[fi + 2] = vi / 3 + 1 + row;
 
-                indexArr[fi + 3] = vi / 3 + 0;
-                indexArr[fi + 4] = vi / 3 + 1;
-                indexArr[fi + 5] = vi / 3 + 1 + stride;
-
-                // indexArr[fi + 3] = vi / 3 + 1 + stride;
-                // indexArr[fi + 4] = vi / 3 + stride;
-                // indexArr[fi + 5] = vi / 3 + 0;
+                indexArr[fi + 3] = vi / 3 + 1 + stride;
+                indexArr[fi + 4] = vi / 3 + stride;
+                indexArr[fi + 5] = vi / 3 + 0;
             }
         }
 
-        const color = this._colorFunc(sx, sy, heights[i], i);
+        const color = this._colorFunc?.(sx, sy, heights[segIndex], segIndex);
         const scale0 = this._scale / this._segments;
 
         const x0 = sx * scale0;
         const x1 = (sx + 1) * scale0;
         const y0 = sy * scale0;
         const y1 = (sy + 1) * scale0;
-        let z1 = heights[i] + 5;
+        let z1 = heights[segIndex];
 
-        let vi = 3 * i;
-        let fi = 2 * i;
+        let vi = 3 * strideIndex;
+        let fi = 6 * segIndex;
         quad(
             vi,
             fi,
@@ -374,7 +398,9 @@ export class HeightMapPlane {
         );
 
         positionAttr.needsUpdate = true;
-        colorAttr.needsUpdate = true;
+        if (colorAttr) {
+            colorAttr.needsUpdate = true;
+        }
         if (init) {
             normalArr.needsUpdate = true;
             indexAttr.needsUpdate = true;
@@ -388,8 +414,8 @@ export class HeightMapPlane {
      * duplicated code.
      */
     _recomputeVertexHeight(sx, sy) {
-        return this._recomputeVertexAttrs(sx, sy);
         const segments = this._segments;
+        const stride = segments + 1;
         sx = Math.floor(sx);
         sy = Math.floor(sy);
 
@@ -404,21 +430,21 @@ export class HeightMapPlane {
         const positionAttr = this._mesh.geometry.attributes.position;
         const positionArr = positionAttr.array;
 
-        const i = sy * segments + sx;
+        const segIndex = sy * segments + sx;
+        const strideIndex = sy * stride + sx;
 
-        const z1 = heights[i];
-        const vi = 4 * 3 * i;
+        const z1 = heights[segIndex];
+        const vi = 3 * strideIndex;
 
-        const stride = 3 * segments;
         positionArr[vi + 2] = z1;
-        if (sx === segments - 1) {
+        if (sx + 1 == segments) {
             positionArr[vi + 3 + 2] = z1;
-            if (sy === segments - 1) {
-                positionArr[vi + stride + 2] = z1;
-                positionArr[vi + stride + 3 + 2] = z1;
-            }
-        } else if (sy === segments - 1) {
-            positionArr[vi + stride + 2] = z1;
+        }
+        if (sy + 1 == segments) {
+            positionArr[vi + 3 * stride + 0 + 2] = z1;
+        }
+        if (sx + 1 == segments || sy + 1 == segments) {
+            positionArr[vi + 3 * stride + 3 + 2] = z1;
         }
 
         positionAttr.needsUpdate = true;

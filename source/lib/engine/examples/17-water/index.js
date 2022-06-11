@@ -60,7 +60,7 @@ function EngineView() {
         const heightMap = makeHeightMap(rng);
         Object.assign(TILE, heightMap.layers.tile.table.keys());
 
-        const waterMap = makeWaterMap(rng, 0.12);
+        const waterMap = makeWaterMap(rng, 0.35);
 
         engine.sequence(function* () {
             engine.actors.push(
@@ -72,7 +72,7 @@ function EngineView() {
             );
 
             engine.sequence(function* () {
-                for (let j = 0; j < 200; j++) {
+                for (let j = 0; j < 800; j++) {
                     for (let i = 0; i < 100; i++) {
                         const x = rng.rangei(0, heightMap.segments);
                         const y = rng.rangei(0, heightMap.segments);
@@ -81,12 +81,23 @@ function EngineView() {
                         heightMap.layers.water.array[i] += 4;
                         heightMap.updateSegment(x, y);
                     }
-                    yield;
+                    yield 10;
                 }
             });
 
             engine.actors.push(new WaterMeshUpdater(heightMap, waterMap));
             engine.actors.push(new WaterLeverUpdate2(heightMap));
+            for (let i = 0; i < 2; i++)
+                engine.actors.push(
+                    new RoadActor({
+                        heightMap,
+                        tiles: {
+                            FOUNDATION: TILE.FOUNDATION,
+                            ROAD: TILE.ROAD,
+                            ROAD_CENTER: TILE.ROAD_CENTER,
+                        },
+                    })
+                );
 
             // Add some trees to give a sense of scale
             for (let clusters = 0; clusters < 6; clusters++) {
@@ -109,7 +120,8 @@ function EngineView() {
             }
 
             if (true) {
-                engine.actors.push(new TerrainMorphHeight({ heightMap, heightScale: 1024 }));
+                engine.actors.push(new TerrainMorphHeight({ heightMap, heightScale: 256 }));
+                engine.actors.push(new TerrainMorphHeight({ heightMap, heightScale: 512 }));
                 engine.actors.push(new TerrainMorphAverage({ heightMap }));
             }
         });
@@ -242,6 +254,9 @@ class WaterMeshUpdater extends Actor {
             const wh = waterArray[si] - 0.5;
             const target = wh > 0 ? heightArray[si] + wh : -1001;
             waterHeightArray[si] = target;
+            if (!Number.isFinite(waterHeightArray[index])) {
+                debugger;
+            }
         });
 
         cursor2.border(cx, cy, D, (sx, sy, { index }) => {
@@ -257,6 +272,9 @@ class WaterMeshUpdater extends Actor {
             }
             const avg = stats.average();
             waterHeightArray[index] = waterHeightArray[index] * 0.15 + avg * 0.85;
+            if (!Number.isFinite(waterHeightArray[index])) {
+                debugger;
+            }
         });
         cursor2.border(cx, cy, D + 1, (x, y) => {
             waterMap.updateSegmentHeight(x, y);
@@ -278,11 +296,8 @@ function makeWaterMap(rng, opacity = 0.45) {
             receiveShadow: false,
         },
         isGround: false,
+        color: new THREE.Color('rgb(15, 116, 217)'),
     });
-
-    heightMap.colorFunc = function (sx, sy, _wz, si) {
-        return [0, 0, 1];
-    };
     heightMap.updateMesh();
 
     return heightMap;
@@ -356,6 +371,16 @@ function makeHeightMap(rng) {
                             walkCost: 10,
                             colorFunc: grassColorFunc,
                         },
+                        ROAD: {
+                            walkable: true,
+                            walkCost: 2,
+                            colorFunc: grassColorFunc,
+                        },
+                        ROAD_CENTER: {
+                            walkable: true,
+                            walkCost: 0.5,
+                            colorFunc: grassColorFunc,
+                        },
                         FOUNDATION: {
                             walkable: false,
                             buildable: false,
@@ -388,7 +413,7 @@ function makeHeightMap(rng) {
             object: { type: Int16Array },
             malleability: { type: Float32Array, defaultValue: 1.0 },
             snow: { type: Float32Array },
-            water: { type: Float32Array, defaultValue: 3 },
+            water: { type: Float32Array, defaultValue: 0.5 },
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -406,7 +431,7 @@ function makeHeightMap(rng) {
         if (water < 0) {
             return [1, 0, 0];
         }
-        const F = 0.0055;
+        const F = 0.45;
         const s = F * core.clamp(water, 0.0, 1.0);
         return mix3(rgb, [0.02, 0.19, 1.0], s);
     };
