@@ -4,6 +4,7 @@ import * as core from '@raiment/core';
 /**
  * 🚧 TODO
  * - Adjacent quads should *share* vertices
+ * - Consider optimizing out color attribute?
  */
 export class HeightMapPlane {
     // ------------------------------------------------------------------------
@@ -215,10 +216,12 @@ export class HeightMapPlane {
 
     _createMesh({ engine }) {
         const segs = this._segments;
+        const stride = segs + 1;
         const arrays = {
-            position: new Float32Array(4 * 3 * segs * segs),
-            normal: new Float32Array(4 * 3 * segs * segs),
-            color: new Float32Array(4 * 3 * segs * segs),
+            // TODO: segs + 1?
+            position: new Float32Array(3 * stride * stride),
+            normal: new Float32Array(3 * stride * stride),
+            color: new Float32Array(3 * stride * stride),
             index: new Uint32Array(6 * segs * segs),
         };
 
@@ -242,6 +245,8 @@ export class HeightMapPlane {
             materialOptions.transparent = true;
         }
         let material = new THREE.MeshPhongMaterial(materialOptions);
+        material.vertexColors = true;
+        material.needsUpdate = true;
 
         this._mesh = new THREE.Mesh(geometry, material);
         this._mesh.position.set(...this._offset);
@@ -254,8 +259,6 @@ export class HeightMapPlane {
             }
         }
         geometry.computeBoundingBox();
-        material.vertexColors = true;
-        material.needsUpdate = true;
 
         return this._mesh;
     }
@@ -264,6 +267,7 @@ export class HeightMapPlane {
      */
     _recomputeVertexAttrs(sx, sy, init = false) {
         const segments = this._segments;
+        const stride = segments + 1;
         sx = Math.floor(sx);
         sy = Math.floor(sy);
 
@@ -274,8 +278,8 @@ export class HeightMapPlane {
             return;
         }
 
-        const i = sy * segments + sx;
-        console.assert(i >= 0 && i < segments * segments, 'Index out of range');
+        const i = sy * stride + sx;
+        console.assert(i >= 0 && i < stride * stride, 'Index out of range');
 
         const heights = this._layers.height.array;
         const indexAttr = this._mesh.geometry.index;
@@ -287,16 +291,17 @@ export class HeightMapPlane {
         const colorAttr = this._mesh.geometry.attributes.color;
         const colorArr = colorAttr.array;
 
-        core.assert(indexArr.length === 6 * segments * segments);
-        core.assert(positionArr.length === 4 * 3 * segments * segments);
-        core.assert(colorArr.length === 4 * 3 * segments * segments);
-
         function copy3(dst, index, src) {
+            if (!(index + 2 < dst.length)) {
+                const n = index + 2;
+                throw new Error(`${n} >= ${dst.length}`);
+            }
             dst[index + 0] = src[0];
             dst[index + 1] = src[1];
             dst[index + 2] = src[2];
         }
 
+        const row = 3 * stride;
         function quad(vi, fi, p0, p1, p2, p3, normal, color, shade) {
             positionArr[vi + 0] = p0[0];
             positionArr[vi + 1] = p0[1];
@@ -306,18 +311,18 @@ export class HeightMapPlane {
             positionArr[vi + 4] = p1[1];
             positionArr[vi + 5] = p1[2];
 
-            positionArr[vi + 6] = p2[0];
-            positionArr[vi + 7] = p2[1];
-            positionArr[vi + 8] = p2[2];
+            positionArr[vi + row + 0] = p2[0];
+            positionArr[vi + row + 1] = p2[1];
+            positionArr[vi + row + 2] = p2[2];
 
-            positionArr[vi + 9] = p3[0];
-            positionArr[vi + 10] = p3[1];
-            positionArr[vi + 11] = p3[2];
+            positionArr[vi + row + 3] = p3[0];
+            positionArr[vi + row + 4] = p3[1];
+            positionArr[vi + row + 5] = p3[2];
 
             copy3(normalArr, vi + 0, normal);
             copy3(normalArr, vi + 3, normal);
-            copy3(normalArr, vi + 6, normal);
-            copy3(normalArr, vi + 9, normal);
+            copy3(normalArr, vi + row + 0, normal);
+            copy3(normalArr, vi + row + 3, normal);
 
             const c = [
                 color[0] * shade, //
@@ -326,18 +331,22 @@ export class HeightMapPlane {
             ];
             copy3(colorArr, vi + 0, c);
             copy3(colorArr, vi + 3, c);
-            copy3(colorArr, vi + 6, c);
-            copy3(colorArr, vi + 9, c);
+            copy3(colorArr, vi + row + 0, c);
+            copy3(colorArr, vi + row + 3, c);
 
             // This should be a noop for the update case
             if (init) {
                 indexArr[fi + 0] = vi / 3 + 0;
                 indexArr[fi + 1] = vi / 3 + 1;
-                indexArr[fi + 2] = vi / 3 + 2;
+                indexArr[fi + 2] = vi / 3 + 1 + stride;
 
-                indexArr[fi + 3] = vi / 3 + 2;
-                indexArr[fi + 4] = vi / 3 + 3;
-                indexArr[fi + 5] = vi / 3 + 0;
+                indexArr[fi + 3] = vi / 3 + 0;
+                indexArr[fi + 4] = vi / 3 + 1;
+                indexArr[fi + 5] = vi / 3 + 1 + stride;
+
+                // indexArr[fi + 3] = vi / 3 + 1 + stride;
+                // indexArr[fi + 4] = vi / 3 + stride;
+                // indexArr[fi + 5] = vi / 3 + 0;
             }
         }
 
@@ -348,16 +357,10 @@ export class HeightMapPlane {
         const x1 = (sx + 1) * scale0;
         const y0 = sy * scale0;
         const y1 = (sy + 1) * scale0;
-        let z1 = heights[i];
+        let z1 = heights[i] + 5;
 
-        //
-        // 5 Faces with 4 vertices of 3 components for each height tile
-        // Stride per quad is 12
-        // 5 Faces with 6 indices for each height tile
-        //
-        let vi = 4 * 3 * i;
-        let fi = 6 * i;
-
+        let vi = 3 * i;
+        let fi = 2 * i;
         quad(
             vi,
             fi,
@@ -385,6 +388,7 @@ export class HeightMapPlane {
      * duplicated code.
      */
     _recomputeVertexHeight(sx, sy) {
+        return this._recomputeVertexAttrs(sx, sy);
         const segments = this._segments;
         sx = Math.floor(sx);
         sy = Math.floor(sy);
@@ -396,42 +400,26 @@ export class HeightMapPlane {
             return;
         }
 
-        const i = sy * segments + sx;
-        console.assert(i >= 0 && i < segments * segments, 'Index out of range');
-
         const heights = this._layers.height.array;
         const positionAttr = this._mesh.geometry.attributes.position;
         const positionArr = positionAttr.array;
 
-        core.assert(positionArr.length === 5 * 4 * 3 * segments * segments);
+        const i = sy * segments + sx;
 
-        function sort2(a, b) {
-            return a < b ? [a, b] : [b, a];
+        const z1 = heights[i];
+        const vi = 4 * 3 * i;
+
+        const stride = 3 * segments;
+        positionArr[vi + 2] = z1;
+        if (sx === segments - 1) {
+            positionArr[vi + 3 + 2] = z1;
+            if (sy === segments - 1) {
+                positionArr[vi + stride + 2] = z1;
+                positionArr[vi + stride + 3 + 2] = z1;
+            }
+        } else if (sy === segments - 1) {
+            positionArr[vi + stride + 2] = z1;
         }
-
-        function quad(vi, p0, p1, p2, p3) {
-            positionArr[vi + 2] = p0;
-            positionArr[vi + 5] = p1;
-            positionArr[vi + 8] = p2;
-            positionArr[vi + 11] = p3;
-        }
-
-        let z1 = heights[i];
-
-        //
-        // 5 Faces with 4 vertices of 3 components for each height tile
-        // Stride per quad is 12
-        // 5 Faces with 6 indices for each height tile
-        //
-        let vi = 4 * 3 * i;
-
-        quad(
-            vi,
-            z1, //
-            z1, //
-            z1, //
-            z1 //
-        );
 
         positionAttr.needsUpdate = true;
     }

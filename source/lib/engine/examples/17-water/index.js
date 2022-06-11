@@ -64,7 +64,7 @@ function EngineView() {
 
         engine.sequence(function* () {
             engine.actors.push(
-                new OrbitCamera({ radius: 96, periodMS: 20000, offsetZ: 64 }), //
+                new OrbitCamera({ radius: 64, periodMS: 20000, offsetZ: 48 }), //
                 new DayNightLighting({ speed: 1, nightSpeed: 16 }),
                 heightMap,
                 waterMap,
@@ -259,7 +259,7 @@ class WaterMeshUpdater extends Actor {
             waterHeightArray[index] = waterHeightArray[index] * 0.15 + avg * 0.85;
         });
         cursor2.border(cx, cy, D + 1, (x, y) => {
-            waterMap.updateSegment(x, y);
+            waterMap.updateSegmentHeight(x, y);
         });
     }
 }
@@ -388,7 +388,7 @@ function makeHeightMap(rng) {
             object: { type: Int16Array },
             malleability: { type: Float32Array, defaultValue: 1.0 },
             snow: { type: Float32Array },
-            water: { type: Float32Array, defaultValue: 0 },
+            water: { type: Float32Array, defaultValue: 3 },
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -406,7 +406,7 @@ function makeHeightMap(rng) {
         if (water < 0) {
             return [1, 0, 0];
         }
-        const F = 0.55;
+        const F = 0.0055;
         const s = F * core.clamp(water, 0.0, 1.0);
         return mix3(rgb, [0.02, 0.19, 1.0], s);
     };
