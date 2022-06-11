@@ -8,6 +8,7 @@ export * from './actors/day_night_lighting';
 export * from './actors/grid';
 export * from './actors/ground_plane';
 export * from './actors/height_map';
+export * from './actors/height_map_plane';
 export * from './actors/orbit_camera';
 export * from './actors/rain';
 export * from './actors/road_actor';

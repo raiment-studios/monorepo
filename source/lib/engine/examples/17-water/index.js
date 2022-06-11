@@ -7,6 +7,7 @@ import {
     EngineFrame,
     OrbitCamera,
     HeightMap,
+    HeightMapPlane,
     DayNightLighting,
     TerrainMorphHeight,
     TerrainMorphAverage,
@@ -31,16 +32,19 @@ export default function () {
                 <code>{`
 ## Devlog notes
 
-How is water going to work?
+Things to do:
 
-Add a moisture layer to the heightmap.
-Run a randomized process that moves moisture to lower elevation neighbors.
-Rain adds more moisture up to a max.
-Sun dries it up to a min.
-Dirt replaces grass at some threshold.
-Water "layer" for above some threshold.
+- Rain adds more moisture up to a max
+- Sun dries it up to a min
+- Grass becomes dirt when dry
+- Grass becomes dirt when fully submerged?
 
-Will the simulation process be too slow?
+Performance:
+
+- Introduce HeightMapPlane that does not have sides
+- Some sort of importance sampling based on where the terrain changed
+        - MxM map that stories aggregate deltas in rolling buffer?
+
 `}</code>
             </pre>
         </ReadingFrame>
@@ -68,49 +72,13 @@ function EngineView() {
             );
 
             engine.sequence(function* () {
-                for (let i = 0; i < 3; i++) {
-                    const actor = new VOXActor({
-                        url: assetURL[
-                            rng.select([
-                                'obj_house3a.vox', //
-                                'obj_house5c.vox', //
-                                'obj_house5c.vox', //
-                            ])
-                        ],
-                        scale: 2,
-                        flags: {
-                            receiveShadow: true,
-                        },
-                        rotation: (Math.PI / 2) * rng.rangei(0, 4),
-                    });
-                    yield placeActor({ engine, actor, heightMap, foundationTile: TILE.FOUNDATION });
-                    yield 50;
-                }
-            });
-
-            for (let i = 0; i < 3; i++) {
-                engine.actors.push(
-                    new RoadActor({
-                        heightMap,
-                        tiles: {
-                            FOUNDATION: TILE.FOUNDATION,
-                            ROAD_CENTER: TILE.DIRT_CENTER,
-                            ROAD: TILE.DIRT,
-                        },
-                    })
-                );
-            }
-            yield 10;
-
-            engine.sequence(function* () {
-                yield 120;
-                for (let i = 0; i < 1000; i++) {
-                    for (let j = 0; j < 1000; j++) {
+                for (let j = 0; j < 200; j++) {
+                    for (let i = 0; i < 100; i++) {
                         const x = rng.rangei(0, heightMap.segments);
                         const y = rng.rangei(0, heightMap.segments);
                         const i = y * heightMap.segments + x;
 
-                        heightMap.layers.water.array[i] += 0.75;
+                        heightMap.layers.water.array[i] += 4;
                         heightMap.updateSegment(x, y);
                     }
                     yield;
@@ -297,7 +265,7 @@ class WaterMeshUpdater extends Actor {
 }
 
 function makeWaterMap(rng, opacity = 0.45) {
-    const heightMap = new HeightMap({
+    const heightMap = new HeightMapPlane({
         offset: [-256 / 2, -256 / 2, 0],
         scale: 256,
         segments: 256,
