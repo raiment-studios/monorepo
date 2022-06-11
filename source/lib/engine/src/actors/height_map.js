@@ -24,6 +24,7 @@ export class HeightMap {
         colorFunc = (sx, sy, si, worldHeight) => [1, 0, 0.5],
         opacity = 1.0,
         layers = {},
+        isGround = true,
     } = {}) {
         this._offset = offset;
         this._scale = scale;
@@ -50,6 +51,12 @@ export class HeightMap {
                 this._layers.height.array[i] =
                     this._heightFunc(scale * u, scale * v, u, v) * this._scale;
             }
+        }
+
+        if (isGround) {
+            this.worldGroundHeight = (wx, wy) => {
+                return this.getLayerWC('height', wx, wy);
+            };
         }
     }
 
@@ -83,10 +90,6 @@ export class HeightMap {
     // ------------------------------------------------------------------------
     // @group Engine methods
     // ------------------------------------------------------------------------
-
-    worldGroundHeight(wx, wy) {
-        return this.getLayerWC('height', wx, wy);
-    }
 
     initMesh(ctx) {
         return this._createMesh(ctx);

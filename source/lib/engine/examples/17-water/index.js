@@ -1,9 +1,3 @@
-/*
-🚧 TODO
-- Click to select building
-- Pop-up "story" dialog when building selected after moving close to it
-*/
-
 import React from 'react';
 import { ReadingFrame } from '../../../react-ex';
 import * as core from '../../../core';
@@ -18,7 +12,13 @@ import {
     TerrainMorphAverage,
     WeatherSystem,
     TreeActor,
+    Actor,
+    RoadActor,
+    VOXActor,
 } from '../..';
+
+import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
+const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
 
 export default function () {
     return (
@@ -47,115 +47,78 @@ Will the simulation process be too slow?
     );
 }
 
+const TILE = {};
+
 function EngineView() {
     const engine = useEngine(() => {
         const rng = core.makeRNG();
 
         const heightMap = makeHeightMap(rng);
-        const waterMap = makeWaterMap(rng, 0.15);
+        Object.assign(TILE, heightMap.layers.tile.table.keys());
+
+        const waterMap = makeWaterMap(rng, 0.12);
 
         engine.sequence(function* () {
             engine.actors.push(
-                new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 48 }), //
+                new OrbitCamera({ radius: 96, periodMS: 20000, offsetZ: 64 }), //
                 new DayNightLighting({ speed: 1, nightSpeed: 16 }),
                 heightMap,
                 waterMap,
                 new WeatherSystem({ startState: 'rainLight', heightMap })
             );
 
-            engine.actors.push({
-                get updateInterval() {
-                    return 0;
-                },
-                update() {
-                    const heightArray = heightMap.layers.height.array;
-                    const waterArray = heightMap.layers.water.array;
-                    const waterHeightArray = waterMap.layers.height.array;
-                    const cursor2 = new core.Cursor2D(waterMap.segments, waterMap.segments);
-
-                    const cx = rng.rangei(0, heightMap.segments);
-                    const cy = rng.rangei(0, heightMap.segments);
-
-                    const D = 42;
-                    cursor2.border(cx, cy, D, (sx, sy, { distance }) => {
-                        const si = sy * heightMap.segments + sx;
-
-                        //seaArray[si] = (1.2 * heightArray[si]) / 256;
-                        const current = waterHeightArray[si];
-                        const heightDelta = core.clamp(waterArray[si] - 30, 0, 255);
-                        if (!(heightDelta > 0)) {
-                            if (current !== 0) {
-                                waterHeightArray[si] = 0;
-                            }
-                        } else {
-                            const targetHeight =
-                                ((heightDelta - 1) / 64) * 0.0256 + heightArray[si];
-
-                            const a0 = 1; //core.clamp(1 - distance / D, 0.5, 1);
-                            const a1 = 1 - a0;
-                            let v2 = targetHeight * a0 + a1 * current;
-                            waterHeightArray[si] = v2;
-                        }
+            engine.sequence(function* () {
+                for (let i = 0; i < 3; i++) {
+                    const actor = new VOXActor({
+                        url: assetURL[
+                            rng.select([
+                                'obj_house3a.vox', //
+                                'obj_house5c.vox', //
+                                'obj_house5c.vox', //
+                            ])
+                        ],
+                        scale: 2,
+                        flags: {
+                            receiveShadow: true,
+                        },
+                        rotation: (Math.PI / 2) * rng.rangei(0, 4),
                     });
-                    cursor2.border(cx, cy, D + 1, (x, y) => {
-                        waterMap.updateSegment(x, y);
-                    });
-                },
+                    yield placeActor({ engine, actor, heightMap, foundationTile: TILE.FOUNDATION });
+                    yield 50;
+                }
             });
 
-            const heightArray = heightMap.layers.height.array;
-            const waterArray = heightMap.layers.water.array;
+            for (let i = 0; i < 3; i++) {
+                engine.actors.push(
+                    new RoadActor({
+                        heightMap,
+                        tiles: {
+                            FOUNDATION: TILE.FOUNDATION,
+                            ROAD_CENTER: TILE.DIRT_CENTER,
+                            ROAD: TILE.DIRT,
+                        },
+                    })
+                );
+            }
+            yield 10;
 
-            const neighbors = [
-                [-1, 1],
-                [0, 1],
-                [1, 1], //
-                [-1, 0],
-                [1, 0], //
-                [-1, -1],
-                [0, -1],
-                [1, -1], //
-            ];
+            engine.sequence(function* () {
+                yield 120;
+                for (let i = 0; i < 1000; i++) {
+                    for (let j = 0; j < 1000; j++) {
+                        const x = rng.rangei(0, heightMap.segments);
+                        const y = rng.rangei(0, heightMap.segments);
+                        const i = y * heightMap.segments + x;
 
-            engine.actors.push({
-                update() {
-                    for (let i = 0; i < 10000; i++) {
-                        const sx = rng.rangei(0, heightMap.segments);
-                        const sy = rng.rangei(0, heightMap.segments);
-                        const si = sy * heightMap.segments + sx;
-
-                        for (let scale = 64; scale >= 1; scale /= 2) {
-                            const nx = sx + rng.sign() * rng.rangei(1, scale);
-                            const ny = sy + rng.sign() * rng.rangei(1, scale);
-                            if (
-                                nx < 0 ||
-                                nx >= heightMap.segments ||
-                                ny < 0 ||
-                                ny >= heightMap.segments
-                            ) {
-                                continue;
-                            }
-                            const ni = ny * heightMap.segments + nx;
-
-                            const sw = waterArray[si];
-                            const nw = waterArray[ni];
-                            const sh = heightArray[si];
-                            const nh = heightArray[ni];
-
-                            if (sh < nh || sw === 0 || nw === 255) {
-                                continue;
-                            }
-
-                            const base = Math.floor(sw / 2);
-                            const delta = core.clamp(base, 1, 255 - nw);
-                            waterArray[si] -= delta;
-                            waterArray[ni] += delta;
-                            heightMap.updateSegment(sx, sy);
-                            heightMap.updateSegment(nx, ny);
-                        }
+                        heightMap.layers.water.array[i] += 0.75;
+                        heightMap.updateSegment(x, y);
                     }
-                },
+                    yield;
+                }
             });
+
+            engine.actors.push(new WaterMeshUpdater(heightMap, waterMap));
+            engine.actors.push(new WaterLeverUpdate2(heightMap));
 
             // Add some trees to give a sense of scale
             for (let clusters = 0; clusters < 6; clusters++) {
@@ -178,13 +141,159 @@ function EngineView() {
             }
 
             if (true) {
-                engine.actors.push(new TerrainMorphHeight({ heightMap }));
+                engine.actors.push(new TerrainMorphHeight({ heightMap, heightScale: 1024 }));
                 engine.actors.push(new TerrainMorphAverage({ heightMap }));
             }
         });
     });
 
     return <EngineFrame engine={engine} recorder="three" />;
+}
+
+class WaterLeverUpdate2 extends Actor {
+    constructor(heightMap) {
+        super();
+        this._heightMap = heightMap;
+        this._cx = 0;
+        this._cy = 0;
+    }
+
+    update({ engine, frameNumber }) {
+        const rng = engine.rng;
+        const heightMap = this._heightMap;
+        const heightArray = heightMap.layers.height.array;
+        const waterArray = heightMap.layers.water.array;
+
+        for (let i = 0; i < 5000; i++) {
+            const sx = rng.rangei(0, heightMap.segments);
+            const sy = rng.rangei(0, heightMap.segments);
+            this._updateInner(rng, heightMap, heightArray, waterArray, sx, sy);
+        }
+
+        if (frameNumber % 5 == 3) {
+            const cursor2 = new core.Cursor2D(heightMap.segments, heightMap.segments);
+
+            const D = 16;
+            const cx = this._cx + D;
+            const cy = this._cy + D;
+            this._cx += 2 * D;
+            if (this._cx >= heightMap.segments) {
+                this._cx = 0;
+                this._cy += 2 * D;
+                if (this._cy >= heightMap.segments) {
+                    this._cy = 0;
+                }
+            }
+
+            cursor2.border(cx, cy, D, (sx, sy) => {
+                this._updateInner(rng, heightMap, heightArray, waterArray, sx, sy);
+            });
+        }
+    }
+
+    _updateInner(rng, heightMap, heightArray, waterArray, sx, sy) {
+        const outerIndex = sy * heightMap.segments + sx;
+        for (let scale = 16; scale >= 1; scale /= 2) {
+            const nx = sx + rng.sign() * rng.rangei(1, scale);
+            const ny = sy + rng.sign() * rng.rangei(1, scale);
+            if (nx < 0 || nx >= heightMap.segments || ny < 0 || ny >= heightMap.segments) {
+                continue;
+            }
+            let ni = ny * heightMap.segments + nx;
+            let si = outerIndex;
+
+            let sh = heightArray[si];
+            let nh = heightArray[ni];
+
+            let sw = waterArray[si];
+            let nw = waterArray[ni];
+            let st = sh + sw;
+            let nt = nh + nw;
+
+            if (st === nt) {
+                continue;
+            }
+            if (st < nt) {
+                [sh, nh] = [nh, sh];
+                [sw, nw] = [nw, sw];
+                [st, nt] = [nt, st];
+                [si, ni] = [ni, si];
+            }
+
+            const at = (st + nt) / 2.0;
+            const transfer = Math.min(st - at, sw);
+            if (transfer <= 0) {
+                continue;
+            }
+
+            waterArray[si] -= transfer;
+            waterArray[ni] += transfer;
+
+            // Should update nx,ny, but skip it with the assumption that it
+            // will be updated "soon" anyway.
+            //heightMap.updateSegmentHeight(nx, ny);
+        }
+        heightMap.updateSegment(sx, sy);
+    }
+}
+
+class WaterMeshUpdater extends Actor {
+    constructor(heightMap, waterMap) {
+        super();
+        this._heightMap = heightMap;
+        this._waterMap = waterMap;
+        this._cx = 0;
+        this._cy = 0;
+    }
+    get updateInterval() {
+        return 0;
+    }
+    update({ frameNumber }) {
+        const heightMap = this._heightMap;
+        const waterMap = this._waterMap;
+        const heightArray = heightMap.layers.height.array;
+        const waterArray = heightMap.layers.water.array;
+        const waterHeightArray = waterMap.layers.height.array;
+        const cursor2 = new core.Cursor2D(waterMap.segments, waterMap.segments);
+
+        const D = 48;
+        const cx = this._cx + D;
+        const cy = this._cy + D;
+        this._cx = Math.floor(this._cx + 1.8 * D);
+        if (this._cx >= heightMap.segments) {
+            this._cx = 0;
+            this._cy = Math.floor(this._cy + 1.8 * D);
+            if (this._cy >= heightMap.segments) {
+                this._cy = 0;
+            }
+        }
+
+        cursor2.border(cx, cy, D, (sx, sy, { index }) => {
+            const si = index;
+            const current = waterHeightArray[si];
+            const wh = waterArray[si] - 0.5;
+            const target = wh > 0 ? heightArray[si] + wh : -1001;
+            waterHeightArray[si] = target;
+        });
+
+        cursor2.border(cx, cy, D, (sx, sy, { index }) => {
+            let stats = new core.SimpleStats();
+            cursor2.border(sx, sy, 1, (sx, sy, { index }) => {
+                const wh = waterHeightArray[index];
+                if (wh > -1000) {
+                    stats.add(wh);
+                }
+            });
+            if (stats.count() < 1) {
+                return;
+            }
+            const avg = stats.average();
+            waterHeightArray[index] = waterHeightArray[index] * 0.15 + avg * 0.85;
+        });
+        cursor2.border(cx, cy, D + 1, (x, y) => {
+            waterMap.updateSegment(x, y);
+        });
+    }
 }
 
 function makeWaterMap(rng, opacity = 0.45) {
@@ -200,6 +309,7 @@ function makeWaterMap(rng, opacity = 0.45) {
         flags: {
             receiveShadow: false,
         },
+        isGround: false,
     });
 
     heightMap.colorFunc = function (sx, sy, _wz, si) {
@@ -278,13 +388,39 @@ function makeHeightMap(rng) {
                             walkCost: 10,
                             colorFunc: grassColorFunc,
                         },
+                        FOUNDATION: {
+                            walkable: false,
+                            buildable: false,
+                            walkCost: 1000,
+                            colorFunc: (sx, sy) => [0.5, 0.5, 0.5],
+                        },
+                        DIRT: {
+                            walkable: true,
+                            buildable: false,
+                            walkCost: 2,
+                            snowFactor: 0.25,
+                            colorFunc: dirtColorFunc,
+                        },
+                        DIRT_CENTER: {
+                            walkable: true,
+                            buildable: false,
+                            walkCost: 0.5,
+                            snowFactor: 0.1,
+                            colorFunc: (sx, sy) => {
+                                const base = dirtColorFunc(sx, sy);
+                                base[0] *= 0.95;
+                                base[1] *= 0.95;
+                                base[2] *= 0.95;
+                                return base;
+                            },
+                        },
                     },
                 },
             },
             object: { type: Int16Array },
             malleability: { type: Float32Array, defaultValue: 1.0 },
             snow: { type: Float32Array },
-            water: { type: Uint8Array, defaultValue: 100 },
+            water: { type: Float32Array, defaultValue: 0 },
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
@@ -294,15 +430,17 @@ function makeHeightMap(rng) {
         },
     });
 
-    const snowArray = heightMap.layers.snow.array;
     const waterArray = heightMap.layers.water.array;
     heightMap.colorFunc = function (sx, sy, _wz, si) {
         const tile = heightMap.layers.tile.lookup(sx, sy);
         const rgb = tile.colorFunc(sx, sy);
-        const water = waterArray[si] / 255;
-        const F = 0.5; // 0.5
+        const water = waterArray[si] / 4;
+        if (water < 0) {
+            return [1, 0, 0];
+        }
+        const F = 0.55;
         const s = F * core.clamp(water, 0.0, 1.0);
-        return mix3(rgb, [0.04, 0.23, 0.9], s);
+        return mix3(rgb, [0.02, 0.19, 1.0], s);
     };
 
     heightMap.updateMesh();

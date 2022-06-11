@@ -77,7 +77,7 @@ export class RoadActor extends Actor {
                         heightMap.layers.tile.set(x, y, tiles.ROAD_CENTER);
                     } else {
                         const tileP = heightMap.layers.tile.get(x, y);
-                        if (tileP !== TILE.DIRT_CENTER) {
+                        if (tileP !== tiles.ROAD_CENTER) {
                             heightMap.layers.tile.set(x, y, tiles.ROAD);
                         }
                     }
