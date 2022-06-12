@@ -153,9 +153,9 @@ function makeHeightMap(rng) {
         scale: 256,
         segments: 256,
         layers: {
-            tile: Int8Array,
-            color: Int8Array,
-            object: Int16Array,
+            tile: { type: Int8Array },
+            color: { type: Int8Array },
+            object: { type: Int16Array },
         },
         heightFunc: (sx, sy) => {
             const nx = sx + 5 * simplex1.noise2D((4 * sx) / S, (4 * sy) / S);
