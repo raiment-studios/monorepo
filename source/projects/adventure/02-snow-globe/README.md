@@ -4,7 +4,6 @@
 
 A single region voxel game where the adventure plays out in a limited space that is constantly changing. Focus is on storytelling and game mechanics (versus infinite world exploration!).
 
-
 https://user-images.githubusercontent.com/65878718/170841733-c72d6192-3d75-4af2-94f4-b91b570fac17.mp4
 
 https://user-images.githubusercontent.com/65878718/170372456-bcc4c35b-0521-440f-bb71-36132f727e0e.mp4
@@ -58,6 +57,13 @@ _Target Launch Announcement_
 -   [ ] TODO
 -   [ ] TODO
 -   [ ] TODO
+
+### 🧬 Prototype ideas
+
+-   [ ] A "storyteller" similar to RimWorld
+-   [ ] A classic Zelda-mini game
+-   [ ] Text choice overlay
+-   [ ] Command-line terminal
 
 ## Design
 
