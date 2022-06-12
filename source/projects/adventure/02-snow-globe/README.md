@@ -80,6 +80,10 @@ The enjoyment of the game is in seeing a different story with different characte
 3.  She gets to a cabin in the forest
 4.  When she interacts with this, a pop-up storyline appears. It is Logan's cabin. She must make a choice.
 
+### Design decisions
+
+**The player controls a single protagonist.** While the game incorporates simulation elements similar to Dwarf Fortress or Rimworld, Raiment is a single-player adventure game rather than a management game. The player only has _indirect_ control is given to the player over other actors. The primary "management" activity is in setting up the initial deck used to initialize the world.
+
 ## FAQ
 
 🚧 TODO

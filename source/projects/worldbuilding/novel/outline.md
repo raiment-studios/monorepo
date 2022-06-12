@@ -1,8 +1,10 @@
+NOTE: every character needs a goal. They need to pursue that and run into obstacles. This is true of every character that runs into any other. Each thinks they are the protagonist.
+
 Kestrel wakes in a underground, solo sleeping chamber. This is confusing, because all the sleeping chambers she has every heard of are under the city-states and massive. She knows something is wrong. She has a deep fever and is feeling disoriented - more than she should even after waking from the sleeping chamber.
 
 NOTE: more explicit from the very first paragraph about what kind of story this is going to be, the conflict, the fundamental problem.
 
-She wanders down the forest trail. Her fever rapidly gets worse. She comes across Logan's cabin. In her rambling, it is clear that she has been asleep for a long time. She speaks of Tristan, who has been missing for half a century.
+She wanders down the forest trail. Her fever rapidly gets worse. She comes across Logan's cabin. She collapses there. In her rambling, it is clear that she has been asleep for a long time. She speaks of Tristan, who has been missing for half a century.
 
 Logan takes her to CITYNAME to meet Meagan, on the way to meet Graham.
 
