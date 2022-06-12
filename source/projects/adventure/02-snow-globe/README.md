@@ -64,6 +64,7 @@ _Target Launch Announcement_
 -   [ ] A classic Zelda-mini game
 -   [ ] Text choice overlay
 -   [ ] Command-line terminal
+-   [ ] Stats panel (e.g. show overall amount of water in the world)
 
 ## Design
 
