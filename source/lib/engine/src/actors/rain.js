@@ -34,7 +34,7 @@ export class Rain {
         mesh.geometry.attributes.position.needsUpdate = true;
     }
 
-    mesh() {
+    initMesh() {
         const { rng } = this._context;
 
         const vertices = [];
