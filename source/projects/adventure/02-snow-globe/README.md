@@ -65,6 +65,7 @@ _Target Launch Announcement_
 -   [ ] Text choice overlay
 -   [ ] Command-line terminal
 -   [ ] Stats panel (e.g. show overall amount of water in the world)
+-   [ ] Object placement (build houses)
 
 ## Design
 
