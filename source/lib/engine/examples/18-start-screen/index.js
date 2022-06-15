@@ -12,7 +12,7 @@ export default function () {
                 backgroundColor: '#777',
             }}
         >
-            <Dialog />
+            <MainMenu />
             <div
                 style={{
                     width: '100%',
@@ -48,27 +48,23 @@ export default function () {
     );
 }
 
-function Dialog() {
-    const handleClick = () => {
-        alert('click');
-    };
+function Button({ label, onClick = () => alert('Not yet implemented') }) {
+    return (
+        <div
+            style={{
+                cursor: 'pointer',
+                userSelect: 'none',
+                padding: '6px 4px',
+                fontWeight: 600,
+            }}
+            onClick={onClick}
+        >
+            {label}
+        </div>
+    );
+}
 
-    const Button = ({ label }) => {
-        return (
-            <div
-                style={{
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    padding: '6px 4px',
-                    fontWeight: 600,
-                }}
-                onClick={handleClick}
-            >
-                {label}
-            </div>
-        );
-    };
-
+function Dialog({ children }) {
     return (
         <div
             style={{
@@ -84,50 +80,61 @@ function Dialog() {
                 style={{
                     padding: '4px 8px 24px 8px',
                     borderRadius: 8,
-                    background: 'rgba(255,255,255,0.8)',
+                    background: 'rgba(255,255,255,0.9)',
+                }}
+            >
+                {children}
+            </div>
+        </div>
+    );
+}
+
+function MainMenu() {
+    return (
+        <Dialog>
+            <div
+                className="serif"
+                style={{
+                    marginBottom: '24px',
                 }}
             >
                 <div
-                    className="serif"
                     style={{
-                        marginBottom: '24px',
+                        fontSize: 42,
+                        weight: 700,
+                        textAlign: 'center',
                     }}
                 >
-                    <div
-                        style={{
-                            fontSize: 42,
-                            weight: 700,
-                            textAlign: 'center',
-                        }}
-                    >
-                        Raiment: Snow Globe
-                    </div>
-                </div>
-                <div style={{ margin: '0 32px' }}>
-                    <Button label="New" />
-                    <Button label="Continue" />
-                    <Button label="Options" />
-                    <Button label="Encyclopedia" />
-                    <Button label="Support" />
-                    <Button label="Credits" />
-                </div>
-                <div
-                    className="serif"
-                    style={{
-                        marginTop: '24px',
-                    }}
-                >
-                    <div
-                        style={{
-                            fontSize: 12,
-                            fontStyle: 'italic',
-                            textAlign: 'center',
-                        }}
-                    >
-                        milestone v0.2 - early prototype
-                    </div>
+                    Raiment: Snow Globe
                 </div>
             </div>
-        </div>
+            <div style={{ margin: '0 32px' }}>
+                <Button label="New" />
+                <Button
+                    label="Continue"
+                    onClick={() => alert('Save/Continue not yet implemented')}
+                />
+                <Button label="Options" />
+                <Button label="Encyclopedia" />
+                <Button label="Support" />
+                <Button label="Credits" />
+            </div>
+            <div
+                className="serif"
+                style={{
+                    marginTop: '24px',
+                }}
+            >
+                <div
+                    style={{
+                        fontSize: 12,
+                        fontStyle: 'italic',
+                        textAlign: 'center',
+                    }}
+                >
+                    milestone v0.2 - early prototype
+                </div>
+            </div>
+        </Dialog>
     );
 }
