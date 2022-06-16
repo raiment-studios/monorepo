@@ -120,12 +120,38 @@ const useMenuStyles = makeUseStyles({
             backgroundColor: 'rgba(0, 0, 255, 0.02)',
         },
     },
+    card: {
+        '& a': {
+            color: 'inherit',
+            textDecoration: 'none',
+        },
+    },
 });
 
 function NewMenu() {
-    const [game, setGame] = React.useState(null);
+    const [game, setGame] = useLocalStorage('new-menu-option', 'standard');
 
     const classes = useMenuStyles();
+
+    const cardData = {
+        standard: {
+            title: 'Kestrel: Snow Globe - Standard Game',
+            id: 'KYRKghcpkM',
+        },
+        simple: {
+            title: 'Simple Game',
+            id: 'cdupkaEzH0',
+        },
+        bare: {
+            title: 'Barebones',
+            id: 'NKZgUq0I1O',
+        },
+        experimental: {
+            title: 'Experimental',
+            id: 'gr9MEAYNif',
+        },
+    };
+    const card = cardData[game];
 
     return (
         <Dialog top={64}>
@@ -137,20 +163,151 @@ function NewMenu() {
                     value={game}
                     onChange={(evt) => setGame(evt.target.value)}
                 >
-                    <option>Standard</option>
-                    <option>Simple</option>
-                    <option>Bare</option>
-                    <option>Kitchen Sink</option>
+                    <option value="standard">Standard</option>
+                    <option value="simple">Simple</option>
+                    <option value="bare">Bare</option>
+                    <option value="experimental">Experimental</option>
                 </select>
 
-                <div
-                    style={{
-                        width: 400,
-                        height: 600,
-                        background: 'red',
-                    }}
-                >
-                    Some description of the starting card goes here...
+                <div style={{ margin: '24px 0' }}>
+                    <div
+                        className={`serif ${classes.card}`}
+                        style={{
+                            width: 400,
+                            height: 600,
+                            padding: 2,
+                            borderRadius: 6,
+                            background: 'black',
+                            color: 'white',
+                            fontWeight: 100,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flexGrow: 1,
+                            backgroundColor: 'black',
+                            boxShadow: '2px 2px 10px 0px rgba(0,0,0,0.39)',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                flexGrow: 1,
+                                backgroundColor: 'rgba(13,63,93,0.6)',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    border: 'solid 1px rgba(255,255,255,0.35)',
+                                    borderRadius: 4,
+                                    padding: '1px 4px',
+                                    margin: 2,
+                                    backgroundColor: 'rgba(0,0,0,0.05)',
+                                    fontSize: 12,
+                                }}
+                            >
+                                {card.title}
+                            </div>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        border: 'solid 1px rgba(255,255,255,0.35)',
+                                        borderRadius: 4,
+                                        padding: '1px 4px',
+                                        margin: 2,
+                                        backgroundColor: 'rgba(128,128,255,0.025)',
+                                        fontSize: 12,
+                                        width: 160,
+                                        height: 160,
+                                    }}
+                                >
+                                    IMAGE
+                                </div>
+                                <div
+                                    style={{
+                                        border: 'solid 1px rgba(255,255,255,0.35)',
+                                        borderRadius: 4,
+                                        padding: '1px 4px',
+                                        margin: 2,
+                                        backgroundColor: 'rgba(255,255,255,0.025)',
+                                        fontSize: 12,
+                                        flexGrow: 1,
+                                    }}
+                                >
+                                    Extra
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    border: 'solid 1px rgba(255,255,255,0.35)',
+                                    borderRadius: 4,
+                                    padding: '1px 4px',
+                                    margin: 2,
+                                    backgroundColor: 'rgba(255,255,255,0.15)',
+                                    fontSize: 12,
+                                    flexGrow: 1,
+                                }}
+                            >
+                                Text
+                            </div>
+                            <div
+                                style={{
+                                    border: 'solid 1px rgba(255,255,255,0.35)',
+                                    borderRadius: 4,
+                                    padding: '1px 4px',
+                                    margin: 2,
+                                    backgroundColor: 'rgba(0,0,0,0.15)',
+                                    color: '#BBB',
+                                    fontStyle: 'italic',
+                                    fontSize: 12,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        fontStyle: 'normal',
+                                        fontFamily: 'monospace',
+                                        fontSize: 10,
+                                    }}
+                                >
+                                    <a
+                                        style={{
+                                            cursor: 'pointer',
+                                            userSelect: 'none',
+                                        }}
+                                        onClick={(evt) => {
+                                            evt.preventDefault();
+                                            alert('TODO: link to card database');
+                                        }}
+                                    >
+                                        {card.id}
+                                    </a>
+                                </div>
+                                <div style={{ flexGrow: 1 }}></div>
+                                <div style={{}}>
+                                    <a
+                                        href="https://github.com/raiment-studios/monorepo"
+                                        target="_blank"
+                                    >
+                                        Raiment Studios 2022
+                                    </a>
+                                    <span style={{ display: 'inline-block', width: '8px' }} />
+                                    <a
+                                        href="https://creativecommons.org/publicdomain/zero/1.0/"
+                                        target="_blank"
+                                    >
+                                        CC0
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <Button label="Start game" />
             </div>
