@@ -1,8 +1,9 @@
 import React from 'react';
-import { Flex, useCommonStyles } from '../../../react-ex';
+import { Flex, useCommonStyles, makeUseStyles, useLocalStorage } from '../../../react-ex';
 import { EngineView } from './canvas';
 
 export default function () {
+    const [menu, setMenu] = useLocalStorage('menu', 'main');
     useCommonStyles();
     return (
         <div
@@ -12,7 +13,7 @@ export default function () {
                 backgroundColor: '#777',
             }}
         >
-            <MainMenu />
+            {menu === 'new' ? <NewMenu /> : <MainMenu onChangeMenu={setMenu} />}
             <div
                 style={{
                     width: '100%',
@@ -48,29 +49,39 @@ export default function () {
     );
 }
 
+const useButtonStyles = makeUseStyles({
+    button: {
+        margin: '6px 0',
+        padding: '6px 8px 6px 12px',
+        border: 'solid 1px rgba(0,0,0,.1)',
+        borderRadius: 8,
+        fontWeight: 600,
+        cursor: 'pointer',
+        userSelect: 'none',
+
+        '&:hover': {
+            color: '#26B',
+            backgroundColor: 'rgba(0, 0, 255, 0.02)',
+        },
+    },
+});
+
 function Button({ label, onClick = () => alert('Not yet implemented') }) {
+    const classes = useButtonStyles();
     return (
-        <div
-            style={{
-                cursor: 'pointer',
-                userSelect: 'none',
-                padding: '6px 4px',
-                fontWeight: 600,
-            }}
-            onClick={onClick}
-        >
+        <div className={classes.button} onClick={onClick}>
             {label}
         </div>
     );
 }
 
-function Dialog({ children }) {
+function Dialog({ top = 256, children }) {
     return (
         <div
             style={{
                 position: 'absolute',
                 zIndex: 1000,
-                top: '256px',
+                top: `${top}px`,
                 left: '50%',
                 width: '480px',
                 transform: 'translateX(-50%)',
@@ -89,7 +100,65 @@ function Dialog({ children }) {
     );
 }
 
-function MainMenu() {
+const useMenuStyles = makeUseStyles({
+    select: {
+        display: 'block',
+        width: '100%',
+        margin: '6px 0',
+        padding: '6px 8px 6px 12px',
+        border: 'solid 1px rgba(0,0,0,.1)',
+        borderRadius: 8,
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        fontWeight: 'inherit',
+        cursor: 'pointer',
+        userSelect: 'none',
+        backgroundColor: 'transparent',
+
+        '&:hover': {
+            color: '#26B',
+            backgroundColor: 'rgba(0, 0, 255, 0.02)',
+        },
+    },
+});
+
+function NewMenu() {
+    const [game, setGame] = React.useState(null);
+
+    const classes = useMenuStyles();
+
+    return (
+        <Dialog top={64}>
+            <div style={{ margin: '0 32px', fontWeight: 600 }}>
+                <div>Choose starting set:</div>
+
+                <select
+                    className={classes.select}
+                    value={game}
+                    onChange={(evt) => setGame(evt.target.value)}
+                >
+                    <option>Standard</option>
+                    <option>Simple</option>
+                    <option>Bare</option>
+                    <option>Kitchen Sink</option>
+                </select>
+
+                <div
+                    style={{
+                        width: 400,
+                        height: 600,
+                        background: 'red',
+                    }}
+                >
+                    Some description of the starting card goes here...
+                </div>
+                <Button label="Start game" />
+            </div>
+        </Dialog>
+    );
+}
+
+function MainMenu({ onChangeMenu }) {
     return (
         <Dialog>
             <div
@@ -109,7 +178,7 @@ function MainMenu() {
                 </div>
             </div>
             <div style={{ margin: '0 32px' }}>
-                <Button label="New" />
+                <Button label="New" onClick={() => onChangeMenu('new')} />
                 <Button
                     label="Continue"
                     onClick={() => alert('Save/Continue not yet implemented')}
