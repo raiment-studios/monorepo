@@ -1,10 +1,18 @@
 import React from 'react';
-import { Flex, useCommonStyles, makeUseStyles, useLocalStorage } from '../../../react-ex';
+import {
+    Flex,
+    useCommonStyles,
+    makeUseStyles,
+    useLocalStorage,
+    useAsyncEffect,
+} from '../../../react-ex';
 import { EngineView } from './canvas';
+import * as core from '../../../core';
 
 import 'glob:$(MONOREPO_ROOT)/source/assets;proto/icons/*.png';
 import 'glob:$(MONOREPO_ROOT)/source/assets;proto/sprites/*.png';
 import 'glob:$(MONOREPO_ROOT)/source/assets;base/sprites/*.png';
+import gameCards from 'glob:$(MONOREPO_ROOT)/source/assets;proto/cards/game/*.yaml';
 
 export default function () {
     const [menu, setMenu] = useLocalStorage('menu', 'main');
@@ -18,7 +26,11 @@ export default function () {
                 backgroundColor: '#777',
             }}
         >
-            {menu === 'new' ? <NewMenu /> : <MainMenu onChangeMenu={setMenu} />}
+            {menu === 'new' ? (
+                <NewMenu onChangeMenu={setMenu} />
+            ) : (
+                <MainMenu onChangeMenu={setMenu} />
+            )}
             <div
                 style={{
                     width: '100%',
@@ -63,6 +75,7 @@ const useButtonStyles = makeUseStyles({
         fontWeight: 600,
         cursor: 'pointer',
         userSelect: 'none',
+        backgroundColor: 'rgba(0, 0, 0, 0.02)',
 
         '&:hover': {
             color: '#26B',
@@ -133,39 +146,51 @@ const useMenuStyles = makeUseStyles({
     },
 });
 
-function NewMenu() {
+function NewMenu({ onChangeMenu }) {
     const [game, setGame] = useLocalStorage('new-menu-option', 'standard');
+    const [cardSet, setCardSet] = React.useState(null);
 
     const classes = useMenuStyles();
 
-    const cardData = {
-        standard: {
-            title: 'Standard Game',
-            subtitle: 'Kestrel: Snow Globe v0.1',
-            id: 'KYRKghcpkM',
-            image: 'base/sprites/commoner-06.png',
-        },
-        simple: {
-            title: 'Simple Game',
-            id: 'cdupkaEzH0',
-            image: 'base/sprites/commoner-07.png',
-        },
-        bare: {
-            title: 'Barebones',
-            id: 'NKZgUq0I1O',
-            image: 'proto/icons/game-card.png',
-        },
-        experimental: {
-            title: 'Experimental',
-            id: 'gr9MEAYNif',
-            image: 'proto/sprites/kestrel.png',
-        },
-    };
-    const card = cardData[game];
+    useAsyncEffect(async (token) => {
+        const results = Object.fromEntries(
+            await Promise.all(
+                gameCards.map(async (url) => {
+                    const resp = await fetch(url);
+                    const text = await resp.text();
+                    const obj = core.parseYAML(text);
+                    return [url, obj];
+                })
+            )
+        );
+        token.check();
+
+        setCardSet(results);
+    }, []);
+
+    if (!cardSet) {
+        return null;
+    }
+
+    const card = cardSet[game] || Object.values(cardSet)[0];
 
     return (
         <Dialog top={64}>
             <div style={{ margin: '0 32px', fontWeight: 600 }}>
+                <Flex dir="row" style={{ marginBottom: 24 }}>
+                    <div
+                        style={{
+                            fontWeight: 600,
+                            fontSize: '120%',
+                        }}
+                    >
+                        Begin New Game
+                    </div>
+                    <div style={{ flex: '1 0 0' }} />
+                    <div>
+                        <Button label="< Back" onClick={() => onChangeMenu('main')} />
+                    </div>
+                </Flex>
                 <div>Choose starting set:</div>
 
                 <select
@@ -173,10 +198,13 @@ function NewMenu() {
                     value={game}
                     onChange={(evt) => setGame(evt.target.value)}
                 >
-                    <option value="standard">Standard</option>
-                    <option value="simple">Simple</option>
-                    <option value="bare">Bare</option>
-                    <option value="experimental">Experimental</option>
+                    {Object.entries(cardSet)
+                        .sort(([_k0, v0], [_k1, v1]) => v0.order - v1.order)
+                        .map(([url, value]) => (
+                            <option key={url} value={url}>
+                                {value.title}
+                            </option>
+                        ))}
                 </select>
 
                 <div style={{ margin: '24px 0' }}>
@@ -185,7 +213,7 @@ function NewMenu() {
                         style={{
                             width: 400,
                             height: 600,
-                            padding: 2,
+                            padding: 0,
                             borderRadius: 6,
                             background: 'black',
                             color: 'white',
@@ -205,6 +233,7 @@ function NewMenu() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 flexGrow: 1,
+                                padding: 4,
                                 borderRadius: 6,
                                 backgroundColor: 'rgba(13,63,93,0.6)',
                                 backdropFilter: 'brightness(40%) blur(16px)',
@@ -217,7 +246,7 @@ function NewMenu() {
                                     borderRadius: 4,
                                     padding: '1px 4px',
                                     margin: 2,
-                                    backgroundColor: 'rgba(0,0,0,0.05)',
+                                    backgroundColor: 'rgba(255,255,255,0.15)',
                                     fontSize: 14,
                                 }}
                             >
@@ -290,6 +319,33 @@ function NewMenu() {
                                         <div style={{ textAlign: 'right' }}>— Lain Grenwood</div>
                                     </div>
                                 </div>
+                            </div>
+                            <div
+                                className="flex-row-center"
+                                style={{
+                                    border: 'solid 1px rgba(255,255,255,0.35)',
+                                    borderRadius: 4,
+                                    padding: '1px 4px',
+                                    margin: 2,
+                                    backgroundColor: 'rgba(128,128,128,0.5)',
+                                    fontSize: 14,
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    Game Card
+                                </div>
+                                <div style={{ flex: '1 0 0' }} />
+                                <div
+                                    style={{
+                                        fontWeight: 100,
+                                        fontSize: '80%',
+                                        opacity: 0.75,
+                                    }}
+                                ></div>
                             </div>
                             <div
                                 style={{
