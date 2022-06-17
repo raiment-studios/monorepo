@@ -1,6 +1,5 @@
 import React from 'react';
-import { ReadingFrame } from '../../../react-ex';
-import * as core from '../../../core';
+import * as core from '../../../core/src';
 import * as THREE from 'three';
 import {
     useEngine,
@@ -15,8 +14,7 @@ import {
     TreeActor,
     Actor,
     RoadActor,
-    VOXActor,
-} from '../..';
+} from '../../src';
 
 const TILE = {};
 
@@ -24,12 +22,11 @@ export function EngineView() {
     const engine = useEngine(() => {
         const rng = core.makeRNG();
 
-        const heightMap = makeHeightMap(rng);
-        Object.assign(TILE, heightMap.layers.tile.table.keys());
-
-        const waterMap = makeWaterMap(rng, 0.35);
-
         engine.sequence(function* () {
+            const heightMap = makeHeightMap(rng);
+            Object.assign(TILE, heightMap.layers.tile.table.keys());
+
+            const waterMap = makeWaterMap(rng, 0.35);
             engine.actors.push(
                 new OrbitCamera({ radius: 64, periodMS: 20000, offsetZ: 48 }), //
                 new DayNightLighting({ speed: 1, nightSpeed: 16 }),

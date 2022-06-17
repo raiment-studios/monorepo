@@ -6,7 +6,7 @@ import {
     useLocalStorage,
     useAsyncEffect,
 } from '../../../react-ex';
-import { EngineView } from './canvas';
+import { EngineView } from './engine_view';
 import * as core from '../../../core';
 
 import 'glob:$(MONOREPO_ROOT)/source/assets;proto/icons/*.png';
@@ -14,11 +14,17 @@ import 'glob:$(MONOREPO_ROOT)/source/assets;proto/sprites/*.png';
 import 'glob:$(MONOREPO_ROOT)/source/assets;base/sprites/*.png';
 import gameCards from 'glob:$(MONOREPO_ROOT)/source/assets;proto/cards/game/*.yaml';
 import { Card } from './card';
-import { Dialog } from './dialog';
+import { Dialog, DialogCurtain } from './dialog';
 
 export default function () {
     const [menu, setMenu] = useLocalStorage('menu', 'main');
+    const [opacity, setOpacity] = React.useState(0.0);
     useCommonStyles();
+
+    useAsyncEffect(async (token) => {
+        await token.sleep(250);
+        setOpacity(1.0);
+    });
 
     return (
         <div
@@ -26,13 +32,17 @@ export default function () {
                 width: '100%',
                 minHeight: '100vh',
                 backgroundColor: '#777',
+                transition: 'opacity 1000ms',
+                opacity,
             }}
         >
-            {menu === 'new' ? (
-                <NewMenu onChangeMenu={setMenu} />
-            ) : (
-                <MainMenu onChangeMenu={setMenu} />
-            )}
+            <DialogCurtain>
+                {menu === 'new' ? (
+                    <NewMenu onChangeMenu={setMenu} />
+                ) : (
+                    <MainMenu onChangeMenu={setMenu} />
+                )}
+            </DialogCurtain>
             <div
                 style={{
                     width: '100%',
@@ -204,11 +214,17 @@ function MainMenu({ onChangeMenu }) {
                 <div
                     style={{
                         fontSize: 42,
-                        weight: 700,
                         textAlign: 'center',
                     }}
                 >
-                    Raiment: Snow Globe
+                    <span style={{}}>Kestrel</span>
+                </div>
+                <div
+                    style={{
+                        textAlign: 'center',
+                    }}
+                >
+                    Snow Globe (version 0.1)
                 </div>
             </div>
             <div style={{ margin: '0 32px' }}>
