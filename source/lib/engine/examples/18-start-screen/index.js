@@ -2,13 +2,14 @@ import React from 'react';
 import { Flex, useCommonStyles, makeUseStyles, useLocalStorage } from '../../../react-ex';
 import { EngineView } from './canvas';
 
-import iconAssets from 'glob:$(MONOREPO_ROOT)/source/assets;proto/icons/*.png';
+import 'glob:$(MONOREPO_ROOT)/source/assets;proto/icons/*.png';
+import 'glob:$(MONOREPO_ROOT)/source/assets;proto/sprites/*.png';
+import 'glob:$(MONOREPO_ROOT)/source/assets;base/sprites/*.png';
 
 export default function () {
     const [menu, setMenu] = useLocalStorage('menu', 'main');
     useCommonStyles();
 
-    console.log(iconAssets);
     return (
         <div
             style={{
@@ -139,20 +140,25 @@ function NewMenu() {
 
     const cardData = {
         standard: {
-            title: 'Kestrel: Snow Globe - Standard Game',
+            title: 'Standard Game',
+            subtitle: 'Kestrel: Snow Globe v0.1',
             id: 'KYRKghcpkM',
+            image: 'base/sprites/commoner-06.png',
         },
         simple: {
             title: 'Simple Game',
             id: 'cdupkaEzH0',
+            image: 'base/sprites/commoner-07.png',
         },
         bare: {
             title: 'Barebones',
             id: 'NKZgUq0I1O',
+            image: 'proto/icons/game-card.png',
         },
         experimental: {
             title: 'Experimental',
             id: 'gr9MEAYNif',
+            image: 'proto/sprites/kestrel.png',
         },
     };
     const card = cardData[game];
@@ -190,7 +196,7 @@ function NewMenu() {
                             backgroundColor: 'black',
                             boxShadow: '4px 4px 5px 0px rgba(0,0,0,0.29)',
 
-                            backgroundImage: `url(proto/icons/game-card.png)`,
+                            backgroundImage: `url(${card.image})`,
                             backgroundSize: 'cover',
                         }}
                     >
@@ -201,10 +207,11 @@ function NewMenu() {
                                 flexGrow: 1,
                                 borderRadius: 6,
                                 backgroundColor: 'rgba(13,63,93,0.6)',
-                                backdropFilter: 'brightness(40%) blur(8px)',
+                                backdropFilter: 'brightness(40%) blur(16px)',
                             }}
                         >
                             <div
+                                className="flex-row-center"
                                 style={{
                                     border: 'solid 1px rgba(255,255,255,0.35)',
                                     borderRadius: 4,
@@ -214,7 +221,23 @@ function NewMenu() {
                                     fontSize: 14,
                                 }}
                             >
-                                {card.title}
+                                <div
+                                    style={{
+                                        fontWeight: 800,
+                                    }}
+                                >
+                                    {card.title}
+                                </div>
+                                <div style={{ flex: '1 0 0' }} />
+                                <div
+                                    style={{
+                                        fontWeight: 100,
+                                        fontSize: '80%',
+                                        opacity: 0.75,
+                                    }}
+                                >
+                                    {card.subtitle}
+                                </div>
                             </div>
                             <div
                                 style={{
@@ -224,20 +247,30 @@ function NewMenu() {
                             >
                                 <div
                                     style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
                                         border: 'solid 1px rgba(255,255,255,0.35)',
                                         borderRadius: 4,
-                                        padding: '1px 4px',
                                         margin: 2,
                                         backgroundColor: 'rgba(128,128,255,0.025)',
                                         fontSize: 12,
                                         width: 160,
                                         height: 160,
-                                        backgroundImage: `url(proto/icons/game-card.png)`,
-                                        backgroundSize: 'cover',
-                                        imageRendering: 'pixelated',
+
                                         flex: '0 0 160px',
                                     }}
-                                ></div>
+                                >
+                                    <div
+                                        style={{
+                                            borderRadius: 4,
+                                            backgroundImage: `url(${card.image})`,
+                                            backgroundSize: 'cover',
+                                            imageRendering: 'pixelated',
+                                            width: 160,
+                                            height: 160,
+                                        }}
+                                    />
+                                </div>
                                 <div
                                     style={{
                                         border: 'solid 1px rgba(255,255,255,0.35)',
@@ -249,7 +282,7 @@ function NewMenu() {
                                         flexGrow: 1,
                                     }}
                                 >
-                                    <div style={{ margin: '8px 0 8px', fontStyle: 'italic' }}>
+                                    <div style={{ margin: '8px 4px 8px', fontStyle: 'italic' }}>
                                         <div style={{}}>
                                             "It's a beautiful world we live in, right? Except for
                                             that deadly maelstrom, of course."
@@ -260,17 +293,33 @@ function NewMenu() {
                             </div>
                             <div
                                 style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'stretch',
                                     border: 'solid 1px rgba(255,255,255,0.35)',
                                     borderRadius: 4,
                                     padding: '1px 4px',
-                                    margin: 2,
-                                    backgroundColor: 'rgba(255,255,255,0.15)',
+                                    padding: 2,
+                                    backgroundColor: 'rgba(255,255,255,0.25)',
                                     fontSize: 14,
                                     flexGrow: 1,
                                 }}
                             >
-                                <div style={{ marginTop: 12 }}>
-                                    Begins a game using the standard deck with no mods enabled.
+                                <div
+                                    style={{
+                                        border: 'solid 1px rgba(255,255,255,0.35)',
+                                        borderRadius: 4,
+                                        padding: '1px 4px',
+                                        padding: 4,
+
+                                        backgroundColor: 'rgba(0,0,0,0.35)',
+                                        fontSize: 14,
+                                        flexGrow: 1,
+                                    }}
+                                >
+                                    <div style={{ marginTop: 12 }}>
+                                        Begins a game using the standard deck with no mods enabled.
+                                    </div>
                                 </div>
                             </div>
                             <div
