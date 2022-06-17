@@ -181,7 +181,6 @@ export function Card({ card }) {
                         alignItems: 'stretch',
                         border: 'solid 1px rgba(255,255,255,0.35)',
                         borderRadius: 4,
-                        padding: '1px 4px',
                         padding: 2,
                         backgroundColor: 'rgba(255,255,255,0.25)',
                         fontSize: 14,
@@ -192,9 +191,7 @@ export function Card({ card }) {
                         style={{
                             border: 'solid 1px rgba(255,255,255,0.35)',
                             borderRadius: 4,
-                            padding: '1px 4px',
                             padding: 4,
-
                             backgroundColor: 'rgba(0,0,0,0.35)',
                             fontSize: 14,
                             flexGrow: 1,

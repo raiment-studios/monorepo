@@ -14,6 +14,7 @@ import 'glob:$(MONOREPO_ROOT)/source/assets;proto/sprites/*.png';
 import 'glob:$(MONOREPO_ROOT)/source/assets;base/sprites/*.png';
 import gameCards from 'glob:$(MONOREPO_ROOT)/source/assets;proto/cards/game/*.yaml';
 import { Card } from './card';
+import { Dialog } from './dialog';
 
 export default function () {
     const [menu, setMenu] = useLocalStorage('menu', 'main');
@@ -90,31 +91,6 @@ function Button({ label, onClick = () => alert('Not yet implemented') }) {
     return (
         <div className={classes.button} onClick={onClick}>
             {label}
-        </div>
-    );
-}
-
-function Dialog({ top = 256, children }) {
-    return (
-        <div
-            style={{
-                position: 'absolute',
-                zIndex: 1000,
-                top: `${top}px`,
-                left: '50%',
-                width: '480px',
-                transform: 'translateX(-50%)',
-            }}
-        >
-            <div
-                style={{
-                    padding: '4px 8px 24px 8px',
-                    borderRadius: 8,
-                    background: 'rgba(255,255,255,0.9)',
-                }}
-            >
-                {children}
-            </div>
         </div>
     );
 }
