@@ -426,17 +426,20 @@ function registerGlobPlugin(build, workingDir, references) {
         });
 
         // Record and dedup
+        let urls = [];
         for (let r of results) {
             const filepath = path.join(base, r);
+            const url = path.relative(base, filepath);
             references[r] = {
                 base: base,
                 filepath,
-                url: path.relative(base, filepath),
+                url,
             };
+            urls.push(url);
         }
 
         return {
-            contents: JSON.stringify(Object.values(references).map((ref) => ref.url)),
+            contents: JSON.stringify(urls),
             loader: 'json',
         };
     });

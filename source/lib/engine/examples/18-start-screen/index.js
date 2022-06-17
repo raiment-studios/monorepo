@@ -159,7 +159,7 @@ function NewMenu({ onChangeMenu }) {
             )
         );
         token.check();
-
+        console.log({ gameCards, results });
         setCardSet(results);
     }, []);
 
@@ -195,7 +195,7 @@ function NewMenu({ onChangeMenu }) {
                 >
                     {Object.entries(cardSet)
                         .sort(([_k0, v0], [_k1, v1]) => v0.order - v1.order)
-                        .map(([url, value]) => (
+                        .map(([url, value], index) => (
                             <option key={url} value={url}>
                                 {value.title}
                             </option>
