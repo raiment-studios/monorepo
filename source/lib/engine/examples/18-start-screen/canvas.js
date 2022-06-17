@@ -18,9 +18,6 @@ import {
     VOXActor,
 } from '../..';
 
-import assets from 'glob:$(MONOREPO_ROOT)/source;assets/**/*{.png,.asset.yaml,.vox}';
-const assetURL = Object.fromEntries(assets.map((url) => [url.split('/').pop(), url]));
-
 const TILE = {};
 
 export function EngineView() {

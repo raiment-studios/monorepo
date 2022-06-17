@@ -2,9 +2,13 @@ import React from 'react';
 import { Flex, useCommonStyles, makeUseStyles, useLocalStorage } from '../../../react-ex';
 import { EngineView } from './canvas';
 
+import iconAssets from 'glob:$(MONOREPO_ROOT)/source/assets;proto/icons/*.png';
+
 export default function () {
     const [menu, setMenu] = useLocalStorage('menu', 'main');
     useCommonStyles();
+
+    console.log(iconAssets);
     return (
         <div
             style={{
@@ -184,7 +188,10 @@ function NewMenu() {
                             flexDirection: 'column',
                             flexGrow: 1,
                             backgroundColor: 'black',
-                            boxShadow: '2px 2px 10px 0px rgba(0,0,0,0.39)',
+                            boxShadow: '4px 4px 5px 0px rgba(0,0,0,0.29)',
+
+                            backgroundImage: `url(proto/icons/game-card.png)`,
+                            backgroundSize: 'cover',
                         }}
                     >
                         <div
@@ -192,7 +199,9 @@ function NewMenu() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 flexGrow: 1,
+                                borderRadius: 6,
                                 backgroundColor: 'rgba(13,63,93,0.6)',
+                                backdropFilter: 'brightness(40%) blur(8px)',
                             }}
                         >
                             <div
@@ -202,7 +211,7 @@ function NewMenu() {
                                     padding: '1px 4px',
                                     margin: 2,
                                     backgroundColor: 'rgba(0,0,0,0.05)',
-                                    fontSize: 12,
+                                    fontSize: 14,
                                 }}
                             >
                                 {card.title}
@@ -223,10 +232,12 @@ function NewMenu() {
                                         fontSize: 12,
                                         width: 160,
                                         height: 160,
+                                        backgroundImage: `url(proto/icons/game-card.png)`,
+                                        backgroundSize: 'cover',
+                                        imageRendering: 'pixelated',
+                                        flex: '0 0 160px',
                                     }}
-                                >
-                                    IMAGE
-                                </div>
+                                ></div>
                                 <div
                                     style={{
                                         border: 'solid 1px rgba(255,255,255,0.35)',
@@ -238,7 +249,13 @@ function NewMenu() {
                                         flexGrow: 1,
                                     }}
                                 >
-                                    Extra
+                                    <div style={{ margin: '8px 0 8px', fontStyle: 'italic' }}>
+                                        <div style={{}}>
+                                            "It's a beautiful world we live in, right? Except for
+                                            that deadly maelstrom, of course."
+                                        </div>
+                                        <div style={{ textAlign: 'right' }}>— Lain Grenwood</div>
+                                    </div>
                                 </div>
                             </div>
                             <div
@@ -248,11 +265,13 @@ function NewMenu() {
                                     padding: '1px 4px',
                                     margin: 2,
                                     backgroundColor: 'rgba(255,255,255,0.15)',
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     flexGrow: 1,
                                 }}
                             >
-                                Text
+                                <div style={{ marginTop: 12 }}>
+                                    Begins a game using the standard deck with no mods enabled.
+                                </div>
                             </div>
                             <div
                                 style={{
