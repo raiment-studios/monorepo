@@ -108,11 +108,19 @@ export class Engine {
      */
     sequence(generatorFunc, self) {
         // A sequence can be represented as a special case of a state machine
+
+        const engine = this;
+
+        function* wrapper() {
+            const ctx = engine.context();
+            yield* generatorFunc(ctx);
+        }
+
         this.actors.push({
             stateMachine() {
                 return {
                     _bind: self,
-                    _start: generatorFunc,
+                    _start: wrapper,
                 };
             },
         });
