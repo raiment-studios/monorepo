@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import * as core from '@raiment/core';
-import { isEqual } from 'lodash';
 
 /**
  * Generates a unit terrain where, by default, it has size = 1 that covers the

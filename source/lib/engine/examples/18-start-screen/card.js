@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, makeUseStyles, useLocalStorage, useAsyncEffect } from '../../../react-ex';
+import { makeUseStyles, useAsyncEffect } from '../../../react-ex';
 
 const useCardStyles = makeUseStyles({
     card: {
@@ -18,6 +18,12 @@ export function Card({ card }) {
         await token.sleep(250);
         setQuoteOpacity(0.9);
     }, []);
+
+    const quote = card.quote || {};
+
+    quote.text ??=
+        "It's a beautiful world we live in, right? Except for that deadly maelstrom, of course.";
+    quote.author ??= 'Lain Grenwood';
 
     return (
         <div
@@ -38,6 +44,8 @@ export function Card({ card }) {
 
                 backgroundImage: `url(${card.image})`,
                 backgroundSize: 'cover',
+
+                userSelect: 'none',
             }}
         >
             <div
@@ -133,16 +141,13 @@ export function Card({ card }) {
                         onClick={() => alert('TODO: link to encyclopedia')}
                     >
                         <div style={{ margin: '8px 4px 8px', fontStyle: 'italic' }}>
-                            <div style={{}}>
-                                "It's a beautiful world we live in, right? Except for that deadly
-                                maelstrom, of course."
-                            </div>
+                            <div style={{}}>"{quote.text}"</div>
                             <div
                                 style={{
                                     textAlign: 'right',
                                 }}
                             >
-                                — Lain Grenwood
+                                — {quote.author}
                             </div>
                         </div>
                     </div>
@@ -198,7 +203,15 @@ export function Card({ card }) {
                         }}
                     >
                         <div style={{ marginTop: 12 }}>
-                            Begins a game using the standard deck with no mods enabled.
+                            {card.description
+                                ? card.description.map((node, index) =>
+                                      node.type === 'text' ? (
+                                          <div key={index}>{node.value}</div>
+                                      ) : (
+                                          node.type
+                                      )
+                                  )
+                                : 'Begins a game using the standard deck with no mods enabled.'}
                         </div>
                     </div>
                 </div>

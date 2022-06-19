@@ -9,7 +9,7 @@ import { Button } from './button';
 import { SimulationView } from './simulation_view';
 
 export function IntroMenus({ onStartGame }) {
-    const [menu, setMenu] = useLocalStorage('menu', 'main');
+    const [menu, setMenu] = React.useState('main');
     return (
         <>
             <DialogCurtain>

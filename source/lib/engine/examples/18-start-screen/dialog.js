@@ -1,5 +1,22 @@
 import React from 'react';
 
+export function CenterOverlay({ top = 256, children }) {
+    return (
+        <div
+            style={{
+                position: 'absolute',
+                zIndex: 1000,
+                top: `${top}px`,
+                left: '50%',
+                transform: 'translateX(-50%)',
+            }}
+            onClick={(evt) => evt.stopPropagation()}
+        >
+            {children}
+        </div>
+    );
+}
+
 export function Dialog({ top = 256, children }) {
     return (
         <div
@@ -25,7 +42,7 @@ export function Dialog({ top = 256, children }) {
     );
 }
 
-export function DialogCurtain({ children }) {
+export function DialogCurtain({ onClick, children }) {
     return (
         <div
             style={{
@@ -37,6 +54,7 @@ export function DialogCurtain({ children }) {
                 height: '100vh',
                 backdropFilter: 'brightness(50%) blur(16px)',
             }}
+            onClick={onClick}
         >
             {children}
         </div>

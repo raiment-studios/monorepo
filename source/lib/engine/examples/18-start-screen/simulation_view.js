@@ -1,84 +1,65 @@
 import React from 'react';
-import { Flex } from '../../../react-ex/src';
-import { EngineFrame, useEngine, TreeActor } from '../../src';
+import { Flex, useAsyncEffect } from '../../../react-ex/src';
+import { EngineFrame, useEngine, TreeActor, VOXActor } from '../../src';
 import * as THREE from 'three';
 import * as core from '../../../core';
 
+import 'glob:$(MONOREPO_ROOT)/source/assets;**/*.vox';
+import assetList from 'glob:$(MONOREPO_ROOT)/source/assets;**/cards/**/*.{js,yaml}';
+import { Dialog, DialogCurtain, CenterOverlay } from './dialog';
+import { Card } from './card';
+
 export function SimulationView({ initSequence }) {
+    const [cards, setCards] = React.useState(null);
+    const [activeCard, setActiveCard] = React.useState(null);
     const engine = useEngine(() => {
+        engine.events.on('CTRL+R', () => window.location.reload());
         engine.sequence(initSequence);
     });
 
-    const toolbarButtons = [
-        {
-            image: `base/sprites/tree-01.png`,
-            handleClick: () => {
-                engine.sequence(function* () {
-                    const rng = engine.rng.fork();
-                    const heightMap = engine.actors.selectByID('terrain');
-                    const cx = rng.rangei(0, heightMap.segments);
-                    const cy = rng.rangei(0, heightMap.segments);
-                    const count = rng.rangei(3, 8);
-                    for (let i = 0; i < count; i++) {
-                        const actor = new TreeActor();
-                        yield placeActor({
-                            engine,
-                            actor,
-                            heightMap,
-                            generatePosition: (rng) => {
-                                return [cx + rng.rangei(-20, 20), cy + rng.rangei(-20, 20)];
-                            },
-                        });
+    useAsyncEffect(
+        async (token) => {
+            const set = Object.fromEntries(assetList.map((url) => [url, true]));
+            const uniqSet = {};
+            for (let url of assetList) {
+                const base = url.split('.').slice(0, -1).join('.');
+                uniqSet[base] = true;
+            }
+
+            const results = await Promise.all(
+                Object.keys(uniqSet).map(async (url) => {
+                    const obj = {};
+
+                    const yamlURL = `${url}.yaml`;
+                    const scriptURL = `${url}.js`;
+                    if (set[yamlURL]) {
+                        const resp0 = await fetch(yamlURL);
+                        const text = await resp0.text();
+                        Object.assign(obj, core.parseYAML(text));
                     }
-                });
-            },
+                    if (set[scriptURL]) {
+                        const module = await import(`./${scriptURL}`);
+                        const context = {
+                            THREE,
+                            engine,
+                            placeActor,
+                            TreeActor,
+                            VOXActor,
+                        };
+                        const hooks = module.default(context);
+                        Object.assign(obj, hooks);
+                    }
+                    return obj;
+                })
+            );
+            token.check();
+            setCards(results);
         },
-        {
-            image: `base/sprites/tree-02.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-        {
-            image: `base/sprites/signpost-01.png`,
-        },
-    ];
+        [engine]
+    );
+
+    console.log({ cards });
+    const toolbarButtons = cards?.filter((c) => c.tags && c.tags.indexOf('toolbar') !== -1) || [];
 
     return (
         <div
@@ -88,17 +69,28 @@ export function SimulationView({ initSequence }) {
                 backgroundColor: '#777',
             }}
         >
+            {activeCard && (
+                <DialogCurtain onClick={() => setActiveCard(null)}>
+                    <CenterOverlay>
+                        <Card card={activeCard} />
+                    </CenterOverlay>
+                </DialogCurtain>
+            )}
             <div
                 style={{
                     width: '100%',
-                    aspectRatio: '16 /9',
                     margin: 0,
                     padding: 0,
                     backgroundColor: '#111',
                     color: 'white',
                 }}
             >
-                <EngineFrame engine={engine} />
+                <EngineFrame
+                    style={{
+                        aspectRatio: '16 / 6',
+                    }}
+                    engine={engine}
+                />
             </div>
             <Flex
                 dir="row"
@@ -120,6 +112,7 @@ export function SimulationView({ initSequence }) {
                 >
                     {toolbarButtons.map((entry, index) => (
                         <div
+                            title={entry.title}
                             key={index}
                             style={{
                                 width: 32,
@@ -134,7 +127,18 @@ export function SimulationView({ initSequence }) {
                                 backgroundSize: 'cover',
                                 imageRendering: 'pixelated',
                             }}
-                            onClick={entry.handleClick}
+                            onClick={() => {
+                                const play = entry?.play;
+                                if (play) {
+                                    engine.sequence(play);
+                                } else {
+                                    console.warn('No play script');
+                                }
+                            }}
+                            onContextMenu={(evt) => {
+                                evt.preventDefault();
+                                setActiveCard(entry);
+                            }}
                         />
                     ))}
                 </div>
@@ -160,7 +164,21 @@ export function SimulationView({ initSequence }) {
                 >
                     <Flex dir="row" className="py-4px">
                         <div style={{ flex: '0 0 16px' }}>{'>'}</div>
-                        <div>cmd</div>
+                        <input
+                            style={{
+                                display: 'block',
+                                outline: 'none',
+                                border: 'none',
+                                fontFamily: 'inherit',
+                                fontSize: 'inherit',
+                                color: 'inherit',
+                                background: 'transparent',
+                                margin: 0,
+                                padding: 0,
+                            }}
+                            type="text"
+                            placeholder="Type commands here"
+                        />
                     </Flex>
                     <div
                         className="mt-4px mb-8px"
@@ -171,7 +189,7 @@ export function SimulationView({ initSequence }) {
                     />
                     <Flex dir="row" align="stretch" g={1}>
                         <div style={{ flex: '0 0 16px' }} />
-                        <div>results</div>
+                        <div>TODO: command results</div>
                     </Flex>
                 </Flex>
                 <Flex style={{ flex: '0 0 480px' }}>tools</Flex>

@@ -2,6 +2,15 @@ import * as core from '../../../core/src';
 import * as THREE from 'three';
 import { OrbitCamera, HeightMap, DayNightLighting, WeatherSystem, TreeActor } from '../../src';
 
+import cards from 'glob:$(MONOREPO_ROOT)/source/assets;proto/cards/**/*.js';
+
+for (let card of cards) {
+    (async () => {
+        const data = await import(`./${card}`);
+        //data.myfunction();
+    })();
+}
+
 export function* simpleSequence({ engine }) {
     const { rng } = engine;
     const heightMap = makeHeightMap(rng, { amplitude: 0.25 });
