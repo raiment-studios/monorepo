@@ -49,12 +49,14 @@ export default function ({
     }
 
     return {
+        id: 'wjySKQpWRpht',
         title: 'Wandering Cat',
         image: 'base/sprites/cat-00.png',
         tags: 'toolbar'.split(',').map((s) => s.trim()),
+        type: 'Creature',
         quote: {
-            value: `The village seemed like a friendly enough place. Even the stray cats
-            seemed well-fed and content enough.`,
+            value: `The village seemed like a friendly enough place. Even the cats
+            wandering the streets seemed well-fed and content enough.`,
             author: 'Marek Margraw',
         },
         description: [
@@ -62,6 +64,13 @@ export default function ({
                 type: 'text',
                 value: `
 Places a wandering cat into the world.
+                `,
+            },
+            {
+                type: 'text',
+                value: `
+Wandering cats often will ignore anyone who tries to interact with
+them. However in Galthea, nothing should be taken for granted.
                 `,
             },
         ],

@@ -170,7 +170,7 @@ export function Card({ card }) {
                             fontWeight: 500,
                         }}
                     >
-                        Game Card
+                        {card.type ?? 'Game Card'}
                     </div>
                     <div style={{ flex: '1 0 0' }} />
                     <div
@@ -204,11 +204,11 @@ export function Card({ card }) {
                             flexGrow: 1,
                         }}
                     >
-                        <div style={{ marginTop: 12 }}>
+                        <div style={{ marginTop: 12, padding: '0px 6px 0px' }}>
                             {card.description
                                 ? card.description.map((node, index) =>
                                       node.type === 'text' ? (
-                                          <div key={index}>
+                                          <div key={index} style={{ marginBottom: '0.5rem' }}>
                                               {node.value.replace(/\n/g, ' ').trim()}
                                           </div>
                                       ) : (
