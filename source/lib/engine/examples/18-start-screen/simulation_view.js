@@ -1,6 +1,16 @@
 import React from 'react';
 import { Flex, useAsyncEffect } from '../../../react-ex/src';
-import { EngineFrame, useEngine, TreeActor, VOXActor } from '../../src';
+import {
+    EngineFrame,
+    useEngine,
+    TreeActor,
+    VOXActor,
+    VoxelSprite,
+    componentGoal,
+    componentPathfinder,
+    componentPhysicsPVA,
+    PathfinderGraph,
+} from '../../src';
 import * as THREE from 'three';
 import * as core from '../../../core';
 
@@ -44,6 +54,11 @@ export function SimulationView({ initSequence }) {
                             engine,
                             TreeActor,
                             VOXActor,
+                            VoxelSprite,
+                            componentGoal,
+                            componentPathfinder,
+                            componentPhysicsPVA,
+                            PathfinderGraph,
                         };
                         const hooks = module.default(context);
                         Object.assign(obj, hooks);
