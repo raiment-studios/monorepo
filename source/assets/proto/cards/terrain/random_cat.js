@@ -1,6 +1,6 @@
 export default function ({ THREE, engine, VOXActor, placeActor }) {
     return {
-        title: 'Random Cat',
+        title: 'Wandering Cat',
         image: 'base/sprites/cat-00.png',
         tags: 'toolbar'.split(',').map((s) => s.trim()),
         quote: {

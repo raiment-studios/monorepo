@@ -1,4 +1,4 @@
-export default function ({ engine, TreeActor, placeActor }) {
+export default function ({ engine, TreeActor }) {
     return {
         quote: {
             value: `
@@ -25,7 +25,7 @@ but Galathea still survives.
                 const count = rng.rangei(3, 8);
                 for (let i = 0; i < count; i++) {
                     const actor = new TreeActor();
-                    yield placeActor({
+                    yield engine.actors.place({
                         engine,
                         actor,
                         heightMap,
