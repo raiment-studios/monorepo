@@ -53,6 +53,9 @@ export function SimulationView({ initSequence }) {
                                 backgroundColor: 'rgba(255,255,255,0.1)',
                                 cursor: 'pointer',
                                 userSelect: 'none',
+                                backgroundImage: `url(base/sprites/tree-01.png)`,
+                                backgroundSize: 'cover',
+                                imageRendering: 'pixelated',
                             }}
                         />
                     ))}
