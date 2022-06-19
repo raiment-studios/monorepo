@@ -21,9 +21,11 @@ export function Card({ card }) {
 
     const quote = card.quote || {};
 
-    quote.text ??=
+    quote.value ??=
         "It's a beautiful world we live in, right? Except for that deadly maelstrom, of course.";
     quote.author ??= 'Lain Grenwood';
+
+    quote.value = quote.value.replace(/\n/g, ' ').trim();
 
     return (
         <div
@@ -141,7 +143,7 @@ export function Card({ card }) {
                         onClick={() => alert('TODO: link to encyclopedia')}
                     >
                         <div style={{ margin: '8px 4px 8px', fontStyle: 'italic' }}>
-                            <div style={{}}>"{quote.text}"</div>
+                            <div style={{}}>"{quote.value}"</div>
                             <div
                                 style={{
                                     textAlign: 'right',
@@ -206,7 +208,9 @@ export function Card({ card }) {
                             {card.description
                                 ? card.description.map((node, index) =>
                                       node.type === 'text' ? (
-                                          <div key={index}>{node.value}</div>
+                                          <div key={index}>
+                                              {node.value.replace(/\n/g, ' ').trim()}
+                                          </div>
                                       ) : (
                                           node.type
                                       )

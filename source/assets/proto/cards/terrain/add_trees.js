@@ -1,12 +1,11 @@
 export default function ({ engine, TreeActor, placeActor }) {
     return {
         quote: {
-            text: `
+            value: `
 Life is more difficult for us humans in the face of the Maelstrom,
 but Galathea still survives.
-`
-                .replace(/\n/g, '')
-                .trim(),
+`,
+
             author: 'Unknown',
         },
         description: [

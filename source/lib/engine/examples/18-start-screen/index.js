@@ -10,7 +10,7 @@ import { SimulationView } from './simulation_view';
 import { IntroMenus } from './intro_menus';
 
 export default function () {
-    const [mode, setMode] = React.useState(true ? 'game' : 'menu');
+    const [mode, setMode] = React.useState(1 ? 'game' : 'menu');
     const [opacity, setOpacity] = React.useState(0.0);
     useCommonStyles();
 
