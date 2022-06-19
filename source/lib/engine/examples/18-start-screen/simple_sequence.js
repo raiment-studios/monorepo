@@ -1,17 +1,6 @@
 import * as core from '../../../core/src';
 import * as THREE from 'three';
-import {
-    OrbitCamera,
-    HeightMap,
-    HeightMapPlane,
-    DayNightLighting,
-    TerrainMorphHeight,
-    TerrainMorphAverage,
-    WeatherSystem,
-    TreeActor,
-    Actor,
-    RoadActor,
-} from '../../src';
+import { OrbitCamera, HeightMap, DayNightLighting, WeatherSystem, TreeActor } from '../../src';
 
 export function* simpleSequence({ engine }) {
     const { rng } = engine;
@@ -25,7 +14,7 @@ export function* simpleSequence({ engine }) {
     );
 
     // Add some trees to give a sense of scale
-    for (let clusters = 0; clusters < 6; clusters++) {
+    for (let clusters = 0; clusters < 1; clusters++) {
         const cx = rng.rangei(0, heightMap.segments);
         const cy = rng.rangei(0, heightMap.segments);
         const count = rng.rangei(3, 8);
@@ -90,6 +79,7 @@ function makeHeightMap(rng, { amplitude = 1.0 } = {}) {
     const dirtColorFunc = makeDirtColorFunc(256);
 
     const heightMap = new HeightMap({
+        id: 'terrain',
         offset: [-256 / 2, -256 / 2, 0],
         scale: 256,
         segments: 256,

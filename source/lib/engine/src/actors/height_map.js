@@ -17,6 +17,7 @@ export class HeightMap {
     // ------------------------------------------------------------------------
 
     constructor({
+        id = 'heightmap',
         offset = [0, 0, 0],
         scale = 1.0,
         segments = 16,
@@ -26,6 +27,7 @@ export class HeightMap {
         layers = {},
         isGround = true,
     } = {}) {
+        this._id = id;
         this._offset = offset;
         this._scale = scale;
         this._segments = segments;
@@ -63,6 +65,10 @@ export class HeightMap {
     // ------------------------------------------------------------------------
     // @group Properties
     // ------------------------------------------------------------------------
+
+    get id() {
+        return this._id;
+    }
 
     get offset() {
         return this._offset;
