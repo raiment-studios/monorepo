@@ -8,7 +8,7 @@ export default function ({
     componentPhysicsPVA,
     PathfinderGraph,
 }) {
-    function generateKestrel({ engine, heightMap }) {
+    function generateActor({ engine, heightMap }) {
         const rng = engine.rng;
         const tileArray = heightMap.getLayerArray('tile');
 
@@ -67,7 +67,7 @@ Places a wandering cat into the world.
         ],
         play: function* () {
             const heightMap = engine.actors.selectByID('terrain');
-            const actor = generateKestrel({ engine, heightMap });
+            const actor = generateActor({ engine, heightMap });
             engine.actors.push(actor);
         },
     };
