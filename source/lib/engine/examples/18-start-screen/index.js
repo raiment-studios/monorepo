@@ -5,7 +5,7 @@ import 'glob:$(MONOREPO_ROOT)/source/assets;proto/icons/*.png';
 import 'glob:$(MONOREPO_ROOT)/source/assets;proto/sprites/*.png';
 import 'glob:$(MONOREPO_ROOT)/source/assets;base/sprites/*.png';
 
-import { backgroundSequence } from './background_sequence';
+import { simpleSequence } from './simple_sequence';
 import { SimulationView } from './simulation_view';
 import { IntroMenus } from './intro_menus';
 
@@ -29,7 +29,7 @@ export default function () {
             {mode === 'menu' ? (
                 <IntroMenus onStartGame={() => setMode('game')} />
             ) : (
-                <SimulationView initSequence={backgroundSequence} />
+                <SimulationView initSequence={simpleSequence} />
             )}
         </div>
     );

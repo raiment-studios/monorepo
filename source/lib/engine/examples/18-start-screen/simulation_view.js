@@ -65,7 +65,34 @@ export function SimulationView({ initSequence }) {
                     alignItems: 'stretch',
                 }}
             >
-                <Flex style={{ flex: '2 0 0', background: '#111', color: '#eee' }}>cmd</Flex>
+                <Flex
+                    dir="col"
+                    className="mono px-2px"
+                    style={{
+                        flex: '2 0 0',
+                        background: '#111',
+                        color: '#eee',
+                        justifyContent: 'stretch',
+                        alignItems: 'stretch',
+                        fontSize: 18,
+                    }}
+                >
+                    <Flex dir="row" className="py-4px">
+                        <div style={{ flex: '0 0 16px' }}>{'>'}</div>
+                        <div>cmd</div>
+                    </Flex>
+                    <div
+                        className="mt-4px mb-8px"
+                        style={{
+                            height: 1,
+                            background: 'rgba(255,255,255,0.35)',
+                        }}
+                    />
+                    <Flex dir="row" align="stretch" g={1}>
+                        <div style={{ flex: '0 0 16px' }} />
+                        <div>results</div>
+                    </Flex>
+                </Flex>
                 <Flex style={{ flex: '0 0 480px' }}>tools</Flex>
             </Flex>
         </div>

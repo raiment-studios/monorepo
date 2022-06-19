@@ -5,7 +5,9 @@ const styles = {
     body: {
         fontFamily: "'Quicksand', sans-serif",
     },
-
+    '.mono': {
+        fontFamily: 'monospace',
+    },
     '.sans': {
         fontFamily: "'Quicksand', sans-serif",
     },
@@ -31,6 +33,31 @@ const styles = {
         flexDirection: 'column',
     },
 };
+
+Object.entries({
+    '1px': '1px',
+    '2px': '2px',
+    '4px': '4px',
+    '6px': '6px',
+    '8px': '8px',
+    '12px': '12px',
+    '16px': '16px',
+    '24px': '24px',
+    '32px': '32px',
+}).forEach(([key, value]) => {
+    Object.entries({
+        p: 'padding',
+        m: 'margin',
+    }).forEach(([short, full]) => {
+        styles[`.${short}-${key}`] = { [`${full}`]: value };
+        styles[`.${short}x-${key}`] = { [`${full}Left`]: value, [`${full}Right`]: value };
+        styles[`.${short}y-${key}`] = { [`${full}Top`]: value, [`${full}Bottom`]: value };
+        styles[`.${short}t-${key}`] = { [`${full}Top`]: value };
+        styles[`.${short}b-${key}`] = { [`${full}Bottom`]: value };
+        styles[`.${short}l-${key}`] = { [`${full}Left`]: value };
+        styles[`.${short}r-${key}`] = { [`${full}Right`]: value };
+    });
+});
 
 const useCommonStyles2 = createUseStyles({
     '@global': styles,

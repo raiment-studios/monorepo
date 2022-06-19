@@ -10,6 +10,8 @@ export function Flex({
     align = 'center',
     direction,
     dir,
+    grow,
+    g,
 
     ...rest
 }) {
@@ -19,12 +21,15 @@ export function Flex({
     if (direction === 'col') {
         direction = 'column';
     }
+    grow = grow || g;
 
     return (
         <div
+            className={className}
             style={{
                 display: 'flex',
                 flexDirection: direction,
+                flexGrow: grow,
                 alignItems: align,
                 ...style,
             }}
