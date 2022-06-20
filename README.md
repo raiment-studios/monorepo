@@ -5,7 +5,7 @@
 ## What is the Raiment?
 
 The everything-soup description is as follows:
-> Raiment is a story-based game with dynamically generated adventures in the tradition of Sierra Online's original King's Quest, set in an infinite world harkening back to the expansive promise of Bethesda's Daggerfall and with the emergent world-simulations of the depth of Dwarf Fortress, all rendered in a 3D voxel and 2D pixel style and controlled via a fairly simple deck-based rulebook that intends to make contributing to and extending the project as much fun as playing it.
+> Raiment is an adventure game in the tradition of Sierra Online's original King's Quest with dynamically generated storylines. The adventure is set in an infinite procedural world harkening back to the expansive promise of Bethesda's Daggerfall and combined with world-simulation inspired by Dwarf Fortress. Visually the world is rendered in a 3D voxel and 2D pixel style while gameplay is controlled via an easy-to-understand deck-based rulebook that makes contributing to and expanding the game as much fun as playing it.
 
 https://user-images.githubusercontent.com/65878718/162589896-58fd3b08-50e6-49df-ac4d-e45653a95dbb.mp4
 
