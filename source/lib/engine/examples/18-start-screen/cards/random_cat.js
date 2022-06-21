@@ -75,6 +75,7 @@ them. However in Galthea, nothing should be taken for granted.
             },
         ],
         play: function* () {
+            engine.journal.message(`A wandering cat appears...`);
             const heightMap = engine.actors.selectByID('terrain');
             const actor = generateActor({ engine, heightMap });
             engine.actors.push(actor);

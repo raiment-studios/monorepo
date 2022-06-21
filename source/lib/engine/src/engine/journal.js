@@ -13,7 +13,7 @@ export class Journal {
     message(s) {
         const entry = {
             type: 'message',
-            timestamp: Date.now(),
+            timestamp: window.performance.now(),
             value: s,
         };
         this._entries.push(entry);

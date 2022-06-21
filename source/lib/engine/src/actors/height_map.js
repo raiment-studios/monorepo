@@ -281,6 +281,14 @@ export class HeightMap {
         return this._mesh;
     }
 
+    _computeColor(sx, sy, wz, si) {
+        if (this._flags.debug_boolean_tile === 'walkable') {
+            const tile = this.layers.tile?.lookupIndex(si);
+            return tile.walkable ? [0, 1, 0] : [1, 0, 0];
+        }
+        return this._colorFunc(sx, sy, wz, si);
+    }
+
     /**
      */
     _recomputeVertexAttrs(sx, sy, init = false) {
@@ -365,7 +373,7 @@ export class HeightMap {
             }
         }
 
-        const color = this._colorFunc(sx, sy, heights[i], i);
+        const color = this._computeColor(sx, sy, heights[i], i);
         const scale0 = this._scale / this._segments;
 
         const x0 = sx * scale0;
@@ -668,8 +676,9 @@ class Layer {
      * in the lookup table.
      */
     mutateAtIndex(index, props) {
-        const value = this._array[index];
-        this._array[index] = this._table.getDerived(value, props);
+        const tileIndex = this._array[index];
+        const derivedIndex = this._table.getDerived(tileIndex, props);
+        this._array[index] = derivedIndex;
     }
 
     mutate(x, y, props) {
@@ -733,12 +742,12 @@ class LookupTable {
 
         // Find or create the derived object
         const derivedName = `${baseObject.name}-d${deltas.join('-')}`;
-        let derivedObject = this._set[derivedName];
-        if (!derivedObject) {
+        let derivedIndex = this._set[derivedName];
+        if (derivedIndex === undefined) {
             this.addSet({ [derivedName]: { ...baseObject, ...props, name: derivedName } });
-            derivedObject = this._set[derivedName];
+            derivedIndex = this._set[derivedName];
         }
-        return derivedObject.index;
+        return derivedIndex;
     }
 
     remove(obj) {

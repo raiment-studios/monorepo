@@ -5,7 +5,7 @@ export default function ({ THREE, engine, VOXActor }) {
         tags: 'toolbar'.split(',').map((s) => s.trim()),
         play: function* () {
             const rng = engine.rng.fork();
-            engine.journal.message('Adding a house...');
+            engine.journal.message('Adding a house to the world...');
             const heightMap = engine.actors.selectByID('terrain');
             for (let i = 0; i < 1; i++) {
                 const actor = new VOXActor({
@@ -24,7 +24,6 @@ export default function ({ THREE, engine, VOXActor }) {
                     rotation: (Math.PI / 2) * rng.rangei(0, 4),
                 });
                 yield engine.actors.place({ engine, actor, heightMap });
-                yield 10;
             }
         },
     };

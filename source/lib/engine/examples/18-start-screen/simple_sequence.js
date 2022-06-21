@@ -7,7 +7,7 @@ export function* simpleSequence({ engine }) {
     const heightMap = makeHeightMap(rng, { amplitude: 0.25 });
 
     engine.actors.push(
-        new OrbitCamera({ radius: 24, periodMS: 20000, offsetZ: 32 }), //
+        new OrbitCamera({ radius: 72, periodMS: 20000, offsetZ: 32 }), //
         new DayNightLighting({ speed: 1, nightSpeed: 4 }),
         heightMap,
         new WeatherSystem({ startState: 'clear', heightMap })
