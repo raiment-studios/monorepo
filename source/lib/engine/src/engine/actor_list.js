@@ -78,6 +78,14 @@ export class ActorList {
     }
 }
 
+/**
+ * ⚠️ This code has not been generalized and thus makes untested assumptions
+ * about the world configuration.
+ *
+ * 🚧 TODO
+ * - Document & normalize actor placementConstraints
+ * - Document walkable & buildable properties. Warn if not present?
+ */
 async function placeActor({
     engine,
     actor,

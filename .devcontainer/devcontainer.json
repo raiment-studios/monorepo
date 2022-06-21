@@ -28,6 +28,19 @@
             "editor.formatOnSave": true,
             "editor.wordWrap": "wordWrapColumn",
             "editor.wordWrapColumn": 80
+        },
+        "emojisense.languages": {
+
+            "markdown": true,
+            "javascript":true,
+            "javascriptreact": true,
+            "typescript":true,
+            "plaintext": {
+                "markupCompletionsEnabled": false,
+                "emojiDecoratorsEnabled": false
+            },
+            "scminput": true,
+            "git-commit": true
         }
     },
     "extensions": [
