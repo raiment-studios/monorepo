@@ -15,7 +15,8 @@ import * as THREE from 'three';
 import * as core from '../../../core';
 
 import 'glob:$(MONOREPO_ROOT)/source/assets;**/*.vox';
-import assetList from 'glob:$(MONOREPO_ROOT)/source/assets;**/cards/**/*.{js,yaml}';
+import assetList1 from 'glob:$(MONOREPO_ROOT)/source/assets;**/cards/**/*.{js,yaml}';
+import assetList2 from 'glob:./cards/**/*.{js,yaml}';
 import { Dialog, DialogCurtain, CenterOverlay } from './dialog';
 import { Card } from './card';
 
@@ -29,6 +30,7 @@ export function SimulationView({ initSequence }) {
 
     useAsyncEffect(
         async (token) => {
+            const assetList = [...assetList1, ...assetList2];
             const set = Object.fromEntries(assetList.map((url) => [url, true]));
             const uniqSet = {};
             for (let url of assetList) {

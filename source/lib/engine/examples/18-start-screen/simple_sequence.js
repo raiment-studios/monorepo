@@ -2,14 +2,12 @@ import * as core from '../../../core/src';
 import * as THREE from 'three';
 import { OrbitCamera, HeightMap, DayNightLighting, WeatherSystem, TreeActor } from '../../src';
 
-import cards from 'glob:$(MONOREPO_ROOT)/source/assets;proto/cards/**/*.js';
-
 export function* simpleSequence({ engine }) {
     const { rng } = engine;
     const heightMap = makeHeightMap(rng, { amplitude: 0.25 });
 
     engine.actors.push(
-        new OrbitCamera({ radius: 24, periodMS: 20000, offsetZ: 1 }), //
+        new OrbitCamera({ radius: 24, periodMS: 20000, offsetZ: 32 }), //
         new DayNightLighting({ speed: 1, nightSpeed: 4 }),
         heightMap,
         new WeatherSystem({ startState: 'clear', heightMap })

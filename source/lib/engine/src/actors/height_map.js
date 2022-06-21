@@ -25,6 +25,7 @@ export class HeightMap {
         opacity = 1.0,
         layers = {},
         isGround = true,
+        flags = {},
     } = {}) {
         this._id = id;
         this._offset = offset;
@@ -35,6 +36,12 @@ export class HeightMap {
         this._colorFunc = colorFunc;
         this._heightFunc = heightFunc;
         this._mesh = null;
+        this._flags = Object.assign(
+            {
+                debug_boolean_tile: null,
+            },
+            flags
+        );
 
         this.addLayer('height', { type: Float32Array });
         for (let [layerName, options] of Object.entries(layers)) {
@@ -67,6 +74,9 @@ export class HeightMap {
 
     get id() {
         return this._id;
+    }
+    get flags() {
+        return this._flags;
     }
 
     get offset() {
