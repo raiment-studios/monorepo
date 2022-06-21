@@ -72,6 +72,7 @@ export class SeaJSX {
         await watchLoop(this, {
             filename,
             watchList: watches,
+            references,
             onBuild: ({ output, buildID, references }) => {
                 content.output = output;
                 content.buildID = buildID;

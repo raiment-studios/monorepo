@@ -10,7 +10,6 @@ export default function ({
 }) {
     function generateActor({ engine, heightMap }) {
         const rng = engine.rng;
-        const tileArray = heightMap.getLayerArray('tile');
 
         function generateRandomWalkablePosition() {
             const walkable = (wx, wy) => {
@@ -18,8 +17,7 @@ export default function ({
                 if (si === -1) {
                     return false;
                 }
-                const tileIndex = tileArray[si];
-                return true; // tileIndex === TILE.GRASS;
+                return heightMap.layers.tile.lookupIndex(si).walkable ?? true;
             };
 
             let worldX, worldY;
@@ -39,10 +37,40 @@ export default function ({
                 billboard: true,
                 pinToGroundHeight: true,
             },
-            mixins: [],
             worldX,
             worldY,
             scale: 0.5,
+
+            stateMachine: () => ({
+                _start: function* () {
+                    return 'pathfind.target';
+                },
+            }),
+        });
+
+        const heightArray = heightMap.getLayerArray('height');
+
+        actor.mixin(componentPathfinder, {
+            pathfinder: new PathfinderGraph({
+                width: heightMap.segments,
+                height: heightMap.segments,
+                walkable: (sx, sy) => heightMap.layers.tile.lookup(sx, sy).walkable ?? true,
+                baseCost: (a) => heightMap.layers.tile.lookup(a.x, a.y)?.walkCost ?? 0.0,
+                edgeCost: (a, b) => {
+                    const hb = heightArray[b.y * heightMap.segments + b.x];
+                    const ha = heightArray[a.y * heightMap.segments + a.x];
+                    return Math.max(0, 10 * (hb - ha));
+                },
+            }),
+            moveDelay: 4,
+            positionFunc: ({ actor }) => {
+                return heightMap.coordW2S(actor.position.x, actor.position.y);
+            },
+            onMove: (sx, sy) => {
+                const [wx, wy] = heightMap.coordS2W(sx, sy);
+                actor.position.x = wx;
+                actor.position.y = wy;
+            },
         });
 
         return actor;

@@ -38,6 +38,9 @@ export class StateMachine {
         this._priorStateName = null;
 
         // Starting state is always "_start"
+        if (!states._start) {
+            throw new Error(`StateMachine must have a '_start' state`);
+        }
         this._activeState = states._start.call(this._self);
     }
 

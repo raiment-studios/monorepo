@@ -50,20 +50,24 @@ export function SimulationView({ initSequence }) {
                         Object.assign(obj, core.parseYAML(text));
                     }
                     if (set[scriptURL]) {
-                        const module = await import(`./${scriptURL}`);
-                        const context = {
-                            THREE,
-                            engine,
-                            TreeActor,
-                            VOXActor,
-                            VoxelSprite,
-                            componentGoal,
-                            componentPathfinder,
-                            componentPhysicsPVA,
-                            PathfinderGraph,
-                        };
-                        const hooks = module.default(context);
-                        Object.assign(obj, hooks);
+                        try {
+                            const module = await import(`./${scriptURL}`);
+                            const context = {
+                                THREE,
+                                engine,
+                                TreeActor,
+                                VOXActor,
+                                VoxelSprite,
+                                componentGoal,
+                                componentPathfinder,
+                                componentPhysicsPVA,
+                                PathfinderGraph,
+                            };
+                            const hooks = module.default(context);
+                            Object.assign(obj, hooks);
+                        } catch (err) {
+                            console.error(err);
+                        }
                     }
                     return obj;
                 })

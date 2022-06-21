@@ -1,20 +1,33 @@
 import fs from 'fs/promises';
 import { build } from './build.js';
 
-export async function watchLoop(app, { filename, watchList, onBuild }) {
-    const state = { watchList };
+export async function watchLoop(app, { filename, watchList, references, onBuild }) {
+    const state = { watchList, references, cache: {} };
 
-    const printV1WatchList = () => {
+    const printV1Cache = () => {
         for (let [filename] of Object.entries(state.watchList)) {
             app.printV1(`Watching {{obj ${filename}}}`);
         }
     };
 
-    printV1WatchList();
+    const rebuildCache = async () => {
+        state.cache = {};
+        for (let [filename, modified] of Object.entries(state.watchList)) {
+            state.cache[filename] = modified;
+        }
+        for (let { filepath } of Object.values(state.references)) {
+            const modified = (await fs.stat(filepath)).mtime;
+            state.cache[filepath] = modified;
+        }
+    };
+
+    printV1Cache();
+    await rebuildCache();
 
     while (true) {
         let dirty = false;
-        for (let [filename, modified] of Object.entries(state.watchList)) {
+
+        for (let [filename, modified] of Object.entries(state.cache)) {
             let mtime;
             try {
                 mtime = (await fs.stat(filename)).mtime;
@@ -28,22 +41,25 @@ export async function watchLoop(app, { filename, watchList, onBuild }) {
             }
             if (mtime > modified) {
                 app.print(`Refreshing ({{obj ${filename}}} modified).`);
-                state.watchList[filename] = mtime;
+                state.cache[filename] = mtime;
 
-                printV1WatchList();
+                printV1Cache();
                 dirty = true;
+                break;
             }
 
             // Slight delay to avoid hogging the filesystem
             await sleep(10);
         }
+
         if (dirty) {
             const ret = await build(app, { filename, sourcemap: true });
             state.watchList = ret.watches;
+            state.references = ret.references;
+            await rebuildCache();
             if (onBuild) {
                 onBuild(ret);
             }
-
             app.cacheID = app.generateRandomID();
         }
         await sleep(250 + Math.floor(Math.random() * 500));
