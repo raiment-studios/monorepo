@@ -1,43 +1,48 @@
 import * as THREE from 'three';
 
-export class OrbitCamera {
+export class FirstPersonCamera {
     constructor({
         id = 'camera',
         radius = 192, //
-        periodMS = 10000,
         offsetZ = 0,
     } = {}) {
         this._id = id;
-        this._periodMS = periodMS;
-        this._radius = new AnimScalar(radius);
-        this._lookAt = new AnimVector3(0, 0, 0);
-        this._angle = 0.0;
-        this._offsetZ = new AnimScalar(offsetZ);
-
-        this._autoHeight = true;
-        this._autoRotate = true;
+        this._lookAt = new AnimVector3(32, 32, 5);
+        this._position = new AnimVector3(0, 0, 12);
+        this._flags = {
+            pinToGroundHeight: true,
+        };
     }
 
     get id() {
         return this._id;
     }
 
-    get radius() {
-        return this._radius.current;
-    }
-    set radius(v) {
-        if (!(v >= 0)) {
-            throw new Error('Invalid parameter');
-        }
-        this._radius.target = v;
-    }
-    set offsetZ(value) {
-        this._offsetZ.target = value;
+    lookAt(pt) {
+        this._lookAt.target.copy(pt);
     }
 
-    lookAt(pt) {
-        this._autoHeight = false;
-        this._lookAt.target.copy(pt);
+    init({ engine }) {
+        engine.events.on('W', () => {
+            console.log('move forward');
+            this._lookAt.target.y += 1;
+            this._position.target.y += 1;
+        });
+        engine.events.on('S', () => {
+            console.log('move back');
+            this._lookAt.target.y -= 1;
+            this._position.target.y -= 1;
+        });
+        engine.events.on('A', () => {
+            console.log('move left');
+            this._lookAt.target.x -= 1;
+            this._position.target.x -= 1;
+        });
+        engine.events.on('D', () => {
+            console.log('move right');
+            this._lookAt.target.x += 1;
+            this._position.target.x += 1;
+        });
     }
 
     update({ engine, timeMS }) {
@@ -45,32 +50,12 @@ export class OrbitCamera {
         const worldUp = new THREE.Vector3(0, 0, 1);
         const camera = engine.renderers.three.camera;
 
-        const offsetZ = this._offsetZ.update(ε).current;
-        const radius = this._radius.update(ε).current;
-
+        this._position.update(ε / 2.0);
         this._lookAt.update(ε / 2.0);
-        let lookX = this._lookAt.current.x;
-        let lookY = this._lookAt.current.y;
-        let lookZ = this._lookAt.current.z;
 
-        if (this._autoHeight) {
-            lookZ += radius / 10.0;
-        }
-
-        if (this._autoRotate) {
-            this._angle = (timeMS * Math.PI) / this._periodMS;
-        }
-
-        const ang = this._angle;
-        const ang2 = ang / 1.802;
-
-        const cx = lookX + radius * Math.cos(ang);
-        const cy = lookY + radius * Math.sin(ang);
-        const cz = lookZ + offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
-
-        camera.position.set(cx, cy, cz);
+        camera.position.copy(this._position.current);
         camera.up = worldUp;
-        camera.lookAt(lookX, lookY, lookZ);
+        camera.lookAt(this._lookAt.current.x, this._lookAt.current.y, this._lookAt.current.z);
     }
 }
 

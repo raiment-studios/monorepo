@@ -62,7 +62,7 @@ export default function ({
                     return Math.max(0, 10 * (hb - ha));
                 },
             }),
-            moveDelay: 4,
+            moveDelay: 6,
             positionFunc: ({ actor }) => {
                 return heightMap.coordW2S(actor.position.x, actor.position.y);
             },

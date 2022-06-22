@@ -14,6 +14,7 @@
     -   [Directory structure](#directory-structure)
     -   [Development process](#development-process)
         -   [Build conventions](#build-conventions)
+        -   [Project definition](#project-definition)
     -   [Communication conventions](#communication-conventions)
         -   [Coding conventions](#coding-conventions)
         -   [Unicode conventions](#unicode-conventions)
@@ -75,6 +76,22 @@ Ideally the `Makefile` is a very thin wrapper on the underlying tooling. As a ge
 In practice, this means:
 
 -   Preferring `Makefile` commands over a `scripts` entry in `package.json`. If the `scripts` section is used, the `Makefile` should provide wrappers on those scripts.
+
+### Project definition
+
+1. UI elements
+2. Design system updates
+3. Reusable UI library updates
+4. API impact
+5. Developer experience issues
+6. Caching
+7. Database / storage impact
+8. Performance work
+9. Bug fixes / tech debt
+10. Testing
+11. Documentation
+
+Epics, user stories, bugs, backlog.
 
 ## Communication conventions
 

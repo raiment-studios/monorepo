@@ -78,7 +78,6 @@ export function SimulationView({ initSequence }) {
         [engine]
     );
 
-    console.log({ cards });
     const toolbarButtons = cards?.filter((c) => c.tags && c.tags.indexOf('toolbar') !== -1) || [];
 
     return (
@@ -194,7 +193,6 @@ function CommandArea({ engine }) {
     React.useEffect(() => {
         const remove = engine.events.on('journal.entry', (entry) => {
             setEntries((entries) => {
-                console.log(entries);
                 return [entry, ...entries];
             });
         });

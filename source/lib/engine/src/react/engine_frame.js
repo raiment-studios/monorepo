@@ -104,7 +104,6 @@ function makeHandleKeyDown(engine) {
             }${evt.key.toUpperCase()}`;
         }
         engine.events.fire(eventName);
-        engine.journal.message(`keydown = ${eventName}`);
     };
 }
 

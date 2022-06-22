@@ -16,8 +16,8 @@ export class ActorList {
         };
     }
 
-    async place(...args) {
-        return placeActor(...args);
+    async place(ctx, ...rest) {
+        return placeActor(ctx, ...rest);
     }
 
     push(...actors) {
@@ -105,7 +105,9 @@ async function placeActor({
     //
     // Read the actor's constraints on how it should be placed
     //
-    const constraints = await actor.placementConstraints({ engine });
+    const constraints = (await actor.placementConstraints?.({ engine })) || {
+        box3: new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1)),
+    };
     const bbox = constraints.box3;
     const size = new THREE.Vector3();
     bbox.min.floor();

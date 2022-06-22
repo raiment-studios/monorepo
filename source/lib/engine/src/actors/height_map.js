@@ -787,6 +787,7 @@ class LookupTable {
             i = this._list.length;
         }
         this._normalize(obj, i);
+        obj.id = name;
         obj.name = name;
         obj.index = i;
 
