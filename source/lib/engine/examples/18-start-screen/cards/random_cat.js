@@ -39,7 +39,7 @@ export default function ({
             },
             worldX,
             worldY,
-            scale: 0.5,
+            scale: 0.25,
 
             stateMachine: () => ({
                 _start: function* () {

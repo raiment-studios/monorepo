@@ -18,16 +18,6 @@ export class Engine {
 
         this._uuid = generateUUID();
         this._frameLoop = new FrameLoop(this.runFrame.bind(this));
-        this._context = {
-            engine: this,
-            timeMS: 0,
-            frameNumber: 0,
-            frameFPS: 0,
-
-            actors: null,
-            actor: null,
-            mesh: null,
-        };
 
         this._hostElement = null;
         this._renderers = {};
@@ -37,6 +27,20 @@ export class Engine {
         this._world = new World(this);
         this._journal = new Journal(this);
         this._opt = {};
+        this._keyState = {};
+
+        this._context = {
+            engine: this,
+            timeMS: 0,
+            frameNumber: 0,
+            frameFPS: 0,
+
+            actors: null,
+            actor: null,
+            mesh: null,
+
+            keyState: this._keyState,
+        };
 
         registerPinToGroundHeight(this);
         registerBillboard(this);

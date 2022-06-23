@@ -1,17 +1,11 @@
 import * as THREE from 'three';
 
 export class FirstPersonCamera {
-    constructor({
-        id = 'camera',
-        radius = 192, //
-        offsetZ = 0,
-    } = {}) {
+    constructor({ id = 'camera' } = {}) {
         this._id = id;
         this._lookAt = new AnimVector3(32, 32, 5);
         this._position = new AnimVector3(0, 0, 12);
-        this._flags = {
-            pinToGroundHeight: true,
-        };
+        this._angle = new AnimScalar(Math.PI / 2.0);
     }
 
     get id() {
@@ -22,40 +16,69 @@ export class FirstPersonCamera {
         this._lookAt.target.copy(pt);
     }
 
-    init({ engine }) {
-        engine.events.on('W', () => {
-            console.log('move forward');
-            this._lookAt.target.y += 1;
-            this._position.target.y += 1;
-        });
-        engine.events.on('S', () => {
-            console.log('move back');
-            this._lookAt.target.y -= 1;
-            this._position.target.y -= 1;
-        });
-        engine.events.on('A', () => {
-            console.log('move left');
-            this._lookAt.target.x -= 1;
-            this._position.target.x -= 1;
-        });
-        engine.events.on('D', () => {
-            console.log('move right');
-            this._lookAt.target.x += 1;
-            this._position.target.x += 1;
-        });
+    _forward() {
+        const x = Math.cos(this._angle.current);
+        const y = Math.sin(this._angle.current);
+        return [x, y];
     }
 
-    update({ engine, timeMS }) {
+    init({ engine }) {
+        const STEP = 1;
+    }
+
+    update({ engine, timeMS, keyState }) {
+        const STEP = 0.15;
         const ε = 0.25;
         const worldUp = new THREE.Vector3(0, 0, 1);
         const camera = engine.renderers.three.camera;
 
-        this._position.update(ε / 2.0);
-        this._lookAt.update(ε / 2.0);
+        if (keyState['Q']) {
+            this._angle.target += Math.PI / 100;
+        }
+        if (keyState['E']) {
+            this._angle.target -= Math.PI / 100;
+        }
 
-        camera.position.copy(this._position.current);
+        const [fx, fy] = this._forward();
+        let dx = 0.0;
+        let dy = 0.0;
+        if (keyState['W']) {
+            dx += STEP * fx;
+            dy += STEP * fy;
+        }
+        if (keyState['S']) {
+            dx -= STEP * fx;
+            dy -= STEP * fy;
+        }
+        if (keyState['A']) {
+            dx -= STEP * fy;
+            dy += STEP * fx;
+        }
+        if (keyState['D']) {
+            dx += STEP * fy;
+            dy -= STEP * fx;
+        }
+        this._position.target.x += dx;
+        this._position.target.y += dy;
+
+        this._angle.update(ε / 4.0);
+        this._position.update(ε * 2.0);
+
+        const pos = this._position.current.clone();
+        const z = engine.world.groundHeight(pos.x, pos.y);
+        if (z > -Infinity) {
+            pos.z = z;
+        }
+        pos.z += 4;
+
+        const lookX = pos.x + 10 * fx;
+        const lookY = pos.y + 10 * fy;
+        const lookZ = pos.z - 1;
+
+        camera.fov = 80;
+        camera.position.copy(pos);
         camera.up = worldUp;
-        camera.lookAt(this._lookAt.current.x, this._lookAt.current.y, this._lookAt.current.z);
+        camera.lookAt(lookX, lookY, lookZ);
     }
 }
 

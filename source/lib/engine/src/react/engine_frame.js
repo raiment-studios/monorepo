@@ -20,6 +20,7 @@ export const EngineFrame = React.memo(
         const refElemRect = React.useRef(null);
 
         const handleKeyDown = makeHandleKeyDown(engine);
+        const handleKeyUp = makeHandleKeyUp(engine);
         const handleClickImp = makeHandleClickImp(engine, refElemRect);
 
         React.useEffect(() => {
@@ -34,6 +35,7 @@ export const EngineFrame = React.memo(
             engine._cache.imageGeometry = new ImageGeometryCache();
 
             window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
 
             engine._actors.push(...actors);
 
@@ -81,6 +83,23 @@ export const EngineFrame = React.memo(
     }
 );
 
+function computeEventName(evt) {
+    let eventName;
+    if (evt.which === 16) {
+        // The default logic would produce "SHIFT+SHIFT"
+        eventName = 'SHIFT';
+    } else if (evt.which === 17) {
+        eventName = 'CTRL';
+    } else if (evt.which === 18) {
+        eventName = 'ALT';
+    } else {
+        eventName = `${evt.altKey ? 'ALT+' : ''}${evt.ctrlKey ? 'CTRL+' : ''}${
+            evt.shiftKey ? 'SHIFT+' : ''
+        }${evt.key.toUpperCase()}`;
+    }
+    return eventName;
+}
+
 function makeHandleKeyDown(engine) {
     return function (evt) {
         // Defer to an active element if there is one
@@ -89,21 +108,25 @@ function makeHandleKeyDown(engine) {
         }
         evt.preventDefault();
         evt.stopPropagation();
+        const eventName = computeEventName(evt);
+        engine.events.fire(`keydown:${eventName}`);
 
-        let eventName;
-        if (evt.which === 16) {
-            // The default logic would produce "SHIFT+SHIFT"
-            eventName = 'SHIFT';
-        } else if (evt.which === 17) {
-            eventName = 'CTRL';
-        } else if (evt.which === 18) {
-            eventName = 'ALT';
-        } else {
-            eventName = `${evt.altKey ? 'ALT+' : ''}${evt.ctrlKey ? 'CTRL+' : ''}${
-                evt.shiftKey ? 'SHIFT+' : ''
-            }${evt.key.toUpperCase()}`;
+        engine._keyState[eventName] = true;
+    };
+}
+
+function makeHandleKeyUp(engine) {
+    return function (evt) {
+        // Defer to an active element if there is one
+        if (!!document.activeElement && document.activeElement !== document.body) {
+            return;
         }
-        engine.events.fire(eventName);
+        evt.preventDefault();
+        evt.stopPropagation();
+        const eventName = computeEventName(evt);
+        engine.events.fire(`keyup:${eventName}`);
+
+        engine._keyState[eventName] = false;
     };
 }
 
