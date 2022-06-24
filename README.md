@@ -5,6 +5,7 @@
 ## What is the Raiment?
 
 The everything-soup description is as follows:
+
 > Raiment is an adventure game in the tradition of Sierra Online's original King's Quest with dynamically generated storylines. The adventure is set in an infinite procedural world harkening back to the expansive promise of Bethesda's Daggerfall and combined with world-simulation inspired by Dwarf Fortress. Visually the world is rendered in a 3D voxel and 2D pixel style while gameplay is controlled via an easy-to-understand deck-based rulebook that makes contributing to and expanding the game as much fun as playing it.
 
 https://user-images.githubusercontent.com/65878718/162589896-58fd3b08-50e6-49df-ac4d-e45653a95dbb.mp4
@@ -115,9 +116,25 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 ➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release, 🧬 for sandboxes or experiments, 📚 documentation, guides, or tutorials
 
 -   [x] ➕🗃️🛠️📣🧬📚
+-   Use links such as https://github.com/raiment-studios/monorepo/compare/main@%7B2022-06-13%7D...main@%7B2022-06-20%7D to view changes from any date range
 
 #### 2022
 
+-   Week 25
+    -   [x] ➕ `sea-jsx` now watches file references (in addition to source)
+    -   [x] ➕ Add `engine.world.generateRandomWalkablePosition()`
+    -   [x] 🛠️ Fix bug in `LookupTable.getDerived`
+    -   [x] 🧬 Add first-person camera
+    -   [x] ➕ Improve keyboard handling options in `Engine`
+    -   [x] 🗃️ Move pathfinding setup into `engine.world` for easier reuse
+    -   [x] 🧬 Add Engine User Guide docs
+-   Week 24
+    -   [x] ➕ Add margin/padding CSS classes
+    -   [x] ➕ Given `sequence` calls access to the engine context
+    -   [x] ➕ Add `place` to `engine.actors` as rough placement method
+    -   [x] ➕ Add new sprites to asset collection
+    -   [x] 🧬 Add start menu experiment
+    -   [x] 🧬 Add basic "card" assets/views as an experiment
 -   Week 23
     -   [x] 🗃️ Move to `@raiment/core` to `fast-mersenne-twister` for performance
     -   [x] 🛠️ Simplify `sea-jsx` `glob:` to return URLs only
