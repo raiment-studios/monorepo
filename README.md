@@ -217,6 +217,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
     -   [x] ➕ Add `sea-jsx` watch/refresh on all referenced user files
     -   [x] ➕ Add EventEmitter to `@raiment/core`
 
-#### Before that...
+#### Prehistory
 
--   [x] 🦕 [_Prehistory_](https://en.wikipedia.org/wiki/Prehistory)
+-   Before Week 17, 2022
+    -   [x] 🦕
