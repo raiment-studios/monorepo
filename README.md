@@ -116,7 +116,6 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 ➕ new or improved functionality, 🗃️ internal organization or code improvements, 🛠️ defect fix, 📣 publication or release, 🧬 for sandboxes or experiments, 📚 documentation, guides, or tutorials
 
 -   [x] ➕🗃️🛠️📣🧬📚
--   Use links such as https://github.com/raiment-studios/monorepo/compare/main@%7B2022-06-13%7D...main@%7B2022-06-20%7D to view changes from any date range
 
 #### 2022
 
