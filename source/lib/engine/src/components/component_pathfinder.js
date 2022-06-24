@@ -23,6 +23,10 @@ export function componentPathfinder(
         interruptFunc,
     }
 ) {
+    console.assert(pathfinder, `Required argument`);
+    console.assert(positionFunc, `Required argument`);
+    console.assert(onMove, `Required argument`);
+
     const prefixName = (s) => `${prefix}${s}`;
     const STATE_TARGET = prefixName('target');
     const STATE_MOVE = prefixName('move');

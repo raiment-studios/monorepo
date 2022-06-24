@@ -1,35 +1,6 @@
-export default function ({
-    THREE,
-    engine,
-    VOXActor,
-    VoxelSprite,
-    componentGoal,
-    componentPathfinder,
-    componentPhysicsPVA,
-    PathfinderGraph,
-}) {
-    function generateActor({ engine, heightMap }) {
-        const rng = engine.rng;
-
-        function generateRandomWalkablePosition() {
-            const walkable = (wx, wy) => {
-                const si = heightMap.coordW2I(wx, wy);
-                if (si === -1) {
-                    return false;
-                }
-                return heightMap.layers.tile.lookupIndex(si).walkable ?? true;
-            };
-
-            let worldX, worldY;
-            do {
-                worldX = rng.sign() * rng.rangei(0, heightMap.segments / 2);
-                worldY = rng.sign() * rng.rangei(0, heightMap.segments / 2);
-            } while (!walkable(worldX, worldY));
-
-            return [worldX, worldY];
-        }
-
-        let [worldX, worldY] = generateRandomWalkablePosition();
+export default function ({ engine, VoxelSprite, componentWorldPathfinder }) {
+    function generateActor({ engine }) {
+        let position = engine.world.generateRandomWalkablePosition();
 
         const actor = new VoxelSprite({
             url: 'base/sprites/cat-00.png',
@@ -37,8 +8,7 @@ export default function ({
                 billboard: true,
                 pinToGroundHeight: true,
             },
-            worldX,
-            worldY,
+            position,
             scale: 0.25,
 
             stateMachine: () => ({
@@ -48,30 +18,7 @@ export default function ({
             }),
         });
 
-        const heightArray = heightMap.getLayerArray('height');
-
-        actor.mixin(componentPathfinder, {
-            pathfinder: new PathfinderGraph({
-                width: heightMap.segments,
-                height: heightMap.segments,
-                walkable: (sx, sy) => heightMap.layers.tile.lookup(sx, sy).walkable ?? true,
-                baseCost: (a) => heightMap.layers.tile.lookup(a.x, a.y)?.walkCost ?? 0.0,
-                edgeCost: (a, b) => {
-                    const hb = heightArray[b.y * heightMap.segments + b.x];
-                    const ha = heightArray[a.y * heightMap.segments + a.x];
-                    return Math.max(0, 10 * (hb - ha));
-                },
-            }),
-            moveDelay: 6,
-            positionFunc: ({ actor }) => {
-                return heightMap.coordW2S(actor.position.x, actor.position.y);
-            },
-            onMove: (sx, sy) => {
-                const [wx, wy] = heightMap.coordS2W(sx, sy);
-                actor.position.x = wx;
-                actor.position.y = wy;
-            },
-        });
+        actor.mixin(componentWorldPathfinder, { engine });
 
         return actor;
     }
@@ -104,8 +51,7 @@ them. However in Galthea, nothing should be taken for granted.
         ],
         play: function* () {
             engine.journal.message(`A wandering cat appears...`);
-            const heightMap = engine.actors.selectByID('terrain');
-            const actor = generateActor({ engine, heightMap });
+            const actor = generateActor({ engine });
             engine.actors.push(actor);
         },
     };

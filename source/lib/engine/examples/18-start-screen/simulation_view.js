@@ -9,6 +9,7 @@ import {
     componentGoal,
     componentPathfinder,
     componentPhysicsPVA,
+    componentWorldPathfinder,
     PathfinderGraph,
 } from '../../src';
 import * as THREE from 'three';
@@ -61,6 +62,7 @@ export function SimulationView({ initSequence }) {
                                 componentGoal,
                                 componentPathfinder,
                                 componentPhysicsPVA,
+                                componentWorldPathfinder,
                                 PathfinderGraph,
                             };
                             const hooks = module.default(context);

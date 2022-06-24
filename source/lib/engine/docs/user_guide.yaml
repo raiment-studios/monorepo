@@ -1,0 +1,18 @@
+content:
+    - type: section
+      name: Core functionality
+      blocks:
+          - type: section
+            name: engine.actors
+          - type: section
+            name: engine.world
+            blocks:
+                - type: text
+                  value: |
+                      A facade for getting information about the world without having
+                      to directly access objects such as height maps or static meshes.
+
+                      The Engine assumes a 2.5D world built on a regular grid.
+
+          - type: section
+            name: engine.journal

@@ -44,6 +44,9 @@ Object.entries({
     '16px': '16px',
     '24px': '24px',
     '32px': '32px',
+    '64px': '64px',
+    '96px': '96px',
+    '128px': '128px',
 }).forEach(([key, value]) => {
     Object.entries({
         p: 'padding',

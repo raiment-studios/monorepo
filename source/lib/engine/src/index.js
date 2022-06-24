@@ -26,6 +26,7 @@ export * from './components/component_goal';
 export * from './components/component_pathfinder';
 export * from './components/component_physics_pva';
 export * from './components/component_self_collider_box3';
+export * from './components/component_world_pathfinder';
 
 export * from './engine/actor';
 
