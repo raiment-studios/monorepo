@@ -120,7 +120,7 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
 
 #### 2022
 
--   Week 25
+-   [Week 25](https://github.com/raiment-studios/monorepo/compare/main@%7B2022-06-20%7D...main@%7B2022-06-27%7D)
     -   [x] ➕ `sea-jsx` now watches file references (in addition to source)
     -   [x] ➕ Add `engine.world.generateRandomWalkablePosition()`
     -   [x] 🛠️ Fix bug in `LookupTable.getDerived`
@@ -128,14 +128,14 @@ Unless stated explicitly otherwise, any contribution intentionally submitted for
     -   [x] ➕ Improve keyboard handling options in `Engine`
     -   [x] 🗃️ Move pathfinding setup into `engine.world` for easier reuse
     -   [x] 🧬 Add Engine User Guide docs
--   Week 24
+-   [Week 24](https://github.com/raiment-studios/monorepo/compare/main@%7B2022-06-13%7D...main@%7B2022-06-20%7D)
     -   [x] ➕ Add margin/padding CSS classes
     -   [x] ➕ Given `sequence` calls access to the engine context
     -   [x] ➕ Add `place` to `engine.actors` as rough placement method
     -   [x] ➕ Add new sprites to asset collection
     -   [x] 🧬 Add start menu experiment
     -   [x] 🧬 Add basic "card" assets/views as an experiment
--   Week 23
+-   [Week 23](https://github.com/raiment-studios/monorepo/compare/main@%7B2022-06-06%7D...main@%7B2022-06-13%7D)
     -   [x] 🗃️ Move to `@raiment/core` to `fast-mersenne-twister` for performance
     -   [x] 🛠️ Simplify `sea-jsx` `glob:` to return URLs only
     -   [x] ➕ Add engine `goal` mixin
