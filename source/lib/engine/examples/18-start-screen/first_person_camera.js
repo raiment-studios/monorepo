@@ -12,8 +12,18 @@ export class FirstPersonCamera {
         return this._id;
     }
 
+    get position() {
+        return this._position.current;
+    }
+
     lookAt(pt) {
         this._lookAt.target.copy(pt);
+    }
+
+    forward() {
+        const x = Math.cos(this._angle.current);
+        const y = Math.sin(this._angle.current);
+        return new THREE.Vector3(x, y, 0.0);
     }
 
     _forward() {

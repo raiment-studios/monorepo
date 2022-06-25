@@ -60,7 +60,7 @@ export function componentPathfinder(
                 }
 
                 // If the destination is "far away", compute a path to an intermediate
-                // point.  Otherwise, compute the path to the destination
+                // point.  Otherwise, compute the path to the destination.
                 const dx = ex - sx;
                 const dy = ey - sy;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -94,12 +94,18 @@ export function componentPathfinder(
             },
 
             [STATE_MOVE]: function* (path, ex, ey, doneState) {
-                let x, y;
                 while (path.length) {
-                    ({ x, y } = path.shift());
-                    onMove(x, y);
+                    let { x, y } = path.shift();
+                    let interruptState = onMove(x, y);
 
-                    const interruptState = interruptFunc?.(x, y);
+                    if (!interruptState && interruptFunc) {
+                        console.warn(
+                            `interruptFunc callback is deprecated.`,
+                            `Return a new state from onMove to interrupt movement.`
+                        );
+                        interruptState = interruptFunc(x, y);
+                    }
+
                     if (interruptState) {
                         return interruptState;
                     }

@@ -12,13 +12,25 @@ export class Actor {
     // @group Construction
     //-----------------------------------------------------------------------//
 
-    constructor({ id = null, mixins = [] } = {}) {
+    constructor({ id = null, mixins = [], update = null, methods = [] } = {}) {
         this._id = id;
         this._opt = {};
 
         for (let comp of mixins) {
             const args = Array.isArray(comp) ? comp : [comp];
             this.mixin(...args);
+        }
+
+        if (update) {
+            this.update = update.bind(this);
+        }
+        for (let [name, method] of Object.entries(methods)) {
+            if (this[name] !== undefined) {
+                throw new Error(
+                    `Method named '${name}' would overwrite existing property with that name`
+                );
+            }
+            this[name] = method.bind(this);
         }
     }
 
@@ -41,6 +53,10 @@ export class Actor {
             methods: {},
         };
         const component = componentFunc(ctx, options);
+        if (!component) {
+            throw new Error(`Components must return a name at minimum`);
+        }
+
         const { name, properties, events, methods, stateMachine, ...rest } = component;
 
         if (this.opt[name]) {

@@ -47,7 +47,8 @@
 		"esbenp.prettier-vscode",
 		"ms-azuretools.vscode-docker",
 		"huntertran.auto-markdown-toc",
-		"bierner.emojisense"
+		"bierner.emojisense",
+		"GitHub.copilot"
 	],
     "remoteUser": "vscode"
 }

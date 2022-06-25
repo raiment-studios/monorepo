@@ -48,6 +48,10 @@ export class StateMachine {
         this._self = obj;
     }
 
+    get current() {
+        return this._activeStateName;
+    }
+
     update() {
         if (!this._activeState) {
             return;

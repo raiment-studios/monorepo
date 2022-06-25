@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash';
+
 /**
  *
  * A "goal" is conceptual-pattern. It introduces a "goal" property on
@@ -32,7 +34,7 @@ export function componentGoal(actor) {
                 set(value) {
                     const prior = actor._goal;
                     actor._goal = value;
-                    if (prior !== value) {
+                    if (!isEqual(prior, value)) {
                         actor.events?.fire('goal.change', value, prior);
                     }
                 },

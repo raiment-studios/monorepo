@@ -11,6 +11,7 @@ export class VoxelSprite extends Actor {
         worldY = 0,
         position = null,
         stateMachine = null,
+        update = null,
         spriteScale = 1.0,
         ...rest
     } = {}) {
@@ -27,6 +28,10 @@ export class VoxelSprite extends Actor {
         this._flags = Object.assign({}, flags);
         this._mesh = null;
         this._stateMachine = stateMachine;
+
+        if (update) {
+            this.update = update.bind(this);
+        }
     }
 
     get flags() {

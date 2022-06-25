@@ -1,4 +1,4 @@
-export default function ({ engine, VoxelSprite, componentWorldPathfinder }) {
+export default function ({ engine, VoxelSprite, componentWorldPathfinder, componentGoal2 }) {
     function generateActor({ engine }) {
         let position = engine.world.generateRandomWalkablePosition();
 
@@ -24,10 +24,70 @@ export default function ({ engine, VoxelSprite, componentWorldPathfinder }) {
                 _start: function* () {
                     return 'pathfind.target';
                 },
+                wait: function* (untilFrameNumber) {
+                    const { frameNumber } = engine.context();
+                    const exclamation = engine.rng.select([
+                        'Hello',
+                        'Hello',
+                        'Hello',
+                        'Greetings',
+                        'Hi there',
+                    ]);
+
+                    engine.journal.message(`"${exclamation}," says the stranger.`);
+                    yield untilFrameNumber - frameNumber;
+
+                    return 'pathfind.target';
+                },
             }),
+
+            update: function (ctx) {
+                this._updateWaitState(ctx);
+            },
+            methods: {
+                _updateWaitState({ engine, frameNumber }) {
+                    const { rng } = engine;
+                    if (rng.rangei(0, 30) !== 0) {
+                        return;
+                    }
+
+                    // Don't stop and wait if the actor did already recently
+                    if (this.goal.history('wait').lastSet > frameNumber - 10 * 60) {
+                        return;
+                    }
+
+                    const player = engine.actors.selectByID('camera');
+                    const posP = player.position;
+                    const posW = this.position;
+
+                    const Δp = posW.clone().sub(posP);
+                    if (Math.abs(Δp.x) > 16 || Math.abs(Δp.y) > 16) {
+                        return;
+                    }
+
+                    const f = player.forward().normalize();
+                    const v = Δp.clone().normalize();
+                    const θ = Math.acos(f.dot(v));
+                    const ang = (θ * 180) / Math.PI;
+                    if (ang < 60) {
+                        this.goal.set('wait', frameNumber + rng.rangei(1, 4) * 60);
+                    }
+                },
+            },
         });
 
-        actor.mixin(componentWorldPathfinder, { engine });
+        actor.mixin(componentGoal2, { engine });
+        actor.mixin(componentWorldPathfinder, {
+            engine,
+            onMove: function (wx, wy) {
+                if (this.goal.name === 'wait') {
+                    return this.goal.release();
+                }
+
+                actor.position.x = wx;
+                actor.position.y = wy;
+            },
+        });
 
         return actor;
     }

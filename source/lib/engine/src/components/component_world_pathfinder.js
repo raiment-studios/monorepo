@@ -9,11 +9,17 @@ import { componentPathfinder } from './component_pathfinder';
  *
  * Returns a set of states which can be merged into a StateMachine descriptor.
  */
-export function componentWorldPathfinder({ actor }, { engine, heightMap }) {
+export function componentWorldPathfinder({ actor }, { engine, heightMap, onMove }) {
     heightMap = heightMap ?? engine.actors.selectByID('terrain');
     console.assert(heightMap, `componentWorldPathfinder requires a 'terrain' object`);
 
     const heightArray = heightMap.getLayerArray('height');
+
+    onMove ??= (wx, wy) => {
+        actor.position.x = wx;
+        actor.position.y = wy;
+    };
+    onMove = onMove.bind(actor);
 
     return componentPathfinder(
         { actor },
@@ -35,8 +41,7 @@ export function componentWorldPathfinder({ actor }, { engine, heightMap }) {
             },
             onMove: (sx, sy) => {
                 const [wx, wy] = heightMap.coordS2W(sx, sy);
-                actor.position.x = wx;
-                actor.position.y = wy;
+                return onMove(wx, wy);
             },
         }
     );
