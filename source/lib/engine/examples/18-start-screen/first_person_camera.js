@@ -69,7 +69,7 @@ export class FirstPersonCamera {
         if (z > -Infinity) {
             pos.z = z;
         }
-        pos.z += 4;
+        pos.z += 5;
 
         const lookX = pos.x + 10 * fx;
         const lookY = pos.y + 10 * fy;
