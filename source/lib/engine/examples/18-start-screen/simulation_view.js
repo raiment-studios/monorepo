@@ -110,7 +110,7 @@ export function SimulationView({ initSequence }) {
             >
                 <EngineFrame
                     style={{
-                        aspectRatio: '16 / 6',
+                        height: 800,
                     }}
                     engine={engine}
                 />

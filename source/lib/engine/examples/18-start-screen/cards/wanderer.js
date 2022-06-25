@@ -9,6 +9,10 @@ export default function ({ engine, VoxelSprite, componentWorldPathfinder, compon
             'commoner-05',
             'commoner-06',
             'commoner-07',
+            'commoner-08',
+            'commoner-09',
+            'commoner-10',
+            'commoner-11',
             'farmer-00',
         ]);
         const actor = new VoxelSprite({
@@ -61,7 +65,14 @@ export default function ({ engine, VoxelSprite, componentWorldPathfinder, compon
                     const posW = this.position;
 
                     const Δp = posW.clone().sub(posP);
-                    if (Math.abs(Δp.x) > 16 || Math.abs(Δp.y) > 16) {
+                    const DIST_MAX = 12;
+                    const DIST_MIN = 3;
+                    if (
+                        Math.abs(Δp.x) > DIST_MAX ||
+                        Math.abs(Δp.y) > DIST_MAX ||
+                        Math.abs(Δp.x) < DIST_MIN ||
+                        Math.abs(Δp.y) < DIST_MIN
+                    ) {
                         return;
                     }
 
@@ -70,7 +81,7 @@ export default function ({ engine, VoxelSprite, componentWorldPathfinder, compon
                     const θ = Math.acos(f.dot(v));
                     const ang = (θ * 180) / Math.PI;
                     if (ang < 60) {
-                        this.goal.set('wait', frameNumber + rng.rangei(1, 4) * 60);
+                        this.goal.set('wait', frameNumber + rng.rangei(3, 6) * 60);
                     }
                 },
             },
