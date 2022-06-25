@@ -2,10 +2,14 @@ import React from 'react';
 import * as ReactEx from '../../react-ex';
 import data from 'yaml:./user_guide.yaml';
 
+const SectionContext = React.createContext({
+    depth: 0,
+});
+
 export default function () {
     ReactEx.useCommonStyles();
     return (
-        <ReactEx.ReadingFrame className="mono">
+        <ReactEx.ReadingFrame className="mono" width="42rem">
             <h1
                 className="mt-64px mb-16px"
                 style={{
@@ -27,7 +31,7 @@ export default function () {
             </div>
 
             {data.content.map((section) => (
-                <Section key={section.name} section={section} />
+                <Section key={section.name} section={section} depth={1} />
             ))}
         </ReactEx.ReadingFrame>
     );
@@ -52,16 +56,27 @@ function TableOfContentsEntry({ section }) {
 }
 
 function Section({ section }) {
+    const sectionContext = React.useContext(SectionContext);
+
     return (
-        <div>
-            <a name={`section-${encodeURIComponent(section.name)}`} />
-            <h2>{section.name}</h2>
+        <SectionContext.Provider value={{ ...sectionContext, depth: sectionContext.depth + 1 }}>
             <div>
-                {section.blocks?.map((block, index) => (
-                    <Block key={index} block={block} />
-                ))}
+                <a name={`section-${encodeURIComponent(section.name)}`} />
+                <h2
+                    style={{
+                        marginTop: `${(48 * 2) / (sectionContext.depth + 2)}px`,
+                        fontSize: `${(24 * 4) / (sectionContext.depth + 4)}px`,
+                    }}
+                >
+                    {section.name}
+                </h2>
+                <div>
+                    {section.blocks?.map((block, index) => (
+                        <Block key={index} block={block} />
+                    ))}
+                </div>
             </div>
-        </div>
+        </SectionContext.Provider>
     );
 }
 

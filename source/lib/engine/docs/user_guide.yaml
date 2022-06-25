@@ -16,3 +16,111 @@ content:
 
           - type: section
             name: engine.journal
+    - type: section
+      name: Design principles
+      blocks:
+          - type: section
+            name: Procedural and deterministically random
+
+          - type: section
+            name: 2.5D with easy to create content
+
+          - type: section
+            name: Conceptually playable without a computer
+            blocks:
+                - type: text
+                  value: |
+                      The engine logic should be straightforward enough that, at least in theory,
+                      the game could be played without a computer.  
+
+                      This principle helps ensure the architecture and game logic stays simple
+                      enough at a high-level that new contributors do not have a long ramp
+                      time on understanding the game logic.
+
+                      This is part of the motivation for the Rulebook project: the game logic
+                      should be simple enough to translate into a table-top game.  This Rulebook
+                      should greatly inform how the code architecture executes.
+
+          - type: section
+            name: 60 frames per section
+            blocks:
+                - type: text
+                  value: |
+                      The engine assumes the game will run at, and be capped to 60
+                      frames per second at all times.
+
+                      This is a *simplifying assumption* designed to make writing code
+                      easier. Frames and game time can be converted because the FPS is
+                      considered to be a constant.
+
+                      This also suggests that if a feature causes the frame rate to 
+                      dip below 60fps, it is not yet ready for production release.
+
+                      In a future revision of the engine this principle may be relaxed,
+                      but for the early revisions it is in place.
+
+          - type: section
+            name: The player is simply another actor in the world
+            blocks:
+                - type: text
+                  value: |
+                      Whenever possible, NPCs should interact with the player as they would
+                      with any other actors. New functionality should strive to acheive this
+                      even though in many (if not the majority) of cases this cannot be
+                      implemented.
+
+                      There are *many* cases where this will not be possible. Performance requirements will 
+                      often dictate that a behavior must be special-cased to the player.
+    - type: section
+      name: Architecture patterns
+      blocks:
+          - type: section
+            name: Engine code
+            blocks:
+                - type: text
+                  value: |
+                      General code that is more of the "data processor" variety.
+                      Often does not understand specific details.
+
+                      Makes it easy for users to handle a certain subset of use cases
+                      well.  Is flexible but only for those use cases.
+
+                      The Engine uses a "data-driven" architecture, even where some that
+                      data may be callbacks and small scripts.
+
+          - type: section
+            name: Leaf code
+            blocks:
+                - type: text
+                  value: |
+                      Edge code that is very specific but only has dependencies on general
+                      library and engine code.  Not code specifically depends on it.
+                      If the Engine is at the trunk of the tree, the leaf code is at the
+                      edge.
+
+          - type: section
+            name: Glue code
+            blocks:
+                - type: text
+                  value: |
+                      Small amounts of "lightweight" code, sometimes with many dependencies
+                      that "strings together" different parts of more generalized code.
+
+          - type: section
+            name: Scaffolding code
+            blocks:
+                - type: text
+                  value: |
+                      Temporary code that allows a change to be made incrementally before
+                      the ideal end state is reached.
+
+                      Scaffolding code often looks like large chunks of glue code as it 
+                      ties to generalized code with special-cases to bootstrap the 
+                      implementation of a new code path or functionality.
+
+                      As scaffolding code is, by definition, intended to be temporary, 
+                      eventually it should be removed.  In practice in large code bases,
+                      reminents of scafollding code often are part of the code base.
+                      It is good to try to generalize these into patterns that match
+                      the working of the code engine or "push out" the scaffolding to
+                      leaf code.
