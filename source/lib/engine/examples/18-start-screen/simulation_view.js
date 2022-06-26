@@ -13,6 +13,7 @@ import {
     componentWorldPathfinder,
     PathfinderGraph,
 } from '../../src';
+import { TextBubble } from './text_bubble';
 import * as THREE from 'three';
 import * as core from '../../../core';
 
@@ -66,6 +67,7 @@ export function SimulationView({ initSequence }) {
                                 componentPhysicsPVA,
                                 componentWorldPathfinder,
                                 PathfinderGraph,
+                                TextBubble,
                             };
                             const hooks = module.default(context);
                             Object.assign(obj, hooks);

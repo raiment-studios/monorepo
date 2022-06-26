@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import { build } from './build.js';
 
 export async function watchLoop(app, { filename, watchList, references, onBuild }) {
-    const state = { watchList, references, cache: {} };
+    const state = { watchList, references, cache: {}, recent: {} };
 
     const printV1Cache = () => {
         for (let [filename] of Object.entries(state.watchList)) {
@@ -24,10 +24,26 @@ export async function watchLoop(app, { filename, watchList, references, onBuild 
     printV1Cache();
     await rebuildCache();
 
+    const priorityTable = {
+        js: 10,
+        ts: 10,
+        jsx: 10,
+        tsx: 10,
+        yaml: 20,
+        yml: 20,
+        json: 30,
+    };
+
     while (true) {
         let dirty = false;
 
-        for (let [filename, modified] of Object.entries(state.cache)) {
+        const pairs = Object.entries(state.cache).sort(([fa], [fb]) => {
+            const ap = state.recent[fa] ? 0 : priorityTable[fa.split('.').pop()] ?? 100;
+            const bp = state.recent[fb] ? 0 : priorityTable[fb.split('.').pop()] ?? 100;
+            return ap - bp;
+        });
+
+        for (let [filename, modified] of pairs) {
             let mtime;
             try {
                 mtime = (await fs.stat(filename)).mtime;
@@ -42,6 +58,7 @@ export async function watchLoop(app, { filename, watchList, references, onBuild 
             if (mtime > modified) {
                 app.print(`Refreshing ({{obj ${filename}}} modified).`);
                 state.cache[filename] = mtime;
+                state.recent[filename] = true;
 
                 printV1Cache();
                 dirty = true;

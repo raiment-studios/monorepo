@@ -1,4 +1,10 @@
-export default function ({ engine, VoxelSprite, componentWorldPathfinder }) {
+export default function ({
+    engine,
+    VoxelSprite,
+    TextBubble,
+    componentGoal2,
+    componentWorldPathfinder,
+}) {
     function generateActor({ engine }) {
         let position = engine.world.generateRandomWalkablePosition();
 
@@ -15,10 +21,65 @@ export default function ({ engine, VoxelSprite, componentWorldPathfinder }) {
                 _start: function* () {
                     return 'pathfind.target';
                 },
+
+                meow: function* () {
+                    const message = engine.rng.select([
+                        'meow',
+                        'meow',
+                        'meow',
+                        'meow',
+                        'meow',
+                        'meeeeeow',
+                    ]);
+
+                    const text = new TextBubble({
+                        text: message,
+                        followActor: this,
+                        offsetZ: 2.5,
+                        lifetime: 3 * 60,
+                    });
+                    engine.actors.push(text);
+
+                    yield 4 * 60;
+                    return 'pathfind.target';
+                },
             }),
+
+            methods: {
+                update(ctx) {
+                    this._updateMeowCheck(ctx);
+                },
+
+                _updateMeowCheck({ engine, frameNumber }) {
+                    const { rng } = engine;
+                    if (rng.rangei(0, 30) !== 0) {
+                        return;
+                    }
+
+                    // Don't meow if done recently
+                    if (this.goal.history('meow').lastSet > frameNumber - 10 * 60) {
+                        return;
+                    }
+
+                    if (rng.rangei(0, 30) === 0) {
+                        this.goal.set('meow');
+                    }
+                },
+            },
         });
 
-        actor.mixin(componentWorldPathfinder, { engine });
+        actor.mixin(componentGoal2, { engine });
+        actor.mixin(componentWorldPathfinder, {
+            engine,
+            onMove: function (wx, wy) {
+                if (this.goal.name === 'meow') {
+                    return this.goal.release();
+                }
+
+                actor.position.x = wx;
+                actor.position.y = wy;
+            },
+        });
 
         return actor;
     }
@@ -51,8 +112,11 @@ them. However in Galthea, nothing should be taken for granted.
         ],
         play: function* () {
             engine.journal.message(`A wandering cat appears...`);
-            const actor = generateActor({ engine });
-            engine.actors.push(actor);
+            for (let i = 0; i < 64; i++) {
+                const actor = generateActor({ engine });
+                engine.actors.push(actor);
+                yield 10;
+            }
         },
     };
 }

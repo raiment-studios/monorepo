@@ -75,6 +75,7 @@ export class VoxelSprite extends Actor {
         const group = new THREE.Group();
         group.position.copy(this._position);
         group.add(mesh);
+
         this._mesh = group;
         return this._mesh;
     }

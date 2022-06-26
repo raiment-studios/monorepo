@@ -34,7 +34,9 @@ export class Actor {
         }
     }
 
-    dispose() {}
+    dispose(ctx) {
+        this.events?.fire('dispose', ctx);
+    }
 
     mixin(componentFunc, options = {}) {
         //
@@ -107,4 +109,8 @@ export class Actor {
     get opt() {
         return this._opt;
     }
+
+    //-----------------------------------------------------------------------//
+    // @group Methods
+    //-----------------------------------------------------------------------//
 }
