@@ -5,7 +5,7 @@
 ![](https://img.shields.io/badge/license-MIT-039)
 [![](https://img.shields.io/badge/feedback-welcome!-1a6)](https://github.com/raiment-studios/monorepo/discussions)
 
-This project builds and publishes to the raiment-studios.github.io site. Note that **the source is stored in the monorepo and raiment-studios.github.io is used pueely as a destination**. Direct edits to the destination repo will potentially break the intended workflow (or at least are unexpected).
+This project builds and publishes to the raiment-studios.github.io site. Note that **the source is stored in the monorepo and raiment-studios.github.io is used purely as a destination**. Direct edits to the destination repo will potentially break the intended workflow (or at least are unexpected).
 
 ## Getting started
 
