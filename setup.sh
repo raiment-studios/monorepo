@@ -23,6 +23,10 @@ git config pull.rebase false
 dircolors -p | sed 's/;42/;01/' > ~/.dircolors
 
 # Ensure rust is set up
+if [ ! -d "$HOME/.cargo"]
+then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+fi
 source $HOME/.cargo/env
 
 # This is probably *NOT* a best practice, but to avoid forgetting to pull the lfs
