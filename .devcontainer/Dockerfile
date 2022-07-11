@@ -22,9 +22,6 @@ RUN wget "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x
     rm -rf "node-v${NODE_VERSION}-linux-x64" && \
     rm -f "node-v${NODE_VERSION}-linux-x64.tar.xz"
 
-# Install Rust
-# MOVED TO setup.sh so it is installed as the user rather than root
-
 # Install Go
 RUN wget "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz"  && \
     rm -rf /usr/local/go && tar -C /usr/local -xzf "go${GO_VERSION}.linux-amd64.tar.gz"
@@ -33,3 +30,6 @@ ENV PATH $PATH:/usr/local/go/bin
 
 # Run the development environment setup script on every login
 RUN echo 'source /workspaces/monorepo/setup.sh' >> /home/vscode/.bashrc 2> /dev/null
+
+USER vscode
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
