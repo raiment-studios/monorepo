@@ -23,7 +23,7 @@ RUN wget "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x
     rm -f "node-v${NODE_VERSION}-linux-x64.tar.xz"
 
 # Install Rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# MOVED TO setup.sh so it is installed as the user rather than root
 
 # Install Go
 RUN wget "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz"  && \
