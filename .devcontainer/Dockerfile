@@ -33,3 +33,6 @@ RUN echo 'source /workspaces/monorepo/setup.sh' >> /home/vscode/.bashrc 2> /dev/
 
 USER vscode
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+SHELL ["/bin/bash", "-c"] 
+RUN source $HOME/.cargo/env  && \
+    cargo install wasm-pack
