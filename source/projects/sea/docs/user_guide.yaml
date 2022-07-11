@@ -1,0 +1,27 @@
+content:
+    - type: section
+      name: Core functionality
+      blocks:
+          - type: text
+            value: |
+                An individual computer treated as a distributed system.
+
+                The keyboard, monitor, and display are all centralized to a a single "main" computer.
+                It is connected to other logical or physical devices allow modular expansion of the
+                system. The system can dynamically upscale or downscale, so a laptop could become
+                an extension of a main network when not being used independently.
+
+                All processes are run as-if they were containers: fully independent and virtualized.
+                They can be launched with some configuration and connect to other sources for 
+                interaction with content and databases.
+
+                The system runs services, which are named. It can use RPCs to communicate with them.
+
+                An application runs itself and possible "workers" which are basically services local
+                to the application itself.
+
+                Storage is local with built in ability to mirror / sync to the cloud and use registries
+                to popular local caches.
+
+                The user filesystem is effectively a large git repository.  There can be multiple but
+                the idea is is namespaced effectively to one.
