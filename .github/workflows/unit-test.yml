@@ -21,7 +21,7 @@ jobs:
                   export MONOREPO_ROOT=$GITHUB_WORKSPACE
                   make -C source/lib/core ensure
                   make -C source/lib/core build
-                  make -C source/sandbox/tools/raiment-chdir publish-local
+                  make -C source/projects/tools/raiment-chdir publish-local
             - name: '@raiment/core unit tests'
               working-directory: source/lib/core
               run: |

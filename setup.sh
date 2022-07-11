@@ -78,7 +78,7 @@ source deploy/setup.sh
 # Tools and scripts
 # -----------------------------------------------------------------------------
 
-make -C source/sandbox/tools/raiment-chdir publish-local
+make -C source/projects/tools/raiment-chdir publish-local
 make -C source/projects/sea/apps/sea-jsx publish-local
 
 # -----------------------------------------------------------------------------
