@@ -11,6 +11,8 @@
 
         "editor.formatOnSaveMode": "file",
         "editor.formatOnSave": true,
+        "editor.minimap.enabled": false,
+
         "prettier.tabWidth": 4,
         "prettier.printWidth": 100,
         "prettier.singleQuote": true,
@@ -30,25 +32,30 @@
             "editor.wordWrapColumn": 80
         },
         "emojisense.languages": {
-
             "markdown": true,
-            "javascript":true,
+            "javascript": true,
             "javascriptreact": true,
-            "typescript":true,
+            "typescript": true,
             "plaintext": {
                 "markupCompletionsEnabled": false,
                 "emojiDecoratorsEnabled": false
             },
             "scminput": true,
             "git-commit": true
+        },
+
+        "explorer.incrementalNaming": "smart",
+        "workbench.colorCustomizations": {
+            "tab.activeBackground": "#5e5370",
+            "editor.background": "#100a0a"
         }
     },
     "extensions": [
-		"esbenp.prettier-vscode",
-		"ms-azuretools.vscode-docker",
-		"huntertran.auto-markdown-toc",
-		"bierner.emojisense",
-		"GitHub.copilot"
-	],
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "huntertran.auto-markdown-toc",
+        "bierner.emojisense",
+        "GitHub.copilot"
+    ],
     "remoteUser": "vscode"
 }
