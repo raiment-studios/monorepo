@@ -6,10 +6,9 @@ const runWasm = async () => {
     // Instantiate our wasm module
     const helloWorld = await init('./pkg/hello_world_bg.wasm');
 
-    // Call the Add function export from wasm, save the result
-    const addResult = helloWorld.add(3 * 7, 21);
+    const result = await helloWorld.main();
 
     // Set the result onto the body
-    document.body.textContent = `Hello World! addResult: ${addResult}`;
+    //document.body.textContent = `Hello World?`;
 };
 runWasm();
