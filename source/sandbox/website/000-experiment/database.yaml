@@ -1,0 +1,10 @@
+projects:
+    - title: Modular stuff
+    - title: Sea Platform
+guidebook:
+    scenarios:
+        - title: Track workout
+        - title: Day hike
+        - title: Solo roadtrip
+    workouts:
+        - title: Track workout
