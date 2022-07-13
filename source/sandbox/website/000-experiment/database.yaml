@@ -8,3 +8,5 @@ guidebook:
         - title: Solo roadtrip
     workouts:
         - title: Track workout
+        - checklist:
+              - 2x400, 1/4 mile rest
