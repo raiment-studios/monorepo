@@ -1,0 +1,7 @@
+function main() {
+    platform.println("Hello world!", add(37, 5));
+}
+
+function add(a : float32, b : float32) : float32 {
+    return a + b;
+}

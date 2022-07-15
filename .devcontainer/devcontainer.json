@@ -51,11 +51,12 @@
         }
     },
     "extensions": [
-        "esbenp.prettier-vscode",
-        "ms-azuretools.vscode-docker",
-        "huntertran.auto-markdown-toc",
-        "bierner.emojisense",
-        "GitHub.copilot"
-    ],
+		"esbenp.prettier-vscode",
+		"ms-azuretools.vscode-docker",
+		"huntertran.auto-markdown-toc",
+		"bierner.emojisense",
+		"GitHub.copilot",
+		"golang.go"
+	],
     "remoteUser": "vscode"
 }
