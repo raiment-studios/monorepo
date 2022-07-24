@@ -8,5 +8,14 @@
     },
     "dependencies": {
         "@raiment/core": "^0.1.2"
+    },
+    "license": "MIT",
+    "author": "https://github.com/raiment-studios",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/raiment-studios/monorepo.git"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
     }
 }
