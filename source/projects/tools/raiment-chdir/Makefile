@@ -24,7 +24,7 @@ publish: ensure
 	git add package.json
 	git commit -m "Update package.json for publish"
 	git push
-	npm publish
+	npm publish --access=public
 
 publish-local: ensure
 	sudo npm install --global .
