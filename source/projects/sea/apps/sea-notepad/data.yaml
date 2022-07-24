@@ -1,0 +1,15 @@
+count: 96
+entries:
+  "20220720":
+    text: The 20th.
+  "20220722":
+    text: The 22nd.
+  "20220724":
+    text: >-
+      # Hello World
+
+
+      This is pretty good as it has autosave that automatically interrupts any in-flight edits.
+
+
+      I could add a preview somewhere?

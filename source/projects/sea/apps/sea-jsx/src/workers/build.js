@@ -6,7 +6,7 @@ import sh from 'shelljs';
 import yaml from 'yaml';
 import { generateRandomID } from '../util/util.js';
 import { parseFrontMatter } from './parse_front_matter.js';
-import { parseYAML } from '@raiment/core';
+import { escapeRegExp, parseYAML } from '@raiment/core';
 import glob from 'glob';
 
 /**
@@ -334,7 +334,8 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, ref
             };
 
             registerYAMLPlugin(build, workingDir, watches);
-            registerGlobPlugin(build, workingDir, references);
+            registerGlobPlugin('glob', build, workingDir, references);
+            registerGlobPlugin('serve', build, workingDir, null); // serve doesn't watch for updates
 
             build.onResolve({ filter: /^\.\.?\/?.*/ }, resolveRelative);
             build.onResolve({ filter: /^[^\.]/ }, resolvePackage);
@@ -388,21 +389,23 @@ function registerYAMLPlugin(build, workingDir, watches) {
     });
 }
 
-function registerGlobPlugin(build, workingDir, references) {
+function registerGlobPlugin(prefix, build, workingDir, references) {
+    const reFilter = new RegExp(`^${escapeRegExp(prefix)}:.*`);
+
     function swapEnvironmentVariables(s) {
         return s.replace(/\$\((.+)\)/g, function (m, name) {
             return process.env[name];
         });
     }
 
-    build.onResolve({ filter: /^glob:.*/ }, async (args) => {
+    build.onResolve({ filter: reFilter }, async (args) => {
         return {
             namespace: 'glob',
             path: args.path,
         };
     });
 
-    build.onLoad({ filter: /^glob:.*/, namespace: 'glob' }, async (args) => {
+    build.onLoad({ filter: reFilter, namespace: 'glob' }, async (args) => {
         const text = args.path.replace('glob:', '');
         const textParts = text.split(';');
 
@@ -430,11 +433,13 @@ function registerGlobPlugin(build, workingDir, references) {
         for (let r of results) {
             const filepath = path.join(base, r);
             const url = path.relative(base, filepath);
-            references[r] = {
-                base: base,
-                filepath,
-                url,
-            };
+            if (references) {
+                references[r] = {
+                    base: base,
+                    filepath,
+                    url,
+                };
+            }
             urls.push(url);
         }
 
