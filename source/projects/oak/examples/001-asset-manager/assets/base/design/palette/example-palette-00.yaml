@@ -10,7 +10,7 @@ status: draft
 tags: []
 labels: {}
 content:
-    title: Example Palette 00
+    title: 'Example Palette #0'
     colors:
         red:
             value: '#fc1303'

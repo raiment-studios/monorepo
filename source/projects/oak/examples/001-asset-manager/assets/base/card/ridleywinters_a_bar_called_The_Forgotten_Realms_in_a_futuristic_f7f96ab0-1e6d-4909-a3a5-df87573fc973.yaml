@@ -1,0 +1,27 @@
+id: ridleywinters_a_bar_called_The_Forgotten_Realms_in_a_futuristic_f7f96ab0-1e6d-4909-a3a5-df87573fc973
+uuid: cb88a2f4-8023-7183-ffb8-0900d8e114c1
+pack: base
+type: cards
+schema: null
+version: null
+tags: []
+license: CC0
+author: Ridley Winters
+status: null
+labels: {}
+content:
+    title: A Future Break
+    quote:
+        value: |
+            Nothing like a like rest and relaxation in the future 
+            before hurrying back to the past.
+        author: Lain Grenbreck
+    description: |
+        Invokes a maelstrom event that pushes the party through time
+        into a future place that is safe and allows them to recuperate.
+        The future location is isolated and detached from the thread
+        of the story. If the characters push too hard, it will rip
+        apart and return them to their original time.
+    author:
+        details: |
+            Card image created by Ridley Winters using Midjourney.
