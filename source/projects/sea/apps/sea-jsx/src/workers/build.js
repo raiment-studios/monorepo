@@ -151,6 +151,8 @@ async function canRead(s) {
 }
 
 function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, references }) {
+    const pendingInstall = {};
+
     return {
         name: 'sea-jsx',
         setup: function (build) {
@@ -247,6 +249,13 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, ref
                 let parts = args.path.split('/');
                 const packageName = parts[0].startsWith('@') ? `${parts[0]}/${parts[1]}` : parts[0];
 
+                if (pendingInstall[packageName]) {
+                    await pendingInstall[packageName];
+                }
+                const ctx = { resolve: () => {} };
+                pendingInstall[packageName] = new Promise((resolve) => {
+                    ctx.resolve = resolve;
+                });
                 app.printV1(`Resolving {{obj ${packageName}}}`);
 
                 const dir = app.tempDirectory;
@@ -259,11 +268,31 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, ref
                         // should be used.  The version is passed along directly to npm so
                         // follows that format.
                         let packageIdentifier;
+                        let versionLocation;
                         const version = frontmatter.modules[packageName];
                         if (version) {
                             app.printV1(`Using {{loc ${version}}}`);
                             packageIdentifier = `${packageName}@${version}`;
-                        } else {
+                        }
+                        if (args.importer.startsWith('/')) {
+                            let dir = args.importer;
+                            do {
+                                dir = path.dirname(dir);
+                                let packageJSON = path.join(dir, 'package.json');
+                                if (sh.test('-f', packageJSON)) {
+                                    const pkgJSON = JSON.parse(
+                                        await fs.readFile(packageJSON, 'utf8')
+                                    );
+                                    const version = pkgJSON?.dependencies[packageName];
+                                    if (version) {
+                                        versionLocation = path.relative(process.cwd(), packageJSON);
+                                        packageIdentifier = `${packageName}@${version}`;
+                                    }
+                                }
+                            } while (!packageIdentifier && path.dirname(dir) !== dir);
+                        }
+
+                        if (!packageIdentifier) {
                             app.printV1('Using latest version');
                             packageIdentifier = packageName;
                         }
@@ -286,8 +315,15 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, ref
 
                         const duration = Date.now() - start;
                         app.runtime.cachedModules[packageName] = true;
+                        let vloc = '';
+                        if (versionLocation) {
+                            vloc = versionLocation
+                                .replace(/^(\.\.\/)*/, '')
+                                .replace(/\/package\.json$/, '');
+                            vloc = ` → ${vloc}`;
+                        }
                         app.print(
-                            `Installed {{obj ${packageName}}} {{loc v${pkgJSON.version}}} ({{loc ${duration}ms}}).`
+                            `Installed {{obj ${packageName}}} {{loc v${pkgJSON.version}}} ({{loc ${duration}ms}})${vloc}`
                         );
                     }
 
@@ -308,6 +344,8 @@ function createPlugin(app, { frontmatter, builtinFiles, workingDir, watches, ref
                         process.exit(1);
                     }
                 }
+
+                ctx.resolve();
 
                 if (result.errors.length > 0) {
                     return { errors: result.errors };

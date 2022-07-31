@@ -7,11 +7,21 @@ export function Flex({
     children,
     onClick,
 
-    align = 'center',
+    align,
     direction,
     dir,
     grow,
     g,
+
+    w,
+
+    m,
+    mx,
+    my,
+    mt,
+    mb,
+    ml,
+    mr,
 
     ...rest
 }) {
@@ -23,6 +33,16 @@ export function Flex({
     }
     grow = grow || g;
 
+    align ??= direction === 'row' ? 'center' : 'start';
+
+    // Margins
+    mx ??= m;
+    my ??= m;
+    mt ??= my;
+    mb ??= my;
+    mr ??= mx;
+    ml ??= mx;
+
     return (
         <div
             className={className}
@@ -31,6 +51,11 @@ export function Flex({
                 flexDirection: direction,
                 flexGrow: grow,
                 alignItems: align,
+                width: w,
+                marginTop: mt,
+                marginBottom: mb,
+                marginRight: mr,
+                marginLeft: ml,
                 ...style,
             }}
             onClick={onClick}
