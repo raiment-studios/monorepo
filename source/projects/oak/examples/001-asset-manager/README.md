@@ -40,3 +40,15 @@ Example types of assets:
 -   color palettes
 -   tiles
 -   sound effects
+
+Other guidelines
+
+-   Singular, not plural, for type names
+
+Checks
+
+-   Filename matches internal name
+-   File path matches internal pack + type
+-   Content not both in meta and file
+-   Not multiple content files with different extensions
+-   Not multiple properties with the same name and different extensions

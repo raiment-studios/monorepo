@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
+import glob from 'glob';
 
 export async function startServer(app, { port, filename, content }) {
     const assets = {
@@ -76,30 +77,57 @@ export async function startServer(app, { port, filename, content }) {
  */
 function registerExperimentalFS(app, { server, content, workingDir }) {
     server.post('/internal-api/experimental-fs/v1', async (req, res) => {
-        let { filename, data, options } = req.body;
+        switch (req.body.functionName) {
+            case 'glob': {
+                let { pattern, options } = req.body;
+                const results = await new Promise((resolve, reject) => {
+                    glob(pattern, options, (err, files) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        return resolve(files);
+                    });
+                });
+                res.set('etag', false);
+                res.set('Cache-Control', 'no-store');
+                return res.send({ results, success: true });
+            }
 
-        if (options?.substitute_env) {
-            filename = filename.replace(/\$\((.+)\)/g, function (m, name) {
-                return process.env[name];
-            });
+            case 'stat': {
+                let { path, options } = req.body;
+                const results = await fs.stat(path, options);
+                res.set('etag', false);
+                res.set('Cache-Control', 'no-store');
+                return res.send({ results, success: true });
+            }
+
+            case 'writeFile': {
+                let { filename, data, options } = req.body;
+
+                if (options?.substitute_env) {
+                    filename = filename.replace(/\$\((.+)\)/g, function (m, name) {
+                        return process.env[name];
+                    });
+                }
+
+                if (options?.encoding === 'data-uri') {
+                    // https://gist.github.com/kapad/5b93b14f8a8b193745807b969b189489
+                    const BASE64_MARKER = ';base64,';
+                    const base64Index = data.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+                    const base64 = data.substring(base64Index);
+                    data = Buffer.from(base64, 'base64');
+                }
+
+                app.print(
+                    `Writing to file {{obj ${path.relative(workingDir, filename)}}} {{loc ${
+                        data.length
+                    }}} bytes.`
+                );
+                await fs.writeFile(filename, data);
+                res.set('etag', false);
+                res.set('Cache-Control', 'no-store');
+                return res.send({ success: true });
+            }
         }
-
-        if (options?.encoding === 'data-uri') {
-            // https://gist.github.com/kapad/5b93b14f8a8b193745807b969b189489
-            const BASE64_MARKER = ';base64,';
-            const base64Index = data.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-            const base64 = data.substring(base64Index);
-            data = Buffer.from(base64, 'base64');
-        }
-
-        app.print(
-            `Writing to file {{obj ${path.relative(workingDir, filename)}}} {{loc ${
-                data.length
-            }}} bytes.`
-        );
-        await fs.writeFile(filename, data);
-        res.set('etag', false);
-        res.set('Cache-Control', 'no-store');
-        res.send({ success: true });
     });
 }

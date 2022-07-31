@@ -1,0 +1,24 @@
+id: example-palette-01
+uuid: d771b801-4f2f-49be-c2d1-af8233029694
+pack: base
+type: design/palette
+license: CC0
+author: null
+schema: null
+version: null
+status: draft
+tags: []
+labels: {}
+content:
+    title: Example Palette 01
+    colors:
+        red:
+            value: '#dc1303'
+        yellow:
+            value: '#fbfd03'
+        blue:
+            value: '#024ecc'
+        green:
+            value: '#2cc63e'
+        gray:
+            value: '#7a7a72'
