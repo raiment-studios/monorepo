@@ -80,6 +80,9 @@ A quick, simple command-line tool to run single JavaScript React Components with
 
 -   [ ] Add support for running node.js scripts
 -   [ ] Add file watches for all `glob:*` files
+-   [ ] Detect conflicting versions in cache versus required version
+-   [ ] Detect conflicting versions from different dependencies
+-   [ ] TypeScript
 
 ## User documentation
 
