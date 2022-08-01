@@ -46,7 +46,10 @@ export function Drawer({
                         </div>
                     </div>
                     <div style={{ flexGrow: 1 }}>
-                        <Header expanded={expanded} />
+                        {Header && <Header expanded={expanded} />}
+                        {React.Children.toArray(children).map((c) =>
+                            c.type?.name === 'DrawerHeader' ? c : null
+                        )}
                     </div>
                 </div>
                 <div
@@ -57,9 +60,16 @@ export function Drawer({
                         visibility: expanded ? 'visible' : 'hidden',
                     }}
                 >
-                    {children}
+                    {React.Children.toArray(children).map((c) =>
+                        c.type?.name !== 'DrawerHeader' ? c : null
+                    )}
                 </div>
             </Body>
         </div>
     );
 }
+
+function DrawerHeader({ children }) {
+    return <>{children}</>;
+}
+Drawer.Header = DrawerHeader;

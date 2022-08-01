@@ -49,7 +49,9 @@ const useStyles = makeUseStyles({
     },
 });
 
-function Card({ asset }) {
+const Card = React.memo(CardImp);
+
+function CardImp({ asset }) {
     const classes = useStyles();
     const [quoteOpacity, setQuoteOpacity] = React.useState(0.6);
 
